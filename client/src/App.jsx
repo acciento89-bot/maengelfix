@@ -72,6 +72,7 @@ function PublicHeader({ user, navigate }) {
       <nav className="publicNav">
         <a href="/#ablauf">So funktioniert's</a>
         <a href="/#funktionen">Funktionen</a>
+        <a href="/#tarife">Tarife</a>
         {user ? (
           <button className="navPrimary" onClick={() => navigate('/app')}>Zur App</button>
         ) : (
@@ -157,6 +158,15 @@ function Landing({ user, navigate }) {
             <article><div className="featureNumber">03</div><h3>Fotobelege</h3><p>Bilder bleiben direkt am jeweiligen Mangel und können in die Dokumentation übernommen werden.</p></article>
             <article><div className="featureNumber">04</div><h3>Absenderprofil</h3><p>Name und Anschrift einmal hinterlegen und automatisch in deinen PDFs verwenden.</p></article>
             <article><div className="featureNumber">05</div><h3>Vorgangsverlauf</h3><p>Notizen und Statusänderungen bilden eine nachvollziehbare Historie des Falls.</p></article>
+          </div>
+        </section>
+
+
+        <section className="pricingSection" id="tarife">
+          <div className="sectionIntro"><span>TARIFE</span><h2>Für den einzelnen Mieter. Und für ganze Verwaltungen.</h2><p>MängelFix bekommt zwei klar getrennte Produktlinien. Die konkreten Preise legen wir vor dem Zahlungsstart fest.</p></div>
+          <div className="pricingGrid">
+            <article className="pricingCard privatePlan"><div className="planTag">PRIVAT</div><h3>MängelFix Privat</h3><p className="planLead">Für Mieter und private Nutzer, die ihre eigenen Vorgänge sauber dokumentieren möchten.</p><div className="planPrice"><strong>Einzeltarif</strong><span>1 persönliches Konto</span></div><ul><li>Eigene Mängel & Objekte</li><li>Fotos, Fristen und Verlauf</li><li>Professionelle PDF-Dokumentation</li><li>Persönliches Absenderprofil</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Zur App' : 'Privat starten'} →</button></article>
+            <article className="pricingCard businessPlan"><div className="planTag">HAUSVERWALTUNG</div><h3>MängelFix Verwaltung</h3><p className="planLead">Für Hausverwaltungen, Vermieterbüros und Teams, die gemeinsam an Objekten und Vorgängen arbeiten.</p><div className="planPrice"><strong>Teamtarif</strong><span>Mehrere Mitarbeiterkonten</span></div><ul><li>Gemeinsamer Arbeitsbereich</li><li>Inhaber-, Admin- und Mitarbeiterrollen</li><li>Mitarbeiter selbst anlegen</li><li>Gemeinsamer Zugriff auf Mängel & Dokumente</li><li>Für viele Objekte skalierbar</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Team einrichten' : 'Verwaltung starten'} →</button></article>
           </div>
         </section>
 
@@ -426,6 +436,43 @@ function ProfileView({ user, onSaved }) {
   return <div className="workspacePage"><div className="workspaceHeading"><div><span>PROFIL</span><h1>Absender & Konto</h1><p>Diese Angaben erscheinen als Absender in deiner MängelFix-PDF.</p></div></div><div className="profileLayout"><form className="workspacePanel profileForm" onSubmit={save}><div className="panelHead"><div><span>ABSENDERDATEN</span><h2>Deine Kontaktdaten</h2></div></div><div className="formGrid two"><label>Name<input required value={form.name} onChange={e => field('name', e.target.value)} /></label><label>E-Mail<input disabled value={user.email} /></label><label>Straße & Hausnummer<input required placeholder="Musterstraße 12" value={form.street} onChange={e => field('street', e.target.value)} /></label><label>Telefon <em>optional</em><input placeholder="+49 …" value={form.phone} onChange={e => field('phone', e.target.value)} /></label><label>PLZ<input required value={form.postalCode} onChange={e => field('postalCode', e.target.value)} /></label><label>Ort<input required value={form.city} onChange={e => field('city', e.target.value)} /></label></div><label>Land<input value={form.country} onChange={e => field('country', e.target.value)} /></label>{error && <div className="errorBox">{error}</div>}{message && <div className="successBox">{message}</div>}<div className="profileActions"><button className="primaryButton" disabled={busy}>{busy ? 'Speichern…' : 'Profil speichern'}</button></div></form><aside className="senderPreview"><span>PDF-VORSCHAU</span><h3>Absender</h3><p><b>{form.name || 'Dein Name'}</b><br />{form.street || 'Straße & Hausnummer'}<br />{form.postalCode || 'PLZ'} {form.city || 'Ort'}<br />{form.country || 'Deutschland'}<br />{user.email}{form.phone ? <><br />{form.phone}</> : null}</p><small>Diese Angaben werden nicht öffentlich angezeigt. Sie werden für dein Konto und die von dir erzeugten Dokumente verwendet.</small></aside></div></div>;
 }
 
+
+function TeamView() {
+  const [team, setTeam] = useState({ organization: null, members: [] });
+  const [orgName, setOrgName] = useState('');
+  const [member, setMember] = useState({ name: '', email: '', password: '', role: 'member' });
+  const [busy, setBusy] = useState(false);
+  const [error, setError] = useState('');
+  const [message, setMessage] = useState('');
+
+  async function load() {
+    try { setTeam(await api('/api/team')); }
+    catch (err) { setError(err.message); }
+  }
+  useEffect(() => { load(); }, []);
+
+  async function createOrganization(event) {
+    event.preventDefault(); setBusy(true); setError(''); setMessage('');
+    try { await api('/api/team', { method: 'POST', body: JSON.stringify({ name: orgName }) }); setMessage('Hausverwaltungs-Arbeitsbereich angelegt. Ab jetzt werden neue Vorgänge mit deinem Team geteilt.'); setOrgName(''); await load(); }
+    catch (err) { setError(err.message); }
+    finally { setBusy(false); }
+  }
+
+  async function createMember(event) {
+    event.preventDefault(); setBusy(true); setError(''); setMessage('');
+    try { await api('/api/team/members', { method: 'POST', body: JSON.stringify(member) }); setMessage('Mitarbeiterkonto erstellt. Die Person kann sich sofort mit der angegebenen E-Mail und dem Startpasswort anmelden.'); setMember({ name: '', email: '', password: '', role: 'member' }); await load(); }
+    catch (err) { setError(err.message); }
+    finally { setBusy(false); }
+  }
+
+  if (!team.organization) {
+    return <div className="workspacePage"><div className="workspaceHeading"><div><span>HAUSVERWALTUNG</span><h1>Gemeinsam statt mit geteilten Passwörtern.</h1><p>Privatkonten bleiben persönlich. Für Verwaltungen richtest du einen gemeinsamen Arbeitsbereich mit eigenen Mitarbeiter-Logins ein.</p></div></div><div className="teamIntroGrid"><section className="workspacePanel teamSetup"><div className="panelHead"><div><span>TEAMTARIF</span><h2>Hausverwaltung einrichten</h2></div></div><p>Nach dem Einrichten sehen alle Teammitglieder die gemeinsamen Vorgänge der Verwaltung. Du wirst automatisch Inhaber.</p><form onSubmit={createOrganization}><label>Name der Hausverwaltung<input required placeholder="z. B. Muster Hausverwaltung GmbH" value={orgName} onChange={e => setOrgName(e.target.value)} /></label>{error && <div className="errorBox">{error}</div>}{message && <div className="successBox">{message}</div>}<button className="primaryButton" disabled={busy}>{busy ? 'Einrichten…' : 'Arbeitsbereich einrichten'}</button></form></section><aside className="teamBenefits"><span>HAUSVERWALTUNG</span><h3>Was der Teamtarif vorbereitet</h3><ul><li>Eigene Logins für Mitarbeiter</li><li>Rollen: Inhaber, Admin, Mitarbeiter</li><li>Gemeinsame Mängel und Dokumente</li><li>Kein Teilen eines Master-Passworts</li><li>Basis für spätere Objekt- und Rechteverwaltung</li></ul></aside></div></div>;
+  }
+
+  const canManage = ['owner', 'admin'].includes(team.organization.role);
+  return <div className="workspacePage"><div className="workspaceHeading"><div><span>TEAM</span><h1>{team.organization.name}</h1><p>Gemeinsamer Hausverwaltungs-Arbeitsbereich · Rolle: {team.organization.role === 'owner' ? 'Inhaber' : team.organization.role === 'admin' ? 'Admin' : 'Mitarbeiter'}</p></div><div className="teamPlanBadge">VERWALTUNG · TEAMTARIF</div></div>{error && <div className="errorBox">{error}</div>}{message && <div className="successBox">{message}</div>}<div className="teamColumns"><section className="workspacePanel"><div className="panelHead"><div><span>MITARBEITER</span><h2>{team.members.length} Teammitglied{team.members.length === 1 ? '' : 'er'}</h2></div></div><div className="memberList">{team.members.map(item => <div className="memberRow" key={item.id}><div>{item.name.slice(0,1).toUpperCase()}</div><p><b>{item.name}</b><span>{item.email}</span></p><strong>{item.role === 'owner' ? 'INHABER' : item.role === 'admin' ? 'ADMIN' : 'MITARBEITER'}</strong></div>)}</div></section>{canManage && <form className="workspacePanel addMemberForm" onSubmit={createMember}><div className="panelHead"><div><span>NEUER ZUGANG</span><h2>Mitarbeiter anlegen</h2></div></div><label>Name<input required value={member.name} onChange={e => setMember({ ...member, name: e.target.value })} /></label><label>E-Mail<input required type="email" value={member.email} onChange={e => setMember({ ...member, email: e.target.value })} /></label><label>Startpasswort<input required minLength="8" type="password" value={member.password} onChange={e => setMember({ ...member, password: e.target.value })} placeholder="Mindestens 8 Zeichen" /></label><label>Rolle<select value={member.role} onChange={e => setMember({ ...member, role: e.target.value })}><option value="member">Mitarbeiter</option><option value="admin">Admin</option></select></label><small>Das Startpasswort wird nicht angezeigt oder per E-Mail versendet. Teile es der Person über einen sicheren Weg mit.</small><button className="primaryButton" disabled={busy}>{busy ? 'Anlegen…' : 'Mitarbeiterkonto anlegen'}</button></form>}</div></div>;
+}
+
 function Workspace({ user, setUser, onLogout, navigate }) {
   const [cases, setCases] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -451,9 +498,10 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   else if (view === 'objects') content = <ObjectsView cases={cases} onSelect={setSelected} />;
   else if (view === 'deadlines') content = <DeadlinesView cases={cases} onSelect={setSelected} />;
   else if (view === 'documents') content = <DocumentsView cases={cases} profileComplete={profileComplete} onProfile={goProfile} />;
+  else if (view === 'team') content = <TeamView />;
   else content = <ProfileView user={user} onSaved={setUser} />;
 
-  return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => { setSelected(null); setView('deadlines'); }}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b></button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button></nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); setSelected(created.id); }} />}</div>;
+  return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => { setSelected(null); setView('deadlines'); }}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b></button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button><button className={view === 'team' ? 'active' : ''} onClick={() => { setSelected(null); setView('team'); }}><span>T</span>Team</button></nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); setSelected(created.id); }} />}</div>;
 }
 
 export default function App() {

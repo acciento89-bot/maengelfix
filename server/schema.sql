@@ -62,3 +62,25 @@ CREATE TABLE IF NOT EXISTS attachments (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS attachments_case_id_idx ON attachments(case_id, created_at);
+
+
+-- v0.3: Privat- und Hausverwaltungs-Arbeitsbereiche
+CREATE TABLE IF NOT EXISTS organizations (
+  id text PRIMARY KEY,
+  name text NOT NULL,
+  plan_code text NOT NULL DEFAULT 'business',
+  created_by text NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+
+CREATE TABLE IF NOT EXISTS organization_memberships (
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  role text NOT NULL DEFAULT 'member',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  PRIMARY KEY (organization_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS organization_memberships_user_idx ON organization_memberships(user_id);
+
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS organization_id text REFERENCES organizations(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS defect_cases_org_idx ON defect_cases(organization_id, updated_at DESC);

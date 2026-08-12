@@ -115,9 +115,39 @@ async function auth(req, res, next) {
 
 const allowedStatuses = new Set(['draft', 'sent', 'reply', 'in_progress', 'resolved']);
 
+
+async function organizationForUser(userId) {
+  const result = await pool.query(
+    `SELECT o.id, o.name, o.plan_code, om.role
+     FROM organization_memberships om
+     JOIN organizations o ON o.id = om.organization_id
+     WHERE om.user_id = $1
+     ORDER BY om.created_at
+     LIMIT 1`,
+    [userId]
+  );
+  return result.rows[0] || null;
+}
+
+async function canAccessCase(userId, caseId) {
+  const result = await pool.query(
+    `SELECT c.*
+     FROM defect_cases c
+     WHERE c.id = $1 AND (
+       c.user_id = $2 OR
+       (c.organization_id IS NOT NULL AND EXISTS (
+         SELECT 1 FROM organization_memberships om
+         WHERE om.organization_id = c.organization_id AND om.user_id = $2
+       ))
+     )`,
+    [caseId, userId]
+  );
+  return result.rows[0] || null;
+}
+
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.2.0' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.3.0' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -209,13 +239,103 @@ app.patch('/api/profile', auth, async (req, res, next) => {
   }
 });
 
+
+app.get('/api/team', auth, async (req, res, next) => {
+  try {
+    const organization = await organizationForUser(req.user.id);
+    if (!organization) return res.json({ organization: null, members: [] });
+    const members = await pool.query(
+      `SELECT u.id, u.name, u.email, om.role, om.created_at
+       FROM organization_memberships om
+       JOIN users u ON u.id = om.user_id
+       WHERE om.organization_id = $1
+       ORDER BY CASE om.role WHEN 'owner' THEN 0 WHEN 'admin' THEN 1 ELSE 2 END, u.name`,
+      [organization.id]
+    );
+    res.json({ organization, members: members.rows });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/team', auth, async (req, res, next) => {
+  try {
+    const existing = await organizationForUser(req.user.id);
+    if (existing) return res.status(409).json({ error: 'Du gehörst bereits zu einem Hausverwaltungs-Arbeitsbereich.' });
+    const name = cleanText(req.body.name, 180);
+    if (!name) return res.status(400).json({ error: 'Bitte gib den Namen der Hausverwaltung an.' });
+    const orgId = id();
+    await pool.query('BEGIN');
+    try {
+      await pool.query(
+        `INSERT INTO organizations (id, name, plan_code, created_by) VALUES ($1,$2,'business',$3)`,
+        [orgId, name, req.user.id]
+      );
+      await pool.query(
+        `INSERT INTO organization_memberships (organization_id, user_id, role) VALUES ($1,$2,'owner')`,
+        [orgId, req.user.id]
+      );
+      await pool.query('COMMIT');
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      throw error;
+    }
+    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business', role: 'owner' } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/team/members', auth, async (req, res, next) => {
+  try {
+    const organization = await organizationForUser(req.user.id);
+    if (!organization || !['owner', 'admin'].includes(organization.role)) {
+      return res.status(403).json({ error: 'Nur Inhaber und Admins können Mitarbeiterkonten anlegen.' });
+    }
+    const name = cleanText(req.body.name, 120);
+    const email = cleanText(req.body.email, 254)?.toLowerCase();
+    const password = String(req.body.password || '');
+    const role = req.body.role === 'admin' ? 'admin' : 'member';
+    if (!name || !email || !email.includes('@') || password.length < 8) {
+      return res.status(400).json({ error: 'Name, gültige E-Mail und ein Startpasswort mit mindestens 8 Zeichen sind erforderlich.' });
+    }
+    const existing = await pool.query('SELECT id FROM users WHERE email=$1', [email]);
+    if (existing.rowCount) return res.status(409).json({ error: 'Für diese E-Mail existiert bereits ein MängelFix-Konto.' });
+    const credentials = await makePassword(password);
+    const userId = id();
+    await pool.query('BEGIN');
+    try {
+      await pool.query(
+        `INSERT INTO users (id,name,email,password_salt,password_hash,country) VALUES ($1,$2,$3,$4,$5,'Deutschland')`,
+        [userId, name, email, credentials.salt, credentials.hash]
+      );
+      await pool.query(
+        `INSERT INTO organization_memberships (organization_id,user_id,role) VALUES ($1,$2,$3)`,
+        [organization.id, userId, role]
+      );
+      await pool.query('COMMIT');
+    } catch (error) {
+      await pool.query('ROLLBACK');
+      throw error;
+    }
+    res.status(201).json({ member: { id: userId, name, email, role } });
+  } catch (error) {
+    next(error);
+  }
+});
+
 app.get('/api/cases', auth, async (req, res, next) => {
   try {
     const result = await pool.query(
       `SELECT c.*,
         (SELECT count(*)::int FROM attachments a WHERE a.case_id = c.id) AS attachment_count
        FROM defect_cases c
-       WHERE c.user_id = $1
+       WHERE c.user_id = $1 OR (
+         c.organization_id IS NOT NULL AND EXISTS (
+           SELECT 1 FROM organization_memberships om
+           WHERE om.organization_id = c.organization_id AND om.user_id = $1
+         )
+       )
        ORDER BY c.updated_at DESC`,
       [req.user.id]
     );
@@ -236,12 +356,13 @@ app.post('/api/cases', auth, async (req, res, next) => {
     await client.query('BEGIN');
     const result = await client.query(
       `INSERT INTO defect_cases
-       (id,user_id,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,'draft')
+       (id,user_id,organization_id,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'draft')
        RETURNING *`,
       [
         caseId,
         req.user.id,
+        (await organizationForUser(req.user.id))?.id || null,
         title,
         cleanText(req.body.category, 80) || 'Sonstiges',
         description,
@@ -270,11 +391,12 @@ app.post('/api/cases', auth, async (req, res, next) => {
 
 app.get('/api/cases/:caseId', auth, async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT * FROM defect_cases WHERE id = $1 AND user_id = $2', [req.params.caseId, req.user.id]);
+    const accessible = await canAccessCase(req.user.id, req.params.caseId);
+    const result = { rowCount: accessible ? 1 : 0, rows: accessible ? [accessible] : [] };
     if (!result.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const [events, attachments] = await Promise.all([
-      pool.query('SELECT * FROM case_events WHERE case_id = $1 AND user_id = $2 ORDER BY created_at DESC', [req.params.caseId, req.user.id]),
-      pool.query('SELECT id, original_name, mime_type, size_bytes, created_at FROM attachments WHERE case_id = $1 AND user_id = $2 ORDER BY created_at', [req.params.caseId, req.user.id])
+      pool.query('SELECT e.*, u.name AS actor_name FROM case_events e LEFT JOIN users u ON u.id=e.user_id WHERE e.case_id = $1 ORDER BY e.created_at DESC', [req.params.caseId]),
+      pool.query('SELECT id, original_name, mime_type, size_bytes, created_at FROM attachments WHERE case_id = $1 ORDER BY created_at', [req.params.caseId])
     ]);
     res.json({ case: result.rows[0], events: events.rows, attachments: attachments.rows });
   } catch (error) {
@@ -286,7 +408,8 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
   try {
     const status = cleanText(req.body.status, 40);
     if (status && !allowedStatuses.has(status)) return res.status(400).json({ error: 'Ungültiger Status.' });
-    const current = await pool.query('SELECT * FROM defect_cases WHERE id=$1 AND user_id=$2', [req.params.caseId, req.user.id]);
+    const accessible = await canAccessCase(req.user.id, req.params.caseId);
+    const current = { rowCount: accessible ? 1 : 0, rows: accessible ? [accessible] : [] };
     if (!current.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const old = current.rows[0];
     const nextStatus = status || old.status;
@@ -295,7 +418,7 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
        title=$3, category=$4, description=$5, property_label=$6, location_label=$7,
        discovered_on=$8, recipient_name=$9, recipient_email=$10, recipient_address=$11,
        deadline_on=$12, status=$13, updated_at=now()
-       WHERE id=$1 AND user_id=$2 RETURNING *`,
+       WHERE id=$1 RETURNING *`,
       [
         req.params.caseId,
         req.user.id,
@@ -326,8 +449,8 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
 
 app.post('/api/cases/:caseId/events', auth, async (req, res, next) => {
   try {
-    const owner = await pool.query('SELECT 1 FROM defect_cases WHERE id=$1 AND user_id=$2', [req.params.caseId, req.user.id]);
-    if (!owner.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
+    const accessible = await canAccessCase(req.user.id, req.params.caseId);
+    if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const note = cleanText(req.body.note, 2000);
     if (!note) return res.status(400).json({ error: 'Notiz darf nicht leer sein.' });
     const result = await pool.query(
@@ -379,7 +502,7 @@ app.post('/api/cases/:caseId/attachments', auth, upload.array('images', 5), asyn
 
 app.get('/api/attachments/:attachmentId', auth, async (req, res, next) => {
   try {
-    const result = await pool.query('SELECT * FROM attachments WHERE id=$1 AND user_id=$2', [req.params.attachmentId, req.user.id]);
+    const result = await pool.query(`SELECT a.* FROM attachments a JOIN defect_cases c ON c.id=a.case_id WHERE a.id=$1 AND (c.user_id=$2 OR (c.organization_id IS NOT NULL AND EXISTS (SELECT 1 FROM organization_memberships om WHERE om.organization_id=c.organization_id AND om.user_id=$2)))`, [req.params.attachmentId, req.user.id]);
     if (!result.rowCount) return res.status(404).end();
     const item = result.rows[0];
     res.type(item.mime_type).sendFile(path.join(uploadDir, item.stored_name));
@@ -391,8 +514,8 @@ app.get('/api/attachments/:attachmentId', auth, async (req, res, next) => {
 app.get('/api/cases/:caseId/pdf', auth, async (req, res, next) => {
   try {
     const [caseResult, attachmentResult] = await Promise.all([
-      pool.query('SELECT * FROM defect_cases WHERE id=$1 AND user_id=$2', [req.params.caseId, req.user.id]),
-      pool.query('SELECT * FROM attachments WHERE case_id=$1 AND user_id=$2 ORDER BY created_at', [req.params.caseId, req.user.id])
+      pool.query(`SELECT c.* FROM defect_cases c WHERE c.id=$1 AND (c.user_id=$2 OR (c.organization_id IS NOT NULL AND EXISTS (SELECT 1 FROM organization_memberships om WHERE om.organization_id=c.organization_id AND om.user_id=$2)))`, [req.params.caseId, req.user.id]),
+      pool.query('SELECT * FROM attachments WHERE case_id=$1 ORDER BY created_at', [req.params.caseId])
     ]);
     if (!caseResult.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
 
@@ -449,7 +572,14 @@ app.get('/api/cases/:caseId/pdf', auth, async (req, res, next) => {
     const pageHeader = (subtitle = 'MÄNGELANZEIGE / DOKUMENTATION') => {
       doc.rect(0, 0, pageW, 78).fill(C.ink);
       doc.roundedRect(left, 23, 32, 32, 6).fill(C.white);
-      doc.font('Helvetica-Bold').fontSize(13).fillColor(C.ink).text('MF', left + 5, 33, { width: 22, align: 'center', lineBreak: false });
+      // MängelFix-Dokumentlogo: Blatt + Haken statt Platzhalter 'MF'
+      doc.save();
+      doc.strokeColor(C.ink).lineWidth(1.4);
+      doc.roundedRect(left + 8, 29, 15, 19, 2).stroke();
+      doc.moveTo(left + 18, 29).lineTo(left + 23, 34).lineTo(left + 18, 34).stroke();
+      doc.strokeColor(C.blue).lineWidth(2.0);
+      doc.moveTo(left + 11, 40).lineTo(left + 15, 44).lineTo(left + 22, 36).stroke();
+      doc.restore();
       doc.font('Helvetica-Bold').fontSize(17).fillColor(C.white).text('MängelFix', left + 44, 24, { lineBreak: false });
       doc.font('Helvetica').fontSize(7.5).fillColor('#B8C0C8').text(subtitle, left + 44, 47, { characterSpacing: 1.05, lineBreak: false });
       doc.font('Helvetica').fontSize(7.5).fillColor('#B8C0C8').text('VORGANG', right - 160, 24, { width: 160, align: 'right', lineBreak: false });
