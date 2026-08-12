@@ -1,0 +1,42 @@
+services:
+  app:
+    build: .
+    restart: unless-stopped
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DATABASE_URL: ${DATABASE_URL:-postgres://maengelfix:maengelfix@db:5432/maengelfix}
+      SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-maengelfix_session}
+      APP_ORIGIN: ${APP_ORIGIN:-https://maengelfix.kamilunavo.com}
+      UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
+    depends_on:
+      db:
+        condition: service_healthy
+    volumes:
+      - maengelfix_uploads:/data/uploads
+    networks:
+      - maengelfix
+
+  db:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: maengelfix
+      POSTGRES_USER: maengelfix
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-maengelfix}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U maengelfix -d maengelfix"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
+    volumes:
+      - maengelfix_db:/var/lib/postgresql/data
+    networks:
+      - maengelfix
+
+networks:
+  maengelfix:
+
+volumes:
+  maengelfix_db:
+  maengelfix_uploads:
