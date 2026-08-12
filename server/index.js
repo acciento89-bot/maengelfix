@@ -480,8 +480,8 @@ const upload = multer({
 
 app.post('/api/cases/:caseId/attachments', auth, upload.array('images', 5), async (req, res, next) => {
   try {
-    const owner = await pool.query('SELECT 1 FROM defect_cases WHERE id=$1 AND user_id=$2', [req.params.caseId, req.user.id]);
-    if (!owner.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
+    const accessible = await canAccessCase(req.user.id, req.params.caseId);
+    if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const created = [];
     for (const file of req.files || []) {
       const attachmentId = id();

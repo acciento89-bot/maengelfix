@@ -73,6 +73,7 @@ function PublicHeader({ user, navigate }) {
         <a href="/#ablauf">So funktioniert's</a>
         <a href="/#funktionen">Funktionen</a>
         <a href="/#tarife">Tarife</a>
+        <a href="/#tarife">Tarife</a>
         {user ? (
           <button className="navPrimary" onClick={() => navigate('/app')}>Zur App</button>
         ) : (
