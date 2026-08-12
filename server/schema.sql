@@ -7,6 +7,12 @@ CREATE TABLE IF NOT EXISTS users (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 
+ALTER TABLE users ADD COLUMN IF NOT EXISTS street text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS postal_code text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS city text;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS country text DEFAULT 'Deutschland';
+ALTER TABLE users ADD COLUMN IF NOT EXISTS phone text;
+
 CREATE TABLE IF NOT EXISTS sessions (
   token_hash text PRIMARY KEY,
   user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
