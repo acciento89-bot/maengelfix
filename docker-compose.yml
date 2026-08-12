@@ -15,7 +15,10 @@ services:
     volumes:
       - maengelfix_uploads:/data/uploads
     networks:
-      - maengelfix
+      maengelfix:
+      frontend:
+        aliases:
+          - maengelfix
 
   db:
     image: postgres:16-alpine
@@ -36,6 +39,9 @@ services:
 
 networks:
   maengelfix:
+  frontend:
+    external: true
+    name: kamilunavo-infrastructure_frontend
 
 volumes:
   maengelfix_db:
