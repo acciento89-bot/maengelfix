@@ -222,3 +222,47 @@ CREATE TABLE IF NOT EXISTS case_messages (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS case_messages_case_idx ON case_messages(case_id, created_at);
+
+
+-- v0.8: Dienstleister & Arbeitsaufträge
+CREATE TABLE IF NOT EXISTS service_providers (
+  id text PRIMARY KEY,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  company_name text NOT NULL,
+  trade text NOT NULL DEFAULT 'Sonstiges',
+  contact_name text,
+  email text,
+  phone text,
+  street text,
+  postal_code text,
+  city text,
+  notes text,
+  active boolean NOT NULL DEFAULT true,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS service_providers_org_idx ON service_providers(organization_id, active, company_name);
+
+CREATE TABLE IF NOT EXISTS work_orders (
+  id text PRIMARY KEY,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  case_id text NOT NULL REFERENCES defect_cases(id) ON DELETE CASCADE,
+  provider_id text NOT NULL REFERENCES service_providers(id) ON DELETE RESTRICT,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE RESTRICT,
+  title text NOT NULL,
+  description text NOT NULL,
+  status text NOT NULL DEFAULT 'draft',
+  due_on date,
+  scheduled_for timestamptz,
+  contractor_note text,
+  token_hash text NOT NULL UNIQUE,
+  token_expires_at timestamptz NOT NULL,
+  sent_at timestamptz,
+  accepted_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS work_orders_org_idx ON work_orders(organization_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS work_orders_case_idx ON work_orders(case_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS work_orders_provider_idx ON work_orders(provider_id, updated_at DESC);

@@ -522,6 +522,172 @@ app.patch('/api/properties/:propertyId/tenant-submissions', auth, async (req,res
   } catch(error){next(error);}
 });
 
+
+
+const workOrderStatuses = new Set(['draft','sent','accepted','scheduled','completed','declined']);
+
+function contractorUrl(token) {
+  return `${appOrigin}/auftrag/${token}`;
+}
+
+async function providerForOrganization(providerId, organizationId) {
+  const result = await pool.query('SELECT * FROM service_providers WHERE id=$1 AND organization_id=$2 AND active=true', [providerId, organizationId]);
+  return result.rows[0] || null;
+}
+
+async function sendWorkOrderMail({ provider, organization, item, portalUrl }) {
+  if (!mailer || !provider.email) return false;
+  const safeTitle = String(item.title || 'Arbeitsauftrag');
+  await mailer.sendMail({
+    from: process.env.SMTP_FROM || 'MängelFix <noreply@kamilunavo.com>',
+    to: provider.email,
+    subject: `Arbeitsauftrag von ${organization.name}: ${safeTitle}`,
+    text: `${organization.name} hat Ihnen einen Arbeitsauftrag über MängelFix gesendet.\n\n${safeTitle}\n${item.description}\n\nAuftrag öffnen: ${portalUrl}\n\nDer Link ist 30 Tage gültig.`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:640px;margin:auto;color:#18212b"><h2 style="margin-bottom:4px">MängelFix</h2><p style="color:#66717d;margin-top:0">Digitaler Arbeitsauftrag</p><p><b>${organization.name}</b> hat Ihnen einen Arbeitsauftrag gesendet.</p><div style="background:#f4f6f8;padding:18px;border-radius:8px;margin:20px 0"><h3 style="margin-top:0">${safeTitle}</h3><p style="white-space:pre-wrap">${String(item.description || '')}</p></div><p><a href="${portalUrl}" style="background:#2457d6;color:#fff;text-decoration:none;padding:12px 18px;border-radius:6px;display:inline-block">Arbeitsauftrag öffnen</a></p><p style="font-size:12px;color:#7a8490">Der persönliche Link ist 30 Tage gültig und darf nur an die zuständige Person weitergegeben werden.</p></div>`
+  });
+  return true;
+}
+
+app.get('/api/providers', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).json({error:'Dienstleister sind im Hausverwaltungs-Arbeitsbereich verfügbar.'});
+    const result=await pool.query(`SELECT sp.*,
+      (SELECT count(*)::int FROM work_orders wo WHERE wo.provider_id=sp.id) AS order_count,
+      (SELECT count(*)::int FROM work_orders wo WHERE wo.provider_id=sp.id AND wo.status NOT IN ('completed','declined')) AS open_order_count
+      FROM service_providers sp WHERE sp.organization_id=$1 AND sp.active=true ORDER BY sp.company_name`,[organization.id]);
+    res.json({providers:result.rows});
+  } catch(error){next(error);}
+});
+
+app.post('/api/providers', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization || !['owner','admin'].includes(organization.role)) return res.status(403).json({error:'Nur Inhaber und Admins können Dienstleister anlegen.'});
+    const companyName=cleanText(req.body.companyName,180); const trade=cleanText(req.body.trade,100)||'Sonstiges';
+    if(!companyName) return res.status(400).json({error:'Bitte gib den Firmennamen an.'});
+    const result=await pool.query(`INSERT INTO service_providers (id,organization_id,company_name,trade,contact_name,email,phone,street,postal_code,city,notes)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,[id(),organization.id,companyName,trade,cleanText(req.body.contactName,160),cleanText(req.body.email,254)?.toLowerCase(),cleanText(req.body.phone,60),cleanText(req.body.street,180),cleanText(req.body.postalCode,20),cleanText(req.body.city,120),cleanText(req.body.notes,2000)]);
+    res.status(201).json({provider:result.rows[0]});
+  } catch(error){next(error);}
+});
+
+app.patch('/api/providers/:providerId', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization || !['owner','admin'].includes(organization.role)) return res.status(403).json({error:'Nur Inhaber und Admins können Dienstleister bearbeiten.'});
+    const current=await pool.query('SELECT * FROM service_providers WHERE id=$1 AND organization_id=$2',[req.params.providerId,organization.id]);
+    if(!current.rowCount) return res.status(404).json({error:'Dienstleister nicht gefunden.'});
+    const old=current.rows[0];
+    const result=await pool.query(`UPDATE service_providers SET company_name=$3,trade=$4,contact_name=$5,email=$6,phone=$7,street=$8,postal_code=$9,city=$10,notes=$11,active=$12,updated_at=now() WHERE id=$1 AND organization_id=$2 RETURNING *`,[req.params.providerId,organization.id,cleanText(req.body.companyName??old.company_name,180),cleanText(req.body.trade??old.trade,100)||'Sonstiges',cleanText(req.body.contactName??old.contact_name,160),cleanText(req.body.email??old.email,254)?.toLowerCase(),cleanText(req.body.phone??old.phone,60),cleanText(req.body.street??old.street,180),cleanText(req.body.postalCode??old.postal_code,20),cleanText(req.body.city??old.city,120),cleanText(req.body.notes??old.notes,2000),req.body.active===undefined?old.active:Boolean(req.body.active)]);
+    res.json({provider:result.rows[0]});
+  } catch(error){next(error);}
+});
+
+app.get('/api/work-orders', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).json({error:'Arbeitsaufträge sind im Hausverwaltungs-Arbeitsbereich verfügbar.'});
+    const result=await pool.query(`SELECT wo.*,sp.company_name,sp.trade,sp.email AS provider_email,c.title AS case_title,c.property_label,c.location_label,p.name AS property_name,u.label AS unit_label
+      FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id JOIN defect_cases c ON c.id=wo.case_id LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id
+      WHERE wo.organization_id=$1 ORDER BY wo.updated_at DESC`,[organization.id]);
+    res.json({orders:result.rows});
+  } catch(error){next(error);}
+});
+
+app.get('/api/cases/:caseId/work-orders', auth, async (req,res,next)=>{
+  try {
+    const accessible=await canAccessCase(req.user.id,req.params.caseId);
+    if(!accessible) return res.status(404).json({error:'Mangel nicht gefunden.'});
+    const organization=await organizationForUser(req.user.id);
+    if(!organization || accessible.organization_id!==organization.id) return res.json({orders:[],providers:[]});
+    const [orders,providers]=await Promise.all([
+      pool.query(`SELECT wo.*,sp.company_name,sp.trade,sp.email AS provider_email FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.case_id=$1 AND wo.organization_id=$2 ORDER BY wo.created_at DESC`,[req.params.caseId,organization.id]),
+      pool.query(`SELECT id,company_name,trade,email,phone FROM service_providers WHERE organization_id=$1 AND active=true ORDER BY company_name`,[organization.id])
+    ]);
+    res.json({orders:orders.rows,providers:providers.rows});
+  } catch(error){next(error);}
+});
+
+app.post('/api/cases/:caseId/work-orders', auth, async (req,res,next)=>{
+  const client=await pool.connect();
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).json({error:'Nur Hausverwaltungen können Arbeitsaufträge erstellen.'});
+    const accessible=await canAccessCase(req.user.id,req.params.caseId);
+    if(!accessible || accessible.organization_id!==organization.id) return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    const provider=await providerForOrganization(cleanText(req.body.providerId,80),organization.id);
+    if(!provider) return res.status(400).json({error:'Bitte wähle einen gültigen Dienstleister.'});
+    const title=cleanText(req.body.title,180)||accessible.title;
+    const description=cleanText(req.body.description,6000)||accessible.description;
+    const token=crypto.randomBytes(32).toString('base64url'); const orderId=id();
+    await client.query('BEGIN');
+    const result=await client.query(`INSERT INTO work_orders (id,organization_id,case_id,provider_id,created_by,title,description,status,due_on,token_hash,token_expires_at)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,'draft',$8,$9,now()+interval '30 days') RETURNING *`,[orderId,organization.id,req.params.caseId,provider.id,req.user.id,title,description,req.body.dueOn||null,tokenHash(token)]);
+    const portalUrl=contractorUrl(token); let delivery='manual';
+    try { if(await sendWorkOrderMail({provider,organization,item:result.rows[0],portalUrl})) delivery='email'; } catch(mailError){ console.error('Work order mail failed',mailError); }
+    const status=delivery==='email'?'sent':'draft';
+    await client.query(`UPDATE work_orders SET status=$2,sent_at=CASE WHEN $2='sent' THEN now() ELSE NULL END,updated_at=now() WHERE id=$1`,[orderId,status]);
+    await client.query(`INSERT INTO case_events (id,case_id,user_id,event_type,note,visibility) VALUES ($1,$2,$3,'note',$4,'internal')`,[id(),req.params.caseId,req.user.id,`Arbeitsauftrag an ${provider.company_name} erstellt${delivery==='email'?' und per E-Mail versendet':''}.`]);
+    await client.query('COMMIT');
+    res.status(201).json({order:{...result.rows[0],status,company_name:provider.company_name},portalUrl,delivery});
+  } catch(error){await client.query('ROLLBACK');next(error);} finally{client.release();}
+});
+
+app.post('/api/work-orders/:orderId/send', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).json({error:'Nicht verfügbar.'});
+    const result=await pool.query(`SELECT wo.*,sp.company_name,sp.email,sp.contact_name FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.id=$1 AND wo.organization_id=$2`,[req.params.orderId,organization.id]);
+    if(!result.rowCount) return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'});
+    const order=result.rows[0]; if(!order.email) return res.status(400).json({error:'Beim Dienstleister ist keine E-Mail-Adresse hinterlegt.'});
+    const token=crypto.randomBytes(32).toString('base64url'); const portalUrl=contractorUrl(token);
+    await pool.query(`UPDATE work_orders SET token_hash=$2,token_expires_at=now()+interval '30 days',status='sent',sent_at=now(),updated_at=now() WHERE id=$1`,[order.id,tokenHash(token)]);
+    await sendWorkOrderMail({provider:{email:order.email},organization,item:order,portalUrl});
+    res.json({sent:true,portalUrl});
+  } catch(error){next(error);}
+});
+
+app.get('/api/work-orders/:orderId/pdf', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).end();
+    const result=await pool.query(`SELECT wo.*,sp.company_name,sp.contact_name,sp.street AS provider_street,sp.postal_code AS provider_postal_code,sp.city AS provider_city,sp.email AS provider_email,sp.phone AS provider_phone,c.title AS case_title,c.category,c.description AS case_description,c.property_label,c.location_label,p.name AS property_name,p.street AS property_street,p.postal_code AS property_postal_code,p.city AS property_city,u.label AS unit_label,o.name AS organization_name
+      FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id JOIN defect_cases c ON c.id=wo.case_id JOIN organizations o ON o.id=wo.organization_id LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id WHERE wo.id=$1 AND wo.organization_id=$2`,[req.params.orderId,organization.id]);
+    if(!result.rowCount) return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'});
+    const x=result.rows[0]; const doc=new PDFDocument({size:'A4',margins:{top:44,right:48,bottom:48,left:48}}); res.type('application/pdf'); res.setHeader('Content-Disposition',`attachment; filename="arbeitsauftrag-${x.id.split('-')[0]}.pdf"`); doc.pipe(res);
+    doc.rect(0,0,doc.page.width,84).fill('#18212B'); doc.fillColor('#FFFFFF').font('Helvetica-Bold').fontSize(20).text('MängelFix',48,24); doc.font('Helvetica').fontSize(9).fillColor('#B9C1C8').text('ARBEITSAUFTRAG',48,52,{characterSpacing:1.2});
+    doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(17).text(x.title,48,112,{width:499}); doc.font('Helvetica').fontSize(9).fillColor('#66717D').text(`Auftrag ${x.id.split('-')[0].toUpperCase()} · erstellt ${new Date(x.created_at).toLocaleDateString('de-DE')}`,48,140);
+    const box=(label,value,y)=>{doc.roundedRect(48,y,499,52,5).fill('#F4F6F8');doc.fillColor('#6F7A86').font('Helvetica-Bold').fontSize(7.5).text(label,60,y+10);doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(10).text(value||'—',60,y+25,{width:470});};
+    box('AUFTRAGGEBER',x.organization_name,174); box('AUFTRAGNEHMER',[x.company_name,x.contact_name].filter(Boolean).join(' · '),234); box('OBJEKT / EINSATZORT',[x.property_name||x.property_label,x.unit_label,x.location_label,[x.property_street,[x.property_postal_code,x.property_city].filter(Boolean).join(' ')].filter(Boolean).join(', ')].filter(Boolean).join(' · '),294);
+    doc.fillColor('#2457D6').font('Helvetica-Bold').fontSize(8).text('AUFGABENBESCHREIBUNG',48,374,{characterSpacing:1}); doc.fillColor('#18212B').font('Helvetica').fontSize(10).text(x.description,48,394,{width:499,lineGap:3});
+    const yy=Math.max(doc.y+24,500); doc.moveTo(48,yy).lineTo(547,yy).strokeColor('#DFE4E8').stroke(); doc.fillColor('#6F7A86').fontSize(8).text(`Gewünschte Erledigung: ${x.due_on?new Date(x.due_on).toLocaleDateString('de-DE'):'nicht festgelegt'}`,48,yy+14); doc.text('Rückmeldung und Status können über den persönlichen MängelFix-Auftragslink erfolgen.',48,yy+30,{width:499});
+    doc.fontSize(7.5).fillColor('#7A8490').text('MängelFix · Arbeitsauftrag · Kamilunavo',48,doc.page.height-60,{width:499,align:'center'}); doc.end();
+  } catch(error){next(error);}
+});
+
+app.get('/api/contractor/work-orders/:token', async (req,res,next)=>{
+  try {
+    const result=await pool.query(`SELECT wo.id,wo.title,wo.description,wo.status,wo.due_on,wo.scheduled_for,wo.contractor_note,wo.created_at,wo.token_expires_at,sp.company_name,sp.trade,o.name AS organization_name,c.property_label,c.location_label,p.name AS property_name,p.street AS property_street,p.postal_code AS property_postal_code,p.city AS property_city,u.label AS unit_label
+      FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id JOIN organizations o ON o.id=wo.organization_id JOIN defect_cases c ON c.id=wo.case_id LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id WHERE wo.token_hash=$1`,[tokenHash(req.params.token)]);
+    if(!result.rowCount) return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'}); const order=result.rows[0];
+    if(new Date(order.token_expires_at)<=new Date()) return res.status(410).json({error:'Dieser Auftragslink ist abgelaufen. Bitte wenden Sie sich an die Hausverwaltung.'});
+    res.json({order});
+  } catch(error){next(error);}
+});
+
+app.post('/api/contractor/work-orders/:token/status', async (req,res,next)=>{
+  try {
+    const status=cleanText(req.body.status,30); if(!['accepted','scheduled','completed','declined'].includes(status)) return res.status(400).json({error:'Ungültiger Auftragsstatus.'});
+    const current=await pool.query(`SELECT wo.*,sp.company_name,o.name AS organization_name,c.title AS case_title FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id JOIN organizations o ON o.id=wo.organization_id JOIN defect_cases c ON c.id=wo.case_id WHERE wo.token_hash=$1`,[tokenHash(req.params.token)]);
+    if(!current.rowCount) return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'}); const old=current.rows[0]; if(new Date(old.token_expires_at)<=new Date()) return res.status(410).json({error:'Dieser Auftragslink ist abgelaufen.'});
+    const scheduledFor=req.body.scheduledFor?new Date(req.body.scheduledFor):old.scheduled_for; if(req.body.scheduledFor && isNaN(scheduledFor.getTime())) return res.status(400).json({error:'Ungültiger Termin.'});
+    const result=await pool.query(`UPDATE work_orders SET status=$2,scheduled_for=$3,contractor_note=$4,accepted_at=CASE WHEN $2='accepted' AND accepted_at IS NULL THEN now() ELSE accepted_at END,completed_at=CASE WHEN $2='completed' THEN now() ELSE completed_at END,updated_at=now() WHERE id=$1 RETURNING *`,[old.id,status,scheduledFor||null,cleanText(req.body.note,3000)]);
+    await pool.query(`INSERT INTO case_events (id,case_id,user_id,event_type,note,visibility) VALUES ($1,$2,$3,'note',$4,'internal')`,[id(),old.case_id,old.created_by,`Dienstleister ${old.company_name}: Auftrag ${status==='accepted'?'angenommen':status==='scheduled'?'terminiert':status==='completed'?'als erledigt gemeldet':'abgelehnt'}${req.body.note?` – ${cleanText(req.body.note,500)}`:''}.`]);
+    res.json({order:result.rows[0]});
+  } catch(error){next(error);}
+});
+
 app.get('/api/management/overview', auth, async (req, res, next) => {
   try {
     const organization = await organizationForUser(req.user.id);
