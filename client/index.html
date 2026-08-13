@@ -6,10 +6,15 @@
     <meta name="theme-color" content="#18212b" />
     <meta name="description" content="MängelFix – Mängel strukturiert dokumentieren, Fristen im Blick behalten und professionelle PDF-Unterlagen erstellen." />
     <link rel="icon" type="image/svg+xml" href="/maengelfix-mark.svg" />
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-title" content="MängelFix" />
     <title>MängelFix – Mängel dokumentieren & nachhalten</title>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.jsx"></script>
+      <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('/sw.js').catch(()=>{}))}</script>
   </body>
 </html>

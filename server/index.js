@@ -34,8 +34,30 @@ await pool.query('DELETE FROM sessions WHERE expires_at <= now()');
 const app = express();
 app.set('trust proxy', 1);
 app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-origin' } }));
+app.post('/api/billing/stripe/webhook', express.raw({type:'application/json'}), handleStripeWebhook);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
+const storage = multer.diskStorage({
+  destination: (_req, _file, cb) => cb(null, uploadDir),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname).toLowerCase().slice(0, 10);
+    cb(null, `${id()}${ext}`);
+  }
+});
+
+const upload = multer({
+  storage,
+  limits: { fileSize: 10 * 1024 * 1024, files: 5 },
+  fileFilter: (_req, file, cb) => cb(null, /^image\/(jpeg|png|webp|heic|heif)$/.test(file.mimetype))
+});
+
+const evidenceUpload = multer({
+  storage,
+  limits: { fileSize: 15 * 1024 * 1024, files: 10 },
+  fileFilter: (_req,file,cb) => cb(null,/^image\/(jpeg|png|webp|heic|heif)$/.test(file.mimetype) || file.mimetype==='application/pdf')
+});
+
+
 
 function id() {
   return crypto.randomUUID();
@@ -171,7 +193,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.14.0', mail: smtpConfigured ? 'smtp' : 'manual' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.15.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -406,21 +428,23 @@ app.delete('/api/account', auth, async (req,res,next)=>{
 app.get('/api/billing/plan', auth, async (req,res,next)=>{
   try {
     const org=await billingOrganizationForUser(req.user.id);
-    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_PRICE_MANAGEMENT)});}
+    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&(process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY||process.env.STRIPE_PRICE_MANAGEMENT_YEARLY)),cycles:{monthly:Boolean(process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY),yearly:Boolean(process.env.STRIPE_PRICE_MANAGEMENT_YEARLY)}});}
     const r=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
-    res.json({scope:'private',plan:r.rows[0],checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_PRICE_PRIVATE)});
+    res.json({scope:'private',plan:r.rows[0],checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&(process.env.STRIPE_PRICE_PRIVATE_MONTHLY||process.env.STRIPE_PRICE_PRIVATE_YEARLY)),cycles:{monthly:Boolean(process.env.STRIPE_PRICE_PRIVATE_MONTHLY),yearly:Boolean(process.env.STRIPE_PRICE_PRIVATE_YEARLY)}});
   } catch(error){next(error)}
 });
 
 app.post('/api/billing/checkout', auth, async (req,res,next)=>{
-  try {
-    const org=await billingOrganizationForUser(req.user.id);
-    if(org&&!['owner','admin'].includes(org.role)) return res.status(403).json({error:'Nur Inhaber und Admins können den Tarif ändern.'});
-    const configured=Boolean(process.env.STRIPE_SECRET_KEY && (org?process.env.STRIPE_PRICE_MANAGEMENT:process.env.STRIPE_PRICE_PRIVATE));
-    if(!configured) return res.status(503).json({error:'Online-Zahlung ist noch nicht aktiviert. Testphase und Tariflimits funktionieren bereits.'});
-    return res.status(501).json({error:'Stripe Checkout wird erst aktiviert, nachdem die endgültigen Preise und Produkt-IDs festgelegt wurden.'});
-  } catch(error){next(error)}
+  try{
+    const org=await billingOrganizationForUser(req.user.id);if(org&&!['owner','admin'].includes(org.role))return res.status(403).json({error:'Nur Inhaber und Admins können den Tarif ändern.'});
+    const scope=org?'organization':'private';const cycle=req.body.cycle==='yearly'?'yearly':'monthly';const price=stripePriceFor(scope,cycle);if(!process.env.STRIPE_SECRET_KEY||!price)return res.status(503).json({error:'Online-Zahlung ist noch nicht vollständig konfiguriert.'});
+    const params={'mode':'subscription','line_items[0][price]':price,'line_items[0][quantity]':'1','success_url':`${appOrigin}/app?view=billing&checkout=success`,'cancel_url':`${appOrigin}/app?view=billing&checkout=cancel`,'allow_promotion_codes':'true','metadata[scope]':scope};
+    if(org)params['metadata[organization_id]']=org.id;else params['metadata[user_id]']=req.user.id;
+    const existing=org?.subscription_customer_id||req.user.subscription_customer_id;if(existing)params.customer=existing;else params.customer_email=req.user.email;
+    const session=await stripeRequest('checkout/sessions',params);res.json({url:session.url});
+  }catch(e){next(e)}
 });
+app.post('/api/billing/portal',auth,async(req,res,next)=>{try{const org=await billingOrganizationForUser(req.user.id);if(org&&!['owner','admin'].includes(org.role))return res.status(403).json({error:'Nur Inhaber und Admins können die Abrechnung verwalten.'});const customer=org?.subscription_customer_id||req.user.subscription_customer_id;if(!process.env.STRIPE_SECRET_KEY||!customer)return res.status(503).json({error:'Noch kein Stripe-Kundenkonto vorhanden.'});const portal=await stripeRequest('billing_portal/sessions',{customer,return_url:`${appOrigin}/app?view=billing`});res.json({url:portal.url})}catch(e){next(e)}});
 
 app.get('/api/team', auth, async (req, res, next) => {
   try {
@@ -545,6 +569,40 @@ async function scopeForUser(userId) {
 
 
 
+
+function configuredAdminEmails(){return String(process.env.ADMIN_EMAILS||'').split(',').map(x=>x.trim().toLowerCase()).filter(Boolean)}
+async function isPlatformAdmin(user){
+  if(!user)return false;
+  if(configuredAdminEmails().includes(String(user.email||'').toLowerCase()))return true;
+  const r=await pool.query('SELECT is_admin FROM users WHERE id=$1',[user.id]);return Boolean(r.rows[0]?.is_admin);
+}
+async function requirePlatformAdmin(req,res){if(!(await isPlatformAdmin(req.user))){res.status(403).json({error:'Adminzugriff erforderlich.'});return false}return true}
+
+async function stripeRequest(pathname,params){
+  if(!process.env.STRIPE_SECRET_KEY)throw new Error('Stripe ist nicht konfiguriert.');
+  const body=new URLSearchParams();for(const [k,v] of Object.entries(params||{})){if(v!==undefined&&v!==null)body.append(k,String(v))}
+  const response=await fetch(`https://api.stripe.com/v1/${pathname}`,{method:'POST',headers:{Authorization:`Bearer ${process.env.STRIPE_SECRET_KEY}`,'Content-Type':'application/x-www-form-urlencoded'},body});
+  const data=await response.json();if(!response.ok)throw new Error(data?.error?.message||'Stripe-Anfrage fehlgeschlagen.');return data;
+}
+function stripePriceFor(scope,cycle){
+ const annual=cycle==='yearly';
+ return scope==='organization'?(annual?process.env.STRIPE_PRICE_MANAGEMENT_YEARLY:process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY):(annual?process.env.STRIPE_PRICE_PRIVATE_YEARLY:process.env.STRIPE_PRICE_PRIVATE_MONTHLY);
+}
+function parseStripeSignature(header){const out={};for(const part of String(header||'').split(',')){const [k,v]=part.split('=');if(k&&v)(out[k]||(out[k]=[])).push(v)}return out}
+function verifyStripeWebhook(raw,header){
+ const secret=process.env.STRIPE_WEBHOOK_SECRET;if(!secret)return false;const sig=parseStripeSignature(header);const t=Number(sig.t?.[0]);if(!t||Math.abs(Date.now()/1000-t)>300)return false;const expected=crypto.createHmac('sha256',secret).update(`${t}.${raw.toString('utf8')}`).digest('hex');return (sig.v1||[]).some(v=>{try{const a=Buffer.from(v,'hex'),b=Buffer.from(expected,'hex');return a.length===b.length&&crypto.timingSafeEqual(a,b)}catch{return false}})
+}
+async function applyStripeSubscription(sub,eventId,eventType,payload){
+ const customer=String(sub.customer||'');const subscriptionId=String(sub.id||'');const status=String(sub.status||'');const end=sub.current_period_end?new Date(sub.current_period_end*1000):null;
+ const org=await pool.query('SELECT id FROM organizations WHERE subscription_customer_id=$1 OR subscription_id=$2 LIMIT 1',[customer,subscriptionId]);
+ const user=org.rowCount?null:await pool.query('SELECT id FROM users WHERE subscription_customer_id=$1 OR subscription_id=$2 LIMIT 1',[customer,subscriptionId]);
+ if(org.rowCount)await pool.query(`UPDATE organizations SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3,subscription_status=$4,subscription_current_period_end=$5,updated_at=now() WHERE id=$1`,[org.rows[0].id,customer,subscriptionId,status==='active'||status==='trialing'?'active':status,end]);
+ if(user?.rowCount)await pool.query(`UPDATE users SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3,subscription_status=$4,subscription_current_period_end=$5 WHERE id=$1`,[user.rows[0].id,customer,subscriptionId,status==='active'||status==='trialing'?'active':status,end]);
+ await pool.query(`INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload) VALUES ($1,'stripe',$2,$3,$4,$5,$6) ON CONFLICT (provider_event_id) DO NOTHING`,[id(),eventId,org.rows[0]?.id||null,user?.rows[0]?.id||null,eventType,payload]);
+}
+async function handleStripeWebhook(req,res){
+ try{if(!verifyStripeWebhook(req.body,req.headers['stripe-signature']))return res.status(400).send('invalid signature');const event=JSON.parse(req.body.toString('utf8'));if(event.type.startsWith('customer.subscription.'))await applyStripeSubscription(event.data.object,event.id,event.type,event);if(event.type==='checkout.session.completed'){const s=event.data.object;const orgId=s.metadata?.organization_id||null,userId=s.metadata?.user_id||null;if(orgId)await pool.query(`UPDATE organizations SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3 WHERE id=$1`,[orgId,String(s.customer||''),String(s.subscription||'')]);if(userId)await pool.query(`UPDATE users SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3 WHERE id=$1`,[userId,String(s.customer||''),String(s.subscription||'')]);await pool.query(`INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload) VALUES ($1,'stripe',$2,$3,$4,$5,$6) ON CONFLICT (provider_event_id) DO NOTHING`,[id(),event.id,orgId,userId,event.type,event]);}res.json({received:true})}catch(e){console.error('Stripe webhook failed',e);res.status(500).send('webhook error')}
+}
 function escapeHtml(value) {
   return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
 }
@@ -813,13 +871,16 @@ app.get('/api/work-orders/:orderId/pdf', auth, async (req,res,next)=>{
   } catch(error){next(error);}
 });
 
+
+app.post('/api/contractor/work-orders/:token/attachments',upload.array('images',5),async(req,res,next)=>{try{const o=await pool.query('SELECT id,token_expires_at FROM work_orders WHERE token_hash=$1',[tokenHash(req.params.token)]);if(!o.rowCount)return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'});if(new Date(o.rows[0].token_expires_at)<=new Date())return res.status(410).json({error:'Auftragslink ist abgelaufen.'});const out=[];for(const file of req.files||[]){const r=await pool.query(`INSERT INTO work_order_attachments (id,work_order_id,uploaded_by_type,original_name,stored_name,mime_type,size_bytes,note) VALUES ($1,$2,'contractor',$3,$4,$5,$6,$7) RETURNING id,original_name,mime_type,size_bytes,note,created_at`,[id(),o.rows[0].id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size,cleanText(req.body.note,800)]);out.push(r.rows[0])}res.status(201).json({attachments:out})}catch(e){next(e)}});
+app.get('/api/contractor/work-orders/:token/attachments/:attachmentId',async(req,res,next)=>{try{const r=await pool.query(`SELECT a.*,wo.token_expires_at FROM work_order_attachments a JOIN work_orders wo ON wo.id=a.work_order_id WHERE a.id=$1 AND wo.token_hash=$2`,[req.params.attachmentId,tokenHash(req.params.token)]);if(!r.rowCount)return res.status(404).end();if(new Date(r.rows[0].token_expires_at)<=new Date())return res.status(410).end();res.type(r.rows[0].mime_type).sendFile(path.join(uploadDir,r.rows[0].stored_name))}catch(e){next(e)}});
 app.get('/api/contractor/work-orders/:token', async (req,res,next)=>{
   try {
     const result=await pool.query(`SELECT wo.id,wo.title,wo.description,wo.status,wo.due_on,wo.scheduled_for,wo.contractor_note,wo.created_at,wo.token_expires_at,sp.company_name,sp.trade,o.name AS organization_name,c.property_label,c.location_label,p.name AS property_name,p.street AS property_street,p.postal_code AS property_postal_code,p.city AS property_city,u.label AS unit_label
       FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id JOIN organizations o ON o.id=wo.organization_id JOIN defect_cases c ON c.id=wo.case_id LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id WHERE wo.token_hash=$1`,[tokenHash(req.params.token)]);
     if(!result.rowCount) return res.status(404).json({error:'Arbeitsauftrag nicht gefunden.'}); const order=result.rows[0];
     if(new Date(order.token_expires_at)<=new Date()) return res.status(410).json({error:'Dieser Auftragslink ist abgelaufen. Bitte wenden Sie sich an die Hausverwaltung.'});
-    res.json({order});
+    const photos=await pool.query('SELECT id,original_name,mime_type,size_bytes,note,created_at FROM work_order_attachments WHERE work_order_id=$1 ORDER BY created_at',[order.id]);res.json({order,attachments:photos.rows});
   } catch(error){next(error);}
 });
 
@@ -999,6 +1060,11 @@ app.patch('/api/tasks/:taskId', auth, async (req,res,next)=>{
     res.json({task:result.rows[0]});
   } catch(error){next(error)}
 });
+
+app.get('/api/admin/me',auth,async(req,res,next)=>{try{res.json({admin:await isPlatformAdmin(req.user)})}catch(e){next(e)}});
+app.get('/api/admin/overview',auth,async(req,res,next)=>{try{if(!(await requirePlatformAdmin(req,res)))return;const [u,o,c,subs,mails]=await Promise.all([pool.query('SELECT count(*)::int n FROM users'),pool.query('SELECT count(*)::int n FROM organizations'),pool.query(`SELECT count(*)::int total,count(*) FILTER(WHERE status<>'resolved')::int open FROM defect_cases`),pool.query(`SELECT count(*) FILTER(WHERE subscription_status='active')::int active,count(*) FILTER(WHERE subscription_status='trialing')::int trialing FROM organizations`),pool.query(`SELECT count(*)::int events FROM billing_events`)]);res.json({users:u.rows[0].n,organizations:o.rows[0].n,cases:c.rows[0],subscriptions:subs.rows[0],billingEvents:mails.rows[0].events,mailConfigured:Boolean(mailer),stripeConfigured:Boolean(process.env.STRIPE_SECRET_KEY),webhookConfigured:Boolean(process.env.STRIPE_WEBHOOK_SECRET)})}catch(e){next(e)}});
+app.get('/api/admin/users',auth,async(req,res,next)=>{try{if(!(await requirePlatformAdmin(req,res)))return;const r=await pool.query(`SELECT u.id,u.name,u.email,u.created_at,u.plan_code,u.subscription_status,u.is_admin,(SELECT count(*)::int FROM defect_cases c WHERE c.user_id=u.id) case_count FROM users u ORDER BY u.created_at DESC LIMIT 500`);res.json({users:r.rows})}catch(e){next(e)}});
+app.get('/api/admin/organizations',auth,async(req,res,next)=>{try{if(!(await requirePlatformAdmin(req,res)))return;const r=await pool.query(`SELECT o.id,o.name,o.plan_code,o.subscription_status,o.trial_ends_at,o.created_at,(SELECT count(*)::int FROM organization_memberships om WHERE om.organization_id=o.id AND COALESCE(om.active,true)) members,(SELECT count(*)::int FROM defect_cases c WHERE c.organization_id=o.id) cases FROM organizations o ORDER BY o.created_at DESC LIMIT 500`);res.json({organizations:r.rows})}catch(e){next(e)}});
 app.get('/api/notifications', auth, async (req,res,next)=>{
   try {
     const result=await pool.query(`SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`,[req.user.id]);
@@ -1243,6 +1309,14 @@ app.get('/api/analytics',auth,async(req,res,next)=>{try{
  ]);
  res.json({scope:'private',summary:summary.rows[0],contexts:contexts.rows,categories:cats.rows,trend:trend.rows});
 }catch(e){next(e)}});
+
+app.get('/api/search/cases',auth,async(req,res,next)=>{try{
+ const org=await organizationForUser(req.user.id);const q=cleanText(req.query.q,180)||'';const status=cleanText(req.query.status,40)||'';const category=cleanText(req.query.category,80)||'';const context=cleanText(req.query.context,40)||'';const archived=String(req.query.archived||'')==='1';const params=[req.user.id,org?.id||null,`%${q}%`,status,category,context,archived];
+ const r=await pool.query(`SELECT c.*,p.name property_name,u.label unit_name,au.name assigned_user_name,(SELECT count(*)::int FROM attachments a WHERE a.case_id=c.id) attachment_count FROM defect_cases c LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id LEFT JOIN users au ON au.id=c.assigned_user_id WHERE ((c.organization_id IS NULL AND c.user_id=$1) OR ($2::text IS NOT NULL AND c.organization_id=$2)) AND (($7=true AND c.archived_at IS NOT NULL) OR ($7=false AND c.archived_at IS NULL)) AND ($3='%%' OR c.title ILIKE $3 OR c.description ILIKE $3 OR c.reference_label ILIKE $3 OR c.subject_label ILIKE $3 OR c.recipient_name ILIKE $3 OR c.property_label ILIKE $3) AND ($4='' OR c.status=$4) AND ($5='' OR c.category=$5) AND ($6='' OR c.case_context=$6) ORDER BY c.updated_at DESC LIMIT 300`,params);res.json({cases:r.rows})
+}catch(e){next(e)}});
+app.post('/api/cases/:caseId/archive',auth,async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const archive=req.body.archived!==false;const r=await pool.query('UPDATE defect_cases SET archived_at=$2,updated_at=now() WHERE id=$1 RETURNING *',[c.id,archive?new Date():null]);if(c.organization_id)await writeAudit({organizationId:c.organization_id,userId:req.user.id,caseId:c.id,action:archive?'case_archived':'case_restored',entityType:'case',entityId:c.id,summary:archive?'Vorgang archiviert.':'Vorgang wiederhergestellt.'});res.json({case:r.rows[0]})}catch(e){next(e)}});
+app.get('/api/deadlines/overview',auth,async(req,res,next)=>{try{const org=await organizationForUser(req.user.id);const r=await pool.query(`SELECT c.id,c.title,c.deadline_on,c.status,c.property_label,c.case_context,CASE WHEN c.deadline_on<current_date THEN 'overdue' WHEN c.deadline_on=current_date THEN 'today' WHEN c.deadline_on<=current_date+3 THEN 'soon' ELSE 'later' END urgency FROM defect_cases c WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.organization_id IS NULL AND c.user_id=$1) OR ($2::text IS NOT NULL AND c.organization_id=$2)) ORDER BY c.deadline_on`,[req.user.id,org?.id||null]);res.json({deadlines:r.rows})}catch(e){next(e)}});
+app.post('/api/cases/:caseId/evidence',auth,evidenceUpload.array('files',10),async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const type=['photo','document','before','after','invoice','delivery_note','other'].includes(req.body.evidenceType)?req.body.evidenceType:'photo';const out=[];for(const file of req.files||[]){const a=await pool.query(`INSERT INTO attachments (id,case_id,user_id,original_name,stored_name,mime_type,size_bytes,evidence_type,note,captured_at,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'user') RETURNING id,original_name,mime_type,size_bytes,evidence_type,note,captured_at,created_at`,[id(),c.id,req.user.id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size,type,cleanText(req.body.note,800),req.body.capturedAt||null]);out.push(a.rows[0])}await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1',[c.id]);res.status(201).json({attachments:out})}catch(e){next(e)}});
 app.get('/api/cases', auth, async (req, res, next) => {
   try {
     const result = await pool.query(
@@ -1346,7 +1420,7 @@ app.get('/api/cases/:caseId', auth, async (req, res, next) => {
     const viewerIsOrganization = Boolean(viewerOrganization && viewerOrganization.id === result.rows[0].organization_id);
     const [events, attachments, messages] = await Promise.all([
       pool.query(`SELECT e.*, u.name AS actor_name FROM case_events e LEFT JOIN users u ON u.id=e.user_id WHERE e.case_id=$1 AND ($2::boolean=true OR e.visibility='shared') ORDER BY e.created_at DESC`, [req.params.caseId, viewerIsOrganization]),
-      pool.query('SELECT id, original_name, mime_type, size_bytes, created_at FROM attachments WHERE case_id = $1 ORDER BY created_at', [req.params.caseId]),
+      pool.query('SELECT id, original_name, mime_type, size_bytes, evidence_type, note, captured_at, source, created_at FROM attachments WHERE case_id = $1 ORDER BY created_at', [req.params.caseId]),
       pool.query('SELECT m.*,u.name AS actor_name FROM case_messages m JOIN users u ON u.id=m.user_id WHERE m.case_id=$1 ORDER BY m.created_at', [req.params.caseId])
     ]);
     res.json({ case: result.rows[0], events: events.rows, attachments: attachments.rows, messages: messages.rows, viewerRole: viewerIsOrganization ? 'management' : 'tenant' });
@@ -1368,7 +1442,7 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
       `UPDATE defect_cases SET
        title=$3, category=$4, description=$5, property_label=$6, location_label=$7,
        discovered_on=$8, recipient_name=$9, recipient_email=$10, recipient_address=$11,
-       deadline_on=$12, status=$13, updated_at=now()
+       deadline_on=$12, status=$13, purchase_on=$14, purchase_price=$15, warranty_until=$16, desired_resolution=$17, updated_at=now()
        WHERE id=$1 RETURNING *`,
       [
         req.params.caseId,
@@ -1383,7 +1457,11 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
         cleanText(req.body.recipientEmail ?? old.recipient_email, 254)?.toLowerCase(),
         cleanText(req.body.recipientAddress ?? old.recipient_address, 500),
         req.body.deadlineOn ?? old.deadline_on,
-        nextStatus
+        nextStatus,
+        req.body.purchaseOn ?? old.purchase_on,
+        req.body.purchasePrice===''?null:(req.body.purchasePrice ?? old.purchase_price),
+        req.body.warrantyUntil ?? old.warranty_until,
+        cleanText(req.body.desiredResolution ?? old.desired_resolution,80)
       ]
     );
     if (nextStatus !== old.status) {
@@ -1447,19 +1525,6 @@ app.post('/api/cases/:caseId/messages', auth, async (req,res,next)=>{
   } catch(error){next(error);}
 });
 
-const storage = multer.diskStorage({
-  destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => {
-    const ext = path.extname(file.originalname).toLowerCase().slice(0, 10);
-    cb(null, `${id()}${ext}`);
-  }
-});
-
-const upload = multer({
-  storage,
-  limits: { fileSize: 10 * 1024 * 1024, files: 5 },
-  fileFilter: (_req, file, cb) => cb(null, /^image\/(jpeg|png|webp|heic|heif)$/.test(file.mimetype))
-});
 
 app.post('/api/cases/:caseId/attachments', auth, upload.array('images', 5), async (req, res, next) => {
   try {
@@ -1738,6 +1803,11 @@ setInterval(processTaskReminders,15*60*1000);
 async function processCalendarReminders(){
   try{const due=await pool.query(`SELECT ce.*,u.email,c.title AS case_title FROM calendar_events ce LEFT JOIN users u ON u.id=ce.assigned_user_id LEFT JOIN defect_cases c ON c.id=ce.case_id WHERE ce.status IN ('planned','confirmed') AND ce.reminder_at IS NOT NULL AND ce.reminder_at<=now() AND ce.reminder_sent_at IS NULL LIMIT 100`);for(const ev of due.rows){if(ev.assigned_user_id)await createNotification({userId:ev.assigned_user_id,organizationId:ev.organization_id,caseId:ev.case_id,type:'appointment_reminder',title:'Termin-Erinnerung',body:`${ev.title} · ${new Date(ev.starts_at).toLocaleString('de-DE')}`,link:'/app?view=calendar'});if(mailer&&ev.email)try{await sendAppMail({to:ev.email,subject:'MängelFix Termin-Erinnerung',heading:'Termin steht an',text:`${ev.title}\n${new Date(ev.starts_at).toLocaleString('de-DE')}${ev.case_title?`\nVorgang: ${ev.case_title}`:''}`,buttonLabel:'Kalender öffnen',buttonUrl:`${appOrigin}/app?view=calendar`})}catch(e){console.error('Calendar reminder mail failed',e)}await pool.query('UPDATE calendar_events SET reminder_sent_at=now() WHERE id=$1 AND reminder_sent_at IS NULL',[ev.id]);}}catch(error){console.error('Calendar reminder worker failed',error)}}
 setTimeout(processCalendarReminders,20000);setInterval(processCalendarReminders,15*60*1000);
+
+
+async function processCaseDeadlineEscalations(){
+ try{const due=await pool.query(`SELECT c.*,u.email,u.name FROM defect_cases c JOIN users u ON u.id=c.user_id WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.deadline_on=current_date+3 AND c.deadline_reminder_stage<1) OR (c.deadline_on=current_date AND c.deadline_reminder_stage<2) OR (c.deadline_on<current_date AND c.deadline_reminder_stage<3)) LIMIT 200`);for(const c of due.rows){const stage=new Date(c.deadline_on)<new Date(new Date().toISOString().slice(0,10))?3:(String(c.deadline_on).slice(0,10)===new Date().toISOString().slice(0,10)?2:1);const title=stage===3?'Frist überfällig':stage===2?'Frist heute fällig':'Frist in 3 Tagen';await createNotification({userId:c.user_id,organizationId:c.organization_id,caseId:c.id,type:'deadline',title,body:c.title,link:`/app?case=${c.id}`});if(mailer&&c.email)try{await sendAppMail({to:c.email,subject:`MängelFix: ${title}`,heading:title,text:`${c.title}\nFrist: ${new Date(c.deadline_on).toLocaleDateString('de-DE')}`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${c.id}`})}catch(e){console.error('Deadline mail failed',e)}await pool.query('UPDATE defect_cases SET deadline_reminder_stage=$2,last_deadline_notification_at=now() WHERE id=$1',[c.id,stage]);}}catch(e){console.error('Deadline escalation failed',e)}}
+setTimeout(processCaseDeadlineEscalations,25000);setInterval(processCaseDeadlineEscalations,60*60*1000);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`MängelFix läuft auf Port ${port}`);

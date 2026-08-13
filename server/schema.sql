@@ -455,3 +455,34 @@ ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS reference_label text;
 ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS subject_label text;
 ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS counterparty_type text;
 CREATE INDEX IF NOT EXISTS defect_cases_context_idx ON defect_cases(user_id,case_context,created_at DESC);
+
+
+-- v0.15: Produktionsvorbereitung ohne Serverzugriff
+ALTER TABLE users ADD COLUMN IF NOT EXISTS is_admin boolean NOT NULL DEFAULT false;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS archived_at timestamptz;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS purchase_on date;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS purchase_price numeric(12,2);
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS desired_resolution text;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS warranty_until date;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS deadline_reminder_stage integer NOT NULL DEFAULT 0;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS last_deadline_notification_at timestamptz;
+ALTER TABLE attachments ADD COLUMN IF NOT EXISTS evidence_type text NOT NULL DEFAULT 'photo';
+ALTER TABLE attachments ADD COLUMN IF NOT EXISTS note text;
+ALTER TABLE attachments ADD COLUMN IF NOT EXISTS captured_at timestamptz;
+ALTER TABLE attachments ADD COLUMN IF NOT EXISTS source text NOT NULL DEFAULT 'user';
+CREATE INDEX IF NOT EXISTS defect_cases_archive_idx ON defect_cases(user_id,archived_at,updated_at DESC);
+CREATE INDEX IF NOT EXISTS defect_cases_org_archive_idx ON defect_cases(organization_id,archived_at,updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS work_order_attachments (
+  id text PRIMARY KEY,
+  work_order_id text NOT NULL REFERENCES work_orders(id) ON DELETE CASCADE,
+  uploaded_by_user_id text REFERENCES users(id) ON DELETE SET NULL,
+  uploaded_by_type text NOT NULL DEFAULT 'contractor',
+  original_name text NOT NULL,
+  stored_name text NOT NULL,
+  mime_type text NOT NULL,
+  size_bytes integer NOT NULL,
+  note text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS work_order_attachments_order_idx ON work_order_attachments(work_order_id,created_at);
