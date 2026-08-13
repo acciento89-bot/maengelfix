@@ -142,3 +142,11 @@ ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS assigned_user_id text REFERENC
 CREATE INDEX IF NOT EXISTS defect_cases_property_idx ON defect_cases(property_id, updated_at DESC);
 CREATE INDEX IF NOT EXISTS defect_cases_unit_idx ON defect_cases(unit_id, updated_at DESC);
 CREATE INDEX IF NOT EXISTS defect_cases_assignee_idx ON defect_cases(assigned_user_id, updated_at DESC);
+
+
+-- v0.5: erweiterte Verwaltungs-Stammdaten
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS street text;
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS postal_code text;
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS city text;
+ALTER TABLE contacts ADD COLUMN IF NOT EXISTS notes text;
+ALTER TABLE units ADD COLUMN IF NOT EXISTS notes text;

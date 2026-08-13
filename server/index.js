@@ -147,7 +147,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.4.0' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.5.0' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -331,6 +331,46 @@ async function scopeForUser(userId) {
   return { organization, organizationId: organization?.id || null };
 }
 
+
+app.get('/api/management/overview', auth, async (req, res, next) => {
+  try {
+    const organization = await organizationForUser(req.user.id);
+    if (!organization) return res.json({ organization: null });
+    const [propertyCount, unitCount, contactCount, cases, members] = await Promise.all([
+      pool.query('SELECT count(*)::int AS count FROM properties WHERE organization_id=$1', [organization.id]),
+      pool.query('SELECT count(*)::int AS count FROM units u JOIN properties p ON p.id=u.property_id WHERE p.organization_id=$1', [organization.id]),
+      pool.query('SELECT count(*)::int AS count FROM contacts WHERE organization_id=$1', [organization.id]),
+      pool.query(`SELECT c.id,c.title,c.status,c.deadline_on,c.assigned_user_id,p.name AS property_name,u.label AS unit_label,au.name AS assigned_user_name
+        FROM defect_cases c LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id LEFT JOIN users au ON au.id=c.assigned_user_id
+        WHERE c.organization_id=$1 ORDER BY c.updated_at DESC`, [organization.id]),
+      pool.query(`SELECT usr.id,usr.name,om.role,
+        (SELECT count(*)::int FROM defect_cases c WHERE c.organization_id=$1 AND c.assigned_user_id=usr.id AND c.status<>'resolved') AS open_cases
+        FROM organization_memberships om JOIN users usr ON usr.id=om.user_id WHERE om.organization_id=$1 ORDER BY usr.name`, [organization.id])
+    ]);
+    const rows = cases.rows;
+    const now = new Date(); now.setHours(0,0,0,0);
+    const overdue = rows.filter(c => c.deadline_on && c.status !== 'resolved' && new Date(c.deadline_on) < now).length;
+    res.json({ organization, metrics: {
+      properties: propertyCount.rows[0].count, units: unitCount.rows[0].count, contacts: contactCount.rows[0].count,
+      open: rows.filter(c=>c.status!=='resolved').length, unassigned: rows.filter(c=>c.status!=='resolved'&&!c.assigned_user_id).length, overdue
+    }, recent: rows.slice(0,6), members: members.rows });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/management/options', auth, async (req, res, next) => {
+  try {
+    const organization = await organizationForUser(req.user.id);
+    if (!organization) return res.json({ organization: null, properties: [], members: [] });
+    const [properties, members] = await Promise.all([
+      pool.query(`SELECT p.id,p.name,p.street,p.postal_code,p.city,
+        COALESCE(json_agg(json_build_object('id',u.id,'label',u.label,'floor',u.floor,'positionLabel',u.position_label) ORDER BY u.label) FILTER (WHERE u.id IS NOT NULL),'[]') AS units
+        FROM properties p LEFT JOIN units u ON u.property_id=p.id WHERE p.organization_id=$1 GROUP BY p.id ORDER BY p.name`, [organization.id]),
+      pool.query(`SELECT u.id,u.name,om.role FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 ORDER BY u.name`, [organization.id])
+    ]);
+    res.json({ organization, properties: properties.rows, members: members.rows });
+  } catch (error) { next(error); }
+});
+
 app.get('/api/properties', auth, async (req, res, next) => {
   try {
     const { organizationId } = await scopeForUser(req.user.id);
@@ -396,6 +436,31 @@ app.post('/api/properties/:propertyId/units', auth, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+
+app.get('/api/units/:unitId', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const unit = await pool.query(`SELECT u.*,p.name AS property_name,p.street AS property_street,p.postal_code AS property_postal_code,p.city AS property_city
+      FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND (($3::text IS NOT NULL AND p.organization_id=$3) OR ($3::text IS NULL AND p.organization_id IS NULL AND p.user_id=$2))`, [req.params.unitId, req.user.id, organizationId]);
+    if (!unit.rowCount) return res.status(404).json({ error: 'Einheit nicht gefunden.' });
+    const [contacts,cases] = await Promise.all([
+      pool.query(`SELECT c.*,uc.role,uc.is_primary FROM unit_contacts uc JOIN contacts c ON c.id=uc.contact_id WHERE uc.unit_id=$1 ORDER BY uc.is_primary DESC,c.name`, [req.params.unitId]),
+      pool.query(`SELECT c.*,au.name AS assigned_user_name FROM defect_cases c LEFT JOIN users au ON au.id=c.assigned_user_id WHERE c.unit_id=$1 ORDER BY c.updated_at DESC`, [req.params.unitId])
+    ]);
+    res.json({ unit: unit.rows[0], contacts: contacts.rows, cases: cases.rows });
+  } catch (error) { next(error); }
+});
+
+app.delete('/api/units/:unitId/contacts/:contactId', auth, async (req,res,next)=>{
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const allowed = await pool.query(`SELECT 1 FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND (($3::text IS NOT NULL AND p.organization_id=$3) OR ($3::text IS NULL AND p.organization_id IS NULL AND p.user_id=$2))`, [req.params.unitId, req.user.id, organizationId]);
+    if (!allowed.rowCount) return res.status(404).json({error:'Einheit nicht gefunden.'});
+    await pool.query('DELETE FROM unit_contacts WHERE unit_id=$1 AND contact_id=$2',[req.params.unitId,req.params.contactId]);
+    res.status(204).end();
+  } catch(error){ next(error); }
+});
+
 app.get('/api/contacts', auth, async (req, res, next) => {
   try {
     const { organizationId } = await scopeForUser(req.user.id);
@@ -413,8 +478,8 @@ app.post('/api/contacts', auth, async (req, res, next) => {
     if (!name) return res.status(400).json({ error: 'Bitte gib einen Namen an.' });
     const { organizationId } = await scopeForUser(req.user.id);
     const result = await pool.query(
-      `INSERT INTO contacts (id,organization_id,user_id,name,email,phone,contact_type) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
-      [id(), organizationId, req.user.id, name, cleanText(req.body.email,254)?.toLowerCase(), cleanText(req.body.phone,60), cleanText(req.body.contactType,40) || 'tenant']
+      `INSERT INTO contacts (id,organization_id,user_id,name,email,phone,contact_type,street,postal_code,city,notes) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11) RETURNING *`,
+      [id(), organizationId, req.user.id, name, cleanText(req.body.email,254)?.toLowerCase(), cleanText(req.body.phone,60), cleanText(req.body.contactType,40) || 'tenant', cleanText(req.body.street,180), cleanText(req.body.postalCode,20), cleanText(req.body.city,120), cleanText(req.body.notes,1200)]
     );
     res.status(201).json({ contact: result.rows[0] });
   } catch (error) { next(error); }
@@ -436,10 +501,27 @@ app.patch('/api/cases/:caseId/assignment', auth, async (req, res, next) => {
   try {
     const accessible = await canAccessCase(req.user.id, req.params.caseId);
     if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
+    const organization = await organizationForUser(req.user.id);
+    if (!organization) return res.status(403).json({ error: 'Zuweisungen sind nur im Verwaltungs-Arbeitsbereich verfügbar.' });
     const propertyId = cleanText(req.body.propertyId,80) || null;
     const unitId = cleanText(req.body.unitId,80) || null;
     const assignedUserId = cleanText(req.body.assignedUserId,80) || null;
-    const result = await pool.query(`UPDATE defect_cases SET property_id=$2, unit_id=$3, assigned_user_id=$4, updated_at=now() WHERE id=$1 RETURNING *`, [req.params.caseId, propertyId, unitId, assignedUserId]);
+    if (propertyId) {
+      const p = await pool.query('SELECT 1 FROM properties WHERE id=$1 AND organization_id=$2',[propertyId,organization.id]);
+      if (!p.rowCount) return res.status(400).json({error:'Objekt gehört nicht zu dieser Verwaltung.'});
+    }
+    if (unitId) {
+      const u = await pool.query('SELECT 1 FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND p.organization_id=$2 AND ($3::text IS NULL OR p.id=$3)',[unitId,organization.id,propertyId]);
+      if (!u.rowCount) return res.status(400).json({error:'Einheit gehört nicht zum gewählten Objekt.'});
+    }
+    if (assignedUserId) {
+      const m = await pool.query('SELECT 1 FROM organization_memberships WHERE organization_id=$1 AND user_id=$2',[organization.id,assignedUserId]);
+      if (!m.rowCount) return res.status(400).json({error:'Mitarbeiter gehört nicht zu dieser Verwaltung.'});
+    }
+    const result = await pool.query(`UPDATE defect_cases SET property_id=$2, unit_id=$3, assigned_user_id=$4,
+      property_label=COALESCE((SELECT name FROM properties WHERE id=$2),property_label),
+      location_label=COALESCE((SELECT label FROM units WHERE id=$3),location_label), updated_at=now() WHERE id=$1 RETURNING *`, [req.params.caseId, propertyId, unitId, assignedUserId]);
+    await pool.query('INSERT INTO case_events (id,case_id,user_id,event_type,note) VALUES ($1,$2,$3,$4,$5)',[id(),req.params.caseId,req.user.id,'assignment','Objekt, Einheit oder Zuständigkeit wurde aktualisiert.']);
     res.json({ case: result.rows[0] });
   } catch (error) { next(error); }
 });
@@ -447,9 +529,9 @@ app.patch('/api/cases/:caseId/assignment', auth, async (req, res, next) => {
 app.get('/api/cases', auth, async (req, res, next) => {
   try {
     const result = await pool.query(
-      `SELECT c.*,
+      `SELECT c.*, p.name AS property_name, un.label AS unit_name, au.name AS assigned_user_name,
         (SELECT count(*)::int FROM attachments a WHERE a.case_id = c.id) AS attachment_count
-       FROM defect_cases c
+       FROM defect_cases c LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units un ON un.id=c.unit_id LEFT JOIN users au ON au.id=c.assigned_user_id
        WHERE c.user_id = $1 OR (
          c.organization_id IS NOT NULL AND EXISTS (
            SELECT 1 FROM organization_memberships om
