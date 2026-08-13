@@ -1384,10 +1384,19 @@ app.get('/api/cases/:caseId/pdf', auth, async (req, res, next) => {
   }
 });
 
+const indexHtml = fs.readFileSync(path.join(publicDir, 'index.html'), 'utf8');
+
 app.use(express.static(publicDir, { index: false, maxAge: production ? '1h' : 0 }));
 app.use((req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api/')) return next();
-  res.sendFile(path.join(publicDir, 'index.html'));
+  res.status(200)
+    .set({
+      'Content-Type': 'text/html; charset=utf-8',
+      'Content-Disposition': 'inline',
+      'Cache-Control': 'no-store',
+      'X-Content-Type-Options': 'nosniff'
+    })
+    .send(indexHtml);
 });
 
 app.use((error, _req, res, _next) => {
