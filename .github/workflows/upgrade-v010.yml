@@ -1,0 +1,32 @@
+name: MängelFix v0.10 Upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/upgrade-v010.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Apply v0.10 patch
+        run: python3 scripts/upgrade_v010.py
+      - name: Commit generated upgrade
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/schema.sql server/index.js server/package.json client/src/App.jsx client/src/maengelfix-pro.css
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Build MängelFix plans trials limits and billing foundation"
+            git push
+          fi
