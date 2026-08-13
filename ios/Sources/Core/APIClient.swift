@@ -90,6 +90,15 @@ final class APIClient: @unchecked Sendable {
         return response.user
     }
 
+    func verifyAppleTransaction(transactionID: String) async throws -> User {
+        let response: AppleBillingResponse = try await request(
+            "/api/billing/apple/verify",
+            method: "POST",
+            body: AppleTransactionRequest(transactionId: transactionID)
+        )
+        return response.user
+    }
+
     func logout() async throws {
         try await requestWithoutResponse("/api/auth/logout", method: "POST")
     }
@@ -192,7 +201,7 @@ final class APIClient: @unchecked Sendable {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("MängelFix-iOS/0.2", forHTTPHeaderField: "X-MaengelFix-Client")
+        request.setValue("MängelFix-iOS/0.3", forHTTPHeaderField: "X-MaengelFix-Client")
         if let bodyData {
             request.httpBody = bodyData
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -213,6 +222,8 @@ private struct LoginRequest: Encodable { let email: String; let password: String
 private struct RegisterRequest: Encodable { let name: String; let email: String; let password: String }
 private struct EmailRequest: Encodable { let email: String }
 private struct MessageRequest: Encodable { let message: String }
+private struct AppleTransactionRequest: Encodable { let transactionId: String }
+private struct AppleBillingResponse: Decodable { let user: User }
 private struct EmptyRequest: Encodable {}
 
 private extension Data {
