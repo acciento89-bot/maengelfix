@@ -3,11 +3,13 @@ import SwiftUI
 @main
 struct MaengelFixApp: App {
     @State private var session = AppSession()
+    @State private var store = StoreKitManager()
 
     var body: some Scene {
         WindowGroup {
             RootView()
                 .environment(session)
+                .environment(store)
                 .tint(.mfPrimary)
         }
     }
@@ -15,6 +17,7 @@ struct MaengelFixApp: App {
 
 private struct RootView: View {
     @Environment(AppSession.self) private var session
+    @Environment(StoreKitManager.self) private var store
 
     var body: some View {
         Group {
@@ -36,6 +39,9 @@ private struct RootView: View {
         }
         .task {
             await session.restoreIfNeeded()
+            if session.phase == .signedIn {
+                await store.loadProducts()
+            }
         }
     }
 }
