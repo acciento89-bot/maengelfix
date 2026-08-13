@@ -303,7 +303,8 @@ function NewCase({ onClose, onCreated }) {
   async function submit(event) {
     event.preventDefault(); setBusy(true); setError('');
     try {
-      const data = await api('/api/cases', { method: 'POST', body: JSON.stringify(form) });
+      let data = await api('/api/cases', { method: 'POST', body: JSON.stringify(form) });
+      if(form.purchaseOn||form.purchasePrice||form.warrantyUntil||form.desiredResolution){const patched=await api(`/api/cases/${data.case.id}`,{method:'PATCH',body:JSON.stringify({purchaseOn:form.purchaseOn||null,purchasePrice:form.purchasePrice||null,warrantyUntil:form.warrantyUntil||null,desiredResolution:form.desiredResolution||null})});data={...data,case:patched.case};}
       onCreated(data.case);
     } catch (err) { setError(err.message); }
     finally { setBusy(false); }
@@ -721,7 +722,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   else if (view === 'tasks') content = <TasksView onSelect={setSelected} />;
   else if (view === 'notifications') content = <NotificationsView onSelect={setSelected} refreshUnread={refreshUnread} />;
   else if (view === 'audit') content = <AuditView />;
-  else if (view === 'security') content = <AccountSecurityView user={user} onUserChanged={setUser} onSignedOut={onSignedOut} />;
+  else if (view === 'security') content = <AccountSecurityView user={user} onUserChanged={setUser} onSignedOut={onLogout} />;
   else if (view === 'billing') content = <BillingView />;
   else if (view === 'admin') content = <AdminView />;
   else if (view === 'team') content = <TeamView />;
