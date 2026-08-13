@@ -88,6 +88,9 @@ struct CaseAttachment: Codable, Identifiable, Hashable {
     var capturedAt: String?
     var source: String?
     var createdAt: String?
+
+    var isImage: Bool { mimeType?.hasPrefix("image/") == true }
+    var isPDF: Bool { mimeType == "application/pdf" }
 }
 
 struct CaseMessage: Codable, Identifiable, Hashable {
@@ -133,20 +136,12 @@ struct EntitlementFeatures: Codable, Hashable {
     var inspections: Bool
 }
 
-struct UserResponse: Decodable {
-    let user: User
-}
-
-struct CasesResponse: Decodable {
-    let cases: [DefectCase]
-}
+struct UserResponse: Decodable { let user: User }
+struct CasesResponse: Decodable { let cases: [DefectCase] }
 
 struct CaseResponse: Decodable {
     let caseItem: DefectCase
-
-    enum CodingKeys: String, CodingKey {
-        case caseItem = "case"
-    }
+    enum CodingKeys: String, CodingKey { case caseItem = "case" }
 }
 
 struct CaseDetailResponse: Decodable {
@@ -155,11 +150,19 @@ struct CaseDetailResponse: Decodable {
     let attachments: [CaseAttachment]
     let messages: [CaseMessage]
     let viewerRole: String?
-
     enum CodingKeys: String, CodingKey {
         case caseItem = "case"
         case events, attachments, messages, viewerRole
     }
+}
+
+struct AttachmentsResponse: Decodable { let attachments: [CaseAttachment] }
+struct MessageResponse: Decodable { let message: CaseMessage }
+struct SimpleResponse: Decodable {
+    var ok: Bool?
+    var sent: Bool?
+    var alreadyVerified: Bool?
+    var message: String?
 }
 
 struct CreateCaseRequest: Encodable {
@@ -169,9 +172,33 @@ struct CreateCaseRequest: Encodable {
     var category: String
     var propertyLabel: String?
     var locationLabel: String?
+    var discoveredOn: String?
     var recipientName: String?
     var recipientEmail: String?
     var recipientAddress: String?
     var deadlineOn: String?
     var destinationLinkId: String?
+}
+
+struct UpdateCaseRequest: Encodable {
+    var title: String?
+    var category: String?
+    var description: String?
+    var propertyLabel: String?
+    var locationLabel: String?
+    var discoveredOn: String?
+    var recipientName: String?
+    var recipientEmail: String?
+    var recipientAddress: String?
+    var deadlineOn: String?
+    var status: String?
+}
+
+struct UpdateProfileRequest: Encodable {
+    var name: String
+    var street: String
+    var postalCode: String
+    var city: String
+    var country: String
+    var phone: String
 }
