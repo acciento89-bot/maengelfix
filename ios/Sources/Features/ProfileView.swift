@@ -1,10 +1,14 @@
+import StoreKit
 import SwiftUI
 
 struct ProfileView: View {
     @Environment(AppSession.self) private var session
+    @Environment(StoreKitManager.self) private var store
+    @Environment(\.openURL) private var openURL
     @State private var isLoggingOut = false
     @State private var showEdit = false
     @State private var verificationMessage: String?
+    @State private var billingMessage: String?
 
     var body: some View {
         NavigationStack {
@@ -40,10 +44,12 @@ struct ProfileView: View {
                             Text(verificationMessage).font(.caption).foregroundStyle(.secondary)
                         }
                     }
+
+                    subscriptionSection(user: user)
                 }
 
                 Section("MängelFix") {
-                    LabeledContent("App-Version", value: "0.2.0")
+                    LabeledContent("App-Version", value: "0.3.0")
                     LabeledContent("Backend", value: "maengelfix.kamilunavo.com")
                 }
 
@@ -64,7 +70,10 @@ struct ProfileView: View {
                 }
             }
             .navigationTitle("Profil")
-            .task { await session.refreshUser() }
+            .task {
+                await session.refreshUser()
+                await store.loadProducts()
+            }
             .sheet(isPresented: $showEdit) {
                 if let user = session.user {
                     NavigationStack {
@@ -75,6 +84,86 @@ struct ProfileView: View {
                     }
                 }
             }
+        }
+    }
+
+    @ViewBuilder
+    private func subscriptionSection(user: User) -> some View {
+        Section("Privat Pro") {
+            if user.planCode == "private_pro" && ["active", "trialing"].contains(user.subscriptionStatus) {
+                Label("Privat Pro ist aktiv", systemImage: "checkmark.seal.fill")
+                    .foregroundStyle(Color.mfPrimary)
+                if let end = user.subscriptionCurrentPeriodEnd, !end.isEmpty {
+                    LabeledContent("Aktueller Zeitraum", value: end)
+                }
+                if store.activeProductID != nil {
+                    Button("App-Store-Abo verwalten") {
+                        if let url = URL(string: "https://apps.apple.com/account/subscriptions") { openURL(url) }
+                    }
+                }
+            } else if store.isLoading {
+                HStack { ProgressView(); Text("App-Store-Angebote werden geladen …") }
+            } else if store.products.isEmpty {
+                Text("Die App-Store-Abos werden verfügbar, sobald sie in App Store Connect freigeschaltet sind.")
+                    .font(.footnote)
+                    .foregroundStyle(.secondary)
+            } else {
+                ForEach(store.products, id: \.id) { product in
+                    Button {
+                        Task { await buy(product, user: user) }
+                    } label: {
+                        HStack {
+                            VStack(alignment: .leading, spacing: 3) {
+                                Text(product.id == StoreKitManager.yearlyProductID ? "Privat Pro – jährlich" : "Privat Pro – monatlich")
+                                    .foregroundStyle(.primary)
+                                if product.id == StoreKitManager.yearlyProductID {
+                                    Text("Jahresabo")
+                                        .font(.caption)
+                                        .foregroundStyle(.secondary)
+                                }
+                            }
+                            Spacer()
+                            Text(product.displayPrice).fontWeight(.semibold)
+                        }
+                    }
+                    .disabled(store.isPurchasing)
+                }
+            }
+
+            Button("Käufe wiederherstellen") {
+                Task { await restorePurchases(user: user) }
+            }
+            .disabled(store.isPurchasing)
+
+            if store.isPurchasing {
+                HStack { ProgressView(); Text("App Store wird verarbeitet …") }
+            }
+            if let billingMessage {
+                Text(billingMessage).font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    @MainActor private func buy(_ product: Product, user: User) async {
+        billingMessage = nil
+        do {
+            if try await store.purchase(product, userID: user.id, api: session.api) {
+                await session.refreshUser()
+                billingMessage = "Privat Pro ist jetzt aktiv."
+            }
+        } catch {
+            billingMessage = error.localizedDescription
+        }
+    }
+
+    @MainActor private func restorePurchases(user: User) async {
+        billingMessage = nil
+        do {
+            let restored = try await store.restore(userID: user.id, api: session.api)
+            await session.refreshUser()
+            billingMessage = restored ? "Käufe wurden wiederhergestellt." : "Für dieses Apple-Konto wurde kein aktives MängelFix-Abo gefunden."
+        } catch {
+            billingMessage = error.localizedDescription
         }
     }
 
