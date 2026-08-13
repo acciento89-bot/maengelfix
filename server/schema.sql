@@ -359,3 +359,30 @@ CREATE TABLE IF NOT EXISTS case_tasks (
 CREATE INDEX IF NOT EXISTS case_tasks_org_idx ON case_tasks(organization_id,status,due_at);
 CREATE INDEX IF NOT EXISTS case_tasks_assignee_idx ON case_tasks(assigned_user_id,status,due_at);
 CREATE INDEX IF NOT EXISTS case_tasks_case_idx ON case_tasks(case_id,created_at DESC);
+
+
+-- v0.12: Kalender und Terminplanung
+CREATE TABLE IF NOT EXISTS calendar_events (
+  id text PRIMARY KEY,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  case_id text REFERENCES defect_cases(id) ON DELETE CASCADE,
+  property_id text REFERENCES properties(id) ON DELETE SET NULL,
+  unit_id text REFERENCES units(id) ON DELETE SET NULL,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  assigned_user_id text REFERENCES users(id) ON DELETE SET NULL,
+  event_type text NOT NULL DEFAULT 'internal',
+  title text NOT NULL,
+  notes text,
+  starts_at timestamptz NOT NULL,
+  ends_at timestamptz NOT NULL,
+  status text NOT NULL DEFAULT 'planned',
+  notify_tenant boolean NOT NULL DEFAULT false,
+  reminder_at timestamptz,
+  reminder_sent_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS calendar_events_org_idx ON calendar_events(organization_id,starts_at);
+CREATE INDEX IF NOT EXISTS calendar_events_user_idx ON calendar_events(assigned_user_id,starts_at);
+CREATE INDEX IF NOT EXISTS calendar_events_case_idx ON calendar_events(case_id,starts_at);
