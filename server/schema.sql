@@ -336,3 +336,26 @@ CREATE TABLE IF NOT EXISTS billing_events (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS billing_events_org_idx ON billing_events(organization_id,created_at DESC);
+
+
+-- v0.11: Aufgaben, Wiedervorlagen und Eskalationen
+CREATE TABLE IF NOT EXISTS case_tasks (
+  id text PRIMARY KEY,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  case_id text NOT NULL REFERENCES defect_cases(id) ON DELETE CASCADE,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  assigned_user_id text REFERENCES users(id) ON DELETE SET NULL,
+  title text NOT NULL,
+  description text,
+  priority text NOT NULL DEFAULT 'normal',
+  status text NOT NULL DEFAULT 'open',
+  due_at timestamptz,
+  remind_at timestamptz,
+  reminder_sent_at timestamptz,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS case_tasks_org_idx ON case_tasks(organization_id,status,due_at);
+CREATE INDEX IF NOT EXISTS case_tasks_assignee_idx ON case_tasks(assigned_user_id,status,due_at);
+CREATE INDEX IF NOT EXISTS case_tasks_case_idx ON case_tasks(case_id,created_at DESC);

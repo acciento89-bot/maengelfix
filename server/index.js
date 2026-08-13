@@ -171,7 +171,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.9.0', mail: smtpConfigured ? 'smtp' : 'manual' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.11.0', mail: smtpConfigured ? 'smtp' : 'manual' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -836,6 +836,59 @@ app.post('/api/contractor/work-orders/:token/status', async (req,res,next)=>{
 });
 
 
+
+app.get('/api/tasks', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    const mine=String(req.query.mine||'')==='1';
+    const params=[]; let where='';
+    if(organization){params.push(organization.id);where='t.organization_id=$1';if(mine){params.push(req.user.id);where+=' AND t.assigned_user_id=$2';}}
+    else {params.push(req.user.id);where='t.organization_id IS NULL AND (t.created_by=$1 OR t.assigned_user_id=$1)';}
+    const result=await pool.query(`SELECT t.*,c.title AS case_title,c.property_label,u.name AS assigned_name,creator.name AS creator_name
+      FROM case_tasks t JOIN defect_cases c ON c.id=t.case_id
+      LEFT JOIN users u ON u.id=t.assigned_user_id LEFT JOIN users creator ON creator.id=t.created_by
+      WHERE ${where} ORDER BY CASE t.status WHEN 'open' THEN 0 ELSE 1 END,CASE t.priority WHEN 'urgent' THEN 0 WHEN 'high' THEN 1 WHEN 'normal' THEN 2 ELSE 3 END,t.due_at NULLS LAST,t.created_at DESC`,params);
+    const now=Date.now();
+    res.json({tasks:result.rows.map(t=>({...t,overdue:t.status==='open'&&t.due_at&&new Date(t.due_at).getTime()<now})),organization:organization||null});
+  } catch(error){next(error)}
+});
+
+app.get('/api/cases/:caseId/tasks', auth, async (req,res,next)=>{
+  try {
+    const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible) return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    const result=await pool.query(`SELECT t.*,u.name AS assigned_name FROM case_tasks t LEFT JOIN users u ON u.id=t.assigned_user_id WHERE t.case_id=$1 ORDER BY CASE t.status WHEN 'open' THEN 0 ELSE 1 END,t.due_at NULLS LAST,t.created_at DESC`,[req.params.caseId]);
+    let members=[]; if(accessible.organization_id){const m=await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id]);members=m.rows;}
+    res.json({tasks:result.rows,members,organizationId:accessible.organization_id||null});
+  } catch(error){next(error)}
+});
+
+app.post('/api/cases/:caseId/tasks', auth, async (req,res,next)=>{
+  try {
+    const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible) return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    const title=cleanText(req.body.title,180); if(!title) return res.status(400).json({error:'Bitte gib einen Aufgabentitel an.'});
+    const priority=['low','normal','high','urgent'].includes(req.body.priority)?req.body.priority:'normal';
+    let assigned=req.body.assignedUserId||req.user.id;
+    if(accessible.organization_id){const m=await pool.query(`SELECT 1 FROM organization_memberships WHERE organization_id=$1 AND user_id=$2 AND COALESCE(active,true)=true`,[accessible.organization_id,assigned]);if(!m.rowCount)return res.status(400).json({error:'Der gewählte Mitarbeiter gehört nicht aktiv zur Verwaltung.'});}
+    else assigned=req.user.id;
+    const taskId=id(); const result=await pool.query(`INSERT INTO case_tasks (id,organization_id,case_id,created_by,assigned_user_id,title,description,priority,due_at,remind_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10) RETURNING *`,[taskId,accessible.organization_id||null,req.params.caseId,req.user.id,assigned,title,cleanText(req.body.description,1200),priority,req.body.dueAt||null,req.body.remindAt||null]);
+    if(accessible.organization_id){await writeAudit({organizationId:accessible.organization_id,userId:req.user.id,caseId:req.params.caseId,action:'task_created',entityType:'task',entityId:taskId,summary:`Aufgabe „${title}“ erstellt.`});if(assigned!==req.user.id)await createNotification({userId:assigned,organizationId:accessible.organization_id,caseId:req.params.caseId,type:'task',title:'Neue Aufgabe für dich',body:title,link:'/app?view=tasks'});}
+    res.status(201).json({task:result.rows[0]});
+  } catch(error){next(error)}
+});
+
+app.patch('/api/tasks/:taskId', auth, async (req,res,next)=>{
+  try {
+    const r=await pool.query(`SELECT t.*,c.user_id AS case_owner FROM case_tasks t JOIN defect_cases c ON c.id=t.case_id WHERE t.id=$1`,[req.params.taskId]); if(!r.rowCount)return res.status(404).json({error:'Aufgabe nicht gefunden.'}); const task=r.rows[0];
+    if(task.organization_id){const org=await organizationForUser(req.user.id);if(!org||org.id!==task.organization_id)return res.status(403).json({error:'Kein Zugriff.'});}
+    else if(task.created_by!==req.user.id&&task.assigned_user_id!==req.user.id&&task.case_owner!==req.user.id)return res.status(403).json({error:'Kein Zugriff.'});
+    const status=req.body.status==='done'?'done':req.body.status==='open'?'open':task.status;
+    let assigned=req.body.assignedUserId===undefined?task.assigned_user_id:(req.body.assignedUserId||null);
+    if(task.organization_id&&assigned){const m=await pool.query(`SELECT 1 FROM organization_memberships WHERE organization_id=$1 AND user_id=$2 AND COALESCE(active,true)=true`,[task.organization_id,assigned]);if(!m.rowCount)return res.status(400).json({error:'Ungültiger Mitarbeiter.'});}
+    const result=await pool.query(`UPDATE case_tasks SET title=COALESCE($2,title),description=COALESCE($3,description),priority=COALESCE($4,priority),assigned_user_id=$5,due_at=$6,remind_at=$7,status=$8,completed_at=CASE WHEN $8='done' THEN COALESCE(completed_at,now()) ELSE NULL END,reminder_sent_at=CASE WHEN remind_at IS DISTINCT FROM $7 THEN NULL ELSE reminder_sent_at END,updated_at=now() WHERE id=$1 RETURNING *`,[task.id,cleanText(req.body.title,180),req.body.description===undefined?task.description:cleanText(req.body.description,1200),['low','normal','high','urgent'].includes(req.body.priority)?req.body.priority:task.priority,assigned,req.body.dueAt===undefined?task.due_at:(req.body.dueAt||null),req.body.remindAt===undefined?task.remind_at:(req.body.remindAt||null),status]);
+    if(task.organization_id)await writeAudit({organizationId:task.organization_id,userId:req.user.id,caseId:task.case_id,action:status==='done'?'task_completed':'task_updated',entityType:'task',entityId:task.id,summary:status==='done'?`Aufgabe „${task.title}“ erledigt.`:`Aufgabe „${task.title}“ aktualisiert.`});
+    res.json({task:result.rows[0]});
+  } catch(error){next(error)}
+});
 app.get('/api/notifications', auth, async (req,res,next)=>{
   try {
     const result=await pool.query(`SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`,[req.user.id]);
@@ -1531,6 +1584,20 @@ app.use((error, _req, res, _next) => {
   if (error instanceof multer.MulterError) return res.status(400).json({ error: error.message });
   res.status(500).json({ error: 'Etwas ist schiefgelaufen.' });
 });
+
+
+async function processTaskReminders(){
+  try{
+    const due=await pool.query(`SELECT t.*,u.email,u.name,c.title AS case_title FROM case_tasks t LEFT JOIN users u ON u.id=t.assigned_user_id JOIN defect_cases c ON c.id=t.case_id WHERE t.status='open' AND t.remind_at IS NOT NULL AND t.remind_at<=now() AND t.reminder_sent_at IS NULL LIMIT 100`);
+    for(const task of due.rows){
+      if(task.assigned_user_id) await createNotification({userId:task.assigned_user_id,organizationId:task.organization_id,caseId:task.case_id,type:'task_reminder',title:'Wiedervorlage fällig',body:task.title,link:'/app?view=tasks'});
+      if(mailer&&task.email) try{await sendAppMail({to:task.email,subject:'MängelFix Wiedervorlage',heading:'Eine Aufgabe ist fällig',text:`${task.title}\nVorgang: ${task.case_title}`,buttonLabel:'Aufgaben öffnen',buttonUrl:`${appOrigin}/app?view=tasks`});}catch(e){console.error('Task reminder mail failed',e)}
+      await pool.query('UPDATE case_tasks SET reminder_sent_at=now() WHERE id=$1 AND reminder_sent_at IS NULL',[task.id]);
+    }
+  }catch(error){console.error('Task reminder worker failed',error)}
+}
+setTimeout(processTaskReminders,15000);
+setInterval(processTaskReminders,15*60*1000);
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`MängelFix läuft auf Port ${port}`);
