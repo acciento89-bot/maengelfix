@@ -1,0 +1,25 @@
+name: MängelFix v0.17 Pricing
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/upgrade-v017.yml']
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: python3 scripts/upgrade_v017_pricing.py
+      - run: node --check server/index.js
+      - run: |
+          cd client
+          npm install --no-audit --no-fund
+          npm run build
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/index.js server/schema.sql server/package.json client/src/App.jsx client/src/maengelfix-pro.css
+          if git diff --cached --quiet; then echo "Nothing to commit"; else git commit -m "Build MängelFix v0.17 pricing and plan catalog" && git pull --rebase origin main && git push; fi
