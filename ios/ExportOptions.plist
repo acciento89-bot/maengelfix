@@ -7,9 +7,16 @@
     <key>destination</key>
     <string>upload</string>
     <key>signingStyle</key>
-    <string>automatic</string>
+    <string>manual</string>
+    <key>signingCertificate</key>
+    <string>Apple Distribution</string>
     <key>teamID</key>
     <string>TKG684N5GL</string>
+    <key>provisioningProfiles</key>
+    <dict>
+        <key>com.kamilunavo.maengelfix</key>
+        <string>MaengelFix App Store</string>
+    </dict>
     <key>uploadSymbols</key>
     <true/>
     <key>manageAppVersionAndBuildNumber</key>
