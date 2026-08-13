@@ -1196,7 +1196,8 @@ app.get('/api/cases/:caseId/pdf', auth, async (req, res, next) => {
     });
 
     res.setHeader('Content-Type', 'application/pdf');
-    res.setHeader('Content-Disposition', `attachment; filename="maengelfix-${item.id}.pdf"`);
+    const forceDownload = String(req.query.download || '') === '1';
+    res.setHeader('Content-Disposition', `${forceDownload ? 'attachment' : 'inline'}; filename="maengelfix-${item.id}.pdf"`);
     doc.pipe(res);
 
     const C = {

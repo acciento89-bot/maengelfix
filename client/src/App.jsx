@@ -66,9 +66,9 @@ function PublicHeader({ user, navigate }) {
     <header className="publicHeader">
       <button className="brandButton" onClick={() => navigate('/')}><Logo /></button>
       <nav className="publicNav">
-        <a href="/#ablauf">So funktioniert's</a>
-        <a href="/#funktionen">Funktionen</a>
-        <a href="/#tarife">Tarife</a>
+        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })); }}>So funktioniert's</button>
+        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('funktionen')?.scrollIntoView({ behavior: 'smooth' })); }}>Funktionen</button>
+        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('tarife')?.scrollIntoView({ behavior: 'smooth' })); }}>Tarife</button>
         {user ? (
           <button className="navPrimary" onClick={() => navigate('/app')}>Zur App</button>
         ) : (
@@ -108,7 +108,7 @@ function Landing({ user, navigate }) {
             <p>Fotos, Beschreibung, Empfänger, Frist und Verlauf an einem Ort. MängelFix hilft dir, Mängel strukturiert festzuhalten und professionelle Unterlagen daraus zu erstellen.</p>
             <div className="heroActions">
               <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
-              <a className="landingSecondary" href="#ablauf">So funktioniert's</a>
+              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
             </div>
             <div className="heroTrust"><span>✓</span> Keine Zettelwirtschaft <span>✓</span> PDF-Dokumentation <span>✓</span> Fristen & Verlauf</div>
           </div>
@@ -393,7 +393,7 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile }) {
       <button className="backButton" onClick={onBack}>← Alle Mängel</button>
       <div className="detailHeader">
         <div><div className="eyebrow">{item.category}</div><h1>{item.title}</h1><div className="metaLine"><span className={`status status-${item.status}`}>{statusLabels[item.status]}</span><span>Festgestellt: {fmtDate(item.discovered_on)}</span><span>Vorgang {item.id.split('-')[0].toUpperCase()}</span></div></div>
-        <div className="detailActions">{!profileComplete && <button className="profileWarning" onClick={onProfile}>Absender ergänzen</button>}<a className="primaryButton linkButton" href={`/api/cases/${item.id}/pdf`} target="_blank" rel="noreferrer">PDF erstellen</a></div>
+        <div className="detailActions">{!profileComplete && <button className="profileWarning" onClick={onProfile}>Absender ergänzen</button>}<a className="primaryButton linkButton" href={`/api/cases/${item.id}/pdf`} target="_blank" rel="noreferrer">PDF öffnen</a><a className="secondaryButton linkButton" href={`/api/cases/${item.id}/pdf?download=1`}>PDF herunterladen</a></div>
       </div>
       {!profileComplete && <div className="noticeBar"><b>Absenderprofil unvollständig.</b> Ergänze Straße, PLZ und Ort, damit deine Mängelanzeige einen vollständigen Absender enthält. <button onClick={onProfile}>Jetzt ergänzen</button></div>}
       {error && <div className="errorBox">{error}</div>}
