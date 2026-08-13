@@ -1,0 +1,26 @@
+name: MängelFix v0.7 Upgrade
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/upgrade-v07.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v0.7 patch
+        run: python3 scripts/upgrade_v07.py
+      - name: Commit generated upgrade
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/index.js server/schema.sql client/src/App.jsx client/src/maengelfix-pro.css .env.example
+          git diff --cached --quiet || git commit -m "Build MängelFix mail system and tenant communication"
+          git push
