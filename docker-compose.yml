@@ -9,6 +9,12 @@ services:
       SESSION_COOKIE_NAME: ${SESSION_COOKIE_NAME:-maengelfix_session}
       APP_ORIGIN: ${APP_ORIGIN:-https://maengelfix.kamilunavo.com}
       UPLOAD_DIR: ${UPLOAD_DIR:-/data/uploads}
+      SMTP_HOST: ${SMTP_HOST:-}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURE: ${SMTP_SECURE:-false}
+      SMTP_USER: ${SMTP_USER:-}
+      SMTP_PASS: ${SMTP_PASS:-}
+      SMTP_FROM: ${SMTP_FROM:-MängelFix <noreply@kamilunavo.com>}
     depends_on:
       db:
         condition: service_healthy

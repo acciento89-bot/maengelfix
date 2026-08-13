@@ -9,6 +9,7 @@ import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import PDFDocument from 'pdfkit';
 import pg from 'pg';
+import nodemailer from 'nodemailer';
 
 const { Pool } = pg;
 const scrypt = promisify(crypto.scrypt);
@@ -19,6 +20,9 @@ const uploadDir = process.env.UPLOAD_DIR || '/data/uploads';
 const port = Number(process.env.PORT || 3000);
 const cookieName = process.env.SESSION_COOKIE_NAME || 'maengelfix_session';
 const production = process.env.NODE_ENV === 'production';
+const appOrigin = process.env.APP_ORIGIN || 'https://maengelfix.kamilunavo.com';
+const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
+const mailer = smtpConfigured ? nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: String(process.env.SMTP_SECURE || 'false') === 'true', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }) : null;
 
 fs.mkdirSync(uploadDir, { recursive: true });
 
@@ -147,7 +151,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.5.0' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.6.0', mail: smtpConfigured ? 'smtp' : 'manual' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -332,6 +336,92 @@ async function scopeForUser(userId) {
 }
 
 
+
+async function sendTenantInvitationMail({ to, tenantName, organizationName, propertyName, unitLabel, inviteUrl }) {
+  if (!mailer) return false;
+  await mailer.sendMail({
+    from: process.env.SMTP_FROM || 'MängelFix <noreply@kamilunavo.com>',
+    to,
+    subject: `${organizationName} lädt dich zu MängelFix ein`,
+    text: `Hallo ${tenantName || ''},\n\n${organizationName} möchte dein MängelFix-Privatkonto mit ${propertyName} – ${unitLabel} verknüpfen. Die Verknüpfung ist freiwillig. Deine privaten Vorgänge bleiben privat. Nur Mängel, die du ausdrücklich an die Hausverwaltung übermittelst, werden dort sichtbar.\n\nEinladung öffnen: ${inviteUrl}\n\nDer Link ist 7 Tage gültig.`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#18212b"><h2 style="margin-bottom:6px">MängelFix</h2><p><b>${organizationName}</b> möchte dein MängelFix-Privatkonto mit <b>${propertyName} – ${unitLabel}</b> verknüpfen.</p><p>Die Verknüpfung ist freiwillig. Deine privaten Vorgänge bleiben privat. Nur Mängel, die du ausdrücklich an die Hausverwaltung übermittelst, werden dort sichtbar.</p><p style="margin:28px 0"><a href="${inviteUrl}" style="background:#2457d6;color:white;text-decoration:none;padding:12px 18px;border-radius:6px">Einladung öffnen</a></p><p style="color:#6f7a86;font-size:13px">Der Link ist 7 Tage gültig.</p></div>`
+  });
+  return true;
+}
+
+app.post('/api/contacts/:contactId/invitations', auth, async (req, res, next) => {
+  try {
+    const organization = await organizationForUser(req.user.id);
+    if (!organization || !['owner','admin'].includes(organization.role)) return res.status(403).json({ error: 'Nur Inhaber und Admins können Mieter einladen.' });
+    const unitId = cleanText(req.body.unitId, 80);
+    const row = await pool.query(`SELECT c.id AS contact_id,c.name,c.email,u.id AS unit_id,u.label AS unit_label,p.id AS property_id,p.name AS property_name,p.allow_tenant_submissions,o.name AS organization_name
+      FROM contacts c JOIN unit_contacts uc ON uc.contact_id=c.id JOIN units u ON u.id=uc.unit_id JOIN properties p ON p.id=u.property_id JOIN organizations o ON o.id=p.organization_id
+      WHERE c.id=$1 AND u.id=$2 AND p.organization_id=$3`, [req.params.contactId, unitId, organization.id]);
+    if (!row.rowCount) return res.status(404).json({ error: 'Mieter oder Einheit nicht gefunden.' });
+    const tenant=row.rows[0];
+    if (!tenant.email) return res.status(400).json({ error: 'Für diesen Mieter ist keine E-Mail-Adresse hinterlegt.' });
+    const active = await pool.query(`SELECT tl.id FROM tenant_links tl JOIN users usr ON usr.id=tl.user_id WHERE tl.unit_id=$1 AND lower(usr.email)=lower($2) AND tl.status='active'`, [unitId, tenant.email]);
+    if (active.rowCount) return res.status(409).json({ error: 'Dieser Mieter ist bereits digital mit der Einheit verknüpft.' });
+    await pool.query(`UPDATE tenant_invitations SET expires_at=now() WHERE contact_id=$1 AND unit_id=$2 AND accepted_at IS NULL AND expires_at>now()`, [tenant.contact_id, unitId]);
+    const token=crypto.randomBytes(32).toString('base64url');
+    const invitationId=id();
+    await pool.query(`INSERT INTO tenant_invitations (id,token_hash,organization_id,property_id,unit_id,contact_id,email,created_by,expires_at) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,now()+interval '7 days')`, [invitationId,tokenHash(token),organization.id,tenant.property_id,unitId,tenant.contact_id,tenant.email.toLowerCase(),req.user.id]);
+    const inviteUrl=`${appOrigin}/einladung/${token}`;
+    let delivery='manual';
+    try { if (await sendTenantInvitationMail({to:tenant.email,tenantName:tenant.name,organizationName:tenant.organization_name,propertyName:tenant.property_name,unitLabel:tenant.unit_label,inviteUrl})) delivery='email'; } catch (mailError) { console.error('Invitation mail failed', mailError); }
+    res.status(201).json({ invitation: { id: invitationId, email: tenant.email, inviteUrl, delivery, expiresInDays: 7 } });
+  } catch(error){ next(error); }
+});
+
+app.get('/api/invitations/:token', async (req,res,next)=>{
+  try {
+    const result=await pool.query(`SELECT ti.email,ti.expires_at,ti.accepted_at,o.name AS organization_name,p.name AS property_name,p.street,p.postal_code,p.city,u.label AS unit_label,c.name AS contact_name
+      FROM tenant_invitations ti JOIN organizations o ON o.id=ti.organization_id JOIN properties p ON p.id=ti.property_id JOIN units u ON u.id=ti.unit_id JOIN contacts c ON c.id=ti.contact_id
+      WHERE ti.token_hash=$1`, [tokenHash(req.params.token)]);
+    if (!result.rowCount) return res.status(404).json({error:'Einladung nicht gefunden.'});
+    const invitation=result.rows[0];
+    if (invitation.accepted_at) return res.status(410).json({error:'Diese Einladung wurde bereits angenommen.'});
+    if (new Date(invitation.expires_at)<=new Date()) return res.status(410).json({error:'Diese Einladung ist abgelaufen. Bitte fordere eine neue Einladung an.'});
+    res.json({ invitation });
+  } catch(error){ next(error); }
+});
+
+app.post('/api/invitations/:token/accept', auth, async (req,res,next)=>{
+  const client=await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result=await client.query(`SELECT ti.* FROM tenant_invitations ti WHERE ti.token_hash=$1 FOR UPDATE`, [tokenHash(req.params.token)]);
+    if (!result.rowCount) { await client.query('ROLLBACK'); return res.status(404).json({error:'Einladung nicht gefunden.'}); }
+    const inv=result.rows[0];
+    if (inv.accepted_at || new Date(inv.expires_at)<=new Date()) { await client.query('ROLLBACK'); return res.status(410).json({error:'Diese Einladung ist nicht mehr gültig.'}); }
+    if (String(req.user.email).toLowerCase() !== String(inv.email).toLowerCase()) { await client.query('ROLLBACK'); return res.status(403).json({error:`Diese Einladung wurde an ${inv.email} gesendet. Bitte melde dich mit genau dieser E-Mail-Adresse an.`}); }
+    const linkId=id();
+    const linked=await client.query(`INSERT INTO tenant_links (id,organization_id,property_id,unit_id,contact_id,user_id,status) VALUES ($1,$2,$3,$4,$5,$6,'active') ON CONFLICT (unit_id,user_id) DO UPDATE SET organization_id=EXCLUDED.organization_id,property_id=EXCLUDED.property_id,contact_id=EXCLUDED.contact_id,status='active' RETURNING *`, [linkId,inv.organization_id,inv.property_id,inv.unit_id,inv.contact_id,req.user.id]);
+    await client.query(`UPDATE tenant_invitations SET accepted_at=now() WHERE id=$1`, [inv.id]);
+    await client.query('COMMIT');
+    res.json({ link: linked.rows[0] });
+  } catch(error){ await client.query('ROLLBACK'); next(error); } finally { client.release(); }
+});
+
+app.get('/api/tenant-links', auth, async (req,res,next)=>{
+  try {
+    const result=await pool.query(`SELECT tl.id,tl.status,o.name AS organization_name,p.id AS property_id,p.name AS property_name,p.street,p.postal_code,p.city,p.allow_tenant_submissions,u.id AS unit_id,u.label AS unit_label,c.name AS contact_name
+      FROM tenant_links tl JOIN organizations o ON o.id=tl.organization_id JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id JOIN contacts c ON c.id=tl.contact_id
+      WHERE tl.user_id=$1 AND tl.status='active' ORDER BY o.name,p.name,u.label`, [req.user.id]);
+    res.json({ links: result.rows });
+  } catch(error){ next(error); }
+});
+
+app.patch('/api/properties/:propertyId/tenant-submissions', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if (!organization || !['owner','admin'].includes(organization.role)) return res.status(403).json({error:'Nur Inhaber und Admins können diese Einstellung ändern.'});
+    const result=await pool.query(`UPDATE properties SET allow_tenant_submissions=$3,updated_at=now() WHERE id=$1 AND organization_id=$2 RETURNING *`, [req.params.propertyId,organization.id,Boolean(req.body.enabled)]);
+    if (!result.rowCount) return res.status(404).json({error:'Objekt nicht gefunden.'});
+    res.json({property:result.rows[0]});
+  } catch(error){next(error);}
+});
+
 app.get('/api/management/overview', auth, async (req, res, next) => {
   try {
     const organization = await organizationForUser(req.user.id);
@@ -444,7 +534,7 @@ app.get('/api/units/:unitId', auth, async (req, res, next) => {
       FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND (($3::text IS NOT NULL AND p.organization_id=$3) OR ($3::text IS NULL AND p.organization_id IS NULL AND p.user_id=$2))`, [req.params.unitId, req.user.id, organizationId]);
     if (!unit.rowCount) return res.status(404).json({ error: 'Einheit nicht gefunden.' });
     const [contacts,cases] = await Promise.all([
-      pool.query(`SELECT c.*,uc.role,uc.is_primary FROM unit_contacts uc JOIN contacts c ON c.id=uc.contact_id WHERE uc.unit_id=$1 ORDER BY uc.is_primary DESC,c.name`, [req.params.unitId]),
+      pool.query(`SELECT c.*,uc.role,uc.is_primary, EXISTS(SELECT 1 FROM tenant_links tl WHERE tl.contact_id=c.id AND tl.unit_id=uc.unit_id AND tl.status='active') AS digitally_linked, (SELECT usr.email FROM tenant_links tl JOIN users usr ON usr.id=tl.user_id WHERE tl.contact_id=c.id AND tl.unit_id=uc.unit_id AND tl.status='active' LIMIT 1) AS linked_account_email FROM unit_contacts uc JOIN contacts c ON c.id=uc.contact_id WHERE uc.unit_id=$1 ORDER BY uc.is_primary DESC,c.name`, [req.params.unitId]),
       pool.query(`SELECT c.*,au.name AS assigned_user_name FROM defect_cases c LEFT JOIN users au ON au.id=c.assigned_user_id WHERE c.unit_id=$1 ORDER BY c.updated_at DESC`, [req.params.unitId])
     ]);
     res.json({ unit: unit.rows[0], contacts: contacts.rows, cases: cases.rows });
@@ -556,22 +646,40 @@ app.post('/api/cases', auth, async (req, res, next) => {
 
     const caseId = id();
     await client.query('BEGIN');
+    const ownOrganization = await organizationForUser(req.user.id);
+    let destination = null;
+    const destinationLinkId = cleanText(req.body.destinationLinkId, 80);
+    if (destinationLinkId && !ownOrganization) {
+      const destinationResult = await client.query(`SELECT tl.*,p.name AS property_name,p.street,p.postal_code,p.city,p.allow_tenant_submissions,u.label AS unit_label,o.name AS organization_name
+        FROM tenant_links tl JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id JOIN organizations o ON o.id=tl.organization_id
+        WHERE tl.id=$1 AND tl.user_id=$2 AND tl.status='active'`, [destinationLinkId, req.user.id]);
+      if (!destinationResult.rowCount) { await client.query('ROLLBACK'); return res.status(400).json({error:'Die ausgewählte Hausverwaltungs-Verknüpfung ist nicht gültig.'}); }
+      destination=destinationResult.rows[0];
+      if (!destination.allow_tenant_submissions) { await client.query('ROLLBACK'); return res.status(403).json({error:'Diese Hausverwaltung nimmt für dieses Objekt derzeit keine digitalen Mängelmeldungen über MängelFix an.'}); }
+    }
+    const organizationId = destination?.organization_id || ownOrganization?.id || null;
+    const propertyLabel = destination ? [destination.property_name, destination.unit_label].filter(Boolean).join(' · ') : cleanText(req.body.propertyLabel, 200);
+    const recipientName = destination?.organization_name || cleanText(req.body.recipientName, 160);
     const result = await client.query(
       `INSERT INTO defect_cases
-       (id,user_id,organization_id,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,'draft')
+       (id,user_id,organization_id,property_id,unit_id,tenant_link_id,submitted_by_tenant,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,'draft')
        RETURNING *`,
       [
         caseId,
         req.user.id,
-        (await organizationForUser(req.user.id))?.id || null,
+        organizationId,
+        destination?.property_id || null,
+        destination?.unit_id || null,
+        destination?.id || null,
+        Boolean(destination),
         title,
         cleanText(req.body.category, 80) || 'Sonstiges',
         description,
-        cleanText(req.body.propertyLabel, 200),
+        propertyLabel,
         cleanText(req.body.locationLabel, 120),
         req.body.discoveredOn || null,
-        cleanText(req.body.recipientName, 160),
+        recipientName,
         cleanText(req.body.recipientEmail, 254)?.toLowerCase(),
         cleanText(req.body.recipientAddress, 500),
         req.body.deadlineOn || null
@@ -579,7 +687,7 @@ app.post('/api/cases', auth, async (req, res, next) => {
     );
     await client.query(
       'INSERT INTO case_events (id, case_id, user_id, event_type, note) VALUES ($1,$2,$3,$4,$5)',
-      [id(), caseId, req.user.id, 'created', 'Mangel wurde erfasst.']
+      [id(), caseId, req.user.id, 'created', destination ? `Mangel wurde vom Mieter digital an ${destination.organization_name} übermittelt.` : 'Mangel wurde erfasst.']
     );
     await client.query('COMMIT');
     res.status(201).json({ case: result.rows[0] });

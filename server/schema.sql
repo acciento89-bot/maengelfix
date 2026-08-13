@@ -150,3 +150,41 @@ ALTER TABLE contacts ADD COLUMN IF NOT EXISTS postal_code text;
 ALTER TABLE contacts ADD COLUMN IF NOT EXISTS city text;
 ALTER TABLE contacts ADD COLUMN IF NOT EXISTS notes text;
 ALTER TABLE units ADD COLUMN IF NOT EXISTS notes text;
+
+-- v0.6: digitale Mieter-Verknüpfungen
+ALTER TABLE properties ADD COLUMN IF NOT EXISTS allow_tenant_submissions boolean NOT NULL DEFAULT true;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS tenant_link_id text;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS submitted_by_tenant boolean NOT NULL DEFAULT false;
+
+CREATE TABLE IF NOT EXISTS tenant_invitations (
+  id text PRIMARY KEY,
+  token_hash text NOT NULL UNIQUE,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  property_id text NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  unit_id text NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  contact_id text NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  email text NOT NULL,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  expires_at timestamptz NOT NULL,
+  accepted_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS tenant_invitations_email_idx ON tenant_invitations(lower(email), expires_at DESC);
+
+CREATE TABLE IF NOT EXISTS tenant_links (
+  id text PRIMARY KEY,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  property_id text NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  unit_id text NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  contact_id text NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  status text NOT NULL DEFAULT 'active',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  UNIQUE (unit_id, user_id)
+);
+CREATE INDEX IF NOT EXISTS tenant_links_user_idx ON tenant_links(user_id, status);
+CREATE INDEX IF NOT EXISTS tenant_links_org_idx ON tenant_links(organization_id, status);
+
+DO $$ BEGIN
+  ALTER TABLE defect_cases ADD CONSTRAINT defect_cases_tenant_link_fk FOREIGN KEY (tenant_link_id) REFERENCES tenant_links(id) ON DELETE SET NULL;
+EXCEPTION WHEN duplicate_object THEN NULL; END $$;
