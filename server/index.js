@@ -147,7 +147,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.3.0' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.4.0' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -322,6 +322,126 @@ app.post('/api/team/members', auth, async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+
+
+async function scopeForUser(userId) {
+  const organization = await organizationForUser(userId);
+  return { organization, organizationId: organization?.id || null };
+}
+
+app.get('/api/properties', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const result = await pool.query(
+      `SELECT p.*,
+        (SELECT count(*)::int FROM units u WHERE u.property_id=p.id) AS unit_count,
+        (SELECT count(*)::int FROM defect_cases c WHERE c.property_id=p.id AND c.status <> 'resolved') AS open_case_count
+       FROM properties p
+       WHERE ($2::text IS NOT NULL AND p.organization_id=$2) OR ($2::text IS NULL AND p.organization_id IS NULL AND p.user_id=$1)
+       ORDER BY p.name`,
+      [req.user.id, organizationId]
+    );
+    res.json({ properties: result.rows });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/properties', auth, async (req, res, next) => {
+  try {
+    const name = cleanText(req.body.name, 180);
+    if (!name) return res.status(400).json({ error: 'Bitte gib einen Objektnamen an.' });
+    const { organizationId } = await scopeForUser(req.user.id);
+    const propertyId = id();
+    const result = await pool.query(
+      `INSERT INTO properties (id,organization_id,user_id,name,street,postal_code,city,notes)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,
+      [propertyId, organizationId, req.user.id, name, cleanText(req.body.street,180), cleanText(req.body.postalCode,20), cleanText(req.body.city,120), cleanText(req.body.notes,2000)]
+    );
+    res.status(201).json({ property: result.rows[0] });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/properties/:propertyId', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const property = await pool.query(
+      `SELECT * FROM properties WHERE id=$1 AND (($3::text IS NOT NULL AND organization_id=$3) OR ($3::text IS NULL AND organization_id IS NULL AND user_id=$2))`,
+      [req.params.propertyId, req.user.id, organizationId]
+    );
+    if (!property.rowCount) return res.status(404).json({ error: 'Objekt nicht gefunden.' });
+    const [units, cases] = await Promise.all([
+      pool.query(`SELECT u.*,
+          (SELECT count(*)::int FROM unit_contacts uc WHERE uc.unit_id=u.id) AS contact_count,
+          (SELECT count(*)::int FROM defect_cases c WHERE c.unit_id=u.id AND c.status <> 'resolved') AS open_case_count
+        FROM units u WHERE u.property_id=$1 ORDER BY u.label`, [req.params.propertyId]),
+      pool.query(`SELECT c.*, u.name AS assigned_user_name FROM defect_cases c LEFT JOIN users u ON u.id=c.assigned_user_id WHERE c.property_id=$1 ORDER BY c.updated_at DESC`, [req.params.propertyId])
+    ]);
+    res.json({ property: property.rows[0], units: units.rows, cases: cases.rows });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/properties/:propertyId/units', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const property = await pool.query(`SELECT 1 FROM properties WHERE id=$1 AND (($3::text IS NOT NULL AND organization_id=$3) OR ($3::text IS NULL AND organization_id IS NULL AND user_id=$2))`, [req.params.propertyId, req.user.id, organizationId]);
+    if (!property.rowCount) return res.status(404).json({ error: 'Objekt nicht gefunden.' });
+    const label = cleanText(req.body.label,120);
+    if (!label) return res.status(400).json({ error: 'Bitte gib eine Bezeichnung für die Einheit an.' });
+    const result = await pool.query(
+      `INSERT INTO units (id,property_id,label,floor,position_label,area_sqm) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,
+      [id(), req.params.propertyId, label, cleanText(req.body.floor,60), cleanText(req.body.positionLabel,120), req.body.areaSqm ? Number(req.body.areaSqm) : null]
+    );
+    res.status(201).json({ unit: result.rows[0] });
+  } catch (error) { next(error); }
+});
+
+app.get('/api/contacts', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const result = await pool.query(
+      `SELECT * FROM contacts WHERE ($2::text IS NOT NULL AND organization_id=$2) OR ($2::text IS NULL AND organization_id IS NULL AND user_id=$1) ORDER BY name`,
+      [req.user.id, organizationId]
+    );
+    res.json({ contacts: result.rows });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/contacts', auth, async (req, res, next) => {
+  try {
+    const name = cleanText(req.body.name,160);
+    if (!name) return res.status(400).json({ error: 'Bitte gib einen Namen an.' });
+    const { organizationId } = await scopeForUser(req.user.id);
+    const result = await pool.query(
+      `INSERT INTO contacts (id,organization_id,user_id,name,email,phone,contact_type) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING *`,
+      [id(), organizationId, req.user.id, name, cleanText(req.body.email,254)?.toLowerCase(), cleanText(req.body.phone,60), cleanText(req.body.contactType,40) || 'tenant']
+    );
+    res.status(201).json({ contact: result.rows[0] });
+  } catch (error) { next(error); }
+});
+
+app.post('/api/units/:unitId/contacts', auth, async (req, res, next) => {
+  try {
+    const { organizationId } = await scopeForUser(req.user.id);
+    const unit = await pool.query(`SELECT u.id FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND (($3::text IS NOT NULL AND p.organization_id=$3) OR ($3::text IS NULL AND p.organization_id IS NULL AND p.user_id=$2))`, [req.params.unitId, req.user.id, organizationId]);
+    if (!unit.rowCount) return res.status(404).json({ error: 'Einheit nicht gefunden.' });
+    const contact = await pool.query(`SELECT id FROM contacts WHERE id=$1 AND (($3::text IS NOT NULL AND organization_id=$3) OR ($3::text IS NULL AND organization_id IS NULL AND user_id=$2))`, [req.body.contactId, req.user.id, organizationId]);
+    if (!contact.rowCount) return res.status(404).json({ error: 'Kontakt nicht gefunden.' });
+    await pool.query(`INSERT INTO unit_contacts (unit_id,contact_id,role,is_primary) VALUES ($1,$2,$3,$4) ON CONFLICT (unit_id,contact_id) DO UPDATE SET role=EXCLUDED.role,is_primary=EXCLUDED.is_primary`, [req.params.unitId, req.body.contactId, cleanText(req.body.role,40) || 'tenant', Boolean(req.body.isPrimary)]);
+    res.status(204).end();
+  } catch (error) { next(error); }
+});
+
+app.patch('/api/cases/:caseId/assignment', auth, async (req, res, next) => {
+  try {
+    const accessible = await canAccessCase(req.user.id, req.params.caseId);
+    if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
+    const propertyId = cleanText(req.body.propertyId,80) || null;
+    const unitId = cleanText(req.body.unitId,80) || null;
+    const assignedUserId = cleanText(req.body.assignedUserId,80) || null;
+    const result = await pool.query(`UPDATE defect_cases SET property_id=$2, unit_id=$3, assigned_user_id=$4, updated_at=now() WHERE id=$1 RETURNING *`, [req.params.caseId, propertyId, unitId, assignedUserId]);
+    res.json({ case: result.rows[0] });
+  } catch (error) { next(error); }
 });
 
 app.get('/api/cases', auth, async (req, res, next) => {

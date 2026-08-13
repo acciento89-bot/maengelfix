@@ -84,3 +84,61 @@ CREATE INDEX IF NOT EXISTS organization_memberships_user_idx ON organization_mem
 
 ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS organization_id text REFERENCES organizations(id) ON DELETE SET NULL;
 CREATE INDEX IF NOT EXISTS defect_cases_org_idx ON defect_cases(organization_id, updated_at DESC);
+
+
+-- v0.4: echte Objekt-/Einheitenstruktur für Hausverwaltungen
+CREATE TABLE IF NOT EXISTS properties (
+  id text PRIMARY KEY,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  street text,
+  postal_code text,
+  city text,
+  notes text,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS properties_org_idx ON properties(organization_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS properties_user_idx ON properties(user_id, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS units (
+  id text PRIMARY KEY,
+  property_id text NOT NULL REFERENCES properties(id) ON DELETE CASCADE,
+  label text NOT NULL,
+  floor text,
+  position_label text,
+  area_sqm numeric,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS units_property_idx ON units(property_id, label);
+
+CREATE TABLE IF NOT EXISTS contacts (
+  id text PRIMARY KEY,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  email text,
+  phone text,
+  contact_type text NOT NULL DEFAULT 'tenant',
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS contacts_org_idx ON contacts(organization_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS contacts_user_idx ON contacts(user_id, updated_at DESC);
+
+CREATE TABLE IF NOT EXISTS unit_contacts (
+  unit_id text NOT NULL REFERENCES units(id) ON DELETE CASCADE,
+  contact_id text NOT NULL REFERENCES contacts(id) ON DELETE CASCADE,
+  role text NOT NULL DEFAULT 'tenant',
+  is_primary boolean NOT NULL DEFAULT false,
+  PRIMARY KEY (unit_id, contact_id)
+);
+
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS property_id text REFERENCES properties(id) ON DELETE SET NULL;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS unit_id text REFERENCES units(id) ON DELETE SET NULL;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS assigned_user_id text REFERENCES users(id) ON DELETE SET NULL;
+CREATE INDEX IF NOT EXISTS defect_cases_property_idx ON defect_cases(property_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS defect_cases_unit_idx ON defect_cases(unit_id, updated_at DESC);
+CREATE INDEX IF NOT EXISTS defect_cases_assignee_idx ON defect_cases(assigned_user_id, updated_at DESC);
