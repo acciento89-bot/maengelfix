@@ -386,3 +386,64 @@ CREATE TABLE IF NOT EXISTS calendar_events (
 CREATE INDEX IF NOT EXISTS calendar_events_org_idx ON calendar_events(organization_id,starts_at);
 CREATE INDEX IF NOT EXISTS calendar_events_user_idx ON calendar_events(assigned_user_id,starts_at);
 CREATE INDEX IF NOT EXISTS calendar_events_case_idx ON calendar_events(case_id,starts_at);
+
+
+-- v0.13: Übergabe- und Abnahmeprotokolle mit Mängelübernahme
+CREATE TABLE IF NOT EXISTS inspection_protocols (
+  id text PRIMARY KEY,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  property_id text REFERENCES properties(id) ON DELETE SET NULL,
+  unit_id text REFERENCES units(id) ON DELETE SET NULL,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  protocol_type text NOT NULL DEFAULT 'handover',
+  status text NOT NULL DEFAULT 'draft',
+  title text NOT NULL,
+  inspection_at timestamptz NOT NULL DEFAULT now(),
+  tenant_name text,
+  tenant_email text,
+  general_notes text,
+  completed_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS inspection_protocols_org_idx ON inspection_protocols(organization_id,inspection_at DESC);
+CREATE INDEX IF NOT EXISTS inspection_protocols_unit_idx ON inspection_protocols(unit_id,inspection_at DESC);
+
+CREATE TABLE IF NOT EXISTS inspection_rooms (
+  id text PRIMARY KEY,
+  protocol_id text NOT NULL REFERENCES inspection_protocols(id) ON DELETE CASCADE,
+  name text NOT NULL,
+  position integer NOT NULL DEFAULT 0,
+  condition text NOT NULL DEFAULT 'ok',
+  notes text,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS inspection_rooms_protocol_idx ON inspection_rooms(protocol_id,position);
+
+CREATE TABLE IF NOT EXISTS inspection_findings (
+  id text PRIMARY KEY,
+  protocol_id text NOT NULL REFERENCES inspection_protocols(id) ON DELETE CASCADE,
+  room_id text REFERENCES inspection_rooms(id) ON DELETE SET NULL,
+  created_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  title text NOT NULL,
+  description text NOT NULL,
+  category text NOT NULL DEFAULT 'Sonstiges',
+  severity text NOT NULL DEFAULT 'normal',
+  status text NOT NULL DEFAULT 'open',
+  defect_case_id text REFERENCES defect_cases(id) ON DELETE SET NULL,
+  created_at timestamptz NOT NULL DEFAULT now(),
+  updated_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS inspection_findings_protocol_idx ON inspection_findings(protocol_id,status);
+
+CREATE TABLE IF NOT EXISTS inspection_attachments (
+  id text PRIMARY KEY,
+  finding_id text NOT NULL REFERENCES inspection_findings(id) ON DELETE CASCADE,
+  uploaded_by text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  original_name text NOT NULL,
+  stored_name text NOT NULL,
+  mime_type text NOT NULL,
+  size_bytes integer NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS inspection_attachments_finding_idx ON inspection_attachments(finding_id,created_at);
