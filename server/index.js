@@ -628,7 +628,7 @@ async function issueVerification(userId, email, name) {
   return sendAppMail({to:email,subject:'E-Mail-Adresse für MängelFix bestätigen',heading:`Hallo ${name || ''}`,text:'Bitte bestätige deine E-Mail-Adresse. Der Link ist 24 Stunden gültig.',buttonLabel:'E-Mail bestätigen',buttonUrl:`${appOrigin}/email-bestaetigen/${token}`});
 }
 
-async function notifyOrganization(organizationId, subject, text, caseId) {
+async function emailOrganization(organizationId, subject, text, caseId) {
   if (!mailer || !organizationId) return;
   const result=await pool.query(`SELECT DISTINCT u.email FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1`, [organizationId]);
   await Promise.allSettled(result.rows.map(row=>sendAppMail({to:row.email,subject,heading:subject,text,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${caseId}`})));
@@ -702,7 +702,7 @@ app.post('/api/invitations/:token/accept', auth, async (req,res,next)=>{
     await client.query(`UPDATE tenant_invitations SET accepted_at=now() WHERE id=$1`, [inv.id]);
     await client.query('COMMIT');
     const orgInfo=await pool.query('SELECT name FROM organizations WHERE id=$1',[inv.organization_id]);
-    try { await notifyOrganization(inv.organization_id,'Mieter-Verknüpfung bestätigt',`${req.user.name} hat die digitale Verbindung zur Einheit bestätigt.`, inv.unit_id); } catch(mailError){ console.error('Acceptance notification failed',mailError); }
+    try { await emailOrganization(inv.organization_id,'Mieter-Verknüpfung bestätigt',`${req.user.name} hat die digitale Verbindung zur Einheit bestätigt.`, inv.unit_id); } catch(mailError){ console.error('Acceptance notification failed',mailError); }
     res.json({ link: linked.rows[0] });
   } catch(error){ await client.query('ROLLBACK'); next(error); } finally { client.release(); }
 });
@@ -1401,7 +1401,7 @@ app.post('/api/cases', auth, async (req, res, next) => {
       [id(), caseId, req.user.id, 'created', destination ? `Mangel wurde vom Mieter digital an ${destination.organization_name} übermittelt.` : 'Mangel wurde erfasst.']
     );
     await client.query('COMMIT');
-    if (destination) { try { await notifyOrganization(destination.organization_id,`Neuer Mangel: ${title}`,`${req.user.name} hat einen neuen Mangel für ${destination.property_name} · ${destination.unit_label} digital übermittelt.`,caseId); } catch(mailError){ console.error('New case notification failed',mailError); } }
+    if (destination) { try { await emailOrganization(destination.organization_id,`Neuer Mangel: ${title}`,`${req.user.name} hat einen neuen Mangel für ${destination.property_name} · ${destination.unit_label} digital übermittelt.`,caseId); } catch(mailError){ console.error('New case notification failed',mailError); } }
     res.status(201).json({ case: result.rows[0] });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -1466,7 +1466,7 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
     );
     if (nextStatus !== old.status) {
       await pool.query(
-        'INSERT INTO case_events (id, case_id, user_id, event_type, note, visibility) VALUES ($1,$2,$3,$4,$5,'shared')',
+        `INSERT INTO case_events (id, case_id, user_id, event_type, note, visibility) VALUES ($1,$2,$3,$4,$5,'shared')`,
         [id(), req.params.caseId, req.user.id, 'status', `Status geändert: ${nextStatus}`]
       );
       if (old.submitted_by_tenant) {
@@ -1518,7 +1518,7 @@ app.post('/api/cases/:caseId/messages', auth, async (req,res,next)=>{
         const owner=await tenantOwnerForCase(req.params.caseId);
         if(owner) await sendAppMail({to:owner.email,subject:`Neue Nachricht zu: ${accessible.title}`,heading:'Neue Nachricht deiner Hausverwaltung',text:message,buttonLabel:'Nachricht öffnen',buttonUrl:`${appOrigin}/app?case=${req.params.caseId}`});
       } else {
-        await notifyOrganization(accessible.organization_id,`Neue Mieternachricht: ${accessible.title}`,`${req.user.name}: ${message}`,req.params.caseId);
+        await emailOrganization(accessible.organization_id,`Neue Mieternachricht: ${accessible.title}`,`${req.user.name}: ${message}`,req.params.caseId);
       }
     } catch(mailError){console.error('Message mail failed',mailError);}
     res.status(201).json({message:result.rows[0]});
