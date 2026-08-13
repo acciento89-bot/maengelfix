@@ -1,0 +1,20 @@
+{
+  "name": "MängelFix",
+  "short_name": "MängelFix",
+  "description": "Mängel erfassen, dokumentieren, nachhalten und sauber bearbeiten.",
+  "start_url": "/app",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#f4f6f8",
+  "theme_color": "#18212b",
+  "lang": "de",
+  "categories": ["productivity", "utilities"],
+  "icons": [
+    {
+      "src": "/maengelfix-mark.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
