@@ -1,0 +1,29 @@
+name: Fix root HTML response
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-root-html-response.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  fix:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      - run: python3 scripts/fix_root_html_response.py
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/index.js
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Serve MängelFix app shell as HTML response"
+            git push
+          fi
