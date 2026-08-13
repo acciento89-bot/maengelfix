@@ -1,0 +1,381 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0346C104424D83BFA21741A9 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D786E693AA94B2D162465F6 /* StoreKitManager.swift */; };
+		05E3FACFBD30D2731A4076C2 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD147D07796741A0E1DC658 /* ProfileView.swift */; };
+		17BD1E4CA7357C9CEB9AF6E4 /* MaengelFixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */; };
+		3B96E955C642CD3FCD4865D7 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C4C17867E1B4ECA98F2C3C /* AuthView.swift */; };
+		51B7C81C37A119679BEE7E5F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52538A56CF3B868CEEB3CC2 /* Models.swift */; };
+		71E6C1D62B444119A4C80A38 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4A2A92F017312F29CAFC98 /* APIClient.swift */; };
+		74DCD5473FBBCA236F07401A /* CreateCaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */; };
+		755279C982DE108FAFAC150A /* MFTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */; };
+		949EE9009FF0908AABD84295 /* ManagementDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */; };
+		C7F9503245819AB084813C93 /* AppSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA713155028C026EFBB2EA4 /* AppSession.swift */; };
+		E4017183F9B56ED6E3CE70C5 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */; };
+		E4E22C3A9B3B6907E512FE76 /* CasesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A3CE6C8B544300CC61AA53 /* CasesView.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXFileReference section */
+		29C4C17867E1B4ECA98F2C3C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
+		3BD147D07796741A0E1DC658 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFTheme.swift; sourceTree = "<group>"; };
+		4F4A2A92F017312F29CAFC98 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
+		56521B0728848725E58C0D0B /* MängelFix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MängelFix.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		57A3CE6C8B544300CC61AA53 /* CasesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasesView.swift; sourceTree = "<group>"; };
+		5AA713155028C026EFBB2EA4 /* AppSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSession.swift; sourceTree = "<group>"; };
+		5D786E693AA94B2D162465F6 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaengelFixApp.swift; sourceTree = "<group>"; };
+		854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCaseView.swift; sourceTree = "<group>"; };
+		C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
+		C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementDashboardView.swift; sourceTree = "<group>"; };
+		E52538A56CF3B868CEEB3CC2 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		2F539D0CD73D2087B86F256E /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				4F4A2A92F017312F29CAFC98 /* APIClient.swift */,
+				5AA713155028C026EFBB2EA4 /* AppSession.swift */,
+				E52538A56CF3B868CEEB3CC2 /* Models.swift */,
+				5D786E693AA94B2D162465F6 /* StoreKitManager.swift */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		A45A13B53DABF5109C99E9E7 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				56521B0728848725E58C0D0B /* MängelFix.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		CC81878E85D1926FBBDC2EA7 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */,
+				2F539D0CD73D2087B86F256E /* Core */,
+				E18B52FEEB9E40B49FF5B75E /* Design */,
+				EC386AD57518E4CE78F6027C /* Features */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		E00EFDAE9567323F536D800F = {
+			isa = PBXGroup;
+			children = (
+				CC81878E85D1926FBBDC2EA7 /* Sources */,
+				A45A13B53DABF5109C99E9E7 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		E18B52FEEB9E40B49FF5B75E /* Design */ = {
+			isa = PBXGroup;
+			children = (
+				4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */,
+			);
+			path = Design;
+			sourceTree = "<group>";
+		};
+		EC386AD57518E4CE78F6027C /* Features */ = {
+			isa = PBXGroup;
+			children = (
+				29C4C17867E1B4ECA98F2C3C /* AuthView.swift */,
+				57A3CE6C8B544300CC61AA53 /* CasesView.swift */,
+				854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */,
+				C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */,
+				C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */,
+				3BD147D07796741A0E1DC658 /* ProfileView.swift */,
+			);
+			path = Features;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		B7D37F886A843FF99A624253 /* MaengelFix */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = C13C3FD8BAC3741017E98AEB /* Build configuration list for PBXNativeTarget "MaengelFix" */;
+			buildPhases = (
+				F23CF89B821C782673A5972C /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MaengelFix;
+			packageProductDependencies = (
+			);
+			productName = MaengelFix;
+			productReference = 56521B0728848725E58C0D0B /* MängelFix.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		ADDBC5AED192CD7F86E9AF42 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1600;
+				TargetAttributes = {
+					B7D37F886A843FF99A624253 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 9723022EAA74D8558DE29CC6 /* Build configuration list for PBXProject "MaengelFix" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = E00EFDAE9567323F536D800F;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = A45A13B53DABF5109C99E9E7 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				B7D37F886A843FF99A624253 /* MaengelFix */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXSourcesBuildPhase section */
+		F23CF89B821C782673A5972C /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				71E6C1D62B444119A4C80A38 /* APIClient.swift in Sources */,
+				C7F9503245819AB084813C93 /* AppSession.swift in Sources */,
+				3B96E955C642CD3FCD4865D7 /* AuthView.swift in Sources */,
+				E4E22C3A9B3B6907E512FE76 /* CasesView.swift in Sources */,
+				74DCD5473FBBCA236F07401A /* CreateCaseView.swift in Sources */,
+				E4017183F9B56ED6E3CE70C5 /* DashboardView.swift in Sources */,
+				755279C982DE108FAFAC150A /* MFTheme.swift in Sources */,
+				17BD1E4CA7357C9CEB9AF6E4 /* MaengelFixApp.swift in Sources */,
+				949EE9009FF0908AABD84295 /* ManagementDashboardView.swift in Sources */,
+				51B7C81C37A119679BEE7E5F /* Models.swift in Sources */,
+				05E3FACFBD30D2731A4076C2 /* ProfileView.swift in Sources */,
+				0346C104424D83BFA21741A9 /* StoreKitManager.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin XCBuildConfiguration section */
+		8F75F64227AD96A8A71E38A4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TKG684N5GL;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MängelFix";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "MängelFix benötigt die Kamera, damit du Schäden und Mängel direkt dokumentieren kannst.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MängelFix benötigt Zugriff auf deine Fotos, damit du vorhandene Aufnahmen zu einem Vorgang hinzufügen kannst.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
+				PRODUCT_NAME = "MängelFix";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		9BBB064F34ED60BC5FF21D5D /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.4.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Debug;
+		};
+		DA569872818A3E10D432953B /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				DEVELOPMENT_TEAM = TKG684N5GL;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "MängelFix";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSCameraUsageDescription = "MängelFix benötigt die Kamera, damit du Schäden und Mängel direkt dokumentieren kannst.";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MängelFix benötigt Zugriff auf deine Fotos, damit du vorhandene Aufnahmen zu einem Vorgang hinzufügen kannst.";
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
+				PRODUCT_NAME = "MängelFix";
+				SDKROOT = iphoneos;
+				SUPPORTS_MACCATALYST = NO;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		EE7D4E904229978AEC9B2B35 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				CODE_SIGN_STYLE = Automatic;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 5;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				MARKETING_VERSION = 0.4.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_STRICT_CONCURRENCY = targeted;
+				SWIFT_VERSION = 5.0;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		9723022EAA74D8558DE29CC6 /* Build configuration list for PBXProject "MaengelFix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				9BBB064F34ED60BC5FF21D5D /* Debug */,
+				EE7D4E904229978AEC9B2B35 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		C13C3FD8BAC3741017E98AEB /* Build configuration list for PBXNativeTarget "MaengelFix" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				8F75F64227AD96A8A71E38A4 /* Debug */,
+				DA569872818A3E10D432953B /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = ADDBC5AED192CD7F86E9AF42 /* Project object */;
+}
