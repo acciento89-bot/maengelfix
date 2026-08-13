@@ -323,12 +323,111 @@ app.patch('/api/profile', auth, async (req, res, next) => {
 });
 
 
+app.post('/api/account/change-password', auth, async (req,res,next)=>{
+  try {
+    const current=String(req.body.currentPassword||''); const nextPassword=String(req.body.newPassword||'');
+    if(nextPassword.length<8) return res.status(400).json({error:'Das neue Passwort muss mindestens 8 Zeichen haben.'});
+    const r=await pool.query('SELECT password_salt,password_hash FROM users WHERE id=$1',[req.user.id]);
+    if(!r.rowCount || !(await verifyPassword(current,r.rows[0].password_salt,r.rows[0].password_hash))) return res.status(401).json({error:'Das aktuelle Passwort ist nicht korrekt.'});
+    const c=await makePassword(nextPassword); await pool.query('UPDATE users SET password_salt=$2,password_hash=$3 WHERE id=$1',[req.user.id,c.salt,c.hash]);
+    const token=req.cookies[cookieName]; await pool.query('DELETE FROM sessions WHERE user_id=$1 AND token_hash<>$2',[req.user.id, token?tokenHash(token):'']);
+    res.json({ok:true});
+  } catch(error){next(error)}
+});
+
+app.patch('/api/account/email', auth, async (req,res,next)=>{
+  try {
+    const password=String(req.body.password||''); const email=cleanText(req.body.email,254)?.toLowerCase();
+    if(!email||!email.includes('@')) return res.status(400).json({error:'Bitte gib eine gültige E-Mail-Adresse an.'});
+    const r=await pool.query('SELECT password_salt,password_hash FROM users WHERE id=$1',[req.user.id]);
+    if(!(await verifyPassword(password,r.rows[0].password_salt,r.rows[0].password_hash))) return res.status(401).json({error:'Das Passwort ist nicht korrekt.'});
+    const exists=await pool.query('SELECT 1 FROM users WHERE email=$1 AND id<>$2',[email,req.user.id]); if(exists.rowCount) return res.status(409).json({error:'Diese E-Mail-Adresse wird bereits verwendet.'});
+    await pool.query('UPDATE users SET email=$2,email_verified_at=NULL WHERE id=$1',[req.user.id,email]);
+    try{await issueVerification(req.user.id,email,req.user.name)}catch(e){console.error('Verification after email change failed',e)}
+    res.json({ok:true,email,verificationMailSent:Boolean(mailer)});
+  } catch(error){next(error)}
+});
+
+app.get('/api/account/export', auth, async (req,res,next)=>{
+  try {
+    const [user,cases,links,memberships]=await Promise.all([
+      pool.query('SELECT id,name,email,street,postal_code,city,country,phone,email_verified_at,created_at FROM users WHERE id=$1',[req.user.id]),
+      pool.query(`SELECT c.*, COALESCE(json_agg(DISTINCT jsonb_build_object('id',a.id,'name',a.original_name,'mimeType',a.mime_type,'size',a.size_bytes,'createdAt',a.created_at)) FILTER (WHERE a.id IS NOT NULL),'[]') attachments FROM defect_cases c LEFT JOIN attachments a ON a.case_id=c.id WHERE c.user_id=$1 GROUP BY c.id ORDER BY c.created_at`,[req.user.id]),
+      pool.query(`SELECT tl.id,tl.status,tl.created_at,tl.disconnected_at,o.name organization,p.name property,u.label unit FROM tenant_links tl JOIN organizations o ON o.id=tl.organization_id JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id WHERE tl.user_id=$1`,[req.user.id]),
+      pool.query(`SELECT om.organization_id,o.name,om.role,COALESCE(om.active,true) active,om.created_at FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id WHERE om.user_id=$1`,[req.user.id])
+    ]);
+    const payload={exportedAt:new Date().toISOString(),account:user.rows[0],cases:cases.rows,tenantLinks:links.rows,organizations:memberships.rows};
+    res.setHeader('Content-Type','application/json; charset=utf-8'); res.setHeader('Content-Disposition','attachment; filename="maengelfix-datenexport.json"'); res.send(JSON.stringify(payload,null,2));
+  } catch(error){next(error)}
+});
+
+app.post('/api/tenant-links/:linkId/disconnect', auth, async (req,res,next)=>{
+  try {
+    const r=await pool.query(`UPDATE tenant_links SET status='disconnected',disconnected_at=now(),disconnected_by=$2 WHERE id=$1 AND user_id=$2 AND status='active' RETURNING id`,[req.params.linkId,req.user.id]);
+    if(!r.rowCount) return res.status(404).json({error:'Aktive Verknüpfung nicht gefunden.'}); res.json({ok:true});
+  } catch(error){next(error)}
+});
+
+app.patch('/api/team/members/:userId/status', auth, async (req,res,next)=>{
+  try {
+    const org=await organizationForUser(req.user.id); if(!org||!['owner','admin'].includes(org.role)) return res.status(403).json({error:'Keine Berechtigung.'});
+    if(req.params.userId===req.user.id) return res.status(400).json({error:'Deinen eigenen Zugang kannst du hier nicht deaktivieren.'});
+    const target=await pool.query('SELECT role FROM organization_memberships WHERE organization_id=$1 AND user_id=$2',[org.id,req.params.userId]); if(!target.rowCount) return res.status(404).json({error:'Mitarbeiter nicht gefunden.'});
+    if(target.rows[0].role==='owner') return res.status(400).json({error:'Der Inhaber kann nicht deaktiviert werden.'});
+    const active=Boolean(req.body.active); await pool.query(`UPDATE organization_memberships SET active=$3,deactivated_at=CASE WHEN $3 THEN NULL ELSE now() END,deactivated_by=CASE WHEN $3 THEN NULL ELSE $4 END WHERE organization_id=$1 AND user_id=$2`,[org.id,req.params.userId,active,req.user.id]);
+    if(!active) await pool.query('DELETE FROM sessions WHERE user_id=$1',[req.params.userId]); res.json({ok:true,active});
+  } catch(error){next(error)}
+});
+
+app.post('/api/team/transfer-ownership', auth, async (req,res,next)=>{
+  const client=await pool.connect(); try {
+    const org=await organizationForUser(req.user.id); if(!org||org.role!=='owner') return res.status(403).json({error:'Nur der aktuelle Inhaber kann die Inhaberschaft übertragen.'});
+    const targetId=cleanText(req.body.userId,80); const t=await client.query(`SELECT role,COALESCE(active,true) active FROM organization_memberships WHERE organization_id=$1 AND user_id=$2`,[org.id,targetId]); if(!t.rowCount||!t.rows[0].active) return res.status(400).json({error:'Bitte wähle einen aktiven Mitarbeiter.'});
+    await client.query('BEGIN'); await client.query(`UPDATE organization_memberships SET role='admin' WHERE organization_id=$1 AND user_id=$2`,[org.id,req.user.id]); await client.query(`UPDATE organization_memberships SET role='owner' WHERE organization_id=$1 AND user_id=$2`,[org.id,targetId]); await client.query('COMMIT'); res.json({ok:true});
+  } catch(error){await client.query('ROLLBACK');next(error)} finally{client.release()}
+});
+
+app.post('/api/team/leave', auth, async (req,res,next)=>{
+  try {
+    const org=await organizationForUser(req.user.id); if(!org) return res.status(404).json({error:'Du gehörst zu keinem Verwaltungs-Arbeitsbereich.'}); if(org.role==='owner') return res.status(400).json({error:'Übertrage zuerst die Inhaberschaft, bevor du die Organisation verlässt.'});
+    await pool.query('DELETE FROM organization_memberships WHERE organization_id=$1 AND user_id=$2',[org.id,req.user.id]); res.json({ok:true});
+  } catch(error){next(error)}
+});
+
+app.delete('/api/account', auth, async (req,res,next)=>{
+  const client=await pool.connect(); try {
+    const password=String(req.body.password||''); const confirmation=String(req.body.confirmation||''); if(confirmation!=='LÖSCHEN') return res.status(400).json({error:'Bitte gib zur Bestätigung LÖSCHEN ein.'});
+    const u=await client.query('SELECT password_salt,password_hash FROM users WHERE id=$1',[req.user.id]); if(!(await verifyPassword(password,u.rows[0].password_salt,u.rows[0].password_hash))) return res.status(401).json({error:'Das Passwort ist nicht korrekt.'});
+    const owned=await client.query(`SELECT o.id,o.name FROM organizations o JOIN organization_memberships om ON om.organization_id=o.id WHERE om.user_id=$1 AND om.role='owner' AND COALESCE(om.active,true)=true`,[req.user.id]); if(owned.rowCount) return res.status(409).json({error:`Du bist noch Inhaber von „${owned.rows[0].name}“. Übertrage zuerst die Inhaberschaft.`});
+    await client.query('BEGIN'); await client.query('DELETE FROM users WHERE id=$1',[req.user.id]); await client.query('COMMIT'); res.clearCookie(cookieName,{path:'/'}); res.json({ok:true});
+  } catch(error){await client.query('ROLLBACK');next(error)} finally{client.release()}
+});
+
+app.get('/api/billing/plan', auth, async (req,res,next)=>{
+  try {
+    const org=await billingOrganizationForUser(req.user.id);
+    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_PRICE_MANAGEMENT)});}
+    const r=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
+    res.json({scope:'private',plan:r.rows[0],checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&process.env.STRIPE_PRICE_PRIVATE)});
+  } catch(error){next(error)}
+});
+
+app.post('/api/billing/checkout', auth, async (req,res,next)=>{
+  try {
+    const org=await billingOrganizationForUser(req.user.id);
+    if(org&&!['owner','admin'].includes(org.role)) return res.status(403).json({error:'Nur Inhaber und Admins können den Tarif ändern.'});
+    const configured=Boolean(process.env.STRIPE_SECRET_KEY && (org?process.env.STRIPE_PRICE_MANAGEMENT:process.env.STRIPE_PRICE_PRIVATE));
+    if(!configured) return res.status(503).json({error:'Online-Zahlung ist noch nicht aktiviert. Testphase und Tariflimits funktionieren bereits.'});
+    return res.status(501).json({error:'Stripe Checkout wird erst aktiviert, nachdem die endgültigen Preise und Produkt-IDs festgelegt wurden.'});
+  } catch(error){next(error)}
+});
+
 app.get('/api/team', auth, async (req, res, next) => {
   try {
     const organization = await organizationForUser(req.user.id);
     if (!organization) return res.json({ organization: null, members: [] });
     const members = await pool.query(
-      `SELECT u.id, u.name, u.email, om.role, om.created_at
+      `SELECT u.id, u.name, u.email, om.role, om.created_at, COALESCE(om.active,true) AS active, om.deactivated_at
        FROM organization_memberships om
        JOIN users u ON u.id = om.user_id
        WHERE om.organization_id = $1
@@ -351,7 +450,7 @@ app.post('/api/team', auth, async (req, res, next) => {
     await pool.query('BEGIN');
     try {
       await pool.query(
-        `INSERT INTO organizations (id, name, plan_code, created_by) VALUES ($1,$2,'business',$3)`,
+        `INSERT INTO organizations (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units) VALUES ($1,$2,'business_trial',$3,'trialing',now()+interval '14 days',5,25,250)`,
         [orgId, name, req.user.id]
       );
       await pool.query(
@@ -363,7 +462,7 @@ app.post('/api/team', auth, async (req, res, next) => {
       await pool.query('ROLLBACK');
       throw error;
     }
-    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business', role: 'owner' } });
+    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business_trial', role: 'owner', subscription_status: 'trialing' } });
   } catch (error) {
     next(error);
   }
@@ -375,6 +474,7 @@ app.post('/api/team/members', auth, async (req, res, next) => {
     if (!organization || !['owner', 'admin'].includes(organization.role)) {
       return res.status(403).json({ error: 'Nur Inhaber und Admins können Mitarbeiterkonten anlegen.' });
     }
+    const capacity=await enforceOrganizationLimit(organization,'member'); if(!capacity.ok) return res.status(402).json({error:capacity.error});
     const name = cleanText(req.body.name, 120);
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
@@ -408,6 +508,33 @@ app.post('/api/team/members', auth, async (req, res, next) => {
 });
 
 
+
+async function billingOrganizationForUser(userId) {
+  const r=await pool.query(`SELECT o.*,om.role FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id WHERE om.user_id=$1 AND COALESCE(om.active,true)=true LIMIT 1`,[userId]);
+  return r.rows[0]||null;
+}
+function billingState(org){
+  if(!org) return {active:false,reason:'none'};
+  if(org.subscription_status==='trialing'){
+    if(org.trial_ends_at && new Date(org.trial_ends_at)<=new Date()) return {active:false,reason:'trial_expired'};
+    return {active:true,reason:'trialing'};
+  }
+  if(org.subscription_status==='active') return {active:true,reason:'active'};
+  return {active:false,reason:org.subscription_status||'inactive'};
+}
+async function billingUsage(organizationId){
+  const r=await pool.query(`SELECT
+    (SELECT count(*)::int FROM organization_memberships WHERE organization_id=$1 AND COALESCE(active,true)=true) members,
+    (SELECT count(*)::int FROM properties WHERE organization_id=$1) properties,
+    (SELECT count(*)::int FROM units u JOIN properties p ON p.id=u.property_id WHERE p.organization_id=$1) units`,[organizationId]);
+  return r.rows[0];
+}
+async function enforceOrganizationLimit(org,kind){
+  const state=billingState(org); if(!state.active) return {ok:false,error:'Die Testphase bzw. das Verwaltungs-Abo ist nicht aktiv.'};
+  const usage=await billingUsage(org.id); const uk={member:'members',property:'properties',unit:'units'}[kind]; const lk={member:'max_members',property:'max_properties',unit:'max_units'}[kind];
+  if(uk && Number(usage[uk])>=Number(org[lk])) return {ok:false,error:`Tariflimit erreicht (${usage[uk]}/${org[lk]}).`};
+  return {ok:true,usage};
+}
 
 async function scopeForUser(userId) {
   const organization = await organizationForUser(userId);
