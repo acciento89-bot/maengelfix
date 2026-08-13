@@ -193,7 +193,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.17.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
+  res.json({ ok: true, service: 'maengelfix', version: '0.18.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -597,6 +597,18 @@ async function stripeRequest(pathname,params){
   const response=await fetch(`https://api.stripe.com/v1/${pathname}`,{method:'POST',headers:{Authorization:`Bearer ${process.env.STRIPE_SECRET_KEY}`,'Content-Type':'application/x-www-form-urlencoded'},body});
   const data=await response.json();if(!response.ok)throw new Error(data?.error?.message||'Stripe-Anfrage fehlgeschlagen.');return data;
 }
+const defectCategoriesByContext={
+  housing:['Feuchtigkeit / Schimmel','Heizung / Warmwasser','Sanitär','Elektro','Fenster / Türen','Boden / Wand','Lärm','Außenbereich','Schädlingsbefall','Sonstiges'],
+  delivery:['Transportschaden','Verpackung beschädigt','Produkt beschädigt','Falsche Lieferung','Fehlteil / unvollständig','Lieferung verspätet','Sonstiges'],
+  product:['Beschädigung','Funktionsmangel','Qualitätsmangel','Fehlteil / unvollständig','Falsches Produkt / Variante','Material- / Verarbeitungsfehler','Software / Firmware','Sonstiges'],
+  service:['Ausführung mangelhaft','Leistung unvollständig','Beschädigung verursacht','Abweichung vom Auftrag','Funktionsmangel nach Ausführung','Termin / Verzögerung','Sonstiges'],
+  vehicle:['Motor / Antrieb','Bremsen','Fahrwerk / Lenkung','Elektrik / Elektronik','Karosserie / Lack','Innenraum','Klima / Heizung','Reifen / Räder','Undichtigkeit','Werkstattleistung','Sonstiges'],
+  travel:['Unterkunft / Zimmer','Sauberkeit / Hygiene','Ausstattung defekt / fehlt','Lärm','Klima / Heizung','Sanitär','Verpflegung','Transport / Transfer','Buchung / Leistung abweichend','Sicherheit','Sonstiges'],
+  other:['Beschädigung','Funktionsmangel','Qualitätsmangel','Fehlteil / unvollständig','Falsche Lieferung / Ausführung','Sonstiges']
+};
+function normalizeDefectContext(value){return Object.prototype.hasOwnProperty.call(defectCategoriesByContext,value)?value:'housing'}
+function normalizeDefectCategory(context,value){const list=defectCategoriesByContext[context]||defectCategoriesByContext.other;return list.includes(value)?value:list[0]}
+
 const pricingCatalog={
   private_free:{code:'private_free',scope:'private',name:'Privat Free',monthly:0,yearly:0,maxCases:5},
   private_pro:{code:'private_pro',scope:'private',name:'Privat Pro',monthly:4.99,yearly:49.99},
@@ -1379,6 +1391,8 @@ app.post('/api/cases', auth, async (req, res, next) => {
   try {
     const title = cleanText(req.body.title, 160);
     const description = cleanText(req.body.description, 6000);
+    const caseContext=normalizeDefectContext(req.body.caseContext);
+    const caseCategory=normalizeDefectCategory(caseContext,cleanText(req.body.category,80));
     if (!title || !description) return res.status(400).json({ error: 'Titel und Beschreibung sind erforderlich.' });
 
     const caseId = id();
@@ -1411,7 +1425,7 @@ app.post('/api/cases', auth, async (req, res, next) => {
         destination?.id || null,
         Boolean(destination),
         title,
-        cleanText(req.body.category, 80) || 'Sonstiges',
+        caseCategory,
         description,
         propertyLabel,
         cleanText(req.body.locationLabel, 120),
@@ -1420,7 +1434,7 @@ app.post('/api/cases', auth, async (req, res, next) => {
         cleanText(req.body.recipientEmail, 254)?.toLowerCase(),
         cleanText(req.body.recipientAddress, 500),
         req.body.deadlineOn || null,
-        ['housing','delivery','product','service','vehicle','travel','other'].includes(req.body.caseContext)?req.body.caseContext:'housing',
+        caseContext,
         cleanText(req.body.referenceLabel,180),
         cleanText(req.body.subjectLabel,220),
         cleanText(req.body.counterpartyType,80)
