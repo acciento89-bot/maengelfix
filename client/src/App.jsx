@@ -399,7 +399,6 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile, pro=true, onUp
   const [error, setError] = useState('');
   const [note, setNote] = useState('');
   const [sharedMessage,setSharedMessage]=useState('');
-  useEffect(()=>{refreshWorkspaceState()},[view]);
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
 
   async function load() {
@@ -765,6 +764,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
     finally { setLoading(false); }
   }
   useEffect(() => { loadCases(); refreshUnread(); api('/api/management/overview').then(setManagement).catch(()=>setManagement({organization:null})); api('/api/entitlements').then(setEntitlements).catch(()=>setEntitlements({scope:'private',pro:false,usage:{activeCases:0},limits:{maxActiveCases:5,maxPhotosPerCase:3}})); api('/api/admin/me').then(x=>setIsAdmin(Boolean(x.admin))).catch(()=>setIsAdmin(false)); const params=new URLSearchParams(window.location.search); const caseId=params.get('case'); const requestedView=params.get('view'); if(caseId)setSelected(caseId); else if(requestedView)setView(requestedView); }, []);
+  useEffect(()=>{refreshWorkspaceState()},[view]);
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
   const goProfile = () => { setSelected(null); setView('profile'); };
   const hasPro=Boolean(entitlements?.pro);
