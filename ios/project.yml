@@ -23,7 +23,7 @@ targets:
       base:
         DEVELOPMENT_TEAM: TKG684N5GL
         PRODUCT_BUNDLE_IDENTIFIER: com.kamilunavo.maengelfix
-        PRODUCT_NAME: "MängelFix"
+        PRODUCT_NAME: "MaengelFix"
         TARGETED_DEVICE_FAMILY: "1,2"
         ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
