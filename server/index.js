@@ -118,7 +118,7 @@ async function auth(req, res, next) {
   }
 }
 
-const allowedStatuses = new Set(['draft', 'sent', 'reply', 'in_progress', 'resolved']);
+const allowedStatuses = new Set(['draft','sent','reply','received','reviewing','commissioned','scheduled','in_progress','resolved']);
 
 
 async function organizationForUser(userId) {
@@ -132,6 +132,25 @@ async function organizationForUser(userId) {
     [userId]
   );
   return result.rows[0] || null;
+}
+
+
+async function createNotification({ userId, organizationId=null, caseId=null, type, title, body=null, link=null }) {
+  if (!userId) return;
+  await pool.query(`INSERT INTO notifications (id,user_id,organization_id,case_id,type,title,body,link) VALUES ($1,$2,$3,$4,$5,$6,$7,$8)`,
+    [id(),userId,organizationId,caseId,type,title,body,link]);
+}
+
+async function notifyOrganization(organizationId, payload, excludeUserId=null) {
+  if (!organizationId) return;
+  const members=await pool.query('SELECT user_id FROM organization_memberships WHERE organization_id=$1',[organizationId]);
+  await Promise.all(members.rows.filter(x=>x.user_id!==excludeUserId).map(x=>createNotification({userId:x.user_id,organizationId,...payload})));
+}
+
+async function writeAudit({ organizationId, userId=null, caseId=null, action, entityType, entityId=null, summary, metadata={} }) {
+  if (!organizationId) return;
+  await pool.query(`INSERT INTO audit_logs (id,organization_id,user_id,case_id,action,entity_type,entity_id,summary,metadata) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9::jsonb)`,
+    [id(),organizationId,userId,caseId,action,entityType,entityId,summary,JSON.stringify(metadata||{})]);
 }
 
 async function canAccessCase(userId, caseId) {
@@ -152,7 +171,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.6.0', mail: smtpConfigured ? 'smtp' : 'manual' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.9.0', mail: smtpConfigured ? 'smtp' : 'manual' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -629,6 +648,7 @@ app.post('/api/cases/:caseId/work-orders', auth, async (req,res,next)=>{
     const status=delivery==='email'?'sent':'draft';
     await client.query(`UPDATE work_orders SET status=$2,sent_at=CASE WHEN $2='sent' THEN now() ELSE NULL END,updated_at=now() WHERE id=$1`,[orderId,status]);
     await client.query(`INSERT INTO case_events (id,case_id,user_id,event_type,note,visibility) VALUES ($1,$2,$3,'note',$4,'internal')`,[id(),req.params.caseId,req.user.id,`Arbeitsauftrag an ${provider.company_name} erstellt${delivery==='email'?' und per E-Mail versendet':''}.`]);
+    await writeAudit({organizationId:organization.id,userId:req.user.id,caseId:req.params.caseId,action:'work_order_created',entityType:'work_order',entityId:orderId,summary:`Arbeitsauftrag an ${provider.company_name} erstellt.`});
     await client.query('COMMIT');
     res.status(201).json({order:{...result.rows[0],status,company_name:provider.company_name},portalUrl,delivery});
   } catch(error){await client.query('ROLLBACK');next(error);} finally{client.release();}
@@ -685,6 +705,36 @@ app.post('/api/contractor/work-orders/:token/status', async (req,res,next)=>{
     const result=await pool.query(`UPDATE work_orders SET status=$2,scheduled_for=$3,contractor_note=$4,accepted_at=CASE WHEN $2='accepted' AND accepted_at IS NULL THEN now() ELSE accepted_at END,completed_at=CASE WHEN $2='completed' THEN now() ELSE completed_at END,updated_at=now() WHERE id=$1 RETURNING *`,[old.id,status,scheduledFor||null,cleanText(req.body.note,3000)]);
     await pool.query(`INSERT INTO case_events (id,case_id,user_id,event_type,note,visibility) VALUES ($1,$2,$3,'note',$4,'internal')`,[id(),old.case_id,old.created_by,`Dienstleister ${old.company_name}: Auftrag ${status==='accepted'?'angenommen':status==='scheduled'?'terminiert':status==='completed'?'als erledigt gemeldet':'abgelehnt'}${req.body.note?` – ${cleanText(req.body.note,500)}`:''}.`]);
     res.json({order:result.rows[0]});
+  } catch(error){next(error);}
+});
+
+
+app.get('/api/notifications', auth, async (req,res,next)=>{
+  try {
+    const result=await pool.query(`SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`,[req.user.id]);
+    res.json({notifications:result.rows,unread:result.rows.filter(x=>!x.read_at).length});
+  } catch(error){next(error);}
+});
+
+app.post('/api/notifications/read-all', auth, async (req,res,next)=>{
+  try { await pool.query('UPDATE notifications SET read_at=COALESCE(read_at,now()) WHERE user_id=$1',[req.user.id]); res.json({ok:true}); }
+  catch(error){next(error);}
+});
+
+app.post('/api/notifications/:notificationId/read', auth, async (req,res,next)=>{
+  try {
+    const result=await pool.query('UPDATE notifications SET read_at=COALESCE(read_at,now()) WHERE id=$1 AND user_id=$2 RETURNING *',[req.params.notificationId,req.user.id]);
+    if(!result.rowCount) return res.status(404).json({error:'Benachrichtigung nicht gefunden.'});
+    res.json({notification:result.rows[0]});
+  } catch(error){next(error);}
+});
+
+app.get('/api/audit', auth, async (req,res,next)=>{
+  try {
+    const organization=await organizationForUser(req.user.id);
+    if(!organization) return res.status(403).json({error:'Das Aktivitätsprotokoll ist im Verwaltungsbereich verfügbar.'});
+    const result=await pool.query(`SELECT al.*,u.name AS actor_name FROM audit_logs al LEFT JOIN users u ON u.id=al.user_id WHERE al.organization_id=$1 ORDER BY al.created_at DESC LIMIT 250`,[organization.id]);
+    res.json({logs:result.rows});
   } catch(error){next(error);}
 });
 
@@ -951,6 +1001,12 @@ app.post('/api/cases', auth, async (req, res, next) => {
         req.body.deadlineOn || null
       ]
     );
+    if (destination) {
+      await client.query(`UPDATE defect_cases SET status='received' WHERE id=$1`,[caseId]);
+      result.rows[0].status='received';
+      await notifyOrganization(destination.organization_id,{caseId,type:'tenant_case',title:'Neue Mängelmeldung vom Mieter',body:title,link:`/app?case=${caseId}`},req.user.id);
+      await writeAudit({organizationId:destination.organization_id,userId:req.user.id,caseId,action:'tenant_submitted',entityType:'case',entityId:caseId,summary:`Mieter hat den Mangel „${title}“ digital übermittelt.`});
+    }
     await client.query(
       'INSERT INTO case_events (id, case_id, user_id, event_type, note) VALUES ($1,$2,$3,$4,$5)',
       [id(), caseId, req.user.id, 'created', destination ? `Mangel wurde vom Mieter digital an ${destination.organization_name} übermittelt.` : 'Mangel wurde erfasst.']
@@ -1045,6 +1101,7 @@ app.post('/api/cases/:caseId/events', auth, async (req, res, next) => {
       [id(), req.params.caseId, req.user.id, 'note', note, visibility]
     );
     await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1', [req.params.caseId]);
+    if (accessible.organization_id) await writeAudit({organizationId:accessible.organization_id,userId:req.user.id,caseId:req.params.caseId,action:'note_added',entityType:'case',entityId:req.params.caseId,summary:'Interne Notiz zum Vorgang ergänzt.'});
     res.status(201).json({ event: result.rows[0] });
   } catch (error) {
     next(error);

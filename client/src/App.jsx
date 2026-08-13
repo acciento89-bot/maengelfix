@@ -1,12 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
-const statusLabels = {
-  draft: 'Entwurf',
-  sent: 'Versendet',
-  reply: 'Rückmeldung',
-  in_progress: 'In Bearbeitung',
-  resolved: 'Erledigt'
-};
+const statusLabels = { draft:'Entwurf', sent:'Versendet', reply:'Rückmeldung', received:'Eingegangen', reviewing:'In Prüfung', commissioned:'Auftrag erstellt', scheduled:'Termin geplant', in_progress:'In Ausführung', resolved:'Erledigt' };
+const managementStatusLabels = { received:'Eingegangen', reviewing:'In Prüfung', commissioned:'Auftrag erstellt', scheduled:'Termin geplant', in_progress:'In Ausführung', resolved:'Erledigt' };
+const privateStatusLabels = { draft:'Entwurf', sent:'Versendet', reply:'Rückmeldung', in_progress:'In Bearbeitung', resolved:'Erledigt' };
 
 const categories = ['Feuchtigkeit / Schimmel', 'Heizung / Warmwasser', 'Sanitär', 'Elektro', 'Fenster / Türen', 'Boden / Wand', 'Lärm', 'Außenbereich', 'Sonstiges'];
 
@@ -403,7 +399,7 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile }) {
       {error && <div className="errorBox">{error}</div>}
       <div className="detailGrid">
         <section className="contentCard"><div className="cardKicker">FALLINHALT</div><h3>Beschreibung</h3><p className="descriptionText">{item.description}</p><div className="factsGrid"><div><span>Objekt</span><b>{item.property_label || '—'}</b></div><div><span>Raum / Ort</span><b>{item.location_label || '—'}</b></div><div><span>Rückmeldung bis</span><b>{fmtDate(item.deadline_on)}</b></div><div><span>Empfänger</span><b>{item.recipient_name || 'Noch nicht hinterlegt'}</b></div></div></section>
-        <aside className="contentCard actionCard"><div className="cardKicker">VORGANG</div><h3>Status</h3><select disabled={busy} value={item.status} onChange={e => changeStatus(e.target.value)}>{Object.entries(statusLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select><p className="muted small">Statusänderungen werden automatisch im Verlauf protokolliert.</p><div className="sideInfo"><span>Fotobelege<b>{data.attachments.length}</b></span><span>Frist<b>{fmtDate(item.deadline_on)}</b></span></div></aside>
+        <aside className="contentCard actionCard"><div className="cardKicker">VORGANG</div><h3>Status</h3><select disabled={busy} value={item.status} onChange={e => changeStatus(e.target.value)}>{Object.entries(data.viewerRole==='management'?managementStatusLabels:privateStatusLabels).map(([key,label])=><option key={key} value={key}>{label}</option>)}</select><p className="muted small">Statusänderungen werden automatisch im Verlauf protokolliert.</p><div className="sideInfo"><span>Fotobelege<b>{data.attachments.length}</b></span><span>Frist<b>{fmtDate(item.deadline_on)}</b></span></div></aside>
       </div>
       <AssignmentPanel caseId={caseId} item={item} onChanged={async()=>{await load();onUpdated();}} />
       {data.viewerRole==='management'&&<WorkOrderPanel caseId={caseId}/>}
@@ -503,6 +499,23 @@ function ProfileView({ user, onSaved }) {
 }
 
 
+
+function NotificationsView({ onSelect, refreshUnread }) {
+  const [data,setData]=useState({notifications:[],unread:0}); const [error,setError]=useState('');
+  async function load(){try{setData(await api('/api/notifications'));refreshUnread?.();}catch(e){setError(e.message)}}
+  useEffect(()=>{load()},[]);
+  async function open(item){try{if(!item.read_at)await api(`/api/notifications/${item.id}/read`,{method:'POST'});if(item.case_id)onSelect(item.case_id);else if(item.link)window.location.href=item.link;else await load();refreshUnread?.();}catch(e){setError(e.message)}}
+  async function readAll(){try{await api('/api/notifications/read-all',{method:'POST'});await load();refreshUnread?.();}catch(e){setError(e.message)}}
+  return <div className="workspacePage"><div className="workspaceHeading"><div><span>BENACHRICHTIGUNGEN</span><h1>Was deine Aufmerksamkeit braucht</h1><p>Mietermeldungen, Nachrichten, Statusänderungen und wichtige Vorgänge an einer Stelle.</p></div>{data.unread>0&&<button className="secondaryButton" onClick={readAll}>Alle als gelesen markieren</button>}</div>{error&&<div className="errorBox">{error}</div>}<div className="notificationList">{data.notifications.length?data.notifications.map(n=><button key={n.id} className={`notificationRow ${n.read_at?'':'unread'}`} onClick={()=>open(n)}><div className="notificationIcon">{n.type==='tenant_case'?'!':n.type==='message'?'✉':n.type==='status'?'↻':'•'}</div><div><span>{n.type.replace('_',' ').toUpperCase()}</span><h3>{n.title}</h3><p>{n.body||''}</p><small>{new Date(n.created_at).toLocaleString('de-DE')}</small></div>{!n.read_at&&<i/>}</button>):<div className="emptyCard workspaceEmpty">Keine Benachrichtigungen vorhanden.</div>}</div></div>;
+}
+
+function AuditView() {
+  const [logs,setLogs]=useState([]); const [error,setError]=useState('');
+  useEffect(()=>{api('/api/audit').then(d=>setLogs(d.logs||[])).catch(e=>setError(e.message))},[]);
+  const labels={tenant_submitted:'Mietermeldung',status_changed:'Status',assignment_changed:'Zuordnung',note_added:'Interne Notiz',message_sent:'Nachricht',work_order_created:'Arbeitsauftrag'};
+  return <div className="workspacePage"><div className="workspaceHeading"><div><span>AKTIVITÄTSPROTOKOLL</span><h1>Wer hat was gemacht?</h1><p>Nachvollziehbare Historie wichtiger Aktionen im Verwaltungs-Arbeitsbereich.</p></div></div>{error&&<div className="errorBox">{error}</div>}<div className="auditList">{logs.length?logs.map(log=><article key={log.id} className="auditRow"><div className="auditTime"><b>{new Date(log.created_at).toLocaleDateString('de-DE')}</b><span>{new Date(log.created_at).toLocaleTimeString('de-DE',{hour:'2-digit',minute:'2-digit'})}</span></div><div><span>{labels[log.action]||log.action}</span><h3>{log.summary}</h3><p>{log.actor_name?`Durch ${log.actor_name}`:'Automatischer Vorgang'}</p></div></article>):<div className="emptyCard workspaceEmpty">Noch keine protokollierten Verwaltungsaktionen.</div>}</div></div>;
+}
+
 function TeamView() {
   const [team, setTeam] = useState({ organization: null, members: [] });
   const [orgName, setOrgName] = useState('');
@@ -590,13 +603,15 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   const [selected, setSelected] = useState(null);
   const [view, setView] = useState('overview');
   const [management,setManagement]=useState(undefined);
+  const [unreadNotifications,setUnreadNotifications]=useState(0);
+  async function refreshUnread(){try{const d=await api('/api/notifications');setUnreadNotifications(d.unread||0);}catch{setUnreadNotifications(0)}}
 
   async function loadCases() {
     try { const data = await api('/api/cases'); setCases(data.cases); setError(''); }
     catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  useEffect(() => { loadCases(); api('/api/management/overview').then(setManagement).catch(()=>setManagement({organization:null})); const params=new URLSearchParams(window.location.search); const caseId=params.get('case'); if(caseId)setSelected(caseId); }, []);
+  useEffect(() => { loadCases(); refreshUnread(); api('/api/management/overview').then(setManagement).catch(()=>setManagement({organization:null})); const params=new URLSearchParams(window.location.search); const caseId=params.get('case'); if(caseId)setSelected(caseId); }, []);
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
   const goProfile = () => { setSelected(null); setView('profile'); };
 
@@ -610,10 +625,12 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   else if (view === 'documents') content = <DocumentsView cases={cases} profileComplete={profileComplete} onProfile={goProfile} />;
   else if (view === 'providers') content = <ProvidersView />;
   else if (view === 'orders') content = <WorkOrdersView onSelectCase={setSelected} />;
+  else if (view === 'notifications') content = <NotificationsView onSelect={setSelected} refreshUnread={refreshUnread} />;
+  else if (view === 'audit') content = <AuditView />;
   else if (view === 'team') content = <TeamView />;
   else content = <ProfileView user={user} onSaved={setUser} />;
 
-  return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => { setSelected(null); setView('deadlines'); }}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b></button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button>{management?.organization&&<><button className={view === 'providers' ? 'active' : ''} onClick={() => { setSelected(null); setView('providers'); }}><span>H</span>Dienstleister</button><button className={view === 'orders' ? 'active' : ''} onClick={() => { setSelected(null); setView('orders'); }}><span>A</span>Aufträge</button></>}<button className={view === 'team' ? 'active' : ''} onClick={() => { setSelected(null); setView('team'); }}><span>T</span>{management?.organization ? 'Team' : 'Verwaltung'}</button></nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); setSelected(created.id); }} />}</div>;
+  return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => { setSelected(null); setView('deadlines'); }}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b></button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button>{management?.organization&&<><button className={view === 'providers' ? 'active' : ''} onClick={() => { setSelected(null); setView('providers'); }}><span>H</span>Dienstleister</button><button className={view === 'orders' ? 'active' : ''} onClick={() => { setSelected(null); setView('orders'); }}><span>A</span>Aufträge</button></>}<button className={view === 'notifications' ? 'active' : ''} onClick={() => { setSelected(null); setView('notifications'); }}><span>B</span>Benachrichtigungen {unreadNotifications>0&&<b>{unreadNotifications}</b>}</button>{management?.organization&&<button className={view === 'audit' ? 'active' : ''} onClick={() => { setSelected(null); setView('audit'); }}><span>A</span>Aktivitätsprotokoll</button>}<button className={view === 'team' ? 'active' : ''} onClick={() => { setSelected(null); setView('team'); }}><span>T</span>{management?.organization ? 'Team' : 'Verwaltung'}</button></nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); setSelected(created.id); }} />}</div>;
 }
 
 export default function App() {

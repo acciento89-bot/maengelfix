@@ -266,3 +266,34 @@ CREATE TABLE IF NOT EXISTS work_orders (
 CREATE INDEX IF NOT EXISTS work_orders_org_idx ON work_orders(organization_id, updated_at DESC);
 CREATE INDEX IF NOT EXISTS work_orders_case_idx ON work_orders(case_id, updated_at DESC);
 CREATE INDEX IF NOT EXISTS work_orders_provider_idx ON work_orders(provider_id, updated_at DESC);
+
+
+-- v0.9: Benachrichtigungen, Audit-Log & Verwaltungsstatus
+CREATE TABLE IF NOT EXISTS notifications (
+  id text PRIMARY KEY,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  organization_id text REFERENCES organizations(id) ON DELETE CASCADE,
+  case_id text REFERENCES defect_cases(id) ON DELETE CASCADE,
+  type text NOT NULL,
+  title text NOT NULL,
+  body text,
+  link text,
+  read_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS notifications_user_idx ON notifications(user_id, read_at, created_at DESC);
+
+CREATE TABLE IF NOT EXISTS audit_logs (
+  id text PRIMARY KEY,
+  organization_id text NOT NULL REFERENCES organizations(id) ON DELETE CASCADE,
+  user_id text REFERENCES users(id) ON DELETE SET NULL,
+  case_id text REFERENCES defect_cases(id) ON DELETE SET NULL,
+  action text NOT NULL,
+  entity_type text NOT NULL,
+  entity_id text,
+  summary text NOT NULL,
+  metadata jsonb NOT NULL DEFAULT '{}'::jsonb,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS audit_logs_org_idx ON audit_logs(organization_id, created_at DESC);
+CREATE INDEX IF NOT EXISTS audit_logs_case_idx ON audit_logs(case_id, created_at DESC);
