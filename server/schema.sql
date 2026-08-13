@@ -188,3 +188,37 @@ CREATE INDEX IF NOT EXISTS tenant_links_org_idx ON tenant_links(organization_id,
 DO $$ BEGIN
   ALTER TABLE defect_cases ADD CONSTRAINT defect_cases_tenant_link_fk FOREIGN KEY (tenant_link_id) REFERENCES tenant_links(id) ON DELETE SET NULL;
 EXCEPTION WHEN duplicate_object THEN NULL; END $$;
+
+
+-- v0.7: Kommunikation und Kontomails
+ALTER TABLE users ADD COLUMN IF NOT EXISTS email_verified_at timestamptz;
+ALTER TABLE case_events ADD COLUMN IF NOT EXISTS visibility text NOT NULL DEFAULT 'shared';
+
+CREATE TABLE IF NOT EXISTS email_verification_tokens (
+  id text PRIMARY KEY,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash text NOT NULL UNIQUE,
+  expires_at timestamptz NOT NULL,
+  used_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS email_verification_user_idx ON email_verification_tokens(user_id, expires_at DESC);
+
+CREATE TABLE IF NOT EXISTS password_reset_tokens (
+  id text PRIMARY KEY,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  token_hash text NOT NULL UNIQUE,
+  expires_at timestamptz NOT NULL,
+  used_at timestamptz,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS password_reset_user_idx ON password_reset_tokens(user_id, expires_at DESC);
+
+CREATE TABLE IF NOT EXISTS case_messages (
+  id text PRIMARY KEY,
+  case_id text NOT NULL REFERENCES defect_cases(id) ON DELETE CASCADE,
+  user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  message text NOT NULL,
+  created_at timestamptz NOT NULL DEFAULT now()
+);
+CREATE INDEX IF NOT EXISTS case_messages_case_idx ON case_messages(case_id, created_at);

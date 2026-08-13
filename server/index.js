@@ -71,7 +71,8 @@ function publicUser(row) {
     postalCode: row.postal_code || '',
     city: row.city || '',
     country: row.country || 'Deutschland',
-    phone: row.phone || ''
+    phone: row.phone || '',
+    emailVerified: Boolean(row.email_verified_at)
   };
 }
 
@@ -100,7 +101,7 @@ async function auth(req, res, next) {
     const token = req.cookies[cookieName];
     if (!token) return res.status(401).json({ error: 'Bitte melde dich an.' });
     const result = await pool.query(
-      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone
+      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone, u.email_verified_at
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = $1 AND s.expires_at > now()`,
@@ -170,11 +171,12 @@ app.post('/api/auth/register', async (req, res, next) => {
     const result = await pool.query(
       `INSERT INTO users (id, name, email, password_salt, password_hash, country)
        VALUES ($1,$2,$3,$4,$5,'Deutschland')
-       RETURNING id, name, email, street, postal_code, city, country, phone`,
+       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at`,
       [userId, name, email, credentials.salt, credentials.hash]
     );
     await createSession(userId, res);
-    res.status(201).json({ user: publicUser(result.rows[0]) });
+    try { await issueVerification(userId, email, name); } catch (mailError) { console.error('Verification mail failed', mailError); }
+    res.status(201).json({ user: publicUser(result.rows[0]), verificationMailSent: Boolean(mailer) });
   } catch (error) {
     next(error);
   }
@@ -185,7 +187,7 @@ app.post('/api/auth/login', async (req, res, next) => {
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
     const result = await pool.query(
-      `SELECT id, name, email, password_salt, password_hash, street, postal_code, city, country, phone
+      `SELECT id, name, email, password_salt, password_hash, street, postal_code, city, country, phone, email_verified_at
        FROM users WHERE email = $1`,
       [email]
     );
@@ -198,6 +200,64 @@ app.post('/api/auth/login', async (req, res, next) => {
   } catch (error) {
     next(error);
   }
+});
+
+
+app.post('/api/auth/resend-verification', auth, async (req,res,next)=>{
+  try {
+    if (req.user.email_verified_at) return res.json({ok:true,alreadyVerified:true});
+    const sent=await issueVerification(req.user.id,req.user.email,req.user.name);
+    res.json({ok:true,sent});
+  } catch(error){next(error);}
+});
+
+app.get('/api/auth/verify-email/:token', async (req,res,next)=>{
+  const client=await pool.connect();
+  try {
+    await client.query('BEGIN');
+    const result=await client.query(`SELECT * FROM email_verification_tokens WHERE token_hash=$1 FOR UPDATE`,[tokenHash(req.params.token)]);
+    if(!result.rowCount){await client.query('ROLLBACK');return res.status(404).json({error:'Bestätigungslink nicht gefunden.'});}
+    const token=result.rows[0];
+    if(token.used_at || new Date(token.expires_at)<=new Date()){await client.query('ROLLBACK');return res.status(410).json({error:'Dieser Bestätigungslink ist abgelaufen oder wurde bereits verwendet.'});}
+    await client.query('UPDATE users SET email_verified_at=now() WHERE id=$1',[token.user_id]);
+    await client.query('UPDATE email_verification_tokens SET used_at=now() WHERE id=$1',[token.id]);
+    await client.query('COMMIT');
+    res.json({ok:true});
+  } catch(error){await client.query('ROLLBACK');next(error);} finally{client.release();}
+});
+
+app.post('/api/auth/forgot-password', async (req,res,next)=>{
+  try {
+    const email=cleanText(req.body.email,254)?.toLowerCase();
+    const result=await pool.query('SELECT id,name,email FROM users WHERE email=$1',[email]);
+    if(result.rowCount && mailer){
+      const user=result.rows[0];
+      await pool.query(`UPDATE password_reset_tokens SET expires_at=now() WHERE user_id=$1 AND used_at IS NULL AND expires_at>now()`,[user.id]);
+      const token=crypto.randomBytes(32).toString('base64url');
+      await pool.query(`INSERT INTO password_reset_tokens (id,user_id,token_hash,expires_at) VALUES ($1,$2,$3,now()+interval '60 minutes')`,[id(),user.id,tokenHash(token)]);
+      await sendAppMail({to:user.email,subject:'MängelFix Passwort zurücksetzen',heading:'Passwort zurücksetzen',text:'Du hast ein neues Passwort angefordert. Der Link ist 60 Minuten gültig. Wenn du das nicht warst, kannst du diese E-Mail ignorieren.',buttonLabel:'Neues Passwort festlegen',buttonUrl:`${appOrigin}/passwort-zuruecksetzen/${token}`});
+    }
+    res.json({ok:true,message:'Wenn ein Konto mit dieser E-Mail existiert, wurde eine Nachricht versendet.'});
+  } catch(error){next(error);}
+});
+
+app.post('/api/auth/reset-password/:token', async (req,res,next)=>{
+  const client=await pool.connect();
+  try {
+    const password=String(req.body.password||'');
+    if(password.length<8) return res.status(400).json({error:'Das neue Passwort muss mindestens 8 Zeichen haben.'});
+    await client.query('BEGIN');
+    const result=await client.query(`SELECT * FROM password_reset_tokens WHERE token_hash=$1 FOR UPDATE`,[tokenHash(req.params.token)]);
+    if(!result.rowCount){await client.query('ROLLBACK');return res.status(404).json({error:'Link nicht gefunden.'});}
+    const token=result.rows[0];
+    if(token.used_at || new Date(token.expires_at)<=new Date()){await client.query('ROLLBACK');return res.status(410).json({error:'Dieser Link ist abgelaufen oder wurde bereits verwendet.'});}
+    const credentials=await makePassword(password);
+    await client.query('UPDATE users SET password_salt=$2,password_hash=$3 WHERE id=$1',[token.user_id,credentials.salt,credentials.hash]);
+    await client.query('UPDATE password_reset_tokens SET used_at=now() WHERE id=$1',[token.id]);
+    await client.query('DELETE FROM sessions WHERE user_id=$1',[token.user_id]);
+    await client.query('COMMIT');
+    res.json({ok:true});
+  } catch(error){await client.query('ROLLBACK');next(error);} finally{client.release();}
 });
 
 app.post('/api/auth/logout', auth, async (req, res, next) => {
@@ -226,7 +286,7 @@ app.patch('/api/profile', auth, async (req, res, next) => {
         country=$6,
         phone=$7
        WHERE id=$1
-       RETURNING id, name, email, street, postal_code, city, country, phone`,
+       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at`,
       [
         req.user.id,
         name,
@@ -337,6 +397,44 @@ async function scopeForUser(userId) {
 
 
 
+
+
+function escapeHtml(value) {
+  return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));
+}
+
+async function sendAppMail({ to, subject, heading, text, buttonLabel, buttonUrl }) {
+  if (!mailer || !to) return false;
+  const safeHeading=escapeHtml(heading || subject);
+  const safeText=escapeHtml(text).replace(/\n/g,'<br>');
+  const button=buttonUrl ? `<p style="margin:28px 0"><a href="${escapeHtml(buttonUrl)}" style="background:#2457d6;color:white;text-decoration:none;padding:12px 18px;border-radius:6px;display:inline-block">${escapeHtml(buttonLabel || 'MängelFix öffnen')}</a></p>` : '';
+  await mailer.sendMail({
+    from: process.env.SMTP_FROM || 'MängelFix <noreply@kamilunavo.com>', to, subject,
+    text: `${heading || subject}\n\n${text}${buttonUrl ? `\n\n${buttonLabel || 'MängelFix öffnen'}: ${buttonUrl}` : ''}`,
+    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#18212b"><div style="font-weight:700;font-size:20px;margin-bottom:24px">MängelFix</div><h2>${safeHeading}</h2><p style="line-height:1.6">${safeText}</p>${button}<p style="color:#6f7a86;font-size:12px;margin-top:32px">Diese Nachricht wurde automatisch von MängelFix gesendet.</p></div>`
+  });
+  return true;
+}
+
+async function issueVerification(userId, email, name) {
+  if (!mailer) return false;
+  await pool.query(`UPDATE email_verification_tokens SET expires_at=now() WHERE user_id=$1 AND used_at IS NULL AND expires_at>now()`, [userId]);
+  const token=crypto.randomBytes(32).toString('base64url');
+  await pool.query(`INSERT INTO email_verification_tokens (id,user_id,token_hash,expires_at) VALUES ($1,$2,$3,now()+interval '24 hours')`, [id(),userId,tokenHash(token)]);
+  return sendAppMail({to:email,subject:'E-Mail-Adresse für MängelFix bestätigen',heading:`Hallo ${name || ''}`,text:'Bitte bestätige deine E-Mail-Adresse. Der Link ist 24 Stunden gültig.',buttonLabel:'E-Mail bestätigen',buttonUrl:`${appOrigin}/email-bestaetigen/${token}`});
+}
+
+async function notifyOrganization(organizationId, subject, text, caseId) {
+  if (!mailer || !organizationId) return;
+  const result=await pool.query(`SELECT DISTINCT u.email FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1`, [organizationId]);
+  await Promise.allSettled(result.rows.map(row=>sendAppMail({to:row.email,subject,heading:subject,text,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${caseId}`})));
+}
+
+async function tenantOwnerForCase(caseId) {
+  const result=await pool.query(`SELECT u.id,u.name,u.email,c.title,c.status,c.organization_id,c.submitted_by_tenant,o.name AS organization_name FROM defect_cases c JOIN users u ON u.id=c.user_id LEFT JOIN organizations o ON o.id=c.organization_id WHERE c.id=$1`, [caseId]);
+  return result.rows[0] || null;
+}
+
 async function sendTenantInvitationMail({ to, tenantName, organizationName, propertyName, unitLabel, inviteUrl }) {
   if (!mailer) return false;
   await mailer.sendMail({
@@ -399,6 +497,8 @@ app.post('/api/invitations/:token/accept', auth, async (req,res,next)=>{
     const linked=await client.query(`INSERT INTO tenant_links (id,organization_id,property_id,unit_id,contact_id,user_id,status) VALUES ($1,$2,$3,$4,$5,$6,'active') ON CONFLICT (unit_id,user_id) DO UPDATE SET organization_id=EXCLUDED.organization_id,property_id=EXCLUDED.property_id,contact_id=EXCLUDED.contact_id,status='active' RETURNING *`, [linkId,inv.organization_id,inv.property_id,inv.unit_id,inv.contact_id,req.user.id]);
     await client.query(`UPDATE tenant_invitations SET accepted_at=now() WHERE id=$1`, [inv.id]);
     await client.query('COMMIT');
+    const orgInfo=await pool.query('SELECT name FROM organizations WHERE id=$1',[inv.organization_id]);
+    try { await notifyOrganization(inv.organization_id,'Mieter-Verknüpfung bestätigt',`${req.user.name} hat die digitale Verbindung zur Einheit bestätigt.`, inv.unit_id); } catch(mailError){ console.error('Acceptance notification failed',mailError); }
     res.json({ link: linked.rows[0] });
   } catch(error){ await client.query('ROLLBACK'); next(error); } finally { client.release(); }
 });
@@ -690,6 +790,7 @@ app.post('/api/cases', auth, async (req, res, next) => {
       [id(), caseId, req.user.id, 'created', destination ? `Mangel wurde vom Mieter digital an ${destination.organization_name} übermittelt.` : 'Mangel wurde erfasst.']
     );
     await client.query('COMMIT');
+    if (destination) { try { await notifyOrganization(destination.organization_id,`Neuer Mangel: ${title}`,`${req.user.name} hat einen neuen Mangel für ${destination.property_name} · ${destination.unit_label} digital übermittelt.`,caseId); } catch(mailError){ console.error('New case notification failed',mailError); } }
     res.status(201).json({ case: result.rows[0] });
   } catch (error) {
     await client.query('ROLLBACK');
@@ -704,11 +805,14 @@ app.get('/api/cases/:caseId', auth, async (req, res, next) => {
     const accessible = await canAccessCase(req.user.id, req.params.caseId);
     const result = { rowCount: accessible ? 1 : 0, rows: accessible ? [accessible] : [] };
     if (!result.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
-    const [events, attachments] = await Promise.all([
-      pool.query('SELECT e.*, u.name AS actor_name FROM case_events e LEFT JOIN users u ON u.id=e.user_id WHERE e.case_id = $1 ORDER BY e.created_at DESC', [req.params.caseId]),
-      pool.query('SELECT id, original_name, mime_type, size_bytes, created_at FROM attachments WHERE case_id = $1 ORDER BY created_at', [req.params.caseId])
+    const viewerOrganization = await organizationForUser(req.user.id);
+    const viewerIsOrganization = Boolean(viewerOrganization && viewerOrganization.id === result.rows[0].organization_id);
+    const [events, attachments, messages] = await Promise.all([
+      pool.query(`SELECT e.*, u.name AS actor_name FROM case_events e LEFT JOIN users u ON u.id=e.user_id WHERE e.case_id=$1 AND ($2::boolean=true OR e.visibility='shared') ORDER BY e.created_at DESC`, [req.params.caseId, viewerIsOrganization]),
+      pool.query('SELECT id, original_name, mime_type, size_bytes, created_at FROM attachments WHERE case_id = $1 ORDER BY created_at', [req.params.caseId]),
+      pool.query('SELECT m.*,u.name AS actor_name FROM case_messages m JOIN users u ON u.id=m.user_id WHERE m.case_id=$1 ORDER BY m.created_at', [req.params.caseId])
     ]);
-    res.json({ case: result.rows[0], events: events.rows, attachments: attachments.rows });
+    res.json({ case: result.rows[0], events: events.rows, attachments: attachments.rows, messages: messages.rows, viewerRole: viewerIsOrganization ? 'management' : 'tenant' });
   } catch (error) {
     next(error);
   }
@@ -747,9 +851,13 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
     );
     if (nextStatus !== old.status) {
       await pool.query(
-        'INSERT INTO case_events (id, case_id, user_id, event_type, note) VALUES ($1,$2,$3,$4,$5)',
+        'INSERT INTO case_events (id, case_id, user_id, event_type, note, visibility) VALUES ($1,$2,$3,$4,$5,'shared')',
         [id(), req.params.caseId, req.user.id, 'status', `Status geändert: ${nextStatus}`]
       );
+      if (old.submitted_by_tenant) {
+        const owner=await tenantOwnerForCase(req.params.caseId);
+        if(owner && owner.id!==req.user.id){ try { await sendAppMail({to:owner.email,subject:`Status aktualisiert: ${old.title}`,heading:'Deine Mängelmeldung wurde aktualisiert',text:`Der Status von „${old.title}“ wurde geändert. Neuer Status: ${nextStatus}.`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${req.params.caseId}`}); } catch(mailError){console.error('Status mail failed',mailError);} }
+      }
     }
     res.json({ case: result.rows[0] });
   } catch (error) {
@@ -763,15 +871,42 @@ app.post('/api/cases/:caseId/events', auth, async (req, res, next) => {
     if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const note = cleanText(req.body.note, 2000);
     if (!note) return res.status(400).json({ error: 'Notiz darf nicht leer sein.' });
+    const viewerOrganization=await organizationForUser(req.user.id);
+    const isManagement=Boolean(viewerOrganization && viewerOrganization.id===accessible.organization_id);
+    const visibility=isManagement ? 'internal' : 'shared';
     const result = await pool.query(
-      'INSERT INTO case_events (id, case_id, user_id, event_type, note) VALUES ($1,$2,$3,$4,$5) RETURNING *',
-      [id(), req.params.caseId, req.user.id, 'note', note]
+      'INSERT INTO case_events (id, case_id, user_id, event_type, note, visibility) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *',
+      [id(), req.params.caseId, req.user.id, 'note', note, visibility]
     );
     await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1', [req.params.caseId]);
     res.status(201).json({ event: result.rows[0] });
   } catch (error) {
     next(error);
   }
+});
+
+
+app.post('/api/cases/:caseId/messages', auth, async (req,res,next)=>{
+  try {
+    const accessible=await canAccessCase(req.user.id,req.params.caseId);
+    if(!accessible) return res.status(404).json({error:'Mangel nicht gefunden.'});
+    if(!accessible.submitted_by_tenant) return res.status(400).json({error:'Gemeinsame Nachrichten sind nur bei digital verbundenen Mietervorgängen verfügbar.'});
+    const message=cleanText(req.body.message,4000);
+    if(!message) return res.status(400).json({error:'Nachricht darf nicht leer sein.'});
+    const result=await pool.query(`INSERT INTO case_messages (id,case_id,user_id,message) VALUES ($1,$2,$3,$4) RETURNING *`,[id(),req.params.caseId,req.user.id,message]);
+    await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1',[req.params.caseId]);
+    const viewerOrganization=await organizationForUser(req.user.id);
+    const fromManagement=Boolean(viewerOrganization && viewerOrganization.id===accessible.organization_id);
+    try {
+      if(fromManagement){
+        const owner=await tenantOwnerForCase(req.params.caseId);
+        if(owner) await sendAppMail({to:owner.email,subject:`Neue Nachricht zu: ${accessible.title}`,heading:'Neue Nachricht deiner Hausverwaltung',text:message,buttonLabel:'Nachricht öffnen',buttonUrl:`${appOrigin}/app?case=${req.params.caseId}`});
+      } else {
+        await notifyOrganization(accessible.organization_id,`Neue Mieternachricht: ${accessible.title}`,`${req.user.name}: ${message}`,req.params.caseId);
+      }
+    } catch(mailError){console.error('Message mail failed',mailError);}
+    res.status(201).json({message:result.rows[0]});
+  } catch(error){next(error);}
 });
 
 const storage = multer.diskStorage({

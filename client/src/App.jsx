@@ -217,6 +217,7 @@ function Auth({ mode, onSignedIn, navigate }) {
             {error && <div className="errorBox">{error}</div>}
             <button className="primaryButton authSubmit" disabled={busy}>{busy ? 'Einen Moment…' : register ? 'Konto erstellen' : 'Anmelden'}</button>
           </form>
+          {!register && <div className="authForgot"><button onClick={() => navigate('/passwort-vergessen')}>Passwort vergessen?</button></div>}
           <div className="authSwitch">{register ? 'Du hast bereits ein Konto?' : 'Noch kein MängelFix-Konto?'} <button onClick={() => navigate(register ? '/anmelden' : '/registrieren')}>{register ? 'Anmelden' : 'Kostenlos registrieren'}</button></div>
           <p className="legalHint">Mit der Nutzung gelten unsere <button onClick={() => navigate('/nutzungsbedingungen')}>Nutzungsbedingungen</button> und <button onClick={() => navigate('/datenschutz')}>Datenschutzhinweise</button>.</p>
         </section>
@@ -224,6 +225,15 @@ function Auth({ mode, onSignedIn, navigate }) {
       <PublicFooter navigate={navigate} />
     </div>
   );
+}
+
+
+function SimpleAccountPage({ mode, token, navigate }) {
+  const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false);
+  useEffect(()=>{ if(mode==='verify'&&token){ setBusy(true); api(`/api/auth/verify-email/${token}`).then(()=>setMessage('Deine E-Mail-Adresse wurde bestätigt.')).catch(e=>setError(e.message)).finally(()=>setBusy(false)); } },[mode,token]);
+  async function submit(e){e.preventDefault();setBusy(true);setError('');setMessage('');try{if(mode==='forgot'){const d=await api('/api/auth/forgot-password',{method:'POST',body:JSON.stringify({email})});setMessage(d.message);}else if(mode==='reset'){await api(`/api/auth/reset-password/${token}`,{method:'POST',body:JSON.stringify({password})});setMessage('Dein Passwort wurde geändert. Du kannst dich jetzt anmelden.');}}catch(x){setError(x.message)}finally{setBusy(false)}}
+  const title=mode==='forgot'?'Passwort vergessen':mode==='reset'?'Neues Passwort':'E-Mail bestätigen';
+  return <div className="authStandalone"><PublicHeader navigate={navigate}/><main className="authStage accountActionStage"><section className="authPitch"><div className="landingEyebrow"><span/> MÄNGELFIX KONTO</div><h1>{title}</h1><p>{mode==='forgot'?'Wir senden dir einen sicheren Link zum Zurücksetzen.':mode==='reset'?'Lege ein neues Passwort mit mindestens 8 Zeichen fest.':'Wir prüfen deinen Bestätigungslink.'}</p></section><section className="authBox"><div className="authBoxHead"><span>KONTO</span><h2>{title}</h2></div>{mode!=='verify'&&<form onSubmit={submit} className="formStack">{mode==='forgot'?<label>E-Mail<input required type="email" value={email} onChange={e=>setEmail(e.target.value)}/></label>:<label>Neues Passwort<input required minLength="8" type="password" value={password} onChange={e=>setPassword(e.target.value)}/></label>}<button className="primaryButton authSubmit" disabled={busy}>{busy?'Einen Moment…':mode==='forgot'?'Link anfordern':'Passwort speichern'}</button></form>}{busy&&mode==='verify'&&<p>Bestätigung wird geprüft…</p>}{error&&<div className="errorBox">{error}</div>}{message&&<div className="successBox">{message}</div>}<div className="authSwitch"><button onClick={()=>navigate('/anmelden')}>Zur Anmeldung</button></div></section></main><PublicFooter navigate={navigate}/></div>;
 }
 
 function LegalPage({ type, navigate }) {
@@ -338,6 +348,7 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile }) {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState('');
   const [note, setNote] = useState('');
+  const [sharedMessage,setSharedMessage]=useState('');
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
 
   async function load() {
@@ -359,6 +370,13 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile }) {
     try { await api(`/api/cases/${caseId}/events`, { method: 'POST', body: JSON.stringify({ note }) }); setNote(''); await load(); onUpdated(); }
     catch (err) { setError(err.message); }
     finally { setBusy(false); }
+  }
+
+  async function sendSharedMessage(event) {
+    event.preventDefault(); if (!sharedMessage.trim()) return;
+    setBusy(true); setError('');
+    try { await api(`/api/cases/${caseId}/messages`, { method:'POST', body:JSON.stringify({message:sharedMessage}) }); setSharedMessage(''); await load(); onUpdated(); }
+    catch(err){setError(err.message);} finally{setBusy(false);}
   }
 
   async function uploadImages(event) {
@@ -388,8 +406,9 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile }) {
         <aside className="contentCard actionCard"><div className="cardKicker">VORGANG</div><h3>Status</h3><select disabled={busy} value={item.status} onChange={e => changeStatus(e.target.value)}>{Object.entries(statusLabels).map(([key, label]) => <option key={key} value={key}>{label}</option>)}</select><p className="muted small">Statusänderungen werden automatisch im Verlauf protokolliert.</p><div className="sideInfo"><span>Fotobelege<b>{data.attachments.length}</b></span><span>Frist<b>{fmtDate(item.deadline_on)}</b></span></div></aside>
       </div>
       <AssignmentPanel caseId={caseId} item={item} onChanged={async()=>{await load();onUpdated();}} />
+      {item.submitted_by_tenant&&<section className="contentCard communicationCard"><div className="sectionTitle"><div><div className="cardKicker">KOMMUNIKATION</div><h3>{data.viewerRole==='management'?'Nachrichten an den Mieter':'Nachrichten mit der Hausverwaltung'}</h3><p className="muted">Diese Nachrichten sind für beide Seiten sichtbar und werden getrennt von internen Notizen gespeichert.</p></div></div><div className="messageThread">{(data.messages||[]).length?(data.messages||[]).map(msg=><div key={msg.id} className={`sharedMessage ${msg.user_id===user.id?'own':''}`}><div><b>{msg.actor_name}</b><span>{new Date(msg.created_at).toLocaleString('de-DE')}</span></div><p>{msg.message}</p></div>):<div className="emptyMini">Noch keine gemeinsamen Nachrichten.</div>}</div><form className="messageComposer" onSubmit={sendSharedMessage}><textarea rows="3" placeholder={data.viewerRole==='management'?'Nachricht an den Mieter…':'Nachricht an die Hausverwaltung…'} value={sharedMessage} onChange={e=>setSharedMessage(e.target.value)}/><button className="primaryButton" disabled={busy}>Nachricht senden</button></form></section>}
       <section className="contentCard"><div className="sectionTitle"><div><div className="cardKicker">BEWEISSICHERUNG</div><h3>Fotos & Belege</h3><p className="muted">Bis zu 5 Bilder pro Upload, jeweils maximal 10 MB.</p></div><label className="secondaryButton uploadButton">Bilder hinzufügen<input type="file" accept="image/*" multiple onChange={uploadImages} /></label></div>{data.attachments.length ? <div className="photoGrid">{data.attachments.map(file => <a key={file.id} href={`/api/attachments/${file.id}`} target="_blank" rel="noreferrer"><img src={`/api/attachments/${file.id}`} alt={file.original_name} /><span>{file.original_name}</span></a>)}</div> : <div className="emptyInline">Noch keine Bilder hinterlegt.</div>}</section>
-      <section className="contentCard"><div className="sectionTitle"><div><div className="cardKicker">CHRONOLOGIE</div><h3>Verlauf</h3><p className="muted">Notizen und Statusänderungen bleiben nachvollziehbar.</p></div></div><form className="noteForm" onSubmit={addNote}><input placeholder="Neue Notiz, z. B. Hausverwaltung telefonisch erreicht…" value={note} onChange={e => setNote(e.target.value)} /><button className="primaryButton" disabled={busy}>Notiz speichern</button></form><div className="timeline">{data.events.map(event => <div className="timelineItem" key={event.id}><div className="timelineDot"/><div><b>{event.event_type === 'created' ? 'Fall erstellt' : event.event_type === 'status' ? 'Status geändert' : 'Notiz'}</b><p>{event.note}</p><span>{new Date(event.created_at).toLocaleString('de-DE')}</span></div></div>)}</div></section>
+      <section className="contentCard"><div className="sectionTitle"><div><div className="cardKicker">CHRONOLOGIE</div><h3>Verlauf</h3><p className="muted">{data.viewerRole==='management'&&item.submitted_by_tenant?'Interne Notizen sind nur für das Verwaltungsteam sichtbar. Statusänderungen bleiben für den Mieter nachvollziehbar.':'Notizen und Statusänderungen bleiben nachvollziehbar.'}</p></div></div><form className="noteForm" onSubmit={addNote}><input placeholder={data.viewerRole==='management'&&item.submitted_by_tenant?'Interne Notiz – für den Mieter nicht sichtbar…':'Neue Notiz, z. B. Hausverwaltung telefonisch erreicht…'} value={note} onChange={e => setNote(e.target.value)} /><button className="primaryButton" disabled={busy}>Notiz speichern</button></form><div className="timeline">{data.events.map(event => <div className="timelineItem" key={event.id}><div className="timelineDot"/><div><b>{event.event_type === 'created' ? 'Fall erstellt' : event.event_type === 'status' ? 'Status geändert' : 'Notiz'}</b><p>{event.note}</p><span>{new Date(event.created_at).toLocaleString('de-DE')}</span></div></div>)}</div></section>
     </div>
   );
 }
@@ -479,7 +498,7 @@ function ProfileView({ user, onSaved }) {
     catch (err) { setError(err.message); }
     finally { setBusy(false); }
   }
-  return <div className="workspacePage"><div className="workspaceHeading"><div><span>PROFIL</span><h1>Absender & Konto</h1><p>Diese Angaben erscheinen als Absender in deiner MängelFix-PDF.</p></div></div><div className="profileLayout"><form className="workspacePanel profileForm" onSubmit={save}><div className="panelHead"><div><span>ABSENDERDATEN</span><h2>Deine Kontaktdaten</h2></div></div><div className="formGrid two"><label>Name<input required value={form.name} onChange={e => field('name', e.target.value)} /></label><label>E-Mail<input disabled value={user.email} /></label><label>Straße & Hausnummer<input required placeholder="Musterstraße 12" value={form.street} onChange={e => field('street', e.target.value)} /></label><label>Telefon <em>optional</em><input placeholder="+49 …" value={form.phone} onChange={e => field('phone', e.target.value)} /></label><label>PLZ<input required value={form.postalCode} onChange={e => field('postalCode', e.target.value)} /></label><label>Ort<input required value={form.city} onChange={e => field('city', e.target.value)} /></label></div><label>Land<input value={form.country} onChange={e => field('country', e.target.value)} /></label>{error && <div className="errorBox">{error}</div>}{message && <div className="successBox">{message}</div>}<div className="profileActions"><button className="primaryButton" disabled={busy}>{busy ? 'Speichern…' : 'Profil speichern'}</button></div></form><aside className="senderPreview"><span>PDF-VORSCHAU</span><h3>Absender</h3><p><b>{form.name || 'Dein Name'}</b><br />{form.street || 'Straße & Hausnummer'}<br />{form.postalCode || 'PLZ'} {form.city || 'Ort'}<br />{form.country || 'Deutschland'}<br />{user.email}{form.phone ? <><br />{form.phone}</> : null}</p><small>Diese Angaben werden nicht öffentlich angezeigt. Sie werden für dein Konto und die von dir erzeugten Dokumente verwendet.</small></aside></div></div>;
+  return <div className="workspacePage"><div className="workspaceHeading"><div><span>PROFIL</span><h1>Absender & Konto</h1><p>Diese Angaben erscheinen als Absender in deiner MängelFix-PDF.</p></div></div><div className="profileLayout"><form className="workspacePanel profileForm" onSubmit={save}><div className="panelHead"><div><span>ABSENDERDATEN</span><h2>Deine Kontaktdaten</h2></div></div><div className="formGrid two"><label>Name<input required value={form.name} onChange={e => field('name', e.target.value)} /></label><label>E-Mail<input disabled value={user.email} /></label><label>Straße & Hausnummer<input required placeholder="Musterstraße 12" value={form.street} onChange={e => field('street', e.target.value)} /></label><label>Telefon <em>optional</em><input placeholder="+49 …" value={form.phone} onChange={e => field('phone', e.target.value)} /></label><label>PLZ<input required value={form.postalCode} onChange={e => field('postalCode', e.target.value)} /></label><label>Ort<input required value={form.city} onChange={e => field('city', e.target.value)} /></label></div><label>Land<input value={form.country} onChange={e => field('country', e.target.value)} /></label>{error && <div className="errorBox">{error}</div>}{message && <div className="successBox">{message}</div>}{!user.emailVerified&&<div className="verificationNotice"><div><b>E-Mail noch nicht bestätigt</b><span>Bestätige deine Adresse für Kontosicherheit und Benachrichtigungen.</span></div><button type="button" className="secondaryButton" onClick={async()=>{try{const d=await api('/api/auth/resend-verification',{method:'POST'});setMessage(d.sent?'Bestätigungs-E-Mail wurde versendet.':'Mailversand ist noch nicht konfiguriert.');}catch(e){setError(e.message)}}}>Bestätigung senden</button></div>}<div className="profileActions"><button className="primaryButton" disabled={busy}>{busy ? 'Speichern…' : 'Profil speichern'}</button></div></form><aside className="senderPreview"><span>PDF-VORSCHAU</span><h3>Absender</h3><p><b>{form.name || 'Dein Name'}</b><br />{form.street || 'Straße & Hausnummer'}<br />{form.postalCode || 'PLZ'} {form.city || 'Ort'}<br />{form.country || 'Deutschland'}<br />{user.email}{form.phone ? <><br />{form.phone}</> : null}</p><small>Diese Angaben werden nicht öffentlich angezeigt. Sie werden für dein Konto und die von dir erzeugten Dokumente verwendet.</small></aside></div></div>;
 }
 
 
@@ -542,7 +561,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
     catch (err) { setError(err.message); }
     finally { setLoading(false); }
   }
-  useEffect(() => { loadCases(); api('/api/management/overview').then(setManagement).catch(()=>setManagement({organization:null})); }, []);
+  useEffect(() => { loadCases(); api('/api/management/overview').then(setManagement).catch(()=>setManagement({organization:null})); const params=new URLSearchParams(window.location.search); const caseId=params.get('case'); if(caseId)setSelected(caseId); }, []);
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
   const goProfile = () => { setSelected(null); setView('profile'); };
 
