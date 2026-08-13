@@ -21,6 +21,8 @@ targets:
       - Sources
     settings:
       base:
+        CURRENT_PROJECT_VERSION: 6
+        MARKETING_VERSION: 0.4.0
         DEVELOPMENT_TEAM: TKG684N5GL
         PRODUCT_BUNDLE_IDENTIFIER: com.kamilunavo.maengelfix
         PRODUCT_NAME: "MaengelFix"
@@ -32,7 +34,7 @@ targets:
         INFOPLIST_KEY_NSPhotoLibraryUsageDescription: "MängelFix benötigt Zugriff auf deine Fotos, damit du vorhandene Aufnahmen zu einem Vorgang hinzufügen kannst."
         INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents: YES
         INFOPLIST_KEY_UILaunchScreen_Generation: YES
-        INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
+        INFOPLIST_KEY_UISupportedInterfaceOrientations: "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad: "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight"
         SUPPORTS_MACCATALYST: NO
         ENABLE_USER_SCRIPT_SANDBOXING: YES
@@ -42,5 +44,7 @@ targets:
           CODE_SIGN_IDENTITY: "Apple Distribution: Piotr Kaminski (TKG684N5GL)"
           PROVISIONING_PROFILE_SPECIFIER: "MaengelFix App Store"
           DEVELOPMENT_TEAM: TKG684N5GL
+          CURRENT_PROJECT_VERSION: 6
+          MARKETING_VERSION: 0.4.0
     scheme:
       testTargets: []
