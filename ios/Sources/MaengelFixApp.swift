@@ -39,7 +39,7 @@ private struct RootView: View {
         }
         .task {
             await session.restoreIfNeeded()
-            if session.phase == .signedIn {
+            if session.phase == .signedIn && !session.isManagement {
                 await store.loadProducts()
             }
         }
@@ -54,20 +54,27 @@ private enum AppTab: Hashable {
 }
 
 private struct MainTabView: View {
+    @Environment(AppSession.self) private var session
     @State private var selectedTab: AppTab = .dashboard
     @State private var caseRefreshVersion = 0
 
     var body: some View {
         TabView(selection: $selectedTab) {
-            DashboardView(refreshVersion: caseRefreshVersion)
-                .tabItem { Label("Übersicht", systemImage: "square.grid.2x2") }
-                .tag(AppTab.dashboard)
+            Group {
+                if session.isManagement {
+                    ManagementDashboardView(refreshVersion: caseRefreshVersion)
+                } else {
+                    DashboardView(refreshVersion: caseRefreshVersion)
+                }
+            }
+            .tabItem { Label(session.isManagement ? "Verwaltung" : "Übersicht", systemImage: session.isManagement ? "building.2" : "square.grid.2x2") }
+            .tag(AppTab.dashboard)
 
             CasesView(refreshVersion: caseRefreshVersion)
-                .tabItem { Label("Mängel", systemImage: "exclamationmark.bubble") }
+                .tabItem { Label(session.isManagement ? "Vorgänge" : "Mängel", systemImage: "exclamationmark.bubble") }
                 .tag(AppTab.cases)
 
-            CreateCaseView { _ in
+            CreateCaseView(managementMode: session.isManagement) { _ in
                 caseRefreshVersion += 1
                 selectedTab = .cases
             }

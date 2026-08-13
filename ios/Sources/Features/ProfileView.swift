@@ -32,7 +32,8 @@ struct ProfileView: View {
                     }
 
                     Section("Konto") {
-                        LabeledContent("Tarif", value: user.planLabel)
+                        LabeledContent("Kontotyp", value: session.isManagement ? "Hausverwaltung" : "Privat")
+                        LabeledContent("Tarif", value: session.isManagement ? managementPlanLabel : user.planLabel)
                         LabeledContent("E-Mail bestätigt", value: user.emailVerified ? "Ja" : "Nein")
                         if !user.city.isEmpty {
                             LabeledContent("Ort", value: [user.postalCode, user.city].filter { !$0.isEmpty }.joined(separator: " "))
@@ -45,11 +46,15 @@ struct ProfileView: View {
                         }
                     }
 
-                    subscriptionSection(user: user)
+                    if session.isManagement {
+                        managementSubscriptionSection
+                    } else {
+                        subscriptionSection(user: user)
+                    }
                 }
 
                 Section("MängelFix") {
-                    LabeledContent("App-Version", value: "0.3.0")
+                    LabeledContent("App-Version", value: "0.4.0")
                     LabeledContent("Backend", value: "maengelfix.kamilunavo.com")
                 }
 
@@ -72,7 +77,8 @@ struct ProfileView: View {
             .navigationTitle("Profil")
             .task {
                 await session.refreshUser()
-                await store.loadProducts()
+                await session.refreshEntitlements()
+                if !session.isManagement { await store.loadProducts() }
             }
             .sheet(isPresented: $showEdit) {
                 if let user = session.user {
@@ -85,6 +91,44 @@ struct ProfileView: View {
                 }
             }
         }
+    }
+
+    private var managementPlanLabel: String {
+        switch session.entitlements?.planCode {
+        case "management_trial": return "Verwaltung · Testphase"
+        case "management_starter": return "Verwaltung Starter"
+        case "management_pro": return "Verwaltung Pro"
+        case "management_business": return "Verwaltung Business"
+        default: return "Verwaltung"
+        }
+    }
+
+    @ViewBuilder
+    private var managementSubscriptionSection: some View {
+        Section("Verwaltung") {
+            if let entitlements = session.entitlements {
+                Label(entitlements.pro ? "Verwaltungsfunktionen sind aktiv" : "Verwaltungstarif ist nicht aktiv", systemImage: entitlements.pro ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
+                    .foregroundStyle(entitlements.pro ? Color.mfPrimary : Color.orange)
+                if entitlements.status == "trialing" {
+                    LabeledContent("Testphase", value: "14 Tage kostenlos")
+                    if let end = entitlements.trialEndsAt { LabeledContent("Test endet", value: displayDate(end)) }
+                }
+                if let used = entitlements.usage.members, let limit = entitlements.limits.members { LabeledContent("Team", value: "\(used) / \(limit)") }
+                if let used = entitlements.usage.properties, let limit = entitlements.limits.properties { LabeledContent("Objekte", value: "\(used) / \(limit)") }
+                if let used = entitlements.usage.units, let limit = entitlements.limits.units { LabeledContent("Einheiten", value: "\(used) / \(limit)") }
+            } else {
+                HStack { ProgressView(); Text("Verwaltungsstatus wird geladen …") }
+            }
+            Text("Privat-Pro-Abos aus dem App Store werden für Verwaltungskonten nicht angeboten.")
+                .font(.footnote).foregroundStyle(.secondary)
+        }
+    }
+
+    private func displayDate(_ value: String) -> String {
+        let fractional = ISO8601DateFormatter(); fractional.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        let date = fractional.date(from: value) ?? ISO8601DateFormatter().date(from: value)
+        guard let date else { return value }
+        return date.formatted(date: .abbreviated, time: .omitted)
     }
 
     @ViewBuilder

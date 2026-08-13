@@ -66,8 +66,12 @@ final class APIClient: @unchecked Sendable {
         return response.user
     }
 
-    func register(name: String, email: String, password: String) async throws -> User {
-        let response: UserResponse = try await request("/api/auth/register", method: "POST", body: RegisterRequest(name: name, email: email, password: password))
+    func register(name: String, email: String, password: String, accountType: String, organizationName: String?) async throws -> User {
+        let response: RegisterResponse = try await request(
+            "/api/auth/register",
+            method: "POST",
+            body: RegisterRequest(name: name, email: email, password: password, accountType: accountType, organizationName: organizationName)
+        )
         return response.user
     }
 
@@ -105,6 +109,10 @@ final class APIClient: @unchecked Sendable {
 
     func entitlements() async throws -> Entitlements {
         try await request("/api/entitlements")
+    }
+
+    func managementOverview() async throws -> ManagementOverviewResponse {
+        try await request("/api/management/overview")
     }
 
     func cases() async throws -> [DefectCase] {
@@ -201,7 +209,7 @@ final class APIClient: @unchecked Sendable {
         var request = URLRequest(url: url)
         request.httpMethod = method
         request.setValue("application/json", forHTTPHeaderField: "Accept")
-        request.setValue("MängelFix-iOS/0.3", forHTTPHeaderField: "X-MaengelFix-Client")
+        request.setValue("MängelFix-iOS/0.4", forHTTPHeaderField: "X-MaengelFix-Client")
         if let bodyData {
             request.httpBody = bodyData
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
@@ -219,7 +227,7 @@ final class APIClient: @unchecked Sendable {
 }
 
 private struct LoginRequest: Encodable { let email: String; let password: String }
-private struct RegisterRequest: Encodable { let name: String; let email: String; let password: String }
+private struct RegisterRequest: Encodable { let name: String; let email: String; let password: String; let accountType: String; let organizationName: String? }
 private struct EmailRequest: Encodable { let email: String }
 private struct MessageRequest: Encodable { let message: String }
 private struct AppleTransactionRequest: Encodable { let transactionId: String }

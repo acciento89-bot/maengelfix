@@ -20,6 +20,7 @@ struct User: Codable, Identifiable, Hashable {
         switch planCode {
         case "private_pro": return "Privat Pro"
         case "private_free": return "Privat Free"
+        case "management_trial": return "Verwaltung · Testphase"
         case "management_starter": return "Verwaltung Starter"
         case "management_pro": return "Verwaltung Pro"
         case "management_business": return "Verwaltung Business"
@@ -134,6 +135,74 @@ struct EntitlementFeatures: Codable, Hashable {
     var analytics: Bool
     var archive: Bool
     var inspections: Bool
+}
+
+struct ManagementOrganization: Codable, Identifiable, Hashable {
+    let id: String
+    var name: String
+    var planCode: String?
+    var role: String?
+    var subscriptionStatus: String?
+    var trialEndsAt: String?
+    var maxMembers: Int?
+    var maxProperties: Int?
+    var maxUnits: Int?
+}
+
+struct ManagementMetrics: Codable, Hashable {
+    var properties: Int
+    var units: Int
+    var contacts: Int
+    var open: Int
+    var unassigned: Int
+    var overdue: Int
+}
+
+struct ManagementRecentCase: Codable, Identifiable, Hashable {
+    let id: String
+    var title: String
+    var status: String
+    var deadlineOn: String?
+    var assignedUserId: String?
+    var propertyName: String?
+    var unitLabel: String?
+    var assignedUserName: String?
+
+    var statusLabel: String {
+        switch status {
+        case "received": return "Eingegangen"
+        case "reviewing": return "In Prüfung"
+        case "commissioned": return "Beauftragt"
+        case "scheduled": return "Terminiert"
+        case "in_progress": return "In Ausführung"
+        case "resolved": return "Erledigt"
+        case "draft": return "Entwurf"
+        case "sent": return "Versendet"
+        case "reply": return "Rückmeldung"
+        default: return status
+        }
+    }
+}
+
+struct ManagementMember: Codable, Identifiable, Hashable {
+    let id: String
+    var name: String
+    var role: String
+    var openCases: Int
+}
+
+struct ManagementOverviewResponse: Decodable {
+    let organization: ManagementOrganization?
+    let metrics: ManagementMetrics?
+    let recent: [ManagementRecentCase]?
+    let members: [ManagementMember]?
+}
+
+struct RegisterResponse: Decodable {
+    let user: User
+    let accountType: String?
+    let organization: ManagementOrganization?
+    let verificationMailSent: Bool?
 }
 
 struct UserResponse: Decodable { let user: User }

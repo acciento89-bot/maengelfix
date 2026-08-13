@@ -13,6 +13,11 @@ final class AppSession {
     let api: APIClient
     var phase: Phase = .loading
     var user: User?
+    var entitlements: Entitlements?
+
+    var isManagement: Bool {
+        entitlements?.scope == "organization" || user?.onboardingUseCase == "management"
+    }
 
     init(api: APIClient = .shared) {
         self.api = api
@@ -24,6 +29,7 @@ final class AppSession {
         do {
             user = try await api.me()
             phase = .signedIn
+            await refreshEntitlements()
         } catch let error as APIError {
             if case .server(let status, _, _) = error, status == 401 {
                 user = nil
@@ -41,11 +47,18 @@ final class AppSession {
     func login(email: String, password: String) async throws {
         user = try await api.login(email: email, password: password)
         phase = .signedIn
+        await refreshEntitlements()
     }
 
-    func register(name: String, email: String, password: String) async throws {
-        user = try await api.register(name: name, email: email, password: password)
+    func register(name: String, email: String, password: String, accountType: String, organizationName: String?) async throws {
+        user = try await api.register(name: name, email: email, password: password, accountType: accountType, organizationName: organizationName)
         phase = .signedIn
+        await refreshEntitlements()
+    }
+
+    func refreshEntitlements() async {
+        guard phase == .signedIn else { entitlements = nil; return }
+        entitlements = try? await api.entitlements()
     }
 
     func refreshUser() async {
@@ -56,6 +69,7 @@ final class AppSession {
     func logout() async {
         try? await api.logout()
         user = nil
+        entitlements = nil
         phase = .signedOut
     }
 }

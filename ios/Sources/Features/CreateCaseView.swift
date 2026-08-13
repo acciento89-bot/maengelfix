@@ -4,7 +4,13 @@ import UIKit
 
 struct CreateCaseView: View {
     @Environment(AppSession.self) private var session
+    let managementMode: Bool
     let onCreated: (DefectCase) -> Void
+
+    init(managementMode: Bool = false, onCreated: @escaping (DefectCase) -> Void) {
+        self.managementMode = managementMode
+        self.onCreated = onCreated
+    }
 
     @State private var title = ""
     @State private var description = ""
@@ -47,10 +53,14 @@ struct CreateCaseView: View {
             Form {
                 Section("Mangel") {
                     TextField("Titel", text: $title).focused($focusedField, equals: .title)
-                    Picker("Bereich", selection: $context) {
-                        ForEach(contexts, id: \.0) { value, label in Text(label).tag(value) }
+                    if managementMode {
+                        LabeledContent("Bereich", value: "Wohnen / Immobilie")
+                    } else {
+                        Picker("Bereich", selection: $context) {
+                            ForEach(contexts, id: \.0) { value, label in Text(label).tag(value) }
+                        }
+                        .onChange(of: context) { _, value in category = categories[value]?.first ?? "Sonstiges" }
                     }
-                    .onChange(of: context) { _, value in category = categories[value]?.first ?? "Sonstiges" }
                     Picker("Kategorie", selection: $category) {
                         ForEach(categories[context] ?? ["Sonstiges"], id: \.self) { Text($0).tag($0) }
                     }
@@ -81,21 +91,32 @@ struct CreateCaseView: View {
                     TextField("Raum / Ort (optional)", text: $locationLabel).focused($focusedField, equals: .location)
                 }
 
-                Section("Empfänger") {
-                    TextField("Name / Firma (optional)", text: $recipientName).focused($focusedField, equals: .recipientName)
-                    TextField("E-Mail (optional)", text: $recipientEmail).keyboardType(.emailAddress).textInputAutocapitalization(.never).focused($focusedField, equals: .recipientEmail)
-                    TextField("Anschrift (optional)", text: $recipientAddress, axis: .vertical).lineLimit(2...4).focused($focusedField, equals: .recipientAddress)
+                if !managementMode {
+                    Section("Empfänger") {
+                        TextField("Name / Firma (optional)", text: $recipientName).focused($focusedField, equals: .recipientName)
+                        TextField("E-Mail (optional)", text: $recipientEmail).keyboardType(.emailAddress).textInputAutocapitalization(.never).focused($focusedField, equals: .recipientEmail)
+                        TextField("Anschrift (optional)", text: $recipientAddress, axis: .vertical).lineLimit(2...4).focused($focusedField, equals: .recipientAddress)
+                    }
                 }
 
                 Section("Frist") {
                     Toggle("Frist setzen", isOn: $hasDeadline)
                     if hasDeadline { DatePicker("Frist bis", selection: $deadlineOn, displayedComponents: .date) }
-                    if hasDeadline { Text("Fristen sind bei Privatkonten eine Pro-Funktion.").font(.caption).foregroundStyle(.secondary) }
+                    if hasDeadline {
+                        Text(managementMode ? "Fristen sind während der Verwaltungs-Testphase und in aktiven Verwaltungstarifen enthalten." : "Fristen sind bei Privatkonten eine Pro-Funktion.")
+                            .font(.caption).foregroundStyle(.secondary)
+                    }
                 }
 
                 if let errorMessage { Section { Text(errorMessage).foregroundStyle(.red) } }
             }
-            .navigationTitle("Neuer Mangel")
+            .navigationTitle(managementMode ? "Neuer Vorgang" : "Neuer Mangel")
+            .onAppear {
+                if managementMode {
+                    context = "housing"
+                    if !(categories["housing"] ?? []).contains(category) { category = categories["housing"]?.first ?? "Sonstiges" }
+                }
+            }
             .scrollDismissesKeyboard(.interactively)
             .onChange(of: selectedPhotos) { _, items in Task { await loadSelected(items) } }
             .sheet(isPresented: $showCamera) {
@@ -148,8 +169,8 @@ struct CreateCaseView: View {
                 let created = try await session.api.createCase(CreateCaseRequest(
                     title: title.trimmed, description: description.trimmed, caseContext: context, category: category,
                     propertyLabel: propertyLabel.nilIfBlank, locationLabel: locationLabel.nilIfBlank,
-                    discoveredOn: Self.apiDate.string(from: discoveredOn), recipientName: recipientName.nilIfBlank,
-                    recipientEmail: recipientEmail.nilIfBlank, recipientAddress: recipientAddress.nilIfBlank,
+                    discoveredOn: Self.apiDate.string(from: discoveredOn), recipientName: managementMode ? nil : recipientName.nilIfBlank,
+                    recipientEmail: managementMode ? nil : recipientEmail.nilIfBlank, recipientAddress: managementMode ? nil : recipientAddress.nilIfBlank,
                     deadlineOn: hasDeadline ? Self.apiDate.string(from: deadlineOn) : nil, destinationLinkId: nil
                 ))
                 if !draftImages.isEmpty {
