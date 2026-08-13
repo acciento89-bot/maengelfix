@@ -86,17 +86,21 @@ function cleanText(value, max = 1000) {
 
 function publicUser(row) {
   return {
-    id: row.id,
-    name: row.name,
-    email: row.email,
-    street: row.street || '',
-    postalCode: row.postal_code || '',
-    city: row.city || '',
-    country: row.country || 'Deutschland',
-    phone: row.phone || '',
-    emailVerified: Boolean(row.email_verified_at)
+    id: row.id, name: row.name, email: row.email,
+    street: row.street || '', postalCode: row.postal_code || '', city: row.city || '', country: row.country || 'Deutschland', phone: row.phone || '',
+    emailVerified: Boolean(row.email_verified_at), planCode: row.plan_code || 'private_free', subscriptionStatus: row.subscription_status || 'active',
+    subscriptionCurrentPeriodEnd: row.subscription_current_period_end || null, onboardingCompleted: Boolean(row.onboarding_completed_at), onboardingUseCase: row.onboarding_use_case || null
   };
 }
+
+function hasPrivatePro(user){return user?.plan_code==='private_pro'&&['active','trialing'].includes(String(user?.subscription_status||''))}
+async function privateEntitlements(userId,user){
+ const org=await billingOrganizationForUser(userId);
+ if(org){const st=billingState(org);return {scope:'organization',pro:Boolean(st.active),planCode:org.plan_code,status:org.subscription_status,trialEndsAt:org.trial_ends_at||null,usage:await billingUsage(org.id),limits:{members:org.max_members,properties:org.max_properties,units:org.max_units},features:{advancedEvidence:true,deadlines:true,tasks:true,calendar:true,analytics:true,archive:true,inspections:true}}}
+ const q=(await pool.query(`SELECT count(*) FILTER(WHERE status<>'resolved' AND archived_at IS NULL)::int active_cases FROM defect_cases WHERE user_id=$1`,[userId])).rows[0];const pro=hasPrivatePro(user);
+ return {scope:'private',pro,planCode:user?.plan_code||'private_free',status:user?.subscription_status||'active',usage:{activeCases:q.active_cases||0},limits:{maxActiveCases:pro?null:5,maxPhotosPerCase:pro?null:3},features:{advancedEvidence:pro,deadlines:pro,tasks:pro,calendar:pro,analytics:pro,archive:pro,inspections:pro}}
+}
+async function privateProFeature(req,res,next){try{const org=await billingOrganizationForUser(req.user.id);if(org){if(billingState(org).active)return next();return res.status(402).json({error:'Die Testphase bzw. das Verwaltungs-Abo ist nicht aktiv.',code:'PLAN_INACTIVE'})}if(hasPrivatePro(req.user))return next();res.status(402).json({error:'Diese Funktion gehört zu MängelFix Privat Pro.',code:'PRO_REQUIRED'})}catch(e){next(e)}}
 
 function setSessionCookie(res, token) {
   res.cookie(cookieName, token, {
@@ -123,7 +127,7 @@ async function auth(req, res, next) {
     const token = req.cookies[cookieName];
     if (!token) return res.status(401).json({ error: 'Bitte melde dich an.' });
     const result = await pool.query(
-      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone, u.email_verified_at
+      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone, u.email_verified_at, u.plan_code, u.subscription_status, u.subscription_current_period_end, u.onboarding_completed_at, u.onboarding_use_case
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = $1 AND s.expires_at > now()`,
@@ -148,7 +152,7 @@ async function organizationForUser(userId) {
     `SELECT o.id, o.name, o.plan_code, om.role
      FROM organization_memberships om
      JOIN organizations o ON o.id = om.organization_id
-     WHERE om.user_id = $1
+     WHERE om.user_id = $1 AND COALESCE(om.active,true)=true
      ORDER BY om.created_at
      LIMIT 1`,
     [userId]
@@ -193,7 +197,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.18.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
+  res.json({ ok: true, service: 'maengelfix', version: '0.19.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -212,7 +216,7 @@ app.post('/api/auth/register', async (req, res, next) => {
     const result = await pool.query(
       `INSERT INTO users (id, name, email, password_salt, password_hash, country)
        VALUES ($1,$2,$3,$4,$5,'Deutschland')
-       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at`,
+       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at, plan_code, subscription_status, subscription_current_period_end, onboarding_completed_at, onboarding_use_case`,
       [userId, name, email, credentials.salt, credentials.hash]
     );
     await createSession(userId, res);
@@ -228,7 +232,7 @@ app.post('/api/auth/login', async (req, res, next) => {
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
     const result = await pool.query(
-      `SELECT id, name, email, password_salt, password_hash, street, postal_code, city, country, phone, email_verified_at
+      `SELECT id, name, email, password_salt, password_hash, street, postal_code, city, country, phone, email_verified_at, plan_code, subscription_status, subscription_current_period_end, onboarding_completed_at, onboarding_use_case
        FROM users WHERE email = $1`,
       [email]
     );
@@ -314,6 +318,9 @@ app.post('/api/auth/logout', auth, async (req, res, next) => {
 
 app.get('/api/me', auth, (req, res) => res.json({ user: publicUser(req.user) }));
 
+app.get('/api/entitlements',auth,async(req,res,next)=>{try{res.json(await privateEntitlements(req.user.id,req.user))}catch(e){next(e)}});
+app.patch('/api/onboarding',auth,async(req,res,next)=>{try{const useCase=['private','management'].includes(req.body.useCase)?req.body.useCase:'private';const q=await pool.query(`UPDATE users SET onboarding_use_case=$2,onboarding_completed_at=now() WHERE id=$1 RETURNING id,name,email,street,postal_code,city,country,phone,email_verified_at,plan_code,subscription_status,subscription_current_period_end,onboarding_completed_at,onboarding_use_case`,[req.user.id,useCase]);res.json({user:publicUser(q.rows[0])})}catch(e){next(e)}});
+
 app.patch('/api/profile', auth, async (req, res, next) => {
   try {
     const name = cleanText(req.body.name, 120);
@@ -327,7 +334,7 @@ app.patch('/api/profile', auth, async (req, res, next) => {
         country=$6,
         phone=$7
        WHERE id=$1
-       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at`,
+       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at, plan_code, subscription_status, subscription_current_period_end, onboarding_completed_at, onboarding_use_case`,
       [
         req.user.id,
         name,
@@ -441,9 +448,9 @@ app.get('/api/pricing',(_req,res)=>res.json({plans:publicPricingCatalog(),trialD
 app.get('/api/billing/plan', auth, async (req,res,next)=>{
   try {
     const org=await billingOrganizationForUser(req.user.id);
-    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,catalog:publicPricingCatalog().filter(p=>p.scope==='organization'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});}
+    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,catalog:billingCatalog('organization'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});}
     const r=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_customer_id,subscription_id,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
-    res.json({scope:'private',plan:r.rows[0],catalog:publicPricingCatalog().filter(p=>p.scope==='private'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});
+    res.json({scope:'private',plan:r.rows[0],catalog:billingCatalog('private'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});
   } catch(error){next(error)}
 });
 
@@ -617,6 +624,7 @@ const pricingCatalog={
   management_business:{code:'management_business',scope:'organization',name:'Verwaltung Business',monthly:119.99,yearly:1199.99,maxMembers:10,maxProperties:300,maxUnits:300}
 };
 function publicPricingCatalog(){return Object.values(pricingCatalog)}
+function billingCatalog(scope){return publicPricingCatalog().filter(p=>p.scope===scope).map(p=>({...p,checkout:{monthly:Boolean(stripePriceForPlan(p.code,'monthly')),yearly:Boolean(stripePriceForPlan(p.code,'yearly'))}}))}
 function stripePriceForPlan(planCode,cycle){
  const env={
   private_pro:{monthly:'STRIPE_PRICE_PRIVATE_PRO_MONTHLY',yearly:'STRIPE_PRICE_PRIVATE_PRO_YEARLY'},
@@ -961,14 +969,14 @@ async function inspectionAccess(userId, protocolId){
   return r.rows[0]||null;
 }
 
-app.get('/api/inspections',auth,async(req,res,next)=>{try{
+app.get('/api/inspections',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);let r;
  if(org) r=await pool.query(`SELECT ip.*,p.name property_name,u.label unit_label,(SELECT count(*)::int FROM inspection_findings f WHERE f.protocol_id=ip.id) finding_count,(SELECT count(*)::int FROM inspection_findings f WHERE f.protocol_id=ip.id AND f.status='open') open_finding_count FROM inspection_protocols ip LEFT JOIN properties p ON p.id=ip.property_id LEFT JOIN units u ON u.id=ip.unit_id WHERE ip.organization_id=$1 ORDER BY ip.inspection_at DESC`,[org.id]);
  else r=await pool.query(`SELECT ip.*,(SELECT count(*)::int FROM inspection_findings f WHERE f.protocol_id=ip.id) finding_count,(SELECT count(*)::int FROM inspection_findings f WHERE f.protocol_id=ip.id AND f.status='open') open_finding_count FROM inspection_protocols ip WHERE ip.organization_id IS NULL AND ip.created_by=$1 ORDER BY ip.inspection_at DESC`,[req.user.id]);
  res.json({protocols:r.rows,organization:org||null});
 }catch(e){next(e)}});
 
-app.post('/api/inspections',auth,async(req,res,next)=>{try{
+app.post('/api/inspections',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);const title=cleanText(req.body.title,180);if(!title)return res.status(400).json({error:'Bitte gib einen Titel an.'});
  const type=['handover','return','inspection'].includes(req.body.protocolType)?req.body.protocolType:'handover';let propertyId=cleanText(req.body.propertyId,80)||null,unitId=cleanText(req.body.unitId,80)||null;
  if(org){if(!propertyId||!unitId)return res.status(400).json({error:'Für Verwaltungsprotokolle sind Objekt und Einheit erforderlich.'});const u=await pool.query(`SELECT 1 FROM units u JOIN properties p ON p.id=u.property_id WHERE u.id=$1 AND p.id=$2 AND p.organization_id=$3`,[unitId,propertyId,org.id]);if(!u.rowCount)return res.status(400).json({error:'Objekt oder Einheit ist ungültig.'});}
@@ -976,23 +984,23 @@ app.post('/api/inspections',auth,async(req,res,next)=>{try{
  if(org)await writeAudit({organizationId:org.id,userId:req.user.id,action:'inspection_created',entityType:'inspection_protocol',entityId:pid,summary:`Protokoll „${title}“ angelegt.`});res.status(201).json({protocol:r.rows[0]});
 }catch(e){next(e)}});
 
-app.get('/api/inspections/:protocolId',auth,async(req,res,next)=>{try{
+app.get('/api/inspections/:protocolId',auth,privateProFeature, async(req,res,next)=>{try{
  const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});
  const [rooms,findings]=await Promise.all([pool.query(`SELECT * FROM inspection_rooms WHERE protocol_id=$1 ORDER BY position,name`,[p.id]),pool.query(`SELECT f.*,r.name room_name,(SELECT count(*)::int FROM inspection_attachments a WHERE a.finding_id=f.id) attachment_count FROM inspection_findings f LEFT JOIN inspection_rooms r ON r.id=f.room_id WHERE f.protocol_id=$1 ORDER BY r.position,f.created_at`,[p.id])]);
  res.json({protocol:p,rooms:rooms.rows,findings:findings.rows});
 }catch(e){next(e)}});
 
-app.post('/api/inspections/:protocolId/rooms',auth,async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});if(p.status==='completed')return res.status(409).json({error:'Abgeschlossene Protokolle können nicht mehr verändert werden.'});const name=cleanText(req.body.name,120);if(!name)return res.status(400).json({error:'Raumname fehlt.'});const pos=(await pool.query('SELECT count(*)::int n FROM inspection_rooms WHERE protocol_id=$1',[p.id])).rows[0].n;const r=await pool.query(`INSERT INTO inspection_rooms (id,protocol_id,name,position,condition,notes) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,[id(),p.id,name,pos,['ok','notice','defect'].includes(req.body.condition)?req.body.condition:'ok',cleanText(req.body.notes,1200)]);res.status(201).json({room:r.rows[0]})}catch(e){next(e)}});
+app.post('/api/inspections/:protocolId/rooms',auth,privateProFeature, async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});if(p.status==='completed')return res.status(409).json({error:'Abgeschlossene Protokolle können nicht mehr verändert werden.'});const name=cleanText(req.body.name,120);if(!name)return res.status(400).json({error:'Raumname fehlt.'});const pos=(await pool.query('SELECT count(*)::int n FROM inspection_rooms WHERE protocol_id=$1',[p.id])).rows[0].n;const r=await pool.query(`INSERT INTO inspection_rooms (id,protocol_id,name,position,condition,notes) VALUES ($1,$2,$3,$4,$5,$6) RETURNING *`,[id(),p.id,name,pos,['ok','notice','defect'].includes(req.body.condition)?req.body.condition:'ok',cleanText(req.body.notes,1200)]);res.status(201).json({room:r.rows[0]})}catch(e){next(e)}});
 
-app.patch('/api/inspection-rooms/:roomId',auth,async(req,res,next)=>{try{const rr=await pool.query('SELECT protocol_id FROM inspection_rooms WHERE id=$1',[req.params.roomId]);if(!rr.rowCount)return res.status(404).json({error:'Raum nicht gefunden.'});const p=await inspectionAccess(req.user.id,rr.rows[0].protocol_id);if(!p)return res.status(403).json({error:'Kein Zugriff.'});const r=await pool.query(`UPDATE inspection_rooms SET name=COALESCE($2,name),condition=$3,notes=$4 WHERE id=$1 RETURNING *`,[req.params.roomId,cleanText(req.body.name,120),['ok','notice','defect'].includes(req.body.condition)?req.body.condition:'ok',cleanText(req.body.notes,1200)]);res.json({room:r.rows[0]})}catch(e){next(e)}});
+app.patch('/api/inspection-rooms/:roomId',auth,privateProFeature, async(req,res,next)=>{try{const rr=await pool.query('SELECT protocol_id FROM inspection_rooms WHERE id=$1',[req.params.roomId]);if(!rr.rowCount)return res.status(404).json({error:'Raum nicht gefunden.'});const p=await inspectionAccess(req.user.id,rr.rows[0].protocol_id);if(!p)return res.status(403).json({error:'Kein Zugriff.'});const r=await pool.query(`UPDATE inspection_rooms SET name=COALESCE($2,name),condition=$3,notes=$4 WHERE id=$1 RETURNING *`,[req.params.roomId,cleanText(req.body.name,120),['ok','notice','defect'].includes(req.body.condition)?req.body.condition:'ok',cleanText(req.body.notes,1200)]);res.json({room:r.rows[0]})}catch(e){next(e)}});
 
-app.post('/api/inspections/:protocolId/findings',auth,async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});if(p.status==='completed')return res.status(409).json({error:'Abgeschlossene Protokolle können nicht mehr verändert werden.'});const title=cleanText(req.body.title,180),description=cleanText(req.body.description,3000);if(!title||!description)return res.status(400).json({error:'Titel und Beschreibung sind erforderlich.'});const roomId=cleanText(req.body.roomId,80)||null;if(roomId){const room=await pool.query('SELECT 1 FROM inspection_rooms WHERE id=$1 AND protocol_id=$2',[roomId,p.id]);if(!room.rowCount)return res.status(400).json({error:'Raum gehört nicht zum Protokoll.'});}const fid=id();const r=await pool.query(`INSERT INTO inspection_findings (id,protocol_id,room_id,created_by,title,description,category,severity) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,[fid,p.id,roomId,req.user.id,title,description,cleanText(req.body.category,80)||'Sonstiges',['minor','normal','urgent'].includes(req.body.severity)?req.body.severity:'normal']);if(p.organization_id)await writeAudit({organizationId:p.organization_id,userId:req.user.id,action:'inspection_finding_created',entityType:'inspection_finding',entityId:fid,summary:`Feststellung „${title}“ im Protokoll ergänzt.`});res.status(201).json({finding:r.rows[0]})}catch(e){next(e)}});
+app.post('/api/inspections/:protocolId/findings',auth,privateProFeature, async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});if(p.status==='completed')return res.status(409).json({error:'Abgeschlossene Protokolle können nicht mehr verändert werden.'});const title=cleanText(req.body.title,180),description=cleanText(req.body.description,3000);if(!title||!description)return res.status(400).json({error:'Titel und Beschreibung sind erforderlich.'});const roomId=cleanText(req.body.roomId,80)||null;if(roomId){const room=await pool.query('SELECT 1 FROM inspection_rooms WHERE id=$1 AND protocol_id=$2',[roomId,p.id]);if(!room.rowCount)return res.status(400).json({error:'Raum gehört nicht zum Protokoll.'});}const fid=id();const r=await pool.query(`INSERT INTO inspection_findings (id,protocol_id,room_id,created_by,title,description,category,severity) VALUES ($1,$2,$3,$4,$5,$6,$7,$8) RETURNING *`,[fid,p.id,roomId,req.user.id,title,description,cleanText(req.body.category,80)||'Sonstiges',['minor','normal','urgent'].includes(req.body.severity)?req.body.severity:'normal']);if(p.organization_id)await writeAudit({organizationId:p.organization_id,userId:req.user.id,action:'inspection_finding_created',entityType:'inspection_finding',entityId:fid,summary:`Feststellung „${title}“ im Protokoll ergänzt.`});res.status(201).json({finding:r.rows[0]})}catch(e){next(e)}});
 
-app.post('/api/inspection-findings/:findingId/attachments',auth,upload.array('images',5),async(req,res,next)=>{try{const fr=await pool.query('SELECT protocol_id FROM inspection_findings WHERE id=$1',[req.params.findingId]);if(!fr.rowCount)return res.status(404).json({error:'Feststellung nicht gefunden.'});const p=await inspectionAccess(req.user.id,fr.rows[0].protocol_id);if(!p)return res.status(403).json({error:'Kein Zugriff.'});const out=[];for(const file of req.files||[]){const aid=id();const r=await pool.query(`INSERT INTO inspection_attachments (id,finding_id,uploaded_by,original_name,stored_name,mime_type,size_bytes) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,original_name,mime_type,size_bytes,created_at`,[aid,req.params.findingId,req.user.id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size]);out.push(r.rows[0])}res.status(201).json({attachments:out})}catch(e){next(e)}});
+app.post('/api/inspection-findings/:findingId/attachments',auth,privateProFeature, upload.array('images',5),async(req,res,next)=>{try{const fr=await pool.query('SELECT protocol_id FROM inspection_findings WHERE id=$1',[req.params.findingId]);if(!fr.rowCount)return res.status(404).json({error:'Feststellung nicht gefunden.'});const p=await inspectionAccess(req.user.id,fr.rows[0].protocol_id);if(!p)return res.status(403).json({error:'Kein Zugriff.'});const out=[];for(const file of req.files||[]){const aid=id();const r=await pool.query(`INSERT INTO inspection_attachments (id,finding_id,uploaded_by,original_name,stored_name,mime_type,size_bytes) VALUES ($1,$2,$3,$4,$5,$6,$7) RETURNING id,original_name,mime_type,size_bytes,created_at`,[aid,req.params.findingId,req.user.id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size]);out.push(r.rows[0])}res.status(201).json({attachments:out})}catch(e){next(e)}});
 
-app.get('/api/inspection-attachments/:attachmentId',auth,async(req,res,next)=>{try{const r=await pool.query(`SELECT a.*,f.protocol_id FROM inspection_attachments a JOIN inspection_findings f ON f.id=a.finding_id WHERE a.id=$1`,[req.params.attachmentId]);if(!r.rowCount)return res.status(404).end();const p=await inspectionAccess(req.user.id,r.rows[0].protocol_id);if(!p)return res.status(403).end();res.type(r.rows[0].mime_type).sendFile(path.join(uploadDir,r.rows[0].stored_name))}catch(e){next(e)}});
+app.get('/api/inspection-attachments/:attachmentId',auth,privateProFeature, async(req,res,next)=>{try{const r=await pool.query(`SELECT a.*,f.protocol_id FROM inspection_attachments a JOIN inspection_findings f ON f.id=a.finding_id WHERE a.id=$1`,[req.params.attachmentId]);if(!r.rowCount)return res.status(404).end();const p=await inspectionAccess(req.user.id,r.rows[0].protocol_id);if(!p)return res.status(403).end();res.type(r.rows[0].mime_type).sendFile(path.join(uploadDir,r.rows[0].stored_name))}catch(e){next(e)}});
 
-app.post('/api/inspection-findings/:findingId/create-case',auth,async(req,res,next)=>{const client=await pool.connect();try{
+app.post('/api/inspection-findings/:findingId/create-case',auth,privateProFeature, async(req,res,next)=>{const client=await pool.connect();try{
  const fr=await client.query(`SELECT f.*,r.name room_name,ip.organization_id,ip.property_id,ip.unit_id,ip.title protocol_title,p.name property_name,u.label unit_label FROM inspection_findings f JOIN inspection_protocols ip ON ip.id=f.protocol_id LEFT JOIN inspection_rooms r ON r.id=f.room_id LEFT JOIN properties p ON p.id=ip.property_id LEFT JOIN units u ON u.id=ip.unit_id WHERE f.id=$1`,[req.params.findingId]);if(!fr.rowCount)return res.status(404).json({error:'Feststellung nicht gefunden.'});const f=fr.rows[0];const p=await inspectionAccess(req.user.id,f.protocol_id);if(!p)return res.status(403).json({error:'Kein Zugriff.'});if(f.defect_case_id)return res.status(409).json({error:'Für diese Feststellung wurde bereits ein Mangel angelegt.',caseId:f.defect_case_id});
  const cid=id();await client.query('BEGIN');await client.query(`INSERT INTO defect_cases (id,user_id,organization_id,property_id,unit_id,title,category,description,property_label,location_label,discovered_on,status) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12)`,[cid,req.user.id,f.organization_id,f.property_id,f.unit_id,f.title,f.category,f.description,f.property_name,f.room_name||f.unit_label,new Date().toISOString().slice(0,10),f.organization_id?'received':'draft']);
  await client.query(`INSERT INTO case_events (id,case_id,user_id,event_type,note,visibility) VALUES ($1,$2,$3,'created',$4,'shared')`,[id(),cid,req.user.id,`Mangel aus ${f.protocol_title} übernommen.`]);
@@ -1000,10 +1008,10 @@ app.post('/api/inspection-findings/:findingId/create-case',auth,async(req,res,ne
  await client.query(`UPDATE inspection_findings SET defect_case_id=$2,status='converted',updated_at=now() WHERE id=$1`,[f.id,cid]);if(f.organization_id)await writeAudit({organizationId:f.organization_id,userId:req.user.id,caseId:cid,action:'inspection_finding_converted',entityType:'inspection_finding',entityId:f.id,summary:`Feststellung „${f.title}“ als Mangel übernommen.`});await client.query('COMMIT');res.status(201).json({caseId:cid});
 }catch(e){await client.query('ROLLBACK');next(e)}finally{client.release()}});
 
-app.post('/api/inspections/:protocolId/complete',auth,async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});const r=await pool.query(`UPDATE inspection_protocols SET status='completed',completed_at=now(),updated_at=now() WHERE id=$1 RETURNING *`,[p.id]);if(p.organization_id)await writeAudit({organizationId:p.organization_id,userId:req.user.id,action:'inspection_completed',entityType:'inspection_protocol',entityId:p.id,summary:`Protokoll „${p.title}“ abgeschlossen.`});res.json({protocol:r.rows[0]})}catch(e){next(e)}});
+app.post('/api/inspections/:protocolId/complete',auth,privateProFeature, async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).json({error:'Protokoll nicht gefunden.'});const r=await pool.query(`UPDATE inspection_protocols SET status='completed',completed_at=now(),updated_at=now() WHERE id=$1 RETURNING *`,[p.id]);if(p.organization_id)await writeAudit({organizationId:p.organization_id,userId:req.user.id,action:'inspection_completed',entityType:'inspection_protocol',entityId:p.id,summary:`Protokoll „${p.title}“ abgeschlossen.`});res.json({protocol:r.rows[0]})}catch(e){next(e)}});
 
-app.get('/api/inspections/:protocolId/pdf',auth,async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).end();const [rooms,findings]=await Promise.all([pool.query('SELECT * FROM inspection_rooms WHERE protocol_id=$1 ORDER BY position',[p.id]),pool.query(`SELECT f.*,r.name room_name FROM inspection_findings f LEFT JOIN inspection_rooms r ON r.id=f.room_id WHERE f.protocol_id=$1 ORDER BY r.position,f.created_at`,[p.id])]);const doc=new PDFDocument({size:'A4',margins:{top:44,right:48,bottom:48,left:48}});res.type('application/pdf');res.setHeader('Content-Disposition',`inline; filename="maengelfix-protokoll-${p.id.split('-')[0]}.pdf"`);doc.pipe(res);doc.rect(0,0,doc.page.width,86).fill('#18212B');doc.fillColor('#fff').font('Helvetica-Bold').fontSize(21).text('MängelFix',48,24);doc.font('Helvetica').fontSize(9).fillColor('#bdc5cc').text(p.protocol_type==='return'?'ABNAHMEPROTOKOLL':'ÜBERGABEPROTOKOLL',48,54,{characterSpacing:1.2});doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(18).text(p.title,48,112);doc.font('Helvetica').fontSize(9).fillColor('#66717d').text(`${new Date(p.inspection_at).toLocaleString('de-DE')} · ${[p.property_name,p.unit_label].filter(Boolean).join(' · ')}`,48,142);let y=180;for(const room of rooms.rows){if(y>700){doc.addPage();y=60}doc.roundedRect(48,y,499,34,4).fill('#f2f4f5');doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(11).text(room.name,60,y+10);doc.fontSize(8).fillColor(room.condition==='defect'?'#b42318':'#66717d').text(room.condition==='defect'?'MANGEL':room.condition==='notice'?'HINWEIS':'OK',450,y+11,{width:80,align:'right'});y+=44;const rf=findings.rows.filter(f=>f.room_id===room.id);for(const f of rf){doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(10).text(`• ${f.title}`,62,y,{width:470});y=doc.y+3;doc.font('Helvetica').fontSize(8.5).fillColor('#59646e').text(f.description,74,y,{width:455});y=doc.y+10}if(room.notes){doc.font('Helvetica-Oblique').fontSize(8).fillColor('#6f7a86').text(room.notes,62,y,{width:470});y=doc.y+10}}const loose=findings.rows.filter(f=>!f.room_id);if(loose.length){doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(11).text('Weitere Feststellungen',48,y+8);y=doc.y+8;for(const f of loose){doc.fontSize(9).text(`• ${f.title}: ${f.description}`,62,y,{width:470});y=doc.y+8}}doc.font('Helvetica').fontSize(8).fillColor('#7a8490').text(`Feststellungen: ${findings.rowCount} · als Mangel übernommen: ${findings.rows.filter(f=>f.defect_case_id).length}`,48,doc.page.height-60,{width:499,align:'center'});doc.end()}catch(e){next(e)}});
-app.get('/api/calendar', auth, async (req,res,next)=>{
+app.get('/api/inspections/:protocolId/pdf',auth,privateProFeature, async(req,res,next)=>{try{const p=await inspectionAccess(req.user.id,req.params.protocolId);if(!p)return res.status(404).end();const [rooms,findings]=await Promise.all([pool.query('SELECT * FROM inspection_rooms WHERE protocol_id=$1 ORDER BY position',[p.id]),pool.query(`SELECT f.*,r.name room_name FROM inspection_findings f LEFT JOIN inspection_rooms r ON r.id=f.room_id WHERE f.protocol_id=$1 ORDER BY r.position,f.created_at`,[p.id])]);const doc=new PDFDocument({size:'A4',margins:{top:44,right:48,bottom:48,left:48}});res.type('application/pdf');res.setHeader('Content-Disposition',`inline; filename="maengelfix-protokoll-${p.id.split('-')[0]}.pdf"`);doc.pipe(res);doc.rect(0,0,doc.page.width,86).fill('#18212B');doc.fillColor('#fff').font('Helvetica-Bold').fontSize(21).text('MängelFix',48,24);doc.font('Helvetica').fontSize(9).fillColor('#bdc5cc').text(p.protocol_type==='return'?'ABNAHMEPROTOKOLL':'ÜBERGABEPROTOKOLL',48,54,{characterSpacing:1.2});doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(18).text(p.title,48,112);doc.font('Helvetica').fontSize(9).fillColor('#66717d').text(`${new Date(p.inspection_at).toLocaleString('de-DE')} · ${[p.property_name,p.unit_label].filter(Boolean).join(' · ')}`,48,142);let y=180;for(const room of rooms.rows){if(y>700){doc.addPage();y=60}doc.roundedRect(48,y,499,34,4).fill('#f2f4f5');doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(11).text(room.name,60,y+10);doc.fontSize(8).fillColor(room.condition==='defect'?'#b42318':'#66717d').text(room.condition==='defect'?'MANGEL':room.condition==='notice'?'HINWEIS':'OK',450,y+11,{width:80,align:'right'});y+=44;const rf=findings.rows.filter(f=>f.room_id===room.id);for(const f of rf){doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(10).text(`• ${f.title}`,62,y,{width:470});y=doc.y+3;doc.font('Helvetica').fontSize(8.5).fillColor('#59646e').text(f.description,74,y,{width:455});y=doc.y+10}if(room.notes){doc.font('Helvetica-Oblique').fontSize(8).fillColor('#6f7a86').text(room.notes,62,y,{width:470});y=doc.y+10}}const loose=findings.rows.filter(f=>!f.room_id);if(loose.length){doc.fillColor('#18212B').font('Helvetica-Bold').fontSize(11).text('Weitere Feststellungen',48,y+8);y=doc.y+8;for(const f of loose){doc.fontSize(9).text(`• ${f.title}: ${f.description}`,62,y,{width:470});y=doc.y+8}}doc.font('Helvetica').fontSize(8).fillColor('#7a8490').text(`Feststellungen: ${findings.rowCount} · als Mangel übernommen: ${findings.rows.filter(f=>f.defect_case_id).length}`,48,doc.page.height-60,{width:499,align:'center'});doc.end()}catch(e){next(e)}});
+app.get('/api/calendar', auth, privateProFeature, async (req,res,next)=>{
   try{
     const organization=await organizationForUser(req.user.id); const {from,to}=calendarRange(req); const mine=String(req.query.mine||'')==='1';
     let own,orders=[];
@@ -1021,14 +1029,15 @@ app.get('/api/calendar', auth, async (req,res,next)=>{
 app.get('/api/cases/:caseId/calendar', auth, async (req,res,next)=>{
   try{
     const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible)return res.status(404).json({error:'Vorgang nicht gefunden.'});
-    const events=(await pool.query(`SELECT ce.*,u.name AS assigned_name FROM calendar_events ce LEFT JOIN users u ON u.id=ce.assigned_user_id WHERE ce.case_id=$1 ORDER BY ce.starts_at`,[req.params.caseId])).rows;
-    const orders=(await pool.query(`SELECT wo.id,wo.title,wo.status,wo.scheduled_for,sp.company_name FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.case_id=$1 AND wo.scheduled_for IS NOT NULL ORDER BY wo.scheduled_for`,[req.params.caseId])).rows.map(x=>({id:`workorder:${x.id}`,title:`${x.company_name}: ${x.title}`,event_type:'contractor',status:x.status,starts_at:x.scheduled_for,ends_at:new Date(new Date(x.scheduled_for).getTime()+90*60000).toISOString(),assigned_name:x.company_name,readonly:true}));
-    let members=[]; if(accessible.organization_id){members=(await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id])).rows;}
-    res.json({events:[...events,...orders].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at)),members,organizationId:accessible.organization_id||null,tenantVisible:Boolean(accessible.submitted_by_tenant)});
+    const viewerOrg=await organizationForUser(req.user.id);const isManagement=Boolean(viewerOrg&&viewerOrg.id===accessible.organization_id);const tenantViewer=Boolean(accessible.organization_id&&!isManagement);
+    const events=(await pool.query(`SELECT ce.*,u.name AS assigned_name FROM calendar_events ce LEFT JOIN users u ON u.id=ce.assigned_user_id WHERE ce.case_id=$1 AND ($2::boolean=false OR ce.notify_tenant=true) ORDER BY ce.starts_at`,[req.params.caseId,tenantViewer])).rows;
+    const orders=isManagement?(await pool.query(`SELECT wo.id,wo.title,wo.status,wo.scheduled_for,sp.company_name FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.case_id=$1 AND wo.scheduled_for IS NOT NULL ORDER BY wo.scheduled_for`,[req.params.caseId])).rows.map(x=>({id:`workorder:${x.id}`,title:`${x.company_name}: ${x.title}`,event_type:'contractor',status:x.status,starts_at:x.scheduled_for,ends_at:new Date(new Date(x.scheduled_for).getTime()+90*60000).toISOString(),assigned_name:x.company_name,readonly:true})):[];
+    let members=[];if(isManagement){members=(await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id])).rows;}
+    res.json({events:[...events,...orders].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at)),members,organizationId:isManagement?accessible.organization_id:null,tenantVisible:Boolean(isManagement&&accessible.submitted_by_tenant),readOnly:tenantViewer});
   }catch(error){next(error)}
 });
 
-app.post('/api/cases/:caseId/calendar', auth, async (req,res,next)=>{
+app.post('/api/cases/:caseId/calendar', auth, privateProFeature, async (req,res,next)=>{
   try{
     const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible)return res.status(404).json({error:'Vorgang nicht gefunden.'});
     const title=cleanText(req.body.title,180); const starts=new Date(req.body.startsAt); const ends=new Date(req.body.endsAt); if(!title||isNaN(starts.getTime())||isNaN(ends.getTime())||ends<=starts)return res.status(400).json({error:'Titel sowie gültiger Start und Ende sind erforderlich.'});
@@ -1042,7 +1051,7 @@ app.post('/api/cases/:caseId/calendar', auth, async (req,res,next)=>{
   }catch(error){next(error)}
 });
 
-app.patch('/api/calendar/:eventId', auth, async (req,res,next)=>{
+app.patch('/api/calendar/:eventId', auth, privateProFeature, async (req,res,next)=>{
   try{
     const r=await pool.query('SELECT * FROM calendar_events WHERE id=$1',[req.params.eventId]);if(!r.rowCount)return res.status(404).json({error:'Termin nicht gefunden.'});const ev=r.rows[0];
     if(ev.organization_id){const org=await organizationForUser(req.user.id);if(!org||org.id!==ev.organization_id)return res.status(403).json({error:'Kein Zugriff.'});}else if(ev.created_by!==req.user.id)return res.status(403).json({error:'Kein Zugriff.'});
@@ -1053,10 +1062,10 @@ app.patch('/api/calendar/:eventId', auth, async (req,res,next)=>{
   }catch(error){next(error)}
 });
 
-app.delete('/api/calendar/:eventId', auth, async (req,res,next)=>{
+app.delete('/api/calendar/:eventId', auth, privateProFeature, async (req,res,next)=>{
   try{const r=await pool.query('SELECT * FROM calendar_events WHERE id=$1',[req.params.eventId]);if(!r.rowCount)return res.status(404).json({error:'Termin nicht gefunden.'});const ev=r.rows[0];if(ev.organization_id){const org=await organizationForUser(req.user.id);if(!org||org.id!==ev.organization_id)return res.status(403).json({error:'Kein Zugriff.'});}else if(ev.created_by!==req.user.id)return res.status(403).json({error:'Kein Zugriff.'});await pool.query('DELETE FROM calendar_events WHERE id=$1',[ev.id]);if(ev.organization_id)await writeAudit({organizationId:ev.organization_id,userId:req.user.id,caseId:ev.case_id,action:'calendar_event_deleted',entityType:'calendar_event',entityId:ev.id,summary:`Termin „${ev.title}“ gelöscht.`});res.status(204).end();}catch(error){next(error)}
 });
-app.get('/api/tasks', auth, async (req,res,next)=>{
+app.get('/api/tasks', auth, privateProFeature, async (req,res,next)=>{
   try {
     const organization=await organizationForUser(req.user.id);
     const mine=String(req.query.mine||'')==='1';
@@ -1072,16 +1081,18 @@ app.get('/api/tasks', auth, async (req,res,next)=>{
   } catch(error){next(error)}
 });
 
-app.get('/api/cases/:caseId/tasks', auth, async (req,res,next)=>{
+app.get('/api/cases/:caseId/tasks', auth, privateProFeature, async (req,res,next)=>{
   try {
     const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible) return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    // TASK_TENANT_PRIVACY_V019
+    if(accessible.organization_id){const vo=await organizationForUser(req.user.id);if(!vo||vo.id!==accessible.organization_id)return res.json({tasks:[],members:[],organizationId:null})}
     const result=await pool.query(`SELECT t.*,u.name AS assigned_name FROM case_tasks t LEFT JOIN users u ON u.id=t.assigned_user_id WHERE t.case_id=$1 ORDER BY CASE t.status WHEN 'open' THEN 0 ELSE 1 END,t.due_at NULLS LAST,t.created_at DESC`,[req.params.caseId]);
     let members=[]; if(accessible.organization_id){const m=await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id]);members=m.rows;}
     res.json({tasks:result.rows,members,organizationId:accessible.organization_id||null});
   } catch(error){next(error)}
 });
 
-app.post('/api/cases/:caseId/tasks', auth, async (req,res,next)=>{
+app.post('/api/cases/:caseId/tasks', auth, privateProFeature, async (req,res,next)=>{
   try {
     const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible) return res.status(404).json({error:'Vorgang nicht gefunden.'});
     const title=cleanText(req.body.title,180); if(!title) return res.status(400).json({error:'Bitte gib einen Aufgabentitel an.'});
@@ -1095,7 +1106,7 @@ app.post('/api/cases/:caseId/tasks', auth, async (req,res,next)=>{
   } catch(error){next(error)}
 });
 
-app.patch('/api/tasks/:taskId', auth, async (req,res,next)=>{
+app.patch('/api/tasks/:taskId', auth, privateProFeature, async (req,res,next)=>{
   try {
     const r=await pool.query(`SELECT t.*,c.user_id AS case_owner FROM case_tasks t JOIN defect_cases c ON c.id=t.case_id WHERE t.id=$1`,[req.params.taskId]); if(!r.rowCount)return res.status(404).json({error:'Aufgabe nicht gefunden.'}); const task=r.rows[0];
     if(task.organization_id){const org=await organizationForUser(req.user.id);if(!org||org.id!==task.organization_id)return res.status(403).json({error:'Kein Zugriff.'});}
@@ -1337,7 +1348,7 @@ app.patch('/api/cases/:caseId/assignment', auth, async (req, res, next) => {
 });
 
 
-app.get('/api/analytics',auth,async(req,res,next)=>{try{
+app.get('/api/analytics',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);
  if(org){
   const [summary,cats,properties,trend,providers]=await Promise.all([
@@ -1358,13 +1369,13 @@ app.get('/api/analytics',auth,async(req,res,next)=>{try{
  res.json({scope:'private',summary:summary.rows[0],contexts:contexts.rows,categories:cats.rows,trend:trend.rows});
 }catch(e){next(e)}});
 
-app.get('/api/search/cases',auth,async(req,res,next)=>{try{
+app.get('/api/search/cases',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);const q=cleanText(req.query.q,180)||'';const status=cleanText(req.query.status,40)||'';const category=cleanText(req.query.category,80)||'';const context=cleanText(req.query.context,40)||'';const archived=String(req.query.archived||'')==='1';const params=[req.user.id,org?.id||null,`%${q}%`,status,category,context,archived];
  const r=await pool.query(`SELECT c.*,p.name property_name,u.label unit_name,au.name assigned_user_name,(SELECT count(*)::int FROM attachments a WHERE a.case_id=c.id) attachment_count FROM defect_cases c LEFT JOIN properties p ON p.id=c.property_id LEFT JOIN units u ON u.id=c.unit_id LEFT JOIN users au ON au.id=c.assigned_user_id WHERE (c.user_id=$1 OR ($2::text IS NOT NULL AND c.organization_id=$2)) AND (($7=true AND c.archived_at IS NOT NULL) OR ($7=false AND c.archived_at IS NULL)) AND ($3='%%' OR c.title ILIKE $3 OR c.description ILIKE $3 OR c.reference_label ILIKE $3 OR c.subject_label ILIKE $3 OR c.recipient_name ILIKE $3 OR c.property_label ILIKE $3) AND ($4='' OR c.status=$4) AND ($5='' OR c.category=$5) AND ($6='' OR c.case_context=$6) ORDER BY c.updated_at DESC LIMIT 300`,params);res.json({cases:r.rows})
 }catch(e){next(e)}});
-app.post('/api/cases/:caseId/archive',auth,async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const archive=req.body.archived!==false;const r=await pool.query('UPDATE defect_cases SET archived_at=$2,updated_at=now() WHERE id=$1 RETURNING *',[c.id,archive?new Date():null]);if(c.organization_id)await writeAudit({organizationId:c.organization_id,userId:req.user.id,caseId:c.id,action:archive?'case_archived':'case_restored',entityType:'case',entityId:c.id,summary:archive?'Vorgang archiviert.':'Vorgang wiederhergestellt.'});res.json({case:r.rows[0]})}catch(e){next(e)}});
-app.get('/api/deadlines/overview',auth,async(req,res,next)=>{try{const org=await organizationForUser(req.user.id);const r=await pool.query(`SELECT c.id,c.title,c.deadline_on,c.status,c.property_label,c.case_context,CASE WHEN c.deadline_on<current_date THEN 'overdue' WHEN c.deadline_on=current_date THEN 'today' WHEN c.deadline_on<=current_date+3 THEN 'soon' ELSE 'later' END urgency FROM defect_cases c WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.organization_id IS NULL AND c.user_id=$1) OR ($2::text IS NOT NULL AND c.organization_id=$2)) ORDER BY c.deadline_on`,[req.user.id,org?.id||null]);res.json({deadlines:r.rows})}catch(e){next(e)}});
-app.post('/api/cases/:caseId/evidence',auth,evidenceUpload.array('files',10),async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const type=['photo','document','before','after','invoice','delivery_note','other'].includes(req.body.evidenceType)?req.body.evidenceType:'photo';const out=[];for(const file of req.files||[]){const a=await pool.query(`INSERT INTO attachments (id,case_id,user_id,original_name,stored_name,mime_type,size_bytes,evidence_type,note,captured_at,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'user') RETURNING id,original_name,mime_type,size_bytes,evidence_type,note,captured_at,created_at`,[id(),c.id,req.user.id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size,type,cleanText(req.body.note,800),req.body.capturedAt||null]);out.push(a.rows[0])}await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1',[c.id]);res.status(201).json({attachments:out})}catch(e){next(e)}});
+app.post('/api/cases/:caseId/archive',auth,privateProFeature, async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const archive=req.body.archived!==false;const r=await pool.query('UPDATE defect_cases SET archived_at=$2,updated_at=now() WHERE id=$1 RETURNING *',[c.id,archive?new Date():null]);if(c.organization_id)await writeAudit({organizationId:c.organization_id,userId:req.user.id,caseId:c.id,action:archive?'case_archived':'case_restored',entityType:'case',entityId:c.id,summary:archive?'Vorgang archiviert.':'Vorgang wiederhergestellt.'});res.json({case:r.rows[0]})}catch(e){next(e)}});
+app.get('/api/deadlines/overview',auth,privateProFeature, async(req,res,next)=>{try{const org=await organizationForUser(req.user.id);const r=await pool.query(`SELECT c.id,c.title,c.deadline_on,c.status,c.property_label,c.case_context,CASE WHEN c.deadline_on<current_date THEN 'overdue' WHEN c.deadline_on=current_date THEN 'today' WHEN c.deadline_on<=current_date+3 THEN 'soon' ELSE 'later' END urgency FROM defect_cases c WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.organization_id IS NULL AND c.user_id=$1) OR ($2::text IS NOT NULL AND c.organization_id=$2)) ORDER BY c.deadline_on`,[req.user.id,org?.id||null]);res.json({deadlines:r.rows})}catch(e){next(e)}});
+app.post('/api/cases/:caseId/evidence',auth,privateProFeature, evidenceUpload.array('files',10),async(req,res,next)=>{try{const c=await canAccessCase(req.user.id,req.params.caseId);if(!c)return res.status(404).json({error:'Mangel nicht gefunden.'});const type=['photo','document','before','after','invoice','delivery_note','other'].includes(req.body.evidenceType)?req.body.evidenceType:'photo';const out=[];for(const file of req.files||[]){const a=await pool.query(`INSERT INTO attachments (id,case_id,user_id,original_name,stored_name,mime_type,size_bytes,evidence_type,note,captured_at,source) VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,'user') RETURNING id,original_name,mime_type,size_bytes,evidence_type,note,captured_at,created_at`,[id(),c.id,req.user.id,cleanText(file.originalname,250),file.filename,file.mimetype,file.size,type,cleanText(req.body.note,800),req.body.capturedAt||null]);out.push(a.rows[0])}await pool.query('UPDATE defect_cases SET updated_at=now() WHERE id=$1',[c.id]);res.status(201).json({attachments:out})}catch(e){next(e)}});
 app.get('/api/cases', auth, async (req, res, next) => {
   try {
     const result = await pool.query(
@@ -1398,6 +1409,8 @@ app.post('/api/cases', auth, async (req, res, next) => {
     const caseId = id();
     await client.query('BEGIN');
     const ownOrganization = await organizationForUser(req.user.id);
+    // FREE_ACTIVE_CASE_LIMIT_V019
+    if(!ownOrganization&&!hasPrivatePro(req.user)){const n=(await client.query(`SELECT count(*)::int n FROM defect_cases WHERE user_id=$1 AND status<>'resolved' AND archived_at IS NULL`,[req.user.id])).rows[0].n;if(n>=5){await client.query('ROLLBACK');return res.status(402).json({error:'Privat Free erlaubt bis zu 5 aktive Vorgänge. Erledige einen Vorgang oder wechsle zu Privat Pro.',code:'PRO_REQUIRED'})}if(req.body.deadlineOn){await client.query('ROLLBACK');return res.status(402).json({error:'Fristen und automatische Erinnerungen gehören zu Privat Pro.',code:'PRO_REQUIRED'})}}
     let destination = null;
     const destinationLinkId = cleanText(req.body.destinationLinkId, 80);
     if (destinationLinkId && !ownOrganization) {
@@ -1487,6 +1500,8 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
     const current = { rowCount: accessible ? 1 : 0, rows: accessible ? [accessible] : [] };
     if (!current.rowCount) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
     const old = current.rows[0];
+    // FREE_DEADLINE_PATCH_V019
+    if(req.body.deadlineOn&&!(await organizationForUser(req.user.id))&&!hasPrivatePro(req.user))return res.status(402).json({error:'Fristen und automatische Erinnerungen gehören zu Privat Pro.',code:'PRO_REQUIRED'});
     const nextStatus = status || old.status;
     const result = await pool.query(
       `UPDATE defect_cases SET
@@ -1580,6 +1595,8 @@ app.post('/api/cases/:caseId/attachments', auth, upload.array('images', 5), asyn
   try {
     const accessible = await canAccessCase(req.user.id, req.params.caseId);
     if (!accessible) return res.status(404).json({ error: 'Mangel nicht gefunden.' });
+    // FREE_PHOTO_LIMIT_V019
+    const photoOrg=await organizationForUser(req.user.id);if(!photoOrg&&!hasPrivatePro(req.user)){const n=(await pool.query('SELECT count(*)::int n FROM attachments WHERE case_id=$1',[req.params.caseId])).rows[0].n;if(n+(req.files||[]).length>3){for(const f of req.files||[]){try{fs.unlinkSync(f.path)}catch{}}return res.status(402).json({error:'Privat Free erlaubt bis zu 3 Fotos pro Vorgang. Für weitere Fotos und Dokumente benötigst du Privat Pro.',code:'PRO_REQUIRED'})}}
     const created = [];
     for (const file of req.files || []) {
       const attachmentId = id();

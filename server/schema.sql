@@ -488,3 +488,7 @@ CREATE TABLE IF NOT EXISTS work_order_attachments (
 CREATE INDEX IF NOT EXISTS work_order_attachments_order_idx ON work_order_attachments(work_order_id,created_at);
 
 -- v0.17 pricing catalog is defined in application code; management trials start with Pro-sized limits and are converted to paid plan limits after checkout.
+
+-- v0.19 onboarding and private entitlements
+ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed_at timestamptz;
+ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_use_case text;
