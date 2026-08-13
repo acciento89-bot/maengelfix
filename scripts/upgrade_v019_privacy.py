@@ -1,0 +1,16 @@
+from pathlib import Path
+p=Path('server/index.js');s=p.read_text()
+old="""    const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible)return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    const events=(await pool.query(`SELECT ce.*,u.name AS assigned_name FROM calendar_events ce LEFT JOIN users u ON u.id=ce.assigned_user_id WHERE ce.case_id=$1 ORDER BY ce.starts_at`,[req.params.caseId])).rows;
+    const orders=(await pool.query(`SELECT wo.id,wo.title,wo.status,wo.scheduled_for,sp.company_name FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.case_id=$1 AND wo.scheduled_for IS NOT NULL ORDER BY wo.scheduled_for`,[req.params.caseId])).rows.map(x=>({id:`workorder:${x.id}`,title:`${x.company_name}: ${x.title}`,event_type:'contractor',status:x.status,starts_at:x.scheduled_for,ends_at:new Date(new Date(x.scheduled_for).getTime()+90*60000).toISOString(),assigned_name:x.company_name,readonly:true}));
+    let members=[]; if(accessible.organization_id){members=(await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id])).rows;}
+    res.json({events:[...events,...orders].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at)),members,organizationId:accessible.organization_id||null,tenantVisible:Boolean(accessible.submitted_by_tenant)});"""
+new="""    const accessible=await canAccessCase(req.user.id,req.params.caseId); if(!accessible)return res.status(404).json({error:'Vorgang nicht gefunden.'});
+    const viewerOrg=await organizationForUser(req.user.id);const isManagement=Boolean(viewerOrg&&viewerOrg.id===accessible.organization_id);const tenantViewer=Boolean(accessible.organization_id&&!isManagement);
+    const events=(await pool.query(`SELECT ce.*,u.name AS assigned_name FROM calendar_events ce LEFT JOIN users u ON u.id=ce.assigned_user_id WHERE ce.case_id=$1 AND ($2::boolean=false OR ce.notify_tenant=true) ORDER BY ce.starts_at`,[req.params.caseId,tenantViewer])).rows;
+    const orders=isManagement?(await pool.query(`SELECT wo.id,wo.title,wo.status,wo.scheduled_for,sp.company_name FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.case_id=$1 AND wo.scheduled_for IS NOT NULL ORDER BY wo.scheduled_for`,[req.params.caseId])).rows.map(x=>({id:`workorder:${x.id}`,title:`${x.company_name}: ${x.title}`,event_type:'contractor',status:x.status,starts_at:x.scheduled_for,ends_at:new Date(new Date(x.scheduled_for).getTime()+90*60000).toISOString(),assigned_name:x.company_name,readonly:true})):[];
+    let members=[];if(isManagement){members=(await pool.query(`SELECT u.id,u.name FROM organization_memberships om JOIN users u ON u.id=om.user_id WHERE om.organization_id=$1 AND COALESCE(om.active,true)=true ORDER BY u.name`,[accessible.organization_id])).rows;}
+    res.json({events:[...events,...orders].sort((a,b)=>new Date(a.starts_at)-new Date(b.starts_at)),members,organizationId:isManagement?accessible.organization_id:null,tenantVisible:Boolean(isManagement&&accessible.submitted_by_tenant),readOnly:tenantViewer});"""
+if old in s:s=s.replace(old,new,1)
+p.write_text(s)
+print('v0.19 calendar privacy prepared')
