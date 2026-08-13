@@ -447,3 +447,11 @@ CREATE TABLE IF NOT EXISTS inspection_attachments (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS inspection_attachments_finding_idx ON inspection_attachments(finding_id,created_at);
+
+
+-- v0.14: allgemeine Privatmängel und Qualitätsanalyse
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS case_context text NOT NULL DEFAULT 'housing';
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS reference_label text;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS subject_label text;
+ALTER TABLE defect_cases ADD COLUMN IF NOT EXISTS counterparty_type text;
+CREATE INDEX IF NOT EXISTS defect_cases_context_idx ON defect_cases(user_id,case_context,created_at DESC);

@@ -171,7 +171,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.13.0', mail: smtpConfigured ? 'smtp' : 'manual' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.14.0', mail: smtpConfigured ? 'smtp' : 'manual' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -1222,6 +1222,27 @@ app.patch('/api/cases/:caseId/assignment', auth, async (req, res, next) => {
   } catch (error) { next(error); }
 });
 
+
+app.get('/api/analytics',auth,async(req,res,next)=>{try{
+ const org=await organizationForUser(req.user.id);
+ if(org){
+  const [summary,cats,properties,trend,providers]=await Promise.all([
+   pool.query(`SELECT count(*)::int total,count(*) FILTER(WHERE status<>'resolved')::int open,count(*) FILTER(WHERE status='resolved')::int resolved,count(*) FILTER(WHERE deadline_on<current_date AND status<>'resolved')::int overdue,round(avg(EXTRACT(EPOCH FROM (updated_at-created_at))/86400) FILTER(WHERE status='resolved')::numeric,1) avg_days FROM defect_cases WHERE organization_id=$1`,[org.id]),
+   pool.query(`SELECT category,count(*)::int total,count(*) FILTER(WHERE status<>'resolved')::int open FROM defect_cases WHERE organization_id=$1 GROUP BY category ORDER BY total DESC LIMIT 8`,[org.id]),
+   pool.query(`SELECT COALESCE(p.name,c.property_label,'Ohne Objekt') label,count(*)::int total,count(*) FILTER(WHERE c.status<>'resolved')::int open,count(*) FILTER(WHERE c.deadline_on<current_date AND c.status<>'resolved')::int overdue FROM defect_cases c LEFT JOIN properties p ON p.id=c.property_id WHERE c.organization_id=$1 GROUP BY COALESCE(p.name,c.property_label,'Ohne Objekt') ORDER BY open DESC,total DESC LIMIT 8`,[org.id]),
+   pool.query(`SELECT to_char(date_trunc('month',created_at),'YYYY-MM') month,count(*)::int total,count(*) FILTER(WHERE status='resolved')::int resolved FROM defect_cases WHERE organization_id=$1 AND created_at>=date_trunc('month',now())-interval '5 months' GROUP BY 1 ORDER BY 1`,[org.id]),
+   pool.query(`SELECT sp.company_name,count(wo.*)::int orders,round(avg(EXTRACT(EPOCH FROM (COALESCE(wo.accepted_at,wo.updated_at)-wo.created_at))/3600)::numeric,1) response_hours,count(*) FILTER(WHERE wo.status='completed')::int completed FROM work_orders wo JOIN service_providers sp ON sp.id=wo.provider_id WHERE wo.organization_id=$1 GROUP BY sp.id,sp.company_name HAVING count(wo.*)>0 ORDER BY orders DESC LIMIT 6`,[org.id])
+  ]);
+  return res.json({scope:'organization',summary:summary.rows[0],categories:cats.rows,properties:properties.rows,trend:trend.rows,providers:providers.rows});
+ }
+ const [summary,contexts,cats,trend]=await Promise.all([
+  pool.query(`SELECT count(*)::int total,count(*) FILTER(WHERE status<>'resolved')::int open,count(*) FILTER(WHERE status='resolved')::int resolved,count(*) FILTER(WHERE deadline_on<current_date AND status<>'resolved')::int overdue FROM defect_cases WHERE user_id=$1 AND organization_id IS NULL`,[req.user.id]),
+  pool.query(`SELECT case_context,count(*)::int total,count(*) FILTER(WHERE status<>'resolved')::int open FROM defect_cases WHERE user_id=$1 AND organization_id IS NULL GROUP BY case_context ORDER BY total DESC`,[req.user.id]),
+  pool.query(`SELECT category,count(*)::int total FROM defect_cases WHERE user_id=$1 AND organization_id IS NULL GROUP BY category ORDER BY total DESC LIMIT 8`,[req.user.id]),
+  pool.query(`SELECT to_char(date_trunc('month',created_at),'YYYY-MM') month,count(*)::int total,count(*) FILTER(WHERE status='resolved')::int resolved FROM defect_cases WHERE user_id=$1 AND organization_id IS NULL AND created_at>=date_trunc('month',now())-interval '5 months' GROUP BY 1 ORDER BY 1`,[req.user.id])
+ ]);
+ res.json({scope:'private',summary:summary.rows[0],contexts:contexts.rows,categories:cats.rows,trend:trend.rows});
+}catch(e){next(e)}});
 app.get('/api/cases', auth, async (req, res, next) => {
   try {
     const result = await pool.query(
@@ -1268,8 +1289,8 @@ app.post('/api/cases', auth, async (req, res, next) => {
     const recipientName = destination?.organization_name || cleanText(req.body.recipientName, 160);
     const result = await client.query(
       `INSERT INTO defect_cases
-       (id,user_id,organization_id,property_id,unit_id,tenant_link_id,submitted_by_tenant,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,status)
-       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,'draft')
+       (id,user_id,organization_id,property_id,unit_id,tenant_link_id,submitted_by_tenant,title,category,description,property_label,location_label,discovered_on,recipient_name,recipient_email,recipient_address,deadline_on,case_context,reference_label,subject_label,counterparty_type,status)
+       VALUES ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10,$11,$12,$13,$14,$15,$16,$17,$18,$19,$20,$21,'draft')
        RETURNING *`,
       [
         caseId,
@@ -1288,7 +1309,11 @@ app.post('/api/cases', auth, async (req, res, next) => {
         recipientName,
         cleanText(req.body.recipientEmail, 254)?.toLowerCase(),
         cleanText(req.body.recipientAddress, 500),
-        req.body.deadlineOn || null
+        req.body.deadlineOn || null,
+        ['housing','delivery','product','service','vehicle','travel','other'].includes(req.body.caseContext)?req.body.caseContext:'housing',
+        cleanText(req.body.referenceLabel,180),
+        cleanText(req.body.subjectLabel,220),
+        cleanText(req.body.counterpartyType,80)
       ]
     );
     if (destination) {
