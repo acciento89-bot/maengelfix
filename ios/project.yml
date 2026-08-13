@@ -24,6 +24,7 @@ targets:
         PRODUCT_BUNDLE_IDENTIFIER: com.kamilunavo.maengelfix
         PRODUCT_NAME: "MängelFix"
         TARGETED_DEVICE_FAMILY: "1,2"
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         GENERATE_INFOPLIST_FILE: YES
         INFOPLIST_KEY_CFBundleDisplayName: "MängelFix"
         INFOPLIST_KEY_NSCameraUsageDescription: "MängelFix benötigt die Kamera, damit du Schäden und Mängel direkt dokumentieren kannst."
