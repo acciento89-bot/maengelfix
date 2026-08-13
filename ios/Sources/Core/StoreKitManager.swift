@@ -15,7 +15,7 @@ final class StoreKitManager {
     var errorMessage: String?
     var activeProductID: String?
 
-    private var updatesTask: Task<Void, Never>?
+    private nonisolated(unsafe) var updatesTask: Task<Void, Never>?
 
     init() {
         updatesTask = Task { [weak self] in
