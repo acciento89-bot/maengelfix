@@ -18,7 +18,7 @@ jobs:
 
       - name: Client-Abhängigkeiten installieren
         working-directory: client
-        run: npm ci
+        run: npm install --no-audit --no-fund
 
       - name: Frontend bauen
         working-directory: client
