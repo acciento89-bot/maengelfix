@@ -1,0 +1,30 @@
+name: MängelFix v0.6 Upgrade
+
+on:
+  push:
+    paths:
+      - 'scripts/upgrade_v06.py'
+      - '.github/workflows/upgrade-v06.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Apply v0.6 patch
+        run: python3 scripts/upgrade_v06.py
+      - name: Commit generated upgrade
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/schema.sql server/package.json server/index.js client/src/App.jsx client/src/maengelfix-pro.css docker-compose.yml .env.example
+          if git diff --cached --quiet; then
+            echo "No changes to commit"
+          else
+            git commit -m "Build MängelFix tenant invitations and digital submissions"
+            git push
+          fi
