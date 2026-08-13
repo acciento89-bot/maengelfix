@@ -1,0 +1,33 @@
+name: MängelFix v0.4 Upgrade
+
+on:
+  push:
+    paths:
+      - 'scripts/upgrade-v04.py'
+      - '.github/workflows/upgrade-v04.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Apply v0.4 patch
+        run: python3 scripts/upgrade-v04.py
+      - name: Commit generated upgrade
+        run: |
+          if git diff --quiet; then
+            echo "No changes required"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server client
+          git commit -m "Build MängelFix property and unit management"
+          git push
