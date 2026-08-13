@@ -297,34 +297,3 @@ CREATE TABLE IF NOT EXISTS audit_logs (
 );
 CREATE INDEX IF NOT EXISTS audit_logs_org_idx ON audit_logs(organization_id, created_at DESC);
 CREATE INDEX IF NOT EXISTS audit_logs_case_idx ON audit_logs(case_id, created_at DESC);
-
-
--- v0.10: Tarife, Testphase, Limits & Abrechnungsgrundlage
-ALTER TABLE users ADD COLUMN IF NOT EXISTS plan_code text NOT NULL DEFAULT 'private_free';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_status text NOT NULL DEFAULT 'active';
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_provider text;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_customer_id text;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_id text;
-ALTER TABLE users ADD COLUMN IF NOT EXISTS subscription_current_period_end timestamptz;
-
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_status text NOT NULL DEFAULT 'trialing';
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS trial_ends_at timestamptz;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_provider text;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_customer_id text;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_id text;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS subscription_current_period_end timestamptz;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS max_members integer NOT NULL DEFAULT 5;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS max_properties integer NOT NULL DEFAULT 25;
-ALTER TABLE organizations ADD COLUMN IF NOT EXISTS max_units integer NOT NULL DEFAULT 250;
-
-CREATE TABLE IF NOT EXISTS billing_events (
- id text PRIMARY KEY,
- provider text NOT NULL,
- provider_event_id text UNIQUE,
- organization_id text REFERENCES organizations(id) ON DELETE SET NULL,
- user_id text REFERENCES users(id) ON DELETE SET NULL,
- event_type text NOT NULL,
- payload jsonb NOT NULL DEFAULT '{}'::jsonb,
- created_at timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS billing_events_org_idx ON billing_events(organization_id,created_at DESC);

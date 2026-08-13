@@ -123,7 +123,7 @@ const allowedStatuses = new Set(['draft','sent','reply','received','reviewing','
 
 async function organizationForUser(userId) {
   const result = await pool.query(
-    `SELECT o.id, o.name, o.plan_code, o.subscription_status, o.trial_ends_at, o.subscription_current_period_end, o.max_members, o.max_properties, o.max_units, om.role
+    `SELECT o.id, o.name, o.plan_code, om.role
      FROM organization_memberships om
      JOIN organizations o ON o.id = om.organization_id
      WHERE om.user_id = $1
@@ -153,28 +153,6 @@ async function writeAudit({ organizationId, userId=null, caseId=null, action, en
     [id(),organizationId,userId,caseId,action,entityType,entityId,summary,JSON.stringify(metadata||{})]);
 }
 
-
-function organizationAccessState(organization) {
-  if (!organization) return {active:false,reason:'none'};
-  if (['active','trialing'].includes(organization.subscription_status)) {
-    if (organization.subscription_status==='trialing' && organization.trial_ends_at && new Date(organization.trial_ends_at)<=new Date()) return {active:false,reason:'trial_expired'};
-    return {active:true,reason:organization.subscription_status};
-  }
-  return {active:false,reason:organization.subscription_status||'inactive'};
-}
-async function organizationUsage(organizationId){
- const r=await pool.query(`SELECT
-  (SELECT count(*)::int FROM organization_memberships WHERE organization_id=$1) members,
-  (SELECT count(*)::int FROM properties WHERE organization_id=$1) properties,
-  (SELECT count(*)::int FROM units u JOIN properties p ON p.id=u.property_id WHERE p.organization_id=$1) units`,[organizationId]);
- return r.rows[0];
-}
-async function requireOrganizationCapacity(organization,kind){
- const state=organizationAccessState(organization); if(!state.active) return {ok:false,error:'Die Testphase bzw. das Verwaltungs-Abo ist nicht aktiv.'};
- const usage=await organizationUsage(organization.id); const limitKey={member:'max_members',property:'max_properties',unit:'max_units'}[kind]; const usageKey={member:'members',property:'properties',unit:'units'}[kind];
- if(limitKey && Number(usage[usageKey])>=Number(organization[limitKey])) return {ok:false,error:`Tariflimit erreicht (${usage[usageKey]}/${organization[limitKey]}).`};
- return {ok:true,usage};
-}
 async function canAccessCase(userId, caseId) {
   const result = await pool.query(
     `SELECT c.*
@@ -193,7 +171,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.10.0', mail: smtpConfigured ? 'smtp' : 'manual' });
+  res.json({ ok: true, service: 'maengelfix', version: '0.9.0', mail: smtpConfigured ? 'smtp' : 'manual' });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -373,7 +351,7 @@ app.post('/api/team', auth, async (req, res, next) => {
     await pool.query('BEGIN');
     try {
       await pool.query(
-        `INSERT INTO organizations (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units) VALUES ($1,$2,'business_trial',$3,'trialing',now()+interval '14 days',5,25,250)`,
+        `INSERT INTO organizations (id, name, plan_code, created_by) VALUES ($1,$2,'business',$3)`,
         [orgId, name, req.user.id]
       );
       await pool.query(
@@ -385,7 +363,7 @@ app.post('/api/team', auth, async (req, res, next) => {
       await pool.query('ROLLBACK');
       throw error;
     }
-    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business_trial', role: 'owner', subscription_status:'trialing' } });
+    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business', role: 'owner' } });
   } catch (error) {
     next(error);
   }
@@ -397,7 +375,6 @@ app.post('/api/team/members', auth, async (req, res, next) => {
     if (!organization || !['owner', 'admin'].includes(organization.role)) {
       return res.status(403).json({ error: 'Nur Inhaber und Admins können Mitarbeiterkonten anlegen.' });
     }
-    const capacity=await requireOrganizationCapacity(organization,'member'); if(!capacity.ok) return res.status(402).json({error:capacity.error});
     const name = cleanText(req.body.name, 120);
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
@@ -732,20 +709,6 @@ app.post('/api/contractor/work-orders/:token/status', async (req,res,next)=>{
 });
 
 
-
-app.get('/api/billing/plan',auth,async(req,res,next)=>{try{
- const organization=await organizationForUser(req.user.id);
- if(organization){const usage=await organizationUsage(organization.id);return res.json({scope:'organization',plan:{...organization,...organizationAccessState(organization)},usage,checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY)});}
- const u=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
- res.json({scope:'private',plan:u.rows[0],checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY)});
-}catch(e){next(e)}});
-
-app.post('/api/billing/checkout',auth,async(req,res,next)=>{try{
- const organization=await organizationForUser(req.user.id); const scope=organization?'organization':'private';
- if(organization && !['owner','admin'].includes(organization.role)) return res.status(403).json({error:'Nur Inhaber und Admins können den Tarif ändern.'});
- if(!process.env.STRIPE_SECRET_KEY) return res.status(503).json({error:'Online-Zahlung ist noch nicht aktiviert. Die Tarif- und Limitlogik ist bereits aktiv.'});
- return res.status(501).json({error:'Stripe-Zahlungsstart wird nach Hinterlegung der Stripe-Produkt-IDs aktiviert.',scope});
-}catch(e){next(e)}});
 app.get('/api/notifications', auth, async (req,res,next)=>{
   try {
     const result=await pool.query(`SELECT * FROM notifications WHERE user_id=$1 ORDER BY created_at DESC LIMIT 100`,[req.user.id]);
@@ -1420,21 +1383,9 @@ app.get('/api/cases/:caseId/pdf', auth, async (req, res, next) => {
   }
 });
 
-app.use(express.static(publicDir, {
-  index: false,
-  maxAge: production ? '1h' : 0,
-  setHeaders: (res, filePath) => {
-    if (filePath.endsWith('.html')) {
-      res.setHeader('Content-Type', 'text/html; charset=utf-8');
-      res.setHeader('Content-Disposition', 'inline');
-    }
-  }
-}));
+app.use(express.static(publicDir, { index: false, maxAge: production ? '1h' : 0 }));
 app.use((req, res, next) => {
   if (req.method !== 'GET' || req.path.startsWith('/api/')) return next();
-  res.setHeader('Content-Type', 'text/html; charset=utf-8');
-  res.setHeader('Content-Disposition', 'inline');
-  res.setHeader('X-Content-Type-Options', 'nosniff');
   res.sendFile(path.join(publicDir, 'index.html'));
 });
 
