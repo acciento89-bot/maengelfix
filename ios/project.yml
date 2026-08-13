@@ -21,6 +21,7 @@ targets:
       - Sources
     settings:
       base:
+        DEVELOPMENT_TEAM: TKG684N5GL
         PRODUCT_BUNDLE_IDENTIFIER: com.kamilunavo.maengelfix
         PRODUCT_NAME: "MängelFix"
         TARGETED_DEVICE_FAMILY: "1,2"
