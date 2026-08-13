@@ -193,7 +193,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.16.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
+  res.json({ ok: true, service: 'maengelfix', version: '0.17.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -436,20 +436,22 @@ app.delete('/api/account', auth, async (req,res,next)=>{
   } catch(error){await client.query('ROLLBACK');next(error)} finally{client.release()}
 });
 
+app.get('/api/pricing',(_req,res)=>res.json({plans:publicPricingCatalog(),trialDays:14,unitExplanation:'Eine Einheit ist eine separat verwaltete Wohnung oder Gewerbeeinheit.'}));
+
 app.get('/api/billing/plan', auth, async (req,res,next)=>{
   try {
     const org=await billingOrganizationForUser(req.user.id);
-    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&(process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY||process.env.STRIPE_PRICE_MANAGEMENT_YEARLY)),cycles:{monthly:Boolean(process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY),yearly:Boolean(process.env.STRIPE_PRICE_MANAGEMENT_YEARLY)}});}
+    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,catalog:publicPricingCatalog().filter(p=>p.scope==='organization'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});}
     const r=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_customer_id,subscription_id,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
-    res.json({scope:'private',plan:r.rows[0],checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY&&(process.env.STRIPE_PRICE_PRIVATE_MONTHLY||process.env.STRIPE_PRICE_PRIVATE_YEARLY)),cycles:{monthly:Boolean(process.env.STRIPE_PRICE_PRIVATE_MONTHLY),yearly:Boolean(process.env.STRIPE_PRICE_PRIVATE_YEARLY)}});
+    res.json({scope:'private',plan:r.rows[0],catalog:publicPricingCatalog().filter(p=>p.scope==='private'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});
   } catch(error){next(error)}
 });
 
 app.post('/api/billing/checkout', auth, async (req,res,next)=>{
   try{
     const org=await billingOrganizationForUser(req.user.id);if(org&&!['owner','admin'].includes(org.role))return res.status(403).json({error:'Nur Inhaber und Admins können den Tarif ändern.'});
-    const scope=org?'organization':'private';const cycle=req.body.cycle==='yearly'?'yearly':'monthly';const price=stripePriceFor(scope,cycle);if(!process.env.STRIPE_SECRET_KEY||!price)return res.status(503).json({error:'Online-Zahlung ist noch nicht vollständig konfiguriert.'});
-    const params={'mode':'subscription','line_items[0][price]':price,'line_items[0][quantity]':'1','success_url':`${appOrigin}/app?view=billing&checkout=success`,'cancel_url':`${appOrigin}/app?view=billing&checkout=cancel`,'allow_promotion_codes':'true','metadata[scope]':scope};
+    const scope=org?'organization':'private';const cycle=req.body.cycle==='yearly'?'yearly':'monthly';const planCode=cleanText(req.body.planCode,80)||(org?'management_pro':'private_pro');const selected=pricingCatalog[planCode];if(!selected||selected.scope!==scope||selected.monthly===0)return res.status(400).json({error:'Ungültiger Tarif.'});const price=stripePriceForPlan(planCode,cycle);if(!process.env.STRIPE_SECRET_KEY||!price)return res.status(503).json({error:'Online-Zahlung ist für diesen Tarif noch nicht vollständig konfiguriert.'});
+    const params={'mode':'subscription','line_items[0][price]':price,'line_items[0][quantity]':'1','success_url':`${appOrigin}/app?view=billing&checkout=success`,'cancel_url':`${appOrigin}/app?view=billing&checkout=cancel`,'allow_promotion_codes':'true','metadata[scope]':scope,'metadata[plan_code]':planCode};
     if(org)params['metadata[organization_id]']=org.id;else params['metadata[user_id]']=req.user.id;
     const existing=org?.subscription_customer_id||req.user.subscription_customer_id;if(existing)params.customer=existing;else params.customer_email=req.user.email;
     const session=await stripeRequest('checkout/sessions',params);res.json({url:session.url});
@@ -485,7 +487,7 @@ app.post('/api/team', auth, async (req, res, next) => {
     await pool.query('BEGIN');
     try {
       await pool.query(
-        `INSERT INTO organizations (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units) VALUES ($1,$2,'business_trial',$3,'trialing',now()+interval '14 days',5,25,250)`,
+        `INSERT INTO organizations (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units) VALUES ($1,$2,'management_trial',$3,'trialing',now()+interval '14 days',5,100,100)`,
         [orgId, name, req.user.id]
       );
       await pool.query(
@@ -497,7 +499,7 @@ app.post('/api/team', auth, async (req, res, next) => {
       await pool.query('ROLLBACK');
       throw error;
     }
-    res.status(201).json({ organization: { id: orgId, name, plan_code: 'business_trial', role: 'owner', subscription_status: 'trialing' } });
+    res.status(201).json({ organization: { id: orgId, name, plan_code: 'management_trial', role: 'owner', subscription_status: 'trialing' } });
   } catch (error) {
     next(error);
   }
@@ -595,10 +597,26 @@ async function stripeRequest(pathname,params){
   const response=await fetch(`https://api.stripe.com/v1/${pathname}`,{method:'POST',headers:{Authorization:`Bearer ${process.env.STRIPE_SECRET_KEY}`,'Content-Type':'application/x-www-form-urlencoded'},body});
   const data=await response.json();if(!response.ok)throw new Error(data?.error?.message||'Stripe-Anfrage fehlgeschlagen.');return data;
 }
-function stripePriceFor(scope,cycle){
- const annual=cycle==='yearly';
- return scope==='organization'?(annual?process.env.STRIPE_PRICE_MANAGEMENT_YEARLY:process.env.STRIPE_PRICE_MANAGEMENT_MONTHLY):(annual?process.env.STRIPE_PRICE_PRIVATE_YEARLY:process.env.STRIPE_PRICE_PRIVATE_MONTHLY);
+const pricingCatalog={
+  private_free:{code:'private_free',scope:'private',name:'Privat Free',monthly:0,yearly:0,maxCases:5},
+  private_pro:{code:'private_pro',scope:'private',name:'Privat Pro',monthly:4.99,yearly:49.99},
+  management_starter:{code:'management_starter',scope:'organization',name:'Verwaltung Starter',monthly:29.99,yearly:299.99,maxMembers:3,maxProperties:25,maxUnits:25},
+  management_pro:{code:'management_pro',scope:'organization',name:'Verwaltung Pro',monthly:59.99,yearly:599.99,maxMembers:5,maxProperties:100,maxUnits:100},
+  management_business:{code:'management_business',scope:'organization',name:'Verwaltung Business',monthly:119.99,yearly:1199.99,maxMembers:10,maxProperties:300,maxUnits:300}
+};
+function publicPricingCatalog(){return Object.values(pricingCatalog)}
+function stripePriceForPlan(planCode,cycle){
+ const env={
+  private_pro:{monthly:'STRIPE_PRICE_PRIVATE_PRO_MONTHLY',yearly:'STRIPE_PRICE_PRIVATE_PRO_YEARLY'},
+  management_starter:{monthly:'STRIPE_PRICE_MANAGEMENT_STARTER_MONTHLY',yearly:'STRIPE_PRICE_MANAGEMENT_STARTER_YEARLY'},
+  management_pro:{monthly:'STRIPE_PRICE_MANAGEMENT_PRO_MONTHLY',yearly:'STRIPE_PRICE_MANAGEMENT_PRO_YEARLY'},
+  management_business:{monthly:'STRIPE_PRICE_MANAGEMENT_BUSINESS_MONTHLY',yearly:'STRIPE_PRICE_MANAGEMENT_BUSINESS_YEARLY'}
+ };
+ return process.env[env[planCode]?.[cycle]||'']||null;
 }
+function applyPlanLimits(planCode){const p=pricingCatalog[planCode];return p&&p.scope==='organization'?{maxMembers:p.maxMembers,maxProperties:p.maxProperties,maxUnits:p.maxUnits}:null}
+
+function stripePriceFor(scope,cycle){return stripePriceForPlan(scope==='organization'?'management_pro':'private_pro',cycle)}
 function parseStripeSignature(header){const out={};for(const part of String(header||'').split(',')){const [k,v]=part.split('=');if(k&&v)(out[k]||(out[k]=[])).push(v)}return out}
 function verifyStripeWebhook(raw,header){
  const secret=process.env.STRIPE_WEBHOOK_SECRET;if(!secret)return false;const sig=parseStripeSignature(header);const t=Number(sig.t?.[0]);if(!t||Math.abs(Date.now()/1000-t)>300)return false;const expected=crypto.createHmac('sha256',secret).update(`${t}.${raw.toString('utf8')}`).digest('hex');return (sig.v1||[]).some(v=>{try{const a=Buffer.from(v,'hex'),b=Buffer.from(expected,'hex');return a.length===b.length&&crypto.timingSafeEqual(a,b)}catch{return false}})
@@ -612,7 +630,7 @@ async function applyStripeSubscription(sub,eventId,eventType,payload){
  await pool.query(`INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload) VALUES ($1,'stripe',$2,$3,$4,$5,$6) ON CONFLICT (provider_event_id) DO NOTHING`,[id(),eventId,org.rows[0]?.id||null,user?.rows[0]?.id||null,eventType,payload]);
 }
 async function handleStripeWebhook(req,res){
- try{if(!verifyStripeWebhook(req.body,req.headers['stripe-signature']))return res.status(400).send('invalid signature');const event=JSON.parse(req.body.toString('utf8'));if(event.type.startsWith('customer.subscription.'))await applyStripeSubscription(event.data.object,event.id,event.type,event);if(event.type==='checkout.session.completed'){const s=event.data.object;const orgId=s.metadata?.organization_id||null,userId=s.metadata?.user_id||null;if(orgId)await pool.query(`UPDATE organizations SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3 WHERE id=$1`,[orgId,String(s.customer||''),String(s.subscription||'')]);if(userId)await pool.query(`UPDATE users SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3 WHERE id=$1`,[userId,String(s.customer||''),String(s.subscription||'')]);await pool.query(`INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload) VALUES ($1,'stripe',$2,$3,$4,$5,$6) ON CONFLICT (provider_event_id) DO NOTHING`,[id(),event.id,orgId,userId,event.type,event]);}res.json({received:true})}catch(e){console.error('Stripe webhook failed',e);res.status(500).send('webhook error')}
+ try{if(!verifyStripeWebhook(req.body,req.headers['stripe-signature']))return res.status(400).send('invalid signature');const event=JSON.parse(req.body.toString('utf8'));if(event.type.startsWith('customer.subscription.'))await applyStripeSubscription(event.data.object,event.id,event.type,event);if(event.type==='checkout.session.completed'){const s=event.data.object;const orgId=s.metadata?.organization_id||null,userId=s.metadata?.user_id||null,planCode=s.metadata?.plan_code||null;if(orgId){const lim=applyPlanLimits(planCode);await pool.query(`UPDATE organizations SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3,plan_code=COALESCE($4,plan_code),max_members=COALESCE($5,max_members),max_properties=COALESCE($6,max_properties),max_units=COALESCE($7,max_units) WHERE id=$1`,[orgId,String(s.customer||''),String(s.subscription||''),planCode,lim?.maxMembers,lim?.maxProperties,lim?.maxUnits]);}if(userId)await pool.query(`UPDATE users SET subscription_provider='stripe',subscription_customer_id=$2,subscription_id=$3,plan_code=COALESCE($4,plan_code) WHERE id=$1`,[userId,String(s.customer||''),String(s.subscription||''),planCode]);await pool.query(`INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload) VALUES ($1,'stripe',$2,$3,$4,$5,$6) ON CONFLICT (provider_event_id) DO NOTHING`,[id(),event.id,orgId,userId,event.type,event]);}res.json({received:true})}catch(e){console.error('Stripe webhook failed',e);res.status(500).send('webhook error')}
 }
 function escapeHtml(value) {
   return String(value || '').replace(/[&<>"']/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[ch]));

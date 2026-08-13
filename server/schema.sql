@@ -486,3 +486,5 @@ CREATE TABLE IF NOT EXISTS work_order_attachments (
   created_at timestamptz NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS work_order_attachments_order_idx ON work_order_attachments(work_order_id,created_at);
+
+-- v0.17 pricing catalog is defined in application code; management trials start with Pro-sized limits and are converted to paid plan limits after checkout.
