@@ -13,5 +13,16 @@ jobs:
       - name: Repository auschecken
         uses: actions/checkout@v4
 
+      - name: Server-Syntax prüfen
+        run: node --check server/index.js
+
+      - name: Client-Abhängigkeiten installieren
+        working-directory: client
+        run: npm ci
+
+      - name: Frontend bauen
+        working-directory: client
+        run: npm run build
+
       - name: Docker-Image bauen
         run: docker build -t maengelfix:ci .
