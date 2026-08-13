@@ -193,7 +193,7 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.15.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
+  res.json({ ok: true, service: 'maengelfix', version: '0.16.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -372,14 +372,25 @@ app.patch('/api/account/email', auth, async (req,res,next)=>{
 
 app.get('/api/account/export', auth, async (req,res,next)=>{
   try {
-    const [user,cases,links,memberships]=await Promise.all([
-      pool.query('SELECT id,name,email,street,postal_code,city,country,phone,email_verified_at,created_at FROM users WHERE id=$1',[req.user.id]),
-      pool.query(`SELECT c.*, COALESCE(json_agg(DISTINCT jsonb_build_object('id',a.id,'name',a.original_name,'mimeType',a.mime_type,'size',a.size_bytes,'createdAt',a.created_at)) FILTER (WHERE a.id IS NOT NULL),'[]') attachments FROM defect_cases c LEFT JOIN attachments a ON a.case_id=c.id WHERE c.user_id=$1 GROUP BY c.id ORDER BY c.created_at`,[req.user.id]),
-      pool.query(`SELECT tl.id,tl.status,tl.created_at,tl.disconnected_at,o.name organization,p.name property,u.label unit FROM tenant_links tl JOIN organizations o ON o.id=tl.organization_id JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id WHERE tl.user_id=$1`,[req.user.id]),
-      pool.query(`SELECT om.organization_id,o.name,om.role,COALESCE(om.active,true) active,om.created_at FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id WHERE om.user_id=$1`,[req.user.id])
-    ]);
-    const payload={exportedAt:new Date().toISOString(),account:user.rows[0],cases:cases.rows,tenantLinks:links.rows,organizations:memberships.rows};
-    res.setHeader('Content-Type','application/json; charset=utf-8'); res.setHeader('Content-Disposition','attachment; filename="maengelfix-datenexport.json"'); res.send(JSON.stringify(payload,null,2));
+    const queries={
+      account: pool.query(`SELECT id,name,email,street,postal_code,city,country,phone,email_verified_at,plan_code,subscription_status,subscription_provider,subscription_current_period_end,created_at FROM users WHERE id=$1`,[req.user.id]),
+      cases: pool.query(`SELECT * FROM defect_cases WHERE user_id=$1 ORDER BY created_at`,[req.user.id]),
+      attachments: pool.query(`SELECT a.id,a.case_id,a.original_name,a.mime_type,a.size_bytes,a.evidence_type,a.note,a.captured_at,a.source,a.created_at FROM attachments a WHERE a.user_id=$1 ORDER BY a.created_at`,[req.user.id]),
+      caseEvents: pool.query(`SELECT id,case_id,event_type,note,visibility,created_at FROM case_events WHERE user_id=$1 ORDER BY created_at`,[req.user.id]),
+      messages: pool.query(`SELECT id,case_id,message,created_at FROM case_messages WHERE user_id=$1 ORDER BY created_at`,[req.user.id]),
+      tasks: pool.query(`SELECT * FROM case_tasks WHERE created_by=$1 OR assigned_user_id=$1 ORDER BY created_at`,[req.user.id]),
+      calendar: pool.query(`SELECT * FROM calendar_events WHERE created_by=$1 OR assigned_user_id=$1 ORDER BY starts_at`,[req.user.id]),
+      inspections: pool.query(`SELECT * FROM inspection_protocols WHERE created_by=$1 ORDER BY created_at`,[req.user.id]),
+      findings: pool.query(`SELECT f.* FROM inspection_findings f WHERE f.created_by=$1 ORDER BY f.created_at`,[req.user.id]),
+      tenantLinks: pool.query(`SELECT tl.id,tl.status,tl.created_at,tl.disconnected_at,o.name organization,p.name property,u.label unit FROM tenant_links tl JOIN organizations o ON o.id=tl.organization_id JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id WHERE tl.user_id=$1 ORDER BY tl.created_at`,[req.user.id]),
+      organizations: pool.query(`SELECT om.organization_id,o.name,om.role,COALESCE(om.active,true) active,om.created_at FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id WHERE om.user_id=$1 ORDER BY om.created_at`,[req.user.id]),
+      notifications: pool.query(`SELECT id,type,title,body,link,read_at,created_at FROM notifications WHERE user_id=$1 ORDER BY created_at`,[req.user.id]),
+      workOrders: pool.query(`SELECT wo.* FROM work_orders wo WHERE wo.created_by=$1 ORDER BY wo.created_at`,[req.user.id]),
+      auditEntries: pool.query(`SELECT id,organization_id,case_id,action,entity_type,entity_id,summary,metadata,created_at FROM audit_logs WHERE user_id=$1 ORDER BY created_at`,[req.user.id]),
+      billingEvents: pool.query(`SELECT id,provider,event_type,created_at FROM billing_events WHERE user_id=$1 ORDER BY created_at`,[req.user.id])
+    };
+    const keys=Object.keys(queries),values=await Promise.all(Object.values(queries));const payload={exportedAt:new Date().toISOString(),formatVersion:'1.0'};keys.forEach((k,i)=>payload[k]=k==='account'?(values[i].rows[0]||null):values[i].rows);
+    res.setHeader('Content-Type','application/json; charset=utf-8');res.setHeader('Content-Disposition','attachment; filename="maengelfix-datenexport.json"');res.send(JSON.stringify(payload,null,2));
   } catch(error){next(error)}
 });
 
@@ -706,6 +717,13 @@ app.post('/api/invitations/:token/accept', auth, async (req,res,next)=>{
     res.json({ link: linked.rows[0] });
   } catch(error){ await client.query('ROLLBACK'); next(error); } finally { client.release(); }
 });
+
+app.get('/api/tenant-dashboard',auth,async(req,res,next)=>{try{
+ const [links,cases]=await Promise.all([
+  pool.query(`SELECT tl.id,tl.status,tl.created_at,o.name organization_name,p.name property_name,p.street,p.postal_code,p.city,u.label unit_label,p.allow_tenant_submissions FROM tenant_links tl JOIN organizations o ON o.id=tl.organization_id JOIN properties p ON p.id=tl.property_id JOIN units u ON u.id=tl.unit_id WHERE tl.user_id=$1 AND tl.status='active' ORDER BY o.name,p.name,u.label`,[req.user.id]),
+  pool.query(`SELECT c.id,c.title,c.category,c.status,c.deadline_on,c.updated_at,c.organization_id,c.property_label,c.location_label,o.name organization_name,(SELECT count(*)::int FROM case_messages m WHERE m.case_id=c.id) message_count,(SELECT count(*)::int FROM attachments a WHERE a.case_id=c.id) attachment_count FROM defect_cases c JOIN organizations o ON o.id=c.organization_id WHERE c.user_id=$1 AND c.submitted_by_tenant=true ORDER BY c.updated_at DESC`,[req.user.id])
+ ]);res.json({links:links.rows,cases:cases.rows})
+}catch(e){next(e)}});
 
 app.get('/api/tenant-links', auth, async (req,res,next)=>{
   try {
