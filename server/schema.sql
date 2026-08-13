@@ -492,3 +492,13 @@ CREATE INDEX IF NOT EXISTS work_order_attachments_order_idx ON work_order_attach
 -- v0.19 onboarding and private entitlements
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_completed_at timestamptz;
 ALTER TABLE users ADD COLUMN IF NOT EXISTS onboarding_use_case text;
+
+
+-- v0.21 account modes and management trial repair
+UPDATE organizations
+SET plan_code = CASE WHEN plan_code='business_trial' THEN 'management_trial' ELSE plan_code END,
+    trial_ends_at = COALESCE(trial_ends_at, created_at + interval '14 days'),
+    max_members = CASE WHEN plan_code IN ('business_trial','management_trial') THEN 5 ELSE max_members END,
+    max_properties = CASE WHEN plan_code IN ('business_trial','management_trial') THEN 100 ELSE max_properties END,
+    max_units = CASE WHEN plan_code IN ('business_trial','management_trial') THEN 100 ELSE max_units END
+WHERE subscription_status='trialing' AND subscription_provider IS NULL;

@@ -181,8 +181,8 @@ function Landing({ user, navigate }) {
           <div className="sectionIntro"><span>TARIFE</span><h2>Einfach für Privat. Planbar für Verwaltungen.</h2><p>Privat funktioniert MängelFix auch ohne verknüpfte Hausverwaltung. Verwaltungen zahlen nach der Zahl ihrer verwalteten Einheiten – nicht nach der Zahl der gemeldeten Mängel.</p></div>
           <div className="pricingExplain"><b>Was bedeutet „Einheit“?</b><p>Eine Einheit ist eine separat verwaltete Wohnung oder Gewerbeeinheit. Beispiel: 3 Häuser mit jeweils 8 Wohnungen = 24 Einheiten. Wie viele Mängel dort gemeldet werden, spielt für den Tarif keine Rolle.</p></div>
           <div className="pricingPrivateRow">
-            <article className="pricingCard privatePlan"><div className="planTag">PRIVAT FREE</div><h3>Kostenlos starten</h3><p className="planLead">Für gelegentliche Mängel und zum Kennenlernen.</p><div className="planPrice"><strong>0 €</strong><span>dauerhaft kostenlos</span></div><ul><li>Grundlegende Mängelerfassung</li><li>Fotos und Verlauf</li><li>Manueller Empfänger – keine Verwaltung muss MängelFix nutzen</li><li>Bis zu 5 aktive Vorgänge</li><li>Bis zu 3 Fotos je Vorgang</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Zur App' : 'Kostenlos starten'} →</button></article>
-            <article className="pricingCard privatePlan featuredPlan"><div className="planTag">PRIVAT PRO</div><h3>Mehr Funktionen für deine Fälle</h3><p className="planLead">Für regelmäßige Reklamationen, Liefer-, Produkt-, Dienstleistungs-, Fahrzeug-, Reise- und Mietmängel.</p><div className="planPrice"><strong>4,99 €</strong><span>/ Monat · oder 49,99 € / Jahr</span></div><ul><li>Unbegrenzte aktive Vorgänge</li><li>Erweiterte Belege & Dokumentation</li><li>Fristen, Aufgaben und Termine</li><li>Übergabe-/Abnahmeprotokolle</li><li>Erweiterte PDFs, Archiv und Auswertungen</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Pro ansehen' : 'Privat Pro starten'} →</button></article>
+            <article className="pricingCard privatePlan"><div className="planTag">PRIVAT FREE</div><h3>Kostenlos starten</h3><p className="planLead">Für gelegentliche Mängel und zum Kennenlernen.</p><div className="planPrice"><strong>0 €</strong><span>dauerhaft kostenlos</span></div><ul><li>Grundlegende Mängelerfassung</li><li>Fotos und Verlauf</li><li>Manueller Empfänger – keine Verwaltung muss MängelFix nutzen</li><li>Bis zu 5 aktive Vorgänge</li><li>Bis zu 3 Fotos je Vorgang</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren/privat')}>{user ? 'Zur App' : 'Kostenlos starten'} →</button></article>
+            <article className="pricingCard privatePlan featuredPlan"><div className="planTag">PRIVAT PRO</div><h3>Mehr Funktionen für deine Fälle</h3><p className="planLead">Für regelmäßige Reklamationen, Liefer-, Produkt-, Dienstleistungs-, Fahrzeug-, Reise- und Mietmängel.</p><div className="planPrice"><strong>4,99 €</strong><span>/ Monat · oder 49,99 € / Jahr</span></div><ul><li>Unbegrenzte aktive Vorgänge</li><li>Erweiterte Belege & Dokumentation</li><li>Fristen, Aufgaben und Termine</li><li>Übergabe-/Abnahmeprotokolle</li><li>Erweiterte PDFs, Archiv und Auswertungen</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren/privat')}>{user ? 'Pro ansehen' : 'Privat Pro starten'} →</button></article>
           </div>
           <div className="managementPricingIntro"><span>HAUSVERWALTUNG</span><h3>14 Tage kostenlos testen</h3><p>Alle Verwaltungsfunktionen kennenlernen. Danach den passenden Tarif nach verwalteten Einheiten wählen.</p></div>
           <div className="managementPricingGrid">
@@ -191,7 +191,7 @@ function Landing({ user, navigate }) {
             <article className="pricingCard businessPlan"><div className="planTag">BUSINESS</div><h3>Bis 300 Einheiten</h3><div className="planPrice"><strong>119,99 €</strong><span>/ Monat · 1.199,99 € / Jahr</span></div><ul><li>Bis 10 Mitarbeiter</li><li>Alles aus Pro</li><li>Größere Portfolios</li><li>Zentrale Aufgaben- und Terminsteuerung</li><li>Priorisierte Produktbasis für professionelle Teams</li></ul></article>
           </div>
           <div className="enterpriseNote"><b>Mehr als 300 Einheiten?</b><span>Individuelles Angebot – damit große Bestände nicht in ein unpassendes Standardpaket gezwungen werden.</span></div>
-          <button className="managementStartButton" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Verwaltung einrichten' : '14 Tage kostenlos testen'} →</button>
+          <button className="managementStartButton" onClick={() => navigate(user ? '/app' : '/registrieren/verwaltung')}>{user ? 'Verwaltung einrichten' : '14 Tage kostenlos testen'} →</button>
         </section>
 
         <section className="landingCta">
@@ -204,17 +204,26 @@ function Landing({ user, navigate }) {
   );
 }
 
-function Auth({ mode, onSignedIn, navigate }) {
-  const [form, setForm] = useState({ name: '', email: '', password: '' });
+function Auth({ mode, onSignedIn, navigate, initialAccountType = 'private' }) {
+  const register = mode === 'register';
+  const [accountType, setAccountType] = useState(initialAccountType);
+  const [form, setForm] = useState({ name: '', email: '', password: '', organizationName: '' });
   const [error, setError] = useState('');
   const [busy, setBusy] = useState(false);
-  const register = mode === 'register';
+
+  useEffect(() => { if (register) setAccountType(initialAccountType); }, [initialAccountType, register]);
 
   async function submit(event) {
     event.preventDefault();
     setBusy(true); setError('');
     try {
-      const data = await api(register ? '/api/auth/register' : '/api/auth/login', { method: 'POST', body: JSON.stringify(form) });
+      if (register && accountType === 'management' && !form.organizationName.trim()) {
+        throw new Error('Bitte gib den Namen deiner Hausverwaltung an.');
+      }
+      const payload = register
+        ? { name: form.name, email: form.email, password: form.password, accountType, organizationName: accountType === 'management' ? form.organizationName : undefined }
+        : { email: form.email, password: form.password };
+      const data = await api(register ? '/api/auth/register' : '/api/auth/login', { method: 'POST', body: JSON.stringify(payload) });
       onSignedIn(data.user);
       const pendingInvite = window.localStorage.getItem('maengelfix_pending_invite');
       navigate(pendingInvite ? `/einladung/${pendingInvite}` : '/app');
@@ -222,24 +231,33 @@ function Auth({ mode, onSignedIn, navigate }) {
     finally { setBusy(false); }
   }
 
+  const management = register && accountType === 'management';
   return (
     <div className="authStandalone">
       <PublicHeader navigate={navigate} />
       <main className="authStage">
         <section className="authPitch">
-          <div className="landingEyebrow"><span /> MÄNGELFIX KONTO</div>
-          <h1>{register ? 'Deine Mängel. Ein Ort. Ein sauberer Verlauf.' : 'Willkommen zurück.'}</h1>
-          <p>{register ? 'Starte mit deinem persönlichen Mängelordner und ergänze dein Absenderprofil anschließend in wenigen Sekunden.' : 'Öffne deine Vorgänge, Fristen und Dokumente.'}</p>
-          <div className="authBenefits"><span>✓ Fälle & Fotos zentral gespeichert</span><span>✓ Professionelle PDF-Dokumentation</span><span>✓ Fristen und Verlauf im Blick</span></div>
+          <div className="landingEyebrow"><span /> {management ? 'MÄNGELFIX VERWALTUNG' : 'MÄNGELFIX KONTO'}</div>
+          <h1>{register ? (management ? 'Deine Verwaltung. Ein eigener Arbeitsbereich.' : 'Deine Mängel. Ein Ort. Ein sauberer Verlauf.') : 'Willkommen zurück.'}</h1>
+          <p>{register ? (management ? 'Starte direkt mit einem Verwaltungs-Arbeitsbereich. Die ersten 14 Tage sind kostenlos und enthalten alle Pro-Verwaltungsfunktionen.' : 'Erstelle dein persönliches Privatkonto für eigene Mängel, Belege und Dokumente.') : 'Öffne deine Vorgänge, Fristen und Dokumente.'}</p>
+          <div className="authBenefits">
+            {management ? <><span>✓ 14 Tage Verwaltung Pro testen</span><span>✓ Eigene Mitarbeiter-Logins & Rollen</span><span>✓ Objekte, Mieter, Aufgaben, Termine & Dienstleister</span></> : <><span>✓ Fälle & Fotos zentral gespeichert</span><span>✓ Professionelle PDF-Dokumentation</span><span>✓ Privat Free dauerhaft nutzbar</span></>}
+          </div>
         </section>
         <section className="authBox">
-          <div className="authBoxHead"><span>{register ? 'KONTO ERSTELLEN' : 'ANMELDEN'}</span><h2>{register ? 'MängelFix starten' : 'In dein Konto'}</h2></div>
+          <div className="authBoxHead"><span>{register ? 'KONTO ERSTELLEN' : 'ANMELDEN'}</span><h2>{register ? (management ? 'Verwaltung kostenlos testen' : 'Privatkonto erstellen') : 'In dein Konto'}</h2></div>
+          {register && <div className="accountTypePicker">
+            <button type="button" className={accountType === 'private' ? 'accountTypeCard selected' : 'accountTypeCard'} onClick={() => setAccountType('private')}><span>PRIVAT</span><strong>Für eigene Mängel</strong><small>Dauerhaft kostenlos starten. Pro später optional.</small></button>
+            <button type="button" className={accountType === 'management' ? 'accountTypeCard selected management' : 'accountTypeCard management'} onClick={() => setAccountType('management')}><span>HAUSVERWALTUNG</span><strong>Für Verwaltung & Team</strong><small>14 Tage alle Verwaltungsfunktionen testen.</small></button>
+          </div>}
           <form onSubmit={submit} className="formStack">
-            {register && <label>Name<input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} autoComplete="name" placeholder="Vor- und Nachname" /></label>}
+            {register && <label>{management ? 'Dein Name' : 'Name'}<input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} autoComplete="name" placeholder="Vor- und Nachname" /></label>}
+            {management && <label>Name der Hausverwaltung<input required value={form.organizationName} onChange={e => setForm({ ...form, organizationName: e.target.value })} placeholder="z. B. Muster Hausverwaltung GmbH" /></label>}
             <label>E-Mail<input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} autoComplete="email" placeholder="name@beispiel.de" /></label>
             <label>Passwort<input required minLength="8" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} autoComplete={register ? 'new-password' : 'current-password'} placeholder="Mindestens 8 Zeichen" /></label>
+            {management && <div className="managementTrialHint"><b>14 Tage kostenlos</b><span>Keine Zahlung bei der Registrierung. Danach wählst du den passenden Verwaltungstarif.</span></div>}
             {error && <div className="errorBox">{error}</div>}
-            <button className="primaryButton authSubmit" disabled={busy}>{busy ? 'Einen Moment…' : register ? 'Konto erstellen' : 'Anmelden'}</button>
+            <button className="primaryButton authSubmit" disabled={busy}>{busy ? 'Einen Moment…' : register ? (management ? '14 Tage kostenlos testen' : 'Privatkonto erstellen') : 'Anmelden'}</button>
           </form>
           {!register && <div className="authForgot"><button onClick={() => navigate('/passwort-vergessen')}>Passwort vergessen?</button></div>}
           <div className="authSwitch">{register ? 'Du hast bereits ein Konto?' : 'Noch kein MängelFix-Konto?'} <button onClick={() => navigate(register ? '/anmelden' : '/registrieren')}>{register ? 'Anmelden' : 'Kostenlos registrieren'}</button></div>
@@ -250,7 +268,6 @@ function Auth({ mode, onSignedIn, navigate }) {
     </div>
   );
 }
-
 
 function SimpleAccountPage({ mode, token, navigate }) {
   const [email,setEmail]=useState(''); const [password,setPassword]=useState(''); const [message,setMessage]=useState(''); const [error,setError]=useState(''); const [busy,setBusy]=useState(false);
@@ -382,6 +399,7 @@ function CaseDetail({ caseId, onBack, onUpdated, user, onProfile, pro=true, onUp
   const [error, setError] = useState('');
   const [note, setNote] = useState('');
   const [sharedMessage,setSharedMessage]=useState('');
+  useEffect(()=>{refreshWorkspaceState()},[view]);
   const profileComplete = Boolean(user.street && user.postalCode && user.city);
 
   async function load() {
@@ -642,7 +660,7 @@ function CaseTasksPanel({caseId}){
  return <section className="contentCard caseTasks"><div className="sectionTitle"><div><div className="cardKicker">AUFGABEN</div><h3>Nächste Schritte & Wiedervorlagen</h3><p className="muted">Lege fest, wer was bis wann erledigen soll.</p></div><button className="secondaryButton" onClick={()=>setOpen(!open)}>{open?'Schließen':'+ Aufgabe'}</button></div>{error&&<div className="errorBox">{error}</div>}{open&&<form className="taskCreate" onSubmit={create}><div className="formGrid two"><label>Aufgabe<input required value={form.title} onChange={e=>setForm({...form,title:e.target.value})} placeholder="z. B. Rückmeldung vom Handwerker prüfen"/></label><label>Priorität<select value={form.priority} onChange={e=>setForm({...form,priority:e.target.value})}>{Object.entries(taskPriorityLabels).map(([k,v])=><option key={k} value={k}>{v}</option>)}</select></label>{data.organizationId&&<label>Zuständig<select value={form.assignedUserId} onChange={e=>setForm({...form,assignedUserId:e.target.value})}>{data.members.map(m=><option key={m.id} value={m.id}>{m.name}</option>)}</select></label>}<label>Fällig am<input type="datetime-local" value={form.dueAt} onChange={e=>setForm({...form,dueAt:e.target.value})}/></label><label>Wiedervorlage<input type="datetime-local" value={form.remindAt} onChange={e=>setForm({...form,remindAt:e.target.value})}/></label></div><label>Notiz<textarea rows="2" value={form.description} onChange={e=>setForm({...form,description:e.target.value})}/></label><button className="primaryButton">Aufgabe anlegen</button></form>}<div className="caseTaskList">{data.tasks.length?data.tasks.map(t=><div className={`caseTask ${t.status==='done'?'done':''}`} key={t.id}><button onClick={()=>toggle(t)}>{t.status==='done'?'✓':''}</button><div><b>{t.title}</b><span>{taskPriorityLabels[t.priority]} · {t.assigned_name||'Ich'} · Fällig {taskDate(t.due_at)}</span></div></div>):<div className="emptyInline">Noch keine Aufgaben für diesen Vorgang.</div>}</div></section>;
 }
 
-function TeamView() {
+function TeamView({ onWorkspaceChanged }) {
   const [team, setTeam] = useState({ organization: null, members: [] });
   const [orgName, setOrgName] = useState('');
   const [member, setMember] = useState({ name: '', email: '', password: '', role: 'member' });
@@ -658,7 +676,7 @@ function TeamView() {
 
   async function createOrganization(event) {
     event.preventDefault(); setBusy(true); setError(''); setMessage('');
-    try { await api('/api/team', { method: 'POST', body: JSON.stringify({ name: orgName }) }); setMessage('Hausverwaltungs-Arbeitsbereich angelegt. Ab jetzt werden neue Vorgänge mit deinem Team geteilt.'); setOrgName(''); await load(); }
+    try { await api('/api/team', { method: 'POST', body: JSON.stringify({ name: orgName }) }); setMessage('Hausverwaltungs-Arbeitsbereich angelegt. Deine 14-Tage-Testphase ist jetzt aktiv.'); setOrgName(''); await load(); await onWorkspaceChanged?.(); }
     catch (err) { setError(err.message); }
     finally { setBusy(false); }
   }
@@ -734,6 +752,13 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   const [unreadNotifications,setUnreadNotifications]=useState(0);const [isAdmin,setIsAdmin]=useState(false);
   async function refreshUnread(){try{const d=await api('/api/notifications');setUnreadNotifications(d.unread||0);}catch{setUnreadNotifications(0)}}
 
+  // V021_WORKSPACE_REFRESH
+  async function refreshWorkspaceState(){
+    const [managementResult,entitlementResult]=await Promise.allSettled([api('/api/management/overview'),api('/api/entitlements')]);
+    if(managementResult.status==='fulfilled')setManagement(managementResult.value);else setManagement({organization:null});
+    if(entitlementResult.status==='fulfilled')setEntitlements(entitlementResult.value);else setEntitlements({scope:'private',pro:false,usage:{activeCases:0},limits:{maxActiveCases:5,maxPhotosPerCase:3}});
+  }
+
   async function loadCases() {
     try { const data = await api('/api/cases'); setCases(data.cases); setError(''); }
     catch (err) { setError(err.message); }
@@ -744,7 +769,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   const goProfile = () => { setSelected(null); setView('profile'); };
   const hasPro=Boolean(entitlements?.pro);
   const selectView=(next,proOnly=false)=>{setSelected(null);if(proOnly&&!hasPro&&!management?.organization){setView('billing');return}setView(next)};
-  const finishOnboarding=(updated,useCase)=>{setUser(updated);setShowOnboarding(false);if(useCase==='management'){setSelected(null);setView('team')}};
+  const finishOnboarding=(updated,useCase)=>{setUser(updated);setShowOnboarding(false);if(useCase==='management'){setSelected(null);setView('overview');refreshWorkspaceState()}};
 
   let content;
   if (selected) content = <CaseDetail caseId={selected} onBack={() => setSelected(null)} onUpdated={loadCases} user={user} onProfile={goProfile} pro={hasPro} onUpgrade={()=>setView('billing')} />;
@@ -767,7 +792,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   else if (view === 'security') content = <AccountSecurityView user={user} onUserChanged={setUser} onSignedOut={onLogout} />;
   else if (view === 'billing') content = <BillingView />;
   else if (view === 'admin') content = <AdminView />;
-  else if (view === 'team') content = <TeamView />;
+  else if (view === 'team') content = <TeamView onWorkspaceChanged={refreshWorkspaceState} />;
   else content = <ProfileView user={user} onSaved={setUser} />;
 
   return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'analytics' ? 'active' : ''} onClick={() => selectView('analytics',true)}><span>Q</span>{management?.organization?'Analyse':'Auswertung'}{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'search' ? 'active' : ''} onClick={() => selectView('search',true)}><span>S</span>Suche & Archiv{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button>{!management?.organization&&<button className={view === 'connections' ? 'active' : ''} onClick={() => { setSelected(null); setView('connections'); }}><span>V</span>Verknüpfte Verwaltungen</button>}<button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => selectView('deadlines',true)}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b>{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button>{management?.organization&&<><button className={view === 'providers' ? 'active' : ''} onClick={() => { setSelected(null); setView('providers'); }}><span>H</span>Dienstleister</button><button className={view === 'orders' ? 'active' : ''} onClick={() => { setSelected(null); setView('orders'); }}><span>A</span>Aufträge</button></>}<button className={view === 'inspections' ? 'active' : ''} onClick={() => selectView('inspections',true)}><span>Ü</span>Übergabe / Abnahme{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'calendar' ? 'active' : ''} onClick={() => selectView('calendar',true)}><span>K</span>Kalender{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'tasks' ? 'active' : ''} onClick={() => selectView('tasks',true)}><span>✓</span>Aufgaben{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'notifications' ? 'active' : ''} onClick={() => { setSelected(null); setView('notifications'); }}><span>B</span>Benachrichtigungen {unreadNotifications>0&&<b>{unreadNotifications}</b>}</button>{management?.organization&&<button className={view === 'audit' ? 'active' : ''} onClick={() => { setSelected(null); setView('audit'); }}><span>A</span>Aktivitätsprotokoll</button>}<button className={view === 'billing' ? 'active' : ''} onClick={() => { setSelected(null); setView('billing'); }}><span>€</span>Tarif & Abrechnung</button><button className={view === 'team' ? 'active' : ''} onClick={() => { setSelected(null); setView('team'); }}><span>T</span>{management?.organization ? 'Team' : 'Verwaltung'}</button>{isAdmin&&<button className={view === 'admin' ? 'active' : ''} onClick={() => { setSelected(null); setView('admin'); }}><span>K</span>Kamilunavo Admin</button>}</nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={()=>setShowOnboarding(true)}><span>?</span>Einführung</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{!management?.organization&&entitlements&&!hasPro&&<div className="freePlanTop"><span><b>Privat Free</b> {entitlements.usage?.activeCases||0} / 5 aktive Vorgänge · 3 Fotos je Vorgang</span><button onClick={()=>setView('billing')}>Pro freischalten · 4,99 € →</button></div>}{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase pro={hasPro} entitlements={entitlements} onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); api('/api/entitlements').then(setEntitlements).catch(()=>{}); setSelected(created.id); }} />}{showOnboarding&&<OnboardingFlow user={user} onDone={finishOnboarding}/>}</div>;
@@ -794,7 +819,10 @@ export default function App() {
   if (path.startsWith('/einladung/')) return <InvitationPage token={path.split('/').pop()} user={state.user} navigate={navigate} />;
   if (path.startsWith('/auftrag/')) return <ContractorPortal token={path.split('/').pop()} navigate={navigate} />;
   if (path === '/anmelden') return <Auth mode="login" onSignedIn={user => setState({ loading: false, user })} navigate={navigate} />;
-  if (path === '/registrieren') return <Auth mode="register" onSignedIn={user => setState({ loading: false, user })} navigate={navigate} />;
+  if (path === '/registrieren' || path === '/registrieren/privat' || path === '/registrieren/verwaltung') {
+    const initialAccountType = path === '/registrieren/verwaltung' ? 'management' : 'private';
+    return <Auth mode="register" initialAccountType={initialAccountType} onSignedIn={user => setState({ loading: false, user })} navigate={navigate} />;
+  }
   if (path.startsWith('/app')) {
     if (!state.user) return <Auth mode="login" onSignedIn={user => setState({ loading: false, user })} navigate={navigate} />;
     return <Workspace user={state.user} setUser={user => setState({ loading: false, user })} onLogout={logout} navigate={navigate} />;

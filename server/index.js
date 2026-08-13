@@ -197,33 +197,70 @@ async function canAccessCase(userId, caseId) {
 
 app.get('/api/health', async (_req, res) => {
   await pool.query('SELECT 1');
-  res.json({ ok: true, service: 'maengelfix', version: '0.19.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
+  res.json({ ok: true, service: 'maengelfix', version: '0.21.0', mail: smtpConfigured ? 'smtp' : 'manual', stripe: Boolean(process.env.STRIPE_SECRET_KEY) });
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
+  const client = await pool.connect();
+  let transactionOpen = false;
   try {
+    const accountType = req.body.accountType === 'management' ? 'management' : 'private';
     const name = cleanText(req.body.name, 120);
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
+    const organizationName = cleanText(req.body.organizationName, 180);
+
     if (!name || !email || !email.includes('@') || password.length < 8) {
       return res.status(400).json({ error: 'Name, gültige E-Mail und mindestens 8 Zeichen Passwort sind erforderlich.' });
     }
-    const existing = await pool.query('SELECT 1 FROM users WHERE email = $1', [email]);
-    if (existing.rowCount) return res.status(409).json({ error: 'Für diese E-Mail existiert bereits ein Konto.' });
+    if (accountType === 'management' && !organizationName) {
+      return res.status(400).json({ error: 'Bitte gib den Namen deiner Hausverwaltung an.' });
+    }
+
+    await client.query('BEGIN');
+    transactionOpen = true;
+    const existing = await client.query('SELECT 1 FROM users WHERE email=$1', [email]);
+    if (existing.rowCount) {
+      await client.query('ROLLBACK'); transactionOpen = false;
+      return res.status(409).json({ error: 'Für diese E-Mail existiert bereits ein Konto.' });
+    }
 
     const credentials = await makePassword(password);
     const userId = id();
-    const result = await pool.query(
-      `INSERT INTO users (id, name, email, password_salt, password_hash, country)
-       VALUES ($1,$2,$3,$4,$5,'Deutschland')
-       RETURNING id, name, email, street, postal_code, city, country, phone, email_verified_at, plan_code, subscription_status, subscription_current_period_end, onboarding_completed_at, onboarding_use_case`,
-      [userId, name, email, credentials.salt, credentials.hash]
+    const result = await client.query(
+      `INSERT INTO users (id,name,email,password_salt,password_hash,country,onboarding_use_case,onboarding_completed_at)
+       VALUES ($1,$2,$3,$4,$5,'Deutschland',$6,now())
+       RETURNING id,name,email,street,postal_code,city,country,phone,email_verified_at,plan_code,subscription_status,subscription_current_period_end,onboarding_completed_at,onboarding_use_case`,
+      [userId, name, email, credentials.salt, credentials.hash, accountType]
     );
+
+    let organization = null;
+    if (accountType === 'management') {
+      const organizationId = id();
+      const orgResult = await client.query(
+        `INSERT INTO organizations
+         (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units)
+         VALUES ($1,$2,'management_trial',$3,'trialing',now()+interval '14 days',5,100,100)
+         RETURNING id,name,plan_code,subscription_status,trial_ends_at,max_members,max_properties,max_units`,
+        [organizationId, organizationName, userId]
+      );
+      await client.query(
+        `INSERT INTO organization_memberships (organization_id,user_id,role) VALUES ($1,$2,'owner')`,
+        [organizationId, userId]
+      );
+      organization = { ...orgResult.rows[0], role: 'owner' };
+    }
+
+    await client.query('COMMIT');
+    transactionOpen = false;
     await createSession(userId, res);
     try { await issueVerification(userId, email, name); } catch (mailError) { console.error('Verification mail failed', mailError); }
-    res.status(201).json({ user: publicUser(result.rows[0]), verificationMailSent: Boolean(mailer) });
+    res.status(201).json({ user: publicUser(result.rows[0]), accountType, organization, verificationMailSent: Boolean(mailer) });
   } catch (error) {
+    if (transactionOpen) { try { await client.query('ROLLBACK'); } catch {} }
     next(error);
+  } finally {
+    client.release();
   }
 });
 
@@ -319,7 +356,42 @@ app.post('/api/auth/logout', auth, async (req, res, next) => {
 app.get('/api/me', auth, (req, res) => res.json({ user: publicUser(req.user) }));
 
 app.get('/api/entitlements',auth,async(req,res,next)=>{try{res.json(await privateEntitlements(req.user.id,req.user))}catch(e){next(e)}});
-app.patch('/api/onboarding',auth,async(req,res,next)=>{try{const useCase=['private','management'].includes(req.body.useCase)?req.body.useCase:'private';const q=await pool.query(`UPDATE users SET onboarding_use_case=$2,onboarding_completed_at=now() WHERE id=$1 RETURNING id,name,email,street,postal_code,city,country,phone,email_verified_at,plan_code,subscription_status,subscription_current_period_end,onboarding_completed_at,onboarding_use_case`,[req.user.id,useCase]);res.json({user:publicUser(q.rows[0])})}catch(e){next(e)}});
+app.patch('/api/onboarding', auth, async (req,res,next)=>{
+  const client = await pool.connect();
+  let transactionOpen = false;
+  try {
+    const useCase = req.body.useCase === 'management' ? 'management' : 'private';
+    const requestedOrganizationName = cleanText(req.body.organizationName,180) || `${req.user.name || 'Meine'} Hausverwaltung`;
+    await client.query('BEGIN'); transactionOpen = true;
+
+    if (useCase === 'management') {
+      const existing = await client.query(
+        `SELECT o.id FROM organization_memberships om JOIN organizations o ON o.id=om.organization_id
+         WHERE om.user_id=$1 AND COALESCE(om.active,true)=true LIMIT 1`, [req.user.id]
+      );
+      if (!existing.rowCount) {
+        const organizationId=id();
+        await client.query(
+          `INSERT INTO organizations (id,name,plan_code,created_by,subscription_status,trial_ends_at,max_members,max_properties,max_units)
+           VALUES ($1,$2,'management_trial',$3,'trialing',now()+interval '14 days',5,100,100)`,
+          [organizationId,requestedOrganizationName,req.user.id]
+        );
+        await client.query(`INSERT INTO organization_memberships (organization_id,user_id,role) VALUES ($1,$2,'owner')`,[organizationId,req.user.id]);
+      }
+    }
+
+    const q=await client.query(
+      `UPDATE users SET onboarding_use_case=$2,onboarding_completed_at=now() WHERE id=$1
+       RETURNING id,name,email,street,postal_code,city,country,phone,email_verified_at,plan_code,subscription_status,subscription_current_period_end,onboarding_completed_at,onboarding_use_case`,
+      [req.user.id,useCase]
+    );
+    await client.query('COMMIT'); transactionOpen=false;
+    res.json({user:publicUser(q.rows[0])});
+  } catch(e) {
+    if(transactionOpen){try{await client.query('ROLLBACK')}catch{}}
+    next(e);
+  } finally { client.release(); }
+});
 
 app.patch('/api/profile', auth, async (req, res, next) => {
   try {
@@ -501,6 +573,8 @@ app.post('/api/team', auth, async (req, res, next) => {
         `INSERT INTO organization_memberships (organization_id, user_id, role) VALUES ($1,$2,'owner')`,
         [orgId, req.user.id]
       );
+      // V021_TEAM_ACCOUNT_MODE
+      await pool.query(`UPDATE users SET onboarding_use_case='management',onboarding_completed_at=COALESCE(onboarding_completed_at,now()) WHERE id=$1`,[req.user.id]);
       await pool.query('COMMIT');
     } catch (error) {
       await pool.query('ROLLBACK');
@@ -533,7 +607,7 @@ app.post('/api/team/members', auth, async (req, res, next) => {
     await pool.query('BEGIN');
     try {
       await pool.query(
-        `INSERT INTO users (id,name,email,password_salt,password_hash,country) VALUES ($1,$2,$3,$4,$5,'Deutschland')`,
+        `INSERT INTO users (id,name,email,password_salt,password_hash,country,onboarding_use_case,onboarding_completed_at) VALUES ($1,$2,$3,$4,$5,'Deutschland','management',now())`,
         [userId, name, email, credentials.salt, credentials.hash]
       );
       await pool.query(
