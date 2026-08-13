@@ -12,6 +12,14 @@ struct CreateCaseView: View {
     @State private var locationLabel = ""
     @State private var isSubmitting = false
     @State private var errorMessage: String?
+    @FocusState private var focusedField: Field?
+
+    private enum Field: Hashable {
+        case title
+        case description
+        case property
+        case location
+    }
 
     private let contexts: [(String, String)] = [
         ("housing", "Wohnen / Immobilie"),
@@ -38,6 +46,10 @@ struct CreateCaseView: View {
             Form {
                 Section("Mangel") {
                     TextField("Titel", text: $title)
+                        .focused($focusedField, equals: .title)
+                        .submitLabel(.next)
+                        .onSubmit { focusedField = .description }
+
                     Picker("Bereich", selection: $context) {
                         ForEach(contexts, id: \.0) { value, label in
                             Text(label).tag(value)
@@ -46,6 +58,7 @@ struct CreateCaseView: View {
                     .onChange(of: context) { _, newValue in
                         category = categories[newValue]?.first ?? "Sonstiges"
                     }
+
                     Picker("Kategorie", selection: $category) {
                         ForEach(categories[context] ?? ["Sonstiges"], id: \.self) { value in
                             Text(value).tag(value)
@@ -56,11 +69,14 @@ struct CreateCaseView: View {
                 Section("Beschreibung") {
                     TextEditor(text: $description)
                         .frame(minHeight: 150)
+                        .focused($focusedField, equals: .description)
                 }
 
                 Section("Ort / Bezug") {
                     TextField("Objekt / Adresse (optional)", text: $propertyLabel)
+                        .focused($focusedField, equals: .property)
                     TextField("Raum / Ort (optional)", text: $locationLabel)
+                        .focused($focusedField, equals: .location)
                 }
 
                 if let errorMessage {
@@ -69,22 +85,50 @@ struct CreateCaseView: View {
                             .foregroundStyle(.red)
                     }
                 }
+            }
+            .navigationTitle("Neuer Mangel")
+            .scrollDismissesKeyboard(.interactively)
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button("Anlegen") {
+                        submit()
+                    }
+                    .fontWeight(.semibold)
+                    .disabled(isSubmitting || !formIsValid)
+                }
 
-                Section {
+                ToolbarItemGroup(placement: .keyboard) {
+                    Spacer()
+                    Button("Fertig") {
+                        focusedField = nil
+                    }
+                }
+            }
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 0) {
+                    Divider()
                     Button {
                         submit()
                     } label: {
-                        HStack {
-                            Spacer()
-                            if isSubmitting { ProgressView() }
-                            Text("Mangel anlegen").fontWeight(.bold)
-                            Spacer()
+                        HStack(spacing: 10) {
+                            if isSubmitting {
+                                ProgressView()
+                            } else {
+                                Image(systemName: "checkmark.circle.fill")
+                            }
+                            Text(isSubmitting ? "Wird angelegt …" : "Mangel anlegen")
+                                .fontWeight(.bold)
                         }
+                        .frame(maxWidth: .infinity)
+                        .padding(.vertical, 14)
                     }
+                    .buttonStyle(.borderedProminent)
                     .disabled(isSubmitting || !formIsValid)
+                    .padding(.horizontal)
+                    .padding(.vertical, 10)
                 }
+                .background(.bar)
             }
-            .navigationTitle("Neuer Mangel")
         }
     }
 
@@ -94,7 +138,8 @@ struct CreateCaseView: View {
     }
 
     private func submit() {
-        guard formIsValid else { return }
+        guard formIsValid, !isSubmitting else { return }
+        focusedField = nil
         isSubmitting = true
         errorMessage = nil
 
