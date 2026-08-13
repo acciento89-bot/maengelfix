@@ -1,0 +1,24 @@
+name: MängelFix v0.19 Build
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/upgrade-v019.yml
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/upgrade_v019_backend.py
+      - run: python3 scripts/upgrade_v019_privacy.py
+      - run: python3 scripts/upgrade_v019_client.py
+      - run: python3 scripts/upgrade_v019_landing.py
+      - run: node --check server/index.js
+      - run: cd client && npm install --no-audit --no-fund && npm run build
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add server/schema.sql server/index.js server/package.json client/src/App.jsx
+          if git diff --cached --quiet; then echo "Nothing to commit"; else git commit -m "Build MängelFix v0.19 onboarding entitlements and landing" && git push; fi
