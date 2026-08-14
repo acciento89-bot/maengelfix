@@ -98,6 +98,7 @@ function PublicFooter({ navigate }) {
     <footer className="publicFooter">
       <div><Logo inverse /><p>Mängel dokumentieren, Fristen im Blick behalten und nachvollziehbare Unterlagen erstellen.</p></div>
       <div className="footerLinks">
+        <button onClick={() => navigate('/support')}>Support</button>
         <button onClick={() => navigate('/impressum')}>Impressum</button>
         <button onClick={() => navigate('/datenschutz')}>Datenschutz</button>
         <button onClick={() => navigate('/nutzungsbedingungen')}>Nutzungsbedingungen</button>
@@ -279,6 +280,17 @@ function SimpleAccountPage({ mode, token, navigate }) {
 
 function LegalPage({ type, navigate }) {
   const content = {
+    support: {
+      eyebrow: 'MÄNGELFIX SUPPORT',
+      title: 'Hilfe & Kontakt',
+      sections: [
+        ['Support für MängelFix', <><p>Du hast eine Frage zur App, zu deinem Konto, zu einem Kauf oder eine Idee für eine Verbesserung? Schreib uns – wir helfen dir gerne weiter.</p><p><b>E-Mail:</b> <a href="mailto:contact@kamilunavo.com">contact@kamilunavo.com</a></p></>],
+        ['Anbieter & Kontakt', <p><b>Kamilunavo</b><br />Inhaber: Piotr Kaminski<br />Otto-Braun-Straße 14<br />40595 Düsseldorf<br />Deutschland</p>],
+        ['Käufe & Abonnements', <p>Abonnements, die in der iPhone- oder iPad-App abgeschlossen wurden, werden über den Apple App Store verwaltet. In MängelFix kannst du Käufe wiederherstellen; Änderungen oder Kündigungen erfolgen über deine Apple-Abonnementverwaltung.</p>],
+        ['Konto & Datenschutz', <p>Passwort, E-Mail-Adresse, Datenexport und die dauerhafte Kontolöschung findest du nach der Anmeldung unter Konto & Datenschutz. Weitere Informationen stehen in unserer Datenschutzerklärung.</p>],
+        ['Bei einer Support-Anfrage hilfreich', <p>Nenne uns bitte die verwendete Plattform (iPhone oder iPad), deine MängelFix-App-Version und eine kurze Beschreibung des Problems. Sende keine Passwörter, Apple-Schlüssel oder andere Zugangsdaten per E-Mail.</p>]
+      ]
+    },
     impressum: {
       eyebrow: 'RECHTLICHE ANGABEN',
       title: 'Impressum',
@@ -813,6 +825,7 @@ export default function App() {
   }
 
   if (state.loading) return <div className="brandSplash"><Logo /><div className="loader" /></div>;
+  if (path === '/support') return <LegalPage type="support" navigate={navigate} />;
   if (path === '/impressum') return <LegalPage type="impressum" navigate={navigate} />;
   if (path === '/datenschutz') return <LegalPage type="datenschutz" navigate={navigate} />;
   if (path === '/nutzungsbedingungen') return <LegalPage type="terms" navigate={navigate} />;
