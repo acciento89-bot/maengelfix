@@ -8,7 +8,7 @@ settings:
   base:
     SWIFT_VERSION: "5.0"
     SWIFT_STRICT_CONCURRENCY: targeted
-    CURRENT_PROJECT_VERSION: 6
+    CURRENT_PROJECT_VERSION: 7
     MARKETING_VERSION: 0.4.0
     CODE_SIGN_STYLE: Automatic
 
@@ -21,7 +21,7 @@ targets:
       - Sources
     settings:
       base:
-        CURRENT_PROJECT_VERSION: 6
+        CURRENT_PROJECT_VERSION: 7
         MARKETING_VERSION: 0.4.0
         DEVELOPMENT_TEAM: TKG684N5GL
         PRODUCT_BUNDLE_IDENTIFIER: com.kamilunavo.maengelfix
@@ -38,7 +38,7 @@ targets:
           CODE_SIGN_IDENTITY: "Apple Distribution: Piotr Kaminski (TKG684N5GL)"
           PROVISIONING_PROFILE_SPECIFIER: "MaengelFix App Store"
           DEVELOPMENT_TEAM: TKG684N5GL
-          CURRENT_PROJECT_VERSION: 6
+          CURRENT_PROJECT_VERSION: 7
           MARKETING_VERSION: 0.4.0
     scheme:
       testTargets: []
