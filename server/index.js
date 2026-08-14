@@ -26,8 +26,25 @@ const appOrigin = process.env.APP_ORIGIN || 'https://maengelfix.kamilunavo.com';
 const appleBundleId = process.env.APPLE_APP_BUNDLE_ID || 'com.kamilunavo.maengelfix';
 const appleIssuerId = process.env.APPLE_IAP_ISSUER_ID || '';
 const appleKeyId = process.env.APPLE_IAP_KEY_ID || '';
-const applePrivateKey = String(process.env.APPLE_IAP_PRIVATE_KEY || '').replace(/\\n/g, '\n');
-const appleBillingConfigured = Boolean(appleIssuerId && appleKeyId && applePrivateKey);
+const applePrivateKeyBase64 = String(process.env.APPLE_IAP_PRIVATE_KEY_B64 || '').trim();
+const applePrivateKey = applePrivateKeyBase64
+  ? Buffer.from(applePrivateKeyBase64, 'base64').toString('utf8').trim()
+  : String(process.env.APPLE_IAP_PRIVATE_KEY || '')
+      .trim()
+      .replace(/^['"]|['"]$/g, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\n/g, '\n');
+let applePrivateKeyValid = false;
+if (applePrivateKey) {
+  try {
+    const parsedAppleKey = crypto.createPrivateKey(applePrivateKey);
+    applePrivateKeyValid = parsedAppleKey.asymmetricKeyType === 'ec';
+    if (!applePrivateKeyValid) console.error('Apple IAP private key is not an EC key.');
+  } catch (error) {
+    console.error('Apple IAP private key could not be parsed:', error.message);
+  }
+}
+const appleBillingConfigured = Boolean(appleIssuerId && appleKeyId && applePrivateKey && applePrivateKeyValid);
 const appleProducts = new Map([
   ['com.kamilunavo.maengelfix.privatepro.monthly', {scope:'private',planCode:'private_pro'}],
   ['com.kamilunavo.maengelfix.privatepro.yearly', {scope:'private',planCode:'private_pro'}],
