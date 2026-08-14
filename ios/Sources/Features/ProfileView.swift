@@ -47,14 +47,14 @@ struct ProfileView: View {
                     }
 
                     if session.isManagement {
-                        managementSubscriptionSection
+                        managementSubscriptionSection(user: user)
                     } else {
                         subscriptionSection(user: user)
                     }
                 }
 
                 Section("MängelFix") {
-                    LabeledContent("App-Version", value: "0.4.0")
+                    LabeledContent("App-Version", value: appVersionLabel)
                     LabeledContent("Backend", value: "maengelfix.kamilunavo.com")
                 }
 
@@ -78,7 +78,10 @@ struct ProfileView: View {
             .task {
                 await session.refreshUser()
                 await session.refreshEntitlements()
-                if !session.isManagement { await store.loadProducts() }
+                await store.loadProducts()
+                if let id = session.user?.id, let token = UUID(uuidString: id) {
+                    await store.refreshLocalEntitlements(accountToken: token)
+                }
             }
             .sheet(isPresented: $showEdit) {
                 if let user = session.user {
@@ -93,6 +96,12 @@ struct ProfileView: View {
         }
     }
 
+    private var appVersionLabel: String {
+        let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "0.4.0"
+        let build = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "?"
+        return "\(version) (\(build))"
+    }
+
     private var managementPlanLabel: String {
         switch session.entitlements?.planCode {
         case "management_trial": return "Verwaltung · Testphase"
@@ -103,24 +112,108 @@ struct ProfileView: View {
         }
     }
 
+    private var canManageManagementBilling: Bool {
+        guard let role = session.entitlements?.role else { return false }
+        return role == "owner" || role == "admin"
+    }
+
     @ViewBuilder
-    private var managementSubscriptionSection: some View {
+    private func managementSubscriptionSection(user: User) -> some View {
         Section("Verwaltung") {
             if let entitlements = session.entitlements {
-                Label(entitlements.pro ? "Verwaltungsfunktionen sind aktiv" : "Verwaltungstarif ist nicht aktiv", systemImage: entitlements.pro ? "checkmark.seal.fill" : "exclamationmark.triangle.fill")
-                    .foregroundStyle(entitlements.pro ? Color.mfPrimary : Color.orange)
+                Label(
+                    entitlements.pro ? "Verwaltungsfunktionen sind aktiv" : "Verwaltungstarif ist nicht aktiv",
+                    systemImage: entitlements.pro ? "checkmark.seal.fill" : "exclamationmark.triangle.fill"
+                )
+                .foregroundStyle(entitlements.pro ? Color.mfPrimary : Color.orange)
+
                 if entitlements.status == "trialing" {
                     LabeledContent("Testphase", value: "14 Tage kostenlos")
-                    if let end = entitlements.trialEndsAt { LabeledContent("Test endet", value: displayDate(end)) }
+                    if let end = entitlements.trialEndsAt {
+                        LabeledContent("Test endet", value: displayDate(end))
+                    }
                 }
-                if let used = entitlements.usage.members, let limit = entitlements.limits.members { LabeledContent("Team", value: "\(used) / \(limit)") }
-                if let used = entitlements.usage.properties, let limit = entitlements.limits.properties { LabeledContent("Objekte", value: "\(used) / \(limit)") }
-                if let used = entitlements.usage.units, let limit = entitlements.limits.units { LabeledContent("Einheiten", value: "\(used) / \(limit)") }
+                if let used = entitlements.usage.members, let limit = entitlements.limits.members {
+                    LabeledContent("Team", value: "\(used) / \(limit)")
+                }
+                if let used = entitlements.usage.properties, let limit = entitlements.limits.properties {
+                    LabeledContent("Objekte", value: "\(used) / \(limit)")
+                }
+                if let used = entitlements.usage.units, let limit = entitlements.limits.units {
+                    LabeledContent("Einheiten", value: "\(used) / \(limit)")
+                }
+
+                if canManageManagementBilling {
+                    if entitlements.provider == "stripe" {
+                        Text("Dieser Verwaltungstarif wird über die MängelFix-Webseite abgerechnet. Änderungen erfolgen dort, damit kein zweites Abo entsteht.")
+                            .font(.footnote)
+                            .foregroundStyle(.secondary)
+                    } else {
+                        managementStoreProducts(user: user)
+
+                        Button("Käufe wiederherstellen") {
+                            Task { await restorePurchases(user: user) }
+                        }
+                        .disabled(store.isPurchasing)
+
+                        if entitlements.provider == "apple" && entitlements.status == "active" {
+                            Button("App-Store-Abo verwalten") {
+                                if let url = URL(string: "https://apps.apple.com/account/subscriptions") { openURL(url) }
+                            }
+                        }
+                    }
+                } else {
+                    Text("Nur Inhaber und Administratoren können den Verwaltungstarif ändern.")
+                        .font(.footnote)
+                        .foregroundStyle(.secondary)
+                }
             } else {
                 HStack { ProgressView(); Text("Verwaltungsstatus wird geladen …") }
             }
-            Text("Privat-Pro-Abos aus dem App Store werden für Verwaltungskonten nicht angeboten.")
-                .font(.footnote).foregroundStyle(.secondary)
+
+            if store.isPurchasing {
+                HStack { ProgressView(); Text("App Store wird verarbeitet …") }
+            }
+            if let billingMessage {
+                Text(billingMessage).font(.footnote).foregroundStyle(.secondary)
+            }
+        }
+    }
+
+    @ViewBuilder
+    private func managementStoreProducts(user: User) -> some View {
+        if store.isLoading {
+            HStack { ProgressView(); Text("App-Store-Angebote werden geladen …") }
+        } else if store.managementProducts.isEmpty {
+            Text("Die Verwaltungs-Abos sind im App Store noch nicht verfügbar. Bitte prüfe die Produkte in App Store Connect.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+        } else {
+            ForEach(store.managementProducts, id: \.id) { product in
+                let active = store.isProductActive(product.id)
+                Button {
+                    Task { await buy(product, user: user) }
+                } label: {
+                    HStack(spacing: 12) {
+                        VStack(alignment: .leading, spacing: 3) {
+                            Text(StoreKitManager.managementTitle(for: product.id))
+                                .foregroundStyle(.primary)
+                            Text(StoreKitManager.periodLabel(for: product.id))
+                                .font(.caption)
+                                .foregroundStyle(.secondary)
+                        }
+                        Spacer()
+                        if active {
+                            Label("Aktiv", systemImage: "checkmark.circle.fill")
+                                .font(.caption)
+                                .foregroundStyle(Color.mfPrimary)
+                        } else {
+                            Text(product.displayPrice).fontWeight(.semibold)
+                        }
+                    }
+                }
+                .disabled(store.isPurchasing || active)
+            }
         }
     }
 
@@ -140,31 +233,29 @@ struct ProfileView: View {
                 if let end = user.subscriptionCurrentPeriodEnd, !end.isEmpty {
                     LabeledContent("Aktueller Zeitraum", value: end)
                 }
-                if store.activeProductID != nil {
+                if store.activeProductIDs.contains(where: { StoreKitManager.privateProductIDs.contains($0) }) {
                     Button("App-Store-Abo verwalten") {
                         if let url = URL(string: "https://apps.apple.com/account/subscriptions") { openURL(url) }
                     }
                 }
             } else if store.isLoading {
                 HStack { ProgressView(); Text("App-Store-Angebote werden geladen …") }
-            } else if store.products.isEmpty {
+            } else if store.privateProducts.isEmpty {
                 Text("Die App-Store-Abos werden verfügbar, sobald sie in App Store Connect freigeschaltet sind.")
                     .font(.footnote)
                     .foregroundStyle(.secondary)
             } else {
-                ForEach(store.products, id: \.id) { product in
+                ForEach(store.privateProducts, id: \.id) { product in
                     Button {
                         Task { await buy(product, user: user) }
                     } label: {
                         HStack {
                             VStack(alignment: .leading, spacing: 3) {
-                                Text(product.id == StoreKitManager.yearlyProductID ? "Privat Pro – jährlich" : "Privat Pro – monatlich")
+                                Text(product.id == StoreKitManager.privateYearlyProductID ? "Privat Pro – jährlich" : "Privat Pro – monatlich")
                                     .foregroundStyle(.primary)
-                                if product.id == StoreKitManager.yearlyProductID {
-                                    Text("Jahresabo")
-                                        .font(.caption)
-                                        .foregroundStyle(.secondary)
-                                }
+                                Text(product.id == StoreKitManager.privateYearlyProductID ? "Jahresabo" : "Monatsabo")
+                                    .font(.caption)
+                                    .foregroundStyle(.secondary)
                             }
                             Spacer()
                             Text(product.displayPrice).fontWeight(.semibold)
@@ -193,7 +284,8 @@ struct ProfileView: View {
         do {
             if try await store.purchase(product, userID: user.id, api: session.api) {
                 await session.refreshUser()
-                billingMessage = "Privat Pro ist jetzt aktiv."
+                await session.refreshEntitlements()
+                billingMessage = session.isManagement ? "Der Verwaltungstarif ist jetzt aktiv." : "Privat Pro ist jetzt aktiv."
             }
         } catch {
             billingMessage = error.localizedDescription
@@ -205,7 +297,8 @@ struct ProfileView: View {
         do {
             let restored = try await store.restore(userID: user.id, api: session.api)
             await session.refreshUser()
-            billingMessage = restored ? "Käufe wurden wiederhergestellt." : "Für dieses Apple-Konto wurde kein aktives MängelFix-Abo gefunden."
+            await session.refreshEntitlements()
+            billingMessage = restored ? "Käufe wurden wiederhergestellt." : "Für dieses Apple-Konto wurde kein aktives MängelFix-Abo für dieses Konto gefunden."
         } catch {
             billingMessage = error.localizedDescription
         }
