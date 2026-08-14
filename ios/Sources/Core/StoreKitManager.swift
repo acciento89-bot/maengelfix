@@ -84,16 +84,31 @@ final class StoreKitManager {
             throw StoreKitManagerError.invalidAccountIdentifier
         }
 
+        // StoreKit keeps currentEntitlements up to date automatically. Check those first so
+        // an already active subscription can be re-linked to the backend without forcing
+        // AppStore.sync(), which may itself fail due to App Store account state.
+        if try await verifyCurrentEntitlements(api: api) {
+            await refreshLocalEntitlements()
+            return true
+        }
+
+        // Only force an App Store sync when no active entitlement was available locally.
         try await AppStore.sync()
+        let restored = try await verifyCurrentEntitlements(api: api)
+        await refreshLocalEntitlements()
+        return restored
+    }
+
+    private func verifyCurrentEntitlements(api: APIClient) async throws -> Bool {
         var restored = false
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
                   Self.productIDs.contains(transaction.productID),
                   transaction.revocationDate == nil else { continue }
+            if let expirationDate = transaction.expirationDate, expirationDate <= Date() { continue }
             _ = try await api.verifyAppleTransaction(transactionID: String(transaction.id))
             restored = true
         }
-        await refreshLocalEntitlements()
         return restored
     }
 
