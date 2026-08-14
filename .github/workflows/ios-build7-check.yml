@@ -1,0 +1,29 @@
+name: MängelFix iOS Build 7 Check
+on:
+  push:
+    branches: [ios-app]
+    paths:
+      - .github/workflows/ios-build7-check.yml
+permissions:
+  contents: read
+jobs:
+  build:
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install XcodeGen
+        run: brew install xcodegen
+      - name: Generate project
+        working-directory: ios
+        run: xcodegen generate
+      - name: Compile iOS app
+        working-directory: ios
+        run: |
+          xcodebuild \
+            -project MaengelFix.xcodeproj \
+            -scheme MaengelFix \
+            -configuration Debug \
+            -sdk iphonesimulator \
+            -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO \
+            build
