@@ -107,6 +107,8 @@ struct Entitlements: Codable, Hashable {
     let planCode: String
     let status: String
     let trialEndsAt: String?
+    let role: String?
+    let provider: String?
     let usage: EntitlementUsage
     let limits: EntitlementLimits
     let features: EntitlementFeatures
