@@ -12,14 +12,14 @@ pattern = re.compile(
     r"const applePrivateKey = .*?;\nconst appleBillingConfigured = Boolean\(appleIssuerId && appleKeyId && applePrivateKey\);",
     re.S,
 )
-replacement = r'''const applePrivateKeyBase64 = String(process.env.APPLE_IAP_PRIVATE_KEY_B64 || '').trim();
+replacement = '''const applePrivateKeyBase64 = String(process.env.APPLE_IAP_PRIVATE_KEY_B64 || '').trim();
 const applePrivateKey = applePrivateKeyBase64
   ? Buffer.from(applePrivateKeyBase64, 'base64').toString('utf8').trim()
   : String(process.env.APPLE_IAP_PRIVATE_KEY || '')
       .trim()
       .replace(/^['"]|['"]$/g, '')
-      .replace(/\\r\\n/g, '\n')
-      .replace(/\\n/g, '\n');
+      .replace(/\\r\\n/g, '\\n')
+      .replace(/\\n/g, '\\n');
 let applePrivateKeyValid = false;
 if (applePrivateKey) {
   try {
@@ -33,7 +33,7 @@ if (applePrivateKey) {
 const appleBillingConfigured = Boolean(appleIssuerId && appleKeyId && applePrivateKey && applePrivateKeyValid);'''
 
 if 'APPLE_IAP_PRIVATE_KEY_B64' not in server:
-    server, count = pattern.subn(replacement, server, count=1)
+    server, count = pattern.subn(lambda _m: replacement, server, count=1)
     if count != 1:
         raise SystemExit('Apple private key anchor not found in server/index.js')
     server_p.write_text(server)
