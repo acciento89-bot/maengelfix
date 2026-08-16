@@ -9,6 +9,7 @@ struct ProfileView: View {
     @State private var showEdit = false
     @State private var verificationMessage: String?
     @State private var billingMessage: String?
+    @State private var showDeleteAccount = false
 
     var body: some View {
         NavigationStack {
@@ -51,6 +52,8 @@ struct ProfileView: View {
                     } else {
                         subscriptionSection(user: user)
                     }
+
+                    accountPrivacySection
                 }
 
                 Section("MängelFix") {
@@ -93,6 +96,30 @@ struct ProfileView: View {
                     }
                 }
             }
+            .sheet(isPresented: $showDeleteAccount) {
+                AccountDeletionView()
+            }
+        }
+    }
+
+    @ViewBuilder
+    private var accountPrivacySection: some View {
+        Section {
+            Link(destination: URL(string: "https://maengelfix.kamilunavo.com/datenschutz")!) {
+                Label("Datenschutzerklärung", systemImage: "hand.raised")
+            }
+            Link(destination: URL(string: "https://maengelfix.kamilunavo.com/nutzungsbedingungen")!) {
+                Label("Nutzungsbedingungen (EULA)", systemImage: "doc.text")
+            }
+            Button(role: .destructive) {
+                showDeleteAccount = true
+            } label: {
+                Label("Konto dauerhaft löschen", systemImage: "trash")
+            }
+        } header: {
+            Text("Konto & Datenschutz")
+        } footer: {
+            Text("Die Kontolöschung kann vollständig in MängelFix gestartet und bestätigt werden. Ein über Apple abgeschlossenes Abonnement wird separat in den Apple-Abonnementeinstellungen verwaltet.")
         }
     }
 
@@ -198,9 +225,13 @@ struct ProfileView: View {
                         VStack(alignment: .leading, spacing: 3) {
                             Text(StoreKitManager.managementTitle(for: product.id))
                                 .foregroundStyle(.primary)
-                            Text(StoreKitManager.periodLabel(for: product.id))
+                            Text("\(StoreKitManager.periodLabel(for: product.id)) · \(managementTerm(for: product.id))")
                                 .font(.caption)
                                 .foregroundStyle(.secondary)
+                            Text(managementBenefits(for: product.id))
+                                .font(.caption2)
+                                .foregroundStyle(.secondary)
+                                .multilineTextAlignment(.leading)
                         }
                         Spacer()
                         if active {
@@ -214,6 +245,31 @@ struct ProfileView: View {
                 }
                 .disabled(store.isPurchasing || active)
             }
+            Text("Apple-Verwaltungsabos verlängern sich automatisch um die gewählte Laufzeit, bis sie in den Apple-Abonnementeinstellungen gekündigt werden.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+            HStack(spacing: 18) {
+                Link("Datenschutz", destination: URL(string: "https://maengelfix.kamilunavo.com/datenschutz")!)
+                Link("Nutzungsbedingungen (EULA)", destination: URL(string: "https://maengelfix.kamilunavo.com/nutzungsbedingungen")!)
+            }
+            .font(.footnote)
+        }
+    }
+
+    private func managementTerm(for productID: String) -> String {
+        productID.hasSuffix(".yearly") ? "Laufzeit 1 Jahr" : "Laufzeit 1 Monat"
+    }
+
+    private func managementBenefits(for productID: String) -> String {
+        switch productID {
+        case StoreKitManager.managementStarterMonthlyProductID, StoreKitManager.managementStarterYearlyProductID:
+            return "Bis 25 Einheiten und 3 Mitarbeiter · Mängelmanagement, Mieter, Dienstleister, Aufgaben, Kalender, Fristen und Protokolle"
+        case StoreKitManager.managementProMonthlyProductID, StoreKitManager.managementProYearlyProductID:
+            return "Bis 100 Einheiten und 5 Mitarbeiter · alle Starter-Funktionen plus Analysen, Qualitätsdashboard und Aktivitätsprotokoll"
+        case StoreKitManager.managementBusinessMonthlyProductID, StoreKitManager.managementBusinessYearlyProductID:
+            return "Bis 300 Einheiten und 10 Mitarbeiter · alle Pro-Funktionen für größere Verwaltungsbestände"
+        default:
+            return "MängelFix-Verwaltungsfunktionen für die gewählte Laufzeit"
         }
     }
 
@@ -226,7 +282,20 @@ struct ProfileView: View {
 
     @ViewBuilder
     private func subscriptionSection(user: User) -> some View {
-        Section("Privat Pro") {
+        Section {
+            VStack(alignment: .leading, spacing: 10) {
+                Text("Was du mit Privat Pro bekommst")
+                    .font(.headline)
+                Label("Unbegrenzt aktive Mängelvorgänge statt maximal 5 in Privat Free", systemImage: "checkmark.circle.fill")
+                Label("Mehr als 3 Fotos sowie PDF-Dokumente und weitere Belege je Vorgang", systemImage: "checkmark.circle.fill")
+                Label("Fristen, Aufgaben, Erinnerungen und Kalender", systemImage: "checkmark.circle.fill")
+                Label("Suche & Archiv sowie persönliche Auswertungen", systemImage: "checkmark.circle.fill")
+                Label("Übergabe- und Abnahmeprotokolle", systemImage: "checkmark.circle.fill")
+            }
+            .font(.subheadline)
+            .foregroundStyle(.primary)
+            .padding(.vertical, 4)
+
             if user.planCode == "private_pro" && ["active", "trialing"].contains(user.subscriptionStatus) {
                 Label("Privat Pro ist aktiv", systemImage: "checkmark.seal.fill")
                     .foregroundStyle(Color.mfPrimary)
@@ -249,16 +318,19 @@ struct ProfileView: View {
                     Button {
                         Task { await buy(product, user: user) }
                     } label: {
-                        HStack {
-                            VStack(alignment: .leading, spacing: 3) {
+                        HStack(alignment: .center, spacing: 12) {
+                            VStack(alignment: .leading, spacing: 4) {
                                 Text(product.id == StoreKitManager.privateYearlyProductID ? "Privat Pro – jährlich" : "Privat Pro – monatlich")
+                                    .font(.headline)
                                     .foregroundStyle(.primary)
-                                Text(product.id == StoreKitManager.privateYearlyProductID ? "Jahresabo" : "Monatsabo")
+                                Text(product.id == StoreKitManager.privateYearlyProductID ? "Laufzeit: 1 Jahr · automatische Verlängerung" : "Laufzeit: 1 Monat · automatische Verlängerung")
                                     .font(.caption)
                                     .foregroundStyle(.secondary)
                             }
                             Spacer()
-                            Text(product.displayPrice).fontWeight(.semibold)
+                            Text(product.displayPrice)
+                                .fontWeight(.semibold)
+                                .foregroundStyle(.primary)
                         }
                     }
                     .disabled(store.isPurchasing)
@@ -276,6 +348,20 @@ struct ProfileView: View {
             if let billingMessage {
                 Text(billingMessage).font(.footnote).foregroundStyle(.secondary)
             }
+
+            Text("Das Abonnement verlängert sich automatisch um die gewählte Laufzeit, bis es in den Apple-Abonnementeinstellungen gekündigt wird. Der beim jeweiligen Angebot angezeigte Preis wird über deine Apple-ID abgerechnet.")
+                .font(.footnote)
+                .foregroundStyle(.secondary)
+
+            HStack(spacing: 18) {
+                Link("Datenschutz", destination: URL(string: "https://maengelfix.kamilunavo.com/datenschutz")!)
+                Link("Nutzungsbedingungen (EULA)", destination: URL(string: "https://maengelfix.kamilunavo.com/nutzungsbedingungen")!)
+            }
+            .font(.footnote)
+        } header: {
+            Text("Privat Pro")
+        } footer: {
+            Text("Titel, Preis und Laufzeit werden direkt aus dem App Store angezeigt. Die oben genannten Pro-Funktionen stehen für die Dauer des aktiven Abonnements zur Verfügung.")
         }
     }
 
@@ -315,6 +401,100 @@ struct ProfileView: View {
 
     private func initials(_ name: String) -> String {
         name.split(separator: " ").prefix(2).compactMap(\.first).map(String.init).joined().uppercased()
+    }
+}
+
+private struct AccountDeletionView: View {
+    @Environment(AppSession.self) private var session
+    @Environment(\.dismiss) private var dismiss
+
+    @State private var password = ""
+    @State private var confirmation = ""
+    @State private var isDeleting = false
+    @State private var errorMessage: String?
+    @State private var showFinalConfirmation = false
+
+    var body: some View {
+        NavigationStack {
+            Form {
+                Section {
+                    Text("Wenn du fortfährst, werden dein MängelFix-Konto, deine persönlichen Kontodaten und deine privaten Mängelvorgänge dauerhaft gelöscht. Dieser Schritt kann nicht rückgängig gemacht werden.")
+                    Text("Falls du Inhaber einer Verwaltung bist, kann die Löschung erst erfolgen, nachdem die Inhaberschaft übertragen wurde.")
+                        .foregroundStyle(.secondary)
+                } header: {
+                    Text("Konto dauerhaft löschen")
+                }
+
+                Section("Bestätigung") {
+                    SecureField("Passwort", text: $password)
+                        .textContentType(.password)
+                    TextField("LÖSCHEN eingeben", text: $confirmation)
+                        .textInputAutocapitalization(.characters)
+                        .autocorrectionDisabled()
+                }
+
+                Section {
+                    Button(role: .destructive) {
+                        showFinalConfirmation = true
+                    } label: {
+                        HStack {
+                            if isDeleting { ProgressView() }
+                            Text("Konto endgültig löschen")
+                        }
+                    }
+                    .disabled(password.isEmpty || confirmation != "LÖSCHEN" || isDeleting)
+                } footer: {
+                    Text("Ein über den App Store abgeschlossenes Abonnement wird durch die Kontolöschung nicht automatisch gekündigt. Verwalte es separat in deinen Apple-Abonnementeinstellungen.")
+                }
+
+                if let errorMessage {
+                    Section {
+                        Text(errorMessage).foregroundStyle(.red)
+                    }
+                }
+
+                Section("Rechtliches") {
+                    Link("Datenschutzerklärung", destination: URL(string: "https://maengelfix.kamilunavo.com/datenschutz")!)
+                    Link("Nutzungsbedingungen (EULA)", destination: URL(string: "https://maengelfix.kamilunavo.com/nutzungsbedingungen")!)
+                }
+            }
+            .navigationTitle("Konto löschen")
+            .navigationBarTitleDisplayMode(.inline)
+            .toolbar {
+                ToolbarItem(placement: .cancellationAction) {
+                    Button("Abbrechen") { dismiss() }
+                        .disabled(isDeleting)
+                }
+            }
+            .confirmationDialog(
+                "Konto wirklich dauerhaft löschen?",
+                isPresented: $showFinalConfirmation,
+                titleVisibility: .visible
+            ) {
+                Button("Ja, Konto dauerhaft löschen", role: .destructive) {
+                    Task { await deleteAccount() }
+                }
+                Button("Abbrechen", role: .cancel) {}
+            } message: {
+                Text("Alle zu diesem Konto gehörenden persönlichen Daten und privaten Vorgänge werden gelöscht.")
+            }
+        }
+        .interactiveDismissDisabled(isDeleting)
+    }
+
+    @MainActor
+    private func deleteAccount() async {
+        guard confirmation == "LÖSCHEN", !password.isEmpty else { return }
+        isDeleting = true
+        errorMessage = nil
+        do {
+            try await session.api.deleteAccount(password: password, confirmation: confirmation)
+            await session.logout()
+            dismiss()
+        } catch {
+            errorMessage = error.localizedDescription
+            isDeleting = false
+        }
     }
 }
 

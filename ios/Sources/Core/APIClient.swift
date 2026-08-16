@@ -103,6 +103,14 @@ final class APIClient: @unchecked Sendable {
         return response.user
     }
 
+    func deleteAccount(password: String, confirmation: String) async throws {
+        let _: SimpleResponse = try await request(
+            "/api/account",
+            method: "DELETE",
+            body: DeleteAccountRequest(password: password, confirmation: confirmation)
+        )
+    }
+
     func logout() async throws {
         try await requestWithoutResponse("/api/auth/logout", method: "POST")
     }
@@ -232,6 +240,7 @@ private struct EmailRequest: Encodable { let email: String }
 private struct MessageRequest: Encodable { let message: String }
 private struct AppleTransactionRequest: Encodable { let transactionId: String }
 private struct AppleBillingResponse: Decodable { let user: User }
+private struct DeleteAccountRequest: Encodable { let password: String; let confirmation: String }
 private struct EmptyRequest: Encodable {}
 
 private extension Data {

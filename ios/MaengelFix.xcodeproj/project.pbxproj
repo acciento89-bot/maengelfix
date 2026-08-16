@@ -16,6 +16,7 @@
 		74DCD5473FBBCA236F07401A /* CreateCaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */; };
 		755279C982DE108FAFAC150A /* MFTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */; };
 		949EE9009FF0908AABD84295 /* ManagementDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */; };
+		A66058E29AE8B5528D39EBA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE09DE515C6AC8AD8FA94FFA /* Assets.xcassets */; };
 		C7F9503245819AB084813C93 /* AppSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA713155028C026EFBB2EA4 /* AppSession.swift */; };
 		E4017183F9B56ED6E3CE70C5 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */; };
 		E4E22C3A9B3B6907E512FE76 /* CasesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A3CE6C8B544300CC61AA53 /* CasesView.swift */; };
@@ -26,7 +27,7 @@
 		3BD147D07796741A0E1DC658 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
 		4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFTheme.swift; sourceTree = "<group>"; };
 		4F4A2A92F017312F29CAFC98 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
-		56521B0728848725E58C0D0B /* MängelFix.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MängelFix.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		56521B0728848725E58C0D0B /* MaengelFix.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MaengelFix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57A3CE6C8B544300CC61AA53 /* CasesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasesView.swift; sourceTree = "<group>"; };
 		5AA713155028C026EFBB2EA4 /* AppSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSession.swift; sourceTree = "<group>"; };
 		5D786E693AA94B2D162465F6 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
@@ -34,6 +35,8 @@
 		854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCaseView.swift; sourceTree = "<group>"; };
 		C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementDashboardView.swift; sourceTree = "<group>"; };
+		D597C8F20A327144E300259C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		DE09DE515C6AC8AD8FA94FFA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E52538A56CF3B868CEEB3CC2 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -52,7 +55,7 @@
 		A45A13B53DABF5109C99E9E7 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				56521B0728848725E58C0D0B /* MängelFix.app */,
+				56521B0728848725E58C0D0B /* MaengelFix.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -60,6 +63,8 @@
 		CC81878E85D1926FBBDC2EA7 /* Sources */ = {
 			isa = PBXGroup;
 			children = (
+				DE09DE515C6AC8AD8FA94FFA /* Assets.xcassets */,
+				D597C8F20A327144E300259C /* Info.plist */,
 				71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */,
 				2F539D0CD73D2087B86F256E /* Core */,
 				E18B52FEEB9E40B49FF5B75E /* Design */,
@@ -105,6 +110,7 @@
 			buildConfigurationList = C13C3FD8BAC3741017E98AEB /* Build configuration list for PBXNativeTarget "MaengelFix" */;
 			buildPhases = (
 				F23CF89B821C782673A5972C /* Sources */,
+				2BB6AF1D40DADCC6809F0447 /* Resources */,
 			);
 			buildRules = (
 			);
@@ -114,7 +120,7 @@
 			packageProductDependencies = (
 			);
 			productName = MaengelFix;
-			productReference = 56521B0728848725E58C0D0B /* MängelFix.app */;
+			productReference = 56521B0728848725E58C0D0B /* MaengelFix.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -127,7 +133,7 @@
 				LastUpgradeCheck = 1600;
 				TargetAttributes = {
 					B7D37F886A843FF99A624253 = {
-						ProvisioningStyle = Automatic;
+						DevelopmentTeam = TKG684N5GL;
 					};
 				};
 			};
@@ -149,6 +155,17 @@
 			);
 		};
 /* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		2BB6AF1D40DADCC6809F0447 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				A66058E29AE8B5528D39EBA3 /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		F23CF89B821C782673A5972C /* Sources */ = {
@@ -178,22 +195,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = TKG684N5GL;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "MängelFix";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "MängelFix benötigt die Kamera, damit du Schäden und Mängel direkt dokumentieren kannst.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MängelFix benötigt Zugriff auf deine Fotos, damit du vorhandene Aufnahmen zu einem Vorgang hinzufügen kannst.";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
-				PRODUCT_NAME = "MängelFix";
+				PRODUCT_NAME = MaengelFix;
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -235,7 +249,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -271,23 +285,22 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "Apple Distribution: Piotr Kaminski (TKG684N5GL)";
+				CODE_SIGN_STYLE = Manual;
+				CURRENT_PROJECT_VERSION = 8;
 				DEVELOPMENT_TEAM = TKG684N5GL;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
-				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = "MängelFix";
-				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
-				INFOPLIST_KEY_NSCameraUsageDescription = "MängelFix benötigt die Kamera, damit du Schäden und Mängel direkt dokumentieren kannst.";
-				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "MängelFix benötigt Zugriff auf deine Fotos, damit du vorhandene Aufnahmen zu einem Vorgang hinzufügen kannst.";
-				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
-				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = Sources/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				MARKETING_VERSION = 0.4.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
-				PRODUCT_NAME = "MängelFix";
+				PRODUCT_NAME = MaengelFix;
+				PROVISIONING_PROFILE_SPECIFIER = "MaengelFix App Store";
 				SDKROOT = iphoneos;
 				SUPPORTS_MACCATALYST = NO;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -329,7 +342,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 5;
+				CURRENT_PROJECT_VERSION = 8;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
