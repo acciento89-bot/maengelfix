@@ -1,0 +1,26 @@
+name: Revert mistaken web App Review changes
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/revert-mistaken-web-app-review.yml
+permissions:
+  contents: write
+jobs:
+  revert:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Revert web-only changes made by mistake
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git revert --no-edit d741859e753687060efd99e9437b226d564ad3e6
+          git revert --no-edit 51f7cdc59e89142ee61cecfe416d7827ed2a2f25
+          git revert --no-edit 452b1fce46e098f4b28c677a36b44fc614634a3b
+          rm .github/workflows/revert-mistaken-web-app-review.yml
+          git add -A
+          git commit -m "Remove temporary web revert workflow"
+          git push
