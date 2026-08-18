@@ -120,6 +120,7 @@ function Landing({ user, navigate }) {
             <p>Vom beschädigten Paket über die Werkstatt bis zum Mietmangel: Privat sammelst du Beweise und Unterlagen an einem Ort. Hausverwaltungen steuern zusätzlich Mieter, Zuständigkeiten, Termine und Dienstleister.</p>
             <div className="heroActions">
               <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
+              <a className="landingSecondary" href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de" target="_blank" rel="noreferrer" aria-label="MängelFix im Apple App Store laden">Im App Store laden ↗</a>
               <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
             </div>
             <div className="heroTrust"><span>✓</span> Privat & Verwaltung <span>✓</span> Professionelle PDFs <span>✓</span> Gegenstelle braucht kein Konto</div>
