@@ -120,7 +120,21 @@ function Landing({ user, navigate }) {
             <p>Vom beschädigten Paket über die Werkstatt bis zum Mietmangel: Privat sammelst du Beweise und Unterlagen an einem Ort. Hausverwaltungen steuern zusätzlich Mieter, Zuständigkeiten, Termine und Dienstleister.</p>
             <div className="heroActions">
               <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
-              <a className="landingSecondary" href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de" target="_blank" rel="noreferrer" aria-label="MängelFix im Apple App Store laden">Im App Store laden ↗</a>
+              <a
+                href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de"
+                target="_blank"
+                rel="noreferrer"
+                aria-label="MängelFix im App Store laden"
+                style={{ display: 'inline-block', lineHeight: 0 }}
+              >
+                <img
+                  src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/de-de?size=250x83"
+                  alt="Laden im App Store"
+                  width="170"
+                  height="56"
+                  style={{ display: 'block', width: '170px', height: 'auto' }}
+                />
+              </a>
               <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
             </div>
             <div className="heroTrust"><span>✓</span> Privat & Verwaltung <span>✓</span> Professionelle PDFs <span>✓</span> Gegenstelle braucht kein Konto</div>
