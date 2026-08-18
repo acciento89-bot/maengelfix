@@ -1,0 +1,54 @@
+name: Upgrade v0.28 mobile App Store hero
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'scripts/upgrade_v028_mobile_app_store_hero.py'
+      - '.github/workflows/upgrade-v028-mobile-app-store-hero.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Apply responsive App Store hero upgrade
+        run: python scripts/upgrade_v028_mobile_app_store_hero.py
+
+      - name: Install client dependencies
+        working-directory: client
+        run: npm install
+
+      - name: Build client
+        working-directory: client
+        run: npm run build
+
+      - name: Commit generated upgrade
+        run: |
+          if git diff --quiet && [ -z "$(git status --porcelain)" ]; then
+            echo "No generated changes to commit."
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/App.jsx client/src/maengelfix-pro.css client/public/badges
+          git commit -m "Improve MängelFix App Store CTA and mobile layout"
+          git push origin main
