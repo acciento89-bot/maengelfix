@@ -120,22 +120,22 @@ function Landing({ user, navigate }) {
             <p>Vom beschädigten Paket über die Werkstatt bis zum Mietmangel: Privat sammelst du Beweise und Unterlagen an einem Ort. Hausverwaltungen steuern zusätzlich Mieter, Zuständigkeiten, Termine und Dienstleister.</p>
             <div className="heroActions">
               <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
+              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
+            </div>
+            <div className="heroStoreCta" aria-label="MängelFix für iPhone und iPad">
+              <div className="heroStoreCopy">
+                <strong>Auch als App</strong>
+                <span>Für iPhone und iPad</span>
+              </div>
               <a
+                className="heroStoreBadge"
                 href="https://apps.apple.com/de/app/maengelfix/id6801253878"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="MängelFix im App Store laden"
-                style={{ display: 'inline-block', lineHeight: 0 }}
               >
-                <img
-                  src="https://tools.applemediaservices.com/api/badges/download-on-the-app-store/black/de-de?size=250x83"
-                  alt="Laden im App Store"
-                  width="170"
-                  height="56"
-                  style={{ display: 'block', width: '170px', height: 'auto' }}
-                />
+                <img src="/badges/app-store-de.svg" alt="Laden im App Store" />
               </a>
-              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
             </div>
             <div className="heroTrust"><span>✓</span> Privat & Verwaltung <span>✓</span> Professionelle PDFs <span>✓</span> Gegenstelle braucht kein Konto</div>
           </div>
