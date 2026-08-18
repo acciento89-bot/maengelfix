@@ -121,7 +121,7 @@ function Landing({ user, navigate }) {
             <div className="heroActions">
               <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
               <a
-                href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de"
+                href="https://apps.apple.com/de/app/maengelfix/id6801253878"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="MängelFix im App Store laden"

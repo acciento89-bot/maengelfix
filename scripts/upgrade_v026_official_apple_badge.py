@@ -3,9 +3,9 @@ from pathlib import Path
 p = Path('client/src/App.jsx')
 s = p.read_text()
 
-old = '''              <a className="landingSecondary" href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de" target="_blank" rel="noreferrer" aria-label="MängelFix im Apple App Store laden">Im App Store laden ↗</a>'''
+old = '''              <a className="landingSecondary" href="https://apps.apple.com/de/app/maengelfix/id6801253878" target="_blank" rel="noreferrer" aria-label="MängelFix im Apple App Store laden">Im App Store laden ↗</a>'''
 new = '''              <a
-                href="https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de"
+                href="https://apps.apple.com/de/app/maengelfix/id6801253878"
                 target="_blank"
                 rel="noreferrer"
                 aria-label="MängelFix im App Store laden"

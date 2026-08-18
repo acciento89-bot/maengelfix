@@ -3,7 +3,7 @@ from pathlib import Path
 p = Path('client/src/App.jsx')
 s = p.read_text()
 
-app_store_url = 'https://apps.apple.com/de/app/m%C3%A4ngelfix/id6759452843?l=de'
+app_store_url = 'https://apps.apple.com/de/app/maengelfix/id6801253878'
 
 hero_old = """            <div className=\"heroActions\">\n              <button className=\"landingPrimary\" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>\n              <button type=\"button\" className=\"landingSecondary\" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>\n            </div>"""
 hero_new = f"""            <div className=\"heroActions\">\n              <button className=\"landingPrimary\" onClick={{() => navigate(user ? '/app' : '/registrieren')}}>{{user ? 'MängelFix öffnen' : 'Kostenlos starten'}} <span>→</span></button>\n              <a className=\"landingSecondary\" href=\"{app_store_url}\" target=\"_blank\" rel=\"noreferrer\" aria-label=\"MängelFix im Apple App Store laden\">Im App Store laden ↗</a>\n              <button type=\"button\" className=\"landingSecondary\" onClick={{() => document.getElementById('ablauf')?.scrollIntoView({{ behavior: 'smooth' }})}}>So funktioniert's</button>\n            </div>"""
