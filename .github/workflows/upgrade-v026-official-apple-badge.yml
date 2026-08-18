@@ -1,0 +1,29 @@
+name: MängelFix Official Apple App Store Badge
+on:
+  push:
+    branches: [main]
+    paths:
+      - .github/workflows/upgrade-v026-official-apple-badge.yml
+permissions:
+  contents: write
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: python3 scripts/upgrade_v026_official_apple_badge.py
+      - name: Build web app
+        working-directory: client
+        run: |
+          npm install
+          npm run build
+      - run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add client/src/App.jsx
+          if git diff --cached --quiet; then
+            echo "Nothing to commit"
+          else
+            git commit -m "Use official Apple App Store badge"
+            git push
+          fi
