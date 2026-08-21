@@ -61,6 +61,28 @@ private fun MaengelFixApp(activity: MainActivity) {
     var loading by remember { mutableStateOf(true) }
     var fatalError by remember { mutableStateOf<String?>(null) }
     var pendingFileCallback by remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
+    var showPlayBilling by remember { mutableStateOf(false) }
+    var billingCatalogVersion by remember { mutableStateOf(0) }
+
+    val billingManager = remember(activity) {
+        BillingManager(
+            activity = activity,
+            onCatalogChanged = {
+                activity.runOnUiThread { billingCatalogVersion += 1 }
+            },
+            onVerified = {
+                activity.runOnUiThread {
+                    showPlayBilling = false
+                    webView?.reload()
+                }
+            },
+            onMessage = { message ->
+                activity.runOnUiThread {
+                    Toast.makeText(activity, message, Toast.LENGTH_LONG).show()
+                }
+            },
+        )
+    }
 
     val filePicker = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
         val callback = pendingFileCallback ?: return@rememberLauncherForActivityResult
@@ -100,6 +122,7 @@ private fun MaengelFixApp(activity: MainActivity) {
                             activity = activity,
                             onLoading = { loading = it },
                             onFatalError = { fatalError = it },
+                            onOpenPlayBilling = { showPlayBilling = true },
                             onFileChooser = { callback, params ->
                                 pendingFileCallback?.onReceiveValue(null)
                                 pendingFileCallback = callback
@@ -125,7 +148,7 @@ private fun MaengelFixApp(activity: MainActivity) {
                 update = { webView = it },
             )
 
-            if (loading && fatalError == null) {
+            if (loading && fatalError == null && !showPlayBilling) {
                 CircularProgressIndicator(
                     modifier = Modifier.align(Alignment.Center),
                     color = Color(0xFF1769E0),
@@ -155,15 +178,28 @@ private fun MaengelFixApp(activity: MainActivity) {
                     }
                 }
             }
+
+            if (showPlayBilling) {
+                PlayBillingSheet(
+                    billing = billingManager,
+                    catalogVersion = billingCatalogVersion,
+                    onClose = { showPlayBilling = false },
+                )
+            }
         }
     }
 
     BackHandler {
-        if (webView?.canGoBack() == true) webView?.goBack() else activity.finish()
+        when {
+            showPlayBilling -> showPlayBilling = false
+            webView?.canGoBack() == true -> webView?.goBack()
+            else -> activity.finish()
+        }
     }
 
     DisposableEffect(Unit) {
         onDispose {
+            billingManager.close()
             pendingFileCallback?.onReceiveValue(null)
             webView?.apply {
                 stopLoading()
@@ -180,6 +216,7 @@ private fun WebView.configureMaengelFixWebView(
     activity: MainActivity,
     onLoading: (Boolean) -> Unit,
     onFatalError: (String?) -> Unit,
+    onOpenPlayBilling: () -> Unit,
     onFileChooser: (ValueCallback<Array<Uri>>, WebChromeClient.FileChooserParams) -> Unit,
 ) {
     setBackgroundColor(android.graphics.Color.WHITE)
@@ -253,6 +290,12 @@ private fun WebView.configureMaengelFixWebView(
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val uri = request?.url ?: return false
+
+            if (uri.scheme == "maengelfix" && uri.host == "play-billing") {
+                onOpenPlayBilling()
+                return true
+            }
+
             if (uri.scheme == "https" && uri.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true)) {
                 return false
             }
@@ -315,7 +358,7 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
           if (!document.getElementById(styleId)) {
             const style = document.createElement('style');
             style.id = styleId;
-            style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}';
+            style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}.mfPlayButton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;margin-top:12px;border:0;border-radius:12px;background:#1769E0;color:#fff;font:inherit;font-weight:700;text-decoration:none}';
             document.head.appendChild(style);
           }
           const page = document.querySelector('.billingPage');
@@ -323,7 +366,7 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
             const note = document.createElement('div');
             note.id = 'mf-android-billing-note';
             note.className = 'infoBox';
-            note.textContent = 'In der Android-App werden neue digitale Abos ausschließlich über Google Play angeboten. Dein bestehender Tarif und deine vorhandenen Funktionen bleiben nutzbar.';
+            note.innerHTML = '<strong>Google Play</strong><br>In der Android-App werden neue digitale Abos ausschließlich über Google Play angeboten. Dein bestehender Tarif und deine vorhandenen Funktionen bleiben nutzbar.<br><a class="mfPlayButton" href="maengelfix://play-billing">Google-Play-Abos öffnen</a>';
             page.prepend(note);
           }
         })();
