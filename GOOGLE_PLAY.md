@@ -7,45 +7,26 @@
 - Version: `1.0.0` (`versionCode 1`)
 - Target SDK: Android 16 / API 36
 - Minimum SDK: API 26
-- Category: Productivity / Tools
 - Backend/web core: `https://maengelfix.kamilunavo.com`
 
 ## Android architecture
 
-The Android client intentionally reuses the production MängelFix web/backend application so the account, case, photo, PDF, deadline, team and management feature set does not fork from the existing service.
+The Android app keeps the production MängelFix web/backend feature core for accounts, cases, photos, PDFs, deadlines and management, while Android-specific store/device functions stay native.
 
 Native Android integration provides:
 
 - persistent authenticated WebView session;
-- HTTPS-only first-party navigation;
-- Android deep links for the MängelFix domain;
-- native file/photo picker for evidence uploads;
-- authenticated native DownloadManager handling for generated PDFs/files;
-- offline/main-frame error state and retry;
-- back navigation integrated with Android;
-- external links opened outside the app;
-- no secrets embedded in the Android binary.
+- HTTPS-only first-party navigation and deep links;
+- native file/photo picker and authenticated DownloadManager;
+- native Google Play subscription screen;
+- Play Billing 9.1 product query, localized prices, purchase and restore;
+- no server secrets embedded in the Android binary.
 
-## Google Play payments policy guard
-
-MängelFix currently has server-side Stripe subscriptions and Apple In-App Purchase subscriptions. The Android release MUST NOT initiate Stripe Checkout or Stripe Billing Portal from inside the Play-distributed app.
-
-The Android client therefore has two independent guards:
-
-1. requests to `/api/billing/checkout` and `/api/billing/portal` are blocked inside the WebView;
-2. navigation to `stripe.com` and all `.stripe.com` subdomains is blocked.
-
-The billing page also hides external checkout/portal buttons and explains that new Android digital subscriptions will be offered through Google Play.
-
-Existing server-side entitlements remain consumable after sign-in. Free accounts keep the current Free feature set.
-
-Google Play subscriptions must not be enabled in the Android UI until server-side Google Play purchase-token verification is green end-to-end. Do not remove the Stripe guards after Play Billing is added; the Play-distributed client must continue to route new Android digital purchases through Google Play.
+Stripe Checkout/Billing Portal remains blocked in the Play-distributed app both at the API request layer and for `stripe.com` navigation. Existing entitlements from another provider remain consumable after login, but Android will not start a duplicate Play subscription while an active Apple/Stripe/Play subscription already exists.
 
 ## Locked Google Play subscription catalog
 
-To keep Android product-to-plan mapping identical to the existing Apple/server mapping, Google Play uses the same eight product identifiers. They are independent store records even though the identifiers match.
-
-| Plan | Billing period | Google Play subscription ID | Base plan ID | Germany price |
+| Plan | Period | Subscription ID | Base plan | DE price |
 | --- | --- | --- | --- | ---: |
 | Private Pro | Monthly | `com.kamilunavo.maengelfix.privatepro.monthly` | `monthly` | €4.99 |
 | Private Pro | Yearly | `com.kamilunavo.maengelfix.privatepro.yearly` | `yearly` | €49.99 |
@@ -56,86 +37,103 @@ To keep Android product-to-plan mapping identical to the existing Apple/server m
 | Management Business | Monthly | `com.kamilunavo.maengelfix.managementbusiness.monthly` | `monthly` | €119.99 |
 | Management Business | Yearly | `com.kamilunavo.maengelfix.managementbusiness.yearly` | `yearly` | €1,199.99 |
 
-Configuration rule for all eight:
+All eight are auto-renewing subscriptions. No introductory trial is required for the v1 Play launch.
 
-- type: subscription;
-- renewal: auto-renewing;
-- no introductory trial required for v1;
-- activate the base plan only after the matching server verification path exists;
-- configure desired countries/regions and let Play calculate local prices from the locked EUR launch price unless a market-specific decision overrides it later.
+### Server mapping
 
-### Server plan mapping
+- `privatepro.*` → `private` / `private_pro`
+- `managementstarter.*` → `organization` / `management_starter`
+- `managementpro.*` → `organization` / `management_pro`
+- `managementbusiness.*` → `organization` / `management_business`
 
-- `privatepro.*` → scope `private`, plan `private_pro`
-- `managementstarter.*` → scope `organization`, plan `management_starter`
-- `managementpro.*` → scope `organization`, plan `management_pro`
-- `managementbusiness.*` → scope `organization`, plan `management_business`
+## Purchase security path
 
-Server verification must validate at minimum:
+Android does not unlock a plan from a client-supplied product ID.
 
-- Android package is exactly `com.kamilunavo.maengelfix`;
-- product ID is one of the eight IDs above;
-- purchase token is valid at Google Play;
-- purchase/account association belongs to the authenticated MängelFix account;
-- expiry, cancellation, grace-period/account-hold and replacement/upgrade state are honored;
-- a client-supplied product or plan value is never trusted without Play verification;
-- Google service-account credentials remain server-side only.
+1. Android reads the authenticated MängelFix account.
+2. Before checkout it reads `/api/billing/plan`, blocks duplicate provider subscriptions, and rejects private/management scope mismatches.
+3. The account UUID is SHA-256 hashed and supplied to Google as `obfuscatedAccountId`.
+4. After Play reports `PURCHASED`, Android sends only product ID + purchase token to the authenticated MängelFix verification endpoint.
+5. Server obtains its own Android Publisher OAuth token and calls Google Play `purchases.subscriptionsv2.get`.
+6. Server uses the product and state returned by Google, compares Google's `obfuscatedExternalAccountId` with the authenticated account hash, and updates the mapped MängelFix entitlement.
+7. Android acknowledges the purchase only after the MängelFix server has accepted the Google-verified purchase.
 
-## Existing server plan catalog
+Purchase tokens are stored only as SHA-256 hashes in MängelFix subscription metadata. Google service-account credentials stay server-side.
 
-- `private_free`: €0
-- `private_pro`: €4.99 monthly / €49.99 yearly
-- `management_starter`: €29.99 monthly / €299.99 yearly
-- `management_pro`: €59.99 monthly / €599.99 yearly
-- `management_business`: €119.99 monthly / €1,199.99 yearly
+## Lifecycle / RTDN
+
+Endpoint:
+
+`POST https://maengelfix.kamilunavo.com/api/billing/google-play/rtdn`
+
+The endpoint accepts Google Pub/Sub authenticated push only. It validates:
+
+- Google RS256 signature against Google's JWKS;
+- issuer;
+- configured OIDC audience;
+- verified sender email;
+- exact configured Pub/Sub push service account.
+
+After authentication, RTDN data itself is not trusted for entitlement state. The server re-fetches the current subscription with `purchases.subscriptionsv2.get` and applies that state. Duplicate/out-of-order RTDN events are therefore safe because current Google state is authoritative.
+
+Entitlement behavior:
+
+- ACTIVE → access
+- CANCELED but not expired → access until expiry
+- IN_GRACE_PERIOD → access
+- PENDING / ON_HOLD / EXPIRED → no active entitlement
+
+A purchase RTDN can race the app's initial verify call. If the account-hash mapping does not exist yet, that first RTDN is acknowledged; the authenticated app verification establishes the mapping and current state. Later renewal/cancel/grace/hold RTDNs resolve through that mapping.
+
+## Server deployment variables
+
+Never commit real values.
+
+- `GOOGLE_PLAY_PACKAGE_NAME=com.kamilunavo.maengelfix`
+- `GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64=<base64 service-account JSON>`
+- `GOOGLE_PLAY_RTDN_AUDIENCE=https://maengelfix.kamilunavo.com/api/billing/google-play/rtdn`
+- `GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL=<Pub/Sub push service account>`
+
+## Google Cloud / Play Console setup
+
+1. Create/link the Google Cloud project used by the Play developer account.
+2. Enable Android Publisher API access for the server service account and grant only the Play permissions required to read/manage MängelFix subscriptions.
+3. Base64 the service-account JSON and place it only in the production deployment variable above.
+4. Create all eight Play subscription records and activate `monthly` / `yearly` base plans with the locked launch prices.
+5. Create a Pub/Sub topic for Google Play Real-time Developer Notifications and connect it in Play Console monetization settings.
+6. Create a Pub/Sub push subscription to the RTDN endpoint above, enable authenticated push, select the dedicated push service account and set the exact audience value above.
+7. Put that push service-account email into `GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL` and redeploy.
+8. Send a Play test notification and confirm HTTP 204.
 
 ## Suggested German Play listing
 
-### Short description
+**Short description**  
 Mängel dokumentieren, Beweise sammeln, Fristen verfolgen und PDFs erstellen.
 
-### Full description
-MängelFix hilft dir, Mängel strukturiert zu dokumentieren und den gesamten Vorgang nachvollziehbar an einem Ort zu organisieren.
-
-Für private Nutzer:
-- Mängel zu Wohnung, Lieferung, Produkt, Werkstatt, Reise oder Dienstleistung erfassen
-- Fotos und Belege dem Vorgang zuordnen
-- Empfänger und Referenzen hinterlegen
-- Fristen und Status im Blick behalten
-- professionelle PDF-Unterlagen erzeugen und herunterladen
-- Verlauf sauber dokumentieren
-
-Für Hausverwaltungen:
-- Objekte und Einheiten organisieren
-- Mängelmeldungen strukturiert bearbeiten
-- Team, Zuständigkeiten und Dienstleister koordinieren
-- Aufgaben, Termine und Fristen verwalten
-- Arbeitsaufträge und Übergabeinformationen dokumentieren
-
-MängelFix ist ein Organisations- und Dokumentationstool und ersetzt keine Rechtsberatung.
+MängelFix hilft privaten Nutzern und Hausverwaltungen, Mängel strukturiert zu erfassen, Fotos und Belege zuzuordnen, Fristen und Status zu verfolgen sowie professionelle PDF-Unterlagen zu erzeugen. Management-Tarife ergänzen Objekte, Einheiten, Teams, Aufgaben und Dienstleister. MängelFix ist ein Organisations- und Dokumentationstool und ersetzt keine Rechtsberatung.
 
 ## URLs
 
 - Website: `https://maengelfix.kamilunavo.com`
 - Support: `https://kamilunavo.com/support`
-- Privacy: use the current public MängelFix privacy URL from the production website/Play Console setup.
+- Privacy: verify the current public MängelFix privacy URL immediately before Play submission.
 
 ## Release gates
 
-- [x] Android API 36 project created.
-- [x] Native upload/download/deep-link integration.
+- [x] API 36 Android project and native upload/download/deep-link integration.
 - [x] Stripe checkout/portal blocked in Play-distributed Android app.
-- [x] Android CI tests + debug bundle + minified release bundle green.
-- [x] Signed upload AAB generated with a private RSA-4096 upload key.
-- [x] Eight Android subscription IDs/prices/base-plan IDs locked in this handoff.
-- [ ] Implement BillingClient subscription UI/query/purchase/restore.
-- [ ] Implement authenticated server-side Google Play purchase-token verification.
-- [ ] Add Google Play lifecycle handling before production (expiry/cancel/grace/account hold; RTDN recommended).
-- [ ] Create Play Console app with package `com.kamilunavo.maengelfix`.
-- [ ] Create the eight subscription records, but do not expose purchases until server verification is green.
-- [ ] Complete Data safety against the production backend data flows.
-- [ ] Complete account deletion declaration and provide the existing deletion path/URL.
-- [ ] Complete target audience/content rating.
-- [ ] Internal test: registration/login, existing login, create/edit case, photo upload, PDF download, logout/relogin, existing Pro entitlement.
-- [ ] Verify no Stripe checkout/portal can be reached from Android.
-- [ ] Internal billing test: each relevant plan/cadence, restore, cancellation/expiry and cross-device entitlement sync.
+- [x] Native Play Billing 9.1 product query/purchase/restore UI.
+- [x] Duplicate-provider and private/management scope checkout guards.
+- [x] Authenticated server-side `subscriptionsv2` purchase-token verification.
+- [x] Account binding through SHA-256 `obfuscatedAccountId`.
+- [x] Server verification happens before purchase acknowledgement.
+- [x] Authenticated Google OIDC RTDN lifecycle path.
+- [x] Eight Android subscription IDs/prices/base plans locked.
+- [ ] Current Android + server CI green after the billing/RTDN implementation.
+- [ ] Configure service-account credentials in production and redeploy.
+- [ ] Configure Play subscriptions/base plans.
+- [ ] Configure Pub/Sub authenticated RTDN and pass the test notification.
+- [ ] Build/sign the final post-billing AAB with the existing MängelFix upload key.
+- [ ] Create/finish the Play Console app and Data safety/account deletion/content rating declarations.
+- [ ] Internal test: login, case/photo/PDF flows, each relevant subscription, restore, pending purchase, cancellation, grace period, account hold/expiry and cross-device entitlement sync.
+- [ ] Confirm Stripe checkout/portal remains unreachable from the Play build.
