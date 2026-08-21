@@ -3,12 +3,18 @@ WORKDIR /src
 COPY server/ ./server/
 COPY client/ ./client/
 COPY scripts/upgrade_v022_case_reliability.py ./scripts/upgrade_v022_case_reliability.py
+COPY scripts/upgrade_v023_google_play_billing.py ./scripts/upgrade_v023_google_play_billing.py
 RUN python3 scripts/upgrade_v022_case_reliability.py \
+  && python3 scripts/upgrade_v023_google_play_billing.py \
   && test -f client/src/v022.css \
   && grep -q 'V022_CASE_DELETE_ENDPOINT' server/index.js \
   && grep -q 'V022_DEADLINE_ATOMIC_CLAIM' server/index.js \
   && grep -q 'V022_BRANDED_APP_MAIL' server/index.js \
-  && grep -q 'V022_CASE_DELETE_ACTION' client/src/App.jsx
+  && grep -q 'V022_CASE_DELETE_ACTION' client/src/App.jsx \
+  && grep -q 'V023_GOOGLE_PLAY_BILLING' server/index.js \
+  && grep -q "app.post('/api/billing/google-play/verify'" server/index.js \
+  && grep -q 'purchases/subscriptionsv2/tokens' server/index.js \
+  && grep -q 'obfuscatedExternalAccountId' server/index.js
 
 FROM node:22-alpine AS web
 WORKDIR /app/client
