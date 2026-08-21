@@ -59,14 +59,9 @@ class BillingManager(
         .enableAutoServiceReconnection()
         .build()
 
-    init {
-        connect()
-    }
+    init { connect() }
 
-    fun close() {
-        billingClient.endConnection()
-    }
-
+    fun close() { billingClient.endConnection() }
     fun isReady(): Boolean = ready
 
     fun price(productId: String): String? {
@@ -80,16 +75,9 @@ class BillingManager(
     fun catalogJson(): String {
         val products = JSONArray()
         productIds.forEach { id ->
-            products.put(
-                JSONObject()
-                    .put("id", id)
-                    .put("price", price(id) ?: JSONObject.NULL)
-            )
+            products.put(JSONObject().put("id", id).put("price", price(id) ?: JSONObject.NULL))
         }
-        return JSONObject()
-            .put("ready", ready)
-            .put("products", products)
-            .toString()
+        return JSONObject().put("ready", ready).put("products", products).toString()
     }
 
     fun purchase(productId: String) {
@@ -106,7 +94,15 @@ class BillingManager(
 
         scope.launch {
             try {
-                ensureNoConflictingActiveSubscription()
+                val accountScope = ensurePurchaseAllowed()
+                val managementProduct = productId.contains(".management")
+                if (managementProduct && accountScope != "organization") {
+                    throw IllegalStateException("Management-Abos können nur für ein MängelFix-Hausverwaltungskonto gekauft werden.")
+                }
+                if (!managementProduct && accountScope != "private") {
+                    throw IllegalStateException("Privat Pro kann nicht für ein Hausverwaltungskonto gekauft werden. Wähle einen Management-Tarif.")
+                }
+
                 val accountHash = fetchAuthenticatedAccountHash()
                 val offer = detail.subscriptionOfferDetails.orEmpty()
                     .firstOrNull { it.offerId == null }
@@ -136,15 +132,15 @@ class BillingManager(
             connect()
             return
         }
-        val params = QueryPurchasesParams.newBuilder()
-            .setProductType(BillingClient.ProductType.SUBS)
-            .build()
+        val params = QueryPurchasesParams.newBuilder().setProductType(BillingClient.ProductType.SUBS).build()
         billingClient.queryPurchasesAsync(params) { result, purchases ->
             if (result.responseCode != BillingClient.BillingResponseCode.OK) {
                 onMessage(result.debugMessage.ifBlank { "Google-Play-Käufe konnten nicht wiederhergestellt werden." })
                 return@queryPurchasesAsync
             }
-            val owned = purchases.filter { it.purchaseState == Purchase.PurchaseState.PURCHASED && it.products.any(knownProducts::contains) }
+            val owned = purchases.filter {
+                it.purchaseState == Purchase.PurchaseState.PURCHASED && it.products.any(knownProducts::contains)
+            }
             if (owned.isEmpty()) {
                 onMessage("Es wurde kein aktives MängelFix-Abo in Google Play gefunden.")
                 return@queryPurchasesAsync
@@ -216,9 +212,7 @@ class BillingManager(
             try {
                 verifyWithServer(productId, purchase.purchaseToken)
                 if (!purchase.isAcknowledged) {
-                    val params = AcknowledgePurchaseParams.newBuilder()
-                        .setPurchaseToken(purchase.purchaseToken)
-                        .build()
+                    val params = AcknowledgePurchaseParams.newBuilder().setPurchaseToken(purchase.purchaseToken).build()
                     billingClient.acknowledgePurchase(params) { result ->
                         if (result.responseCode == BillingClient.BillingResponseCode.OK) {
                             onVerified()
@@ -237,13 +231,17 @@ class BillingManager(
         }
     }
 
-    private suspend fun ensureNoConflictingActiveSubscription() = withContext(Dispatchers.IO) {
+    private suspend fun ensurePurchaseAllowed(): String = withContext(Dispatchers.IO) {
         val connection = authenticatedConnection("/api/billing/plan", "GET")
         try {
             val status = connection.responseCode
             val bytes = (if (status in 200..299) connection.inputStream else connection.errorStream)?.use { it.readBytes() } ?: ByteArray(0)
             if (status !in 200..299) throw IllegalStateException("Dein aktueller MängelFix-Tarif konnte nicht geprüft werden.")
             val root = JSONObject(bytes.toString(Charsets.UTF_8))
+            val accountScope = root.optString("scope").trim()
+            if (accountScope !in setOf("private", "organization")) {
+                throw IllegalStateException("MängelFix konnte den passenden Abo-Bereich für dein Konto nicht bestimmen.")
+            }
             val plan = root.optJSONObject("plan") ?: JSONObject()
             val provider = plan.optString("subscription_provider").trim()
             val subscriptionStatus = plan.optString("subscription_status").trim().lowercase()
@@ -264,6 +262,7 @@ class BillingManager(
                         "Für dieses MängelFix-Konto ist bereits ein aktives Abo über $providerLabel vorhanden. Um Doppelzahlungen zu vermeiden, startet Android kein zweites Abo."
                 )
             }
+            accountScope
         } finally {
             connection.disconnect()
         }
