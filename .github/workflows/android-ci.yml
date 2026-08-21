@@ -21,9 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: '17'
@@ -42,13 +42,25 @@ jobs:
       - name: Build release bundle
         run: gradle -p android bundleRelease --stacktrace
       - name: Verify Play policy and release identity
+        shell: bash
         run: |
+          set -euo pipefail
+          echo 'Checking release AAB...'
           test -f android/app/build/outputs/bundle/release/app-release.aab
-          grep -q 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -q 'targetSdk = 36' android/app/build.gradle.kts
-          grep -q '/api/billing/checkout' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          grep -q 'host.endsWith("stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          ! grep -R --include='*.kt' --include='*.xml' 'STRIPE_SECRET\|APPLE_IAP_PRIVATE' android/
+          echo 'Checking package identity...'
+          grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
+          echo 'Checking Android 16 target...'
+          grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
+          echo 'Checking Stripe API guard...'
+          grep -Fq '/api/billing/checkout' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          echo 'Checking Stripe navigation guard...'
+          grep -Fq 'host.endsWith("stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          echo 'Checking Android source for server secrets...'
+          if grep -RFn --include='*.kt' --include='*.xml' -e 'STRIPE_SECRET' -e 'APPLE_IAP_PRIVATE' android/app/src; then
+            echo 'Server-only secret marker found in Android source.' >&2
+            exit 1
+          fi
+          echo 'MängelFix Play policy gate passed.'
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
