@@ -54,7 +54,7 @@ jobs:
           echo 'Checking Stripe API guard...'
           grep -Fq '/api/billing/checkout' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
           echo 'Checking Stripe navigation guard...'
-          grep -Fq 'host.endsWith("stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          grep -Fq 'host == "stripe.com" || host.endsWith(".stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
           echo 'Checking Android source for server secrets...'
           if grep -RFn --include='*.kt' --include='*.xml' -e 'STRIPE_SECRET' -e 'APPLE_IAP_PRIVATE' android/app/src; then
             echo 'Server-only secret marker found in Android source.' >&2
