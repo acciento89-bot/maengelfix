@@ -1,15 +1,16 @@
 package com.kamilunavo.maengelfix
 
+import android.app.Activity
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.os.Environment
-import android.provider.Settings
 import android.webkit.CookieManager
 import android.webkit.DownloadListener
 import android.webkit.MimeTypeMap
+import android.webkit.URLUtil
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
 import android.webkit.WebResourceError
@@ -33,7 +34,7 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.material3.darkColorScheme
+import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
@@ -62,22 +63,26 @@ private fun MaengelFixApp(activity: MainActivity) {
     var pendingFileCallback by remember { mutableStateOf<ValueCallback<Array<Uri>>?>(null) }
 
     val filePicker = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
-        val callback = pendingFileCallback
+        val callback = pendingFileCallback ?: return@rememberLauncherForActivityResult
         pendingFileCallback = null
-        if (callback == null) return@rememberLauncherForActivityResult
+        if (result.resultCode != Activity.RESULT_OK) {
+            callback.onReceiveValue(null)
+            return@rememberLauncherForActivityResult
+        }
 
-        val intent = result.data
+        val data = result.data
         val uris = when {
-            result.resultCode != ComponentActivity.RESULT_OK -> null
-            intent?.clipData != null -> Array(intent.clipData!!.itemCount) { index -> intent.clipData!!.getItemAt(index).uri }
-            intent?.data != null -> arrayOf(intent.data!!)
+            data?.clipData != null -> Array(data.clipData!!.itemCount) { index ->
+                data.clipData!!.getItemAt(index).uri
+            }
+            data?.data != null -> arrayOf(data.data!!)
             else -> null
         }
         callback.onReceiveValue(uris)
     }
 
     MaterialTheme(
-        colorScheme = darkColorScheme(
+        colorScheme = lightColorScheme(
             primary = Color(0xFF1769E0),
             background = Color(0xFFF5F7FA),
             surface = Color.White,
@@ -91,46 +96,61 @@ private fun MaengelFixApp(activity: MainActivity) {
                 factory = { context ->
                     WebView(context).apply {
                         webView = this
-                        configureWebView(
+                        configureMaengelFixWebView(
                             activity = activity,
                             onLoading = { loading = it },
                             onFatalError = { fatalError = it },
                             onFileChooser = { callback, params ->
                                 pendingFileCallback?.onReceiveValue(null)
                                 pendingFileCallback = callback
-                                val requested = params.acceptTypes.filter { it.isNotBlank() }.toTypedArray()
-                                val intent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                                val acceptTypes = params.acceptTypes.filter { it.isNotBlank() }.toTypedArray()
+                                val chooser = Intent(Intent.ACTION_GET_CONTENT).apply {
                                     addCategory(Intent.CATEGORY_OPENABLE)
-                                    type = if (requested.size == 1) requested[0] else "*/*"
-                                    if (requested.size > 1) putExtra(Intent.EXTRA_MIME_TYPES, requested)
-                                    putExtra(Intent.EXTRA_ALLOW_MULTIPLE, params.mode == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE)
+                                    type = if (acceptTypes.size == 1) acceptTypes[0] else "*/*"
+                                    if (acceptTypes.size > 1) putExtra(Intent.EXTRA_MIME_TYPES, acceptTypes)
+                                    putExtra(
+                                        Intent.EXTRA_ALLOW_MULTIPLE,
+                                        params.mode == WebChromeClient.FileChooserParams.MODE_OPEN_MULTIPLE,
+                                    )
                                 }
-                                filePicker.launch(Intent.createChooser(intent, "Datei oder Foto auswählen"))
+                                filePicker.launch(Intent.createChooser(chooser, "Datei oder Foto auswählen"))
                             },
                         )
-                        val incoming = activity.intent?.data?.takeIf { it.scheme == "https" && it.host == BuildConfig.ALLOWED_HOST }
-                        loadUrl(incoming?.toString() ?: BuildConfig.APP_URL)
+                        val deepLink = activity.intent?.data?.takeIf {
+                            it.scheme == "https" && it.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true)
+                        }
+                        loadUrl(deepLink?.toString() ?: BuildConfig.APP_URL)
                     }
                 },
                 update = { webView = it },
             )
 
             if (loading && fatalError == null) {
-                CircularProgressIndicator(Modifier.align(Alignment.Center), color = Color(0xFF1769E0))
+                CircularProgressIndicator(
+                    modifier = Modifier.align(Alignment.Center),
+                    color = Color(0xFF1769E0),
+                )
             }
 
             fatalError?.let { message ->
                 Column(
-                    Modifier.align(Alignment.Center).padding(28.dp),
+                    modifier = Modifier.align(Alignment.Center).padding(28.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
-                    Text("MängelFix konnte nicht geladen werden.", color = Color(0xFF101828))
-                    Text(message, modifier = Modifier.padding(top = 8.dp, bottom = 18.dp), color = Color(0xFF667085))
-                    Button(onClick = {
-                        fatalError = null
-                        loading = true
-                        webView?.reload()
-                    }, modifier = Modifier.fillMaxWidth()) {
+                    Text("MängelFix konnte nicht geladen werden.")
+                    Text(
+                        message,
+                        modifier = Modifier.padding(top = 8.dp, bottom = 18.dp),
+                        color = Color(0xFF667085),
+                    )
+                    Button(
+                        onClick = {
+                            fatalError = null
+                            loading = true
+                            webView?.reload()
+                        },
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
                         Text("Erneut versuchen")
                     }
                 }
@@ -139,10 +159,7 @@ private fun MaengelFixApp(activity: MainActivity) {
     }
 
     BackHandler {
-        when {
-            webView?.canGoBack() == true -> webView?.goBack()
-            else -> activity.finish()
-        }
+        if (webView?.canGoBack() == true) webView?.goBack() else activity.finish()
     }
 
     DisposableEffect(Unit) {
@@ -159,7 +176,7 @@ private fun MaengelFixApp(activity: MainActivity) {
     }
 }
 
-private fun WebView.configureWebView(
+private fun WebView.configureMaengelFixWebView(
     activity: MainActivity,
     onLoading: (Boolean) -> Unit,
     onFatalError: (String?) -> Unit,
@@ -181,7 +198,7 @@ private fun WebView.configureWebView(
 
     CookieManager.getInstance().apply {
         setAcceptCookie(true)
-        setAcceptThirdPartyCookies(this@configureWebView, false)
+        setAcceptThirdPartyCookies(this@configureMaengelFixWebView, false)
     }
 
     webChromeClient = object : WebChromeClient() {
@@ -198,38 +215,13 @@ private fun WebView.configureWebView(
 
     webViewClient = object : WebViewClient() {
         override fun onPageStarted(view: WebView?, url: String?, favicon: android.graphics.Bitmap?) {
-            onLoading(true)
             onFatalError(null)
+            onLoading(true)
         }
 
         override fun onPageFinished(view: WebView?, url: String?) {
             onLoading(false)
-            // Google Play policy guard: Android may consume existing entitlements, but Stripe checkout/portal
-            // are never offered from the Play-distributed app. A Play Billing integration is a separate gate.
-            view?.evaluateJavascript(
-                """
-                (() => {
-                  document.documentElement.dataset.maengelFixAndroid = 'true';
-                  if (location.pathname.startsWith('/app')) {
-                    const style = document.createElement('style');
-                    style.id = 'mf-android-play-policy';
-                    style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}';
-                    if (!document.getElementById(style.id)) document.head.appendChild(style);
-                    if (location.search.includes('view=billing') || document.querySelector('.billingPage')) {
-                      const page = document.querySelector('.billingPage');
-                      if (page && !document.getElementById('mf-android-billing-note')) {
-                        const note = document.createElement('div');
-                        note.id = 'mf-android-billing-note';
-                        note.className = 'infoBox';
-                        note.textContent = 'In der Android-App werden neue digitale Abos ausschließlich über Google Play angeboten. Dein bestehender Tarif und deine vorhandenen Funktionen bleiben nutzbar.';
-                        page.prepend(note);
-                      }
-                    }
-                  }
-                })();
-                """.trimIndent(),
-                null,
-            )
+            injectGooglePlayBillingGuard(view)
         }
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
@@ -240,64 +232,102 @@ private fun WebView.configureWebView(
         }
 
         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
-            val url = request?.url ?: return null
-            if (url.host == BuildConfig.ALLOWED_HOST &&
-                request.method.equals("POST", ignoreCase = true) &&
-                (url.path == "/api/billing/checkout" || url.path == "/api/billing/portal")
-            ) {
-                val body = "{\"error\":\"Neue digitale Abos werden in der Android-App über Google Play verwaltet.\"}"
-                return WebResourceResponse(
-                    "application/json",
-                    "utf-8",
-                    403,
-                    "Forbidden",
-                    mapOf("Cache-Control" to "no-store"),
-                    ByteArrayInputStream(body.toByteArray()),
-                )
-            }
-            return null
+            val uri = request?.url ?: return null
+            val blockedBillingRequest =
+                uri.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true) &&
+                    request.method.equals("POST", ignoreCase = true) &&
+                    (uri.path == "/api/billing/checkout" || uri.path == "/api/billing/portal")
+
+            if (!blockedBillingRequest) return null
+
+            val body = "{\"error\":\"Neue digitale Abos werden in der Android-App über Google Play verwaltet.\"}"
+            return WebResourceResponse(
+                "application/json",
+                "utf-8",
+                403,
+                "Forbidden",
+                mapOf("Cache-Control" to "no-store"),
+                ByteArrayInputStream(body.toByteArray()),
+            )
         }
 
         override fun shouldOverrideUrlLoading(view: WebView?, request: WebResourceRequest?): Boolean {
             val uri = request?.url ?: return false
-            if (uri.host == BuildConfig.ALLOWED_HOST && uri.scheme == "https") return false
+            if (uri.scheme == "https" && uri.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true)) {
+                return false
+            }
 
             val host = uri.host.orEmpty().lowercase()
-            if (host.endsWith("stripe.com")) {
-                Toast.makeText(activity, "Abos werden in der Android-App über Google Play verwaltet.", Toast.LENGTH_LONG).show()
+            if (host == "stripe.com" || host.endsWith(".stripe.com")) {
+                Toast.makeText(
+                    activity,
+                    "Abos werden in der Android-App über Google Play verwaltet.",
+                    Toast.LENGTH_LONG,
+                ).show()
                 return true
             }
 
-            return try {
+            return runCatching {
                 activity.startActivity(Intent(Intent.ACTION_VIEW, uri))
                 true
-            } catch (_: Exception) {
-                true
-            }
+            }.getOrDefault(true)
         }
     }
 
-    setDownloadListener(DownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
-        if (!url.startsWith("https://${BuildConfig.ALLOWED_HOST}/")) {
-            Toast.makeText(activity, "Download aus unbekannter Quelle blockiert.", Toast.LENGTH_LONG).show()
-            return@DownloadListener
-        }
-        try {
-            val fileName = android.webkit.URLUtil.guessFileName(url, contentDisposition, mimeType)
-            val request = DownloadManager.Request(Uri.parse(url)).apply {
-                setMimeType(mimeType ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.substringAfterLast('.', "")))
-                addRequestHeader("User-Agent", userAgent)
-                CookieManager.getInstance().getCookie(url)?.let { addRequestHeader("Cookie", it) }
-                setTitle(fileName)
-                setDescription("MängelFix Download")
-                setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-                setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+    setDownloadListener(
+        DownloadListener { url, userAgent, contentDisposition, mimeType, _ ->
+            if (!url.startsWith("https://${BuildConfig.ALLOWED_HOST}/")) {
+                Toast.makeText(activity, "Download aus unbekannter Quelle blockiert.", Toast.LENGTH_LONG).show()
+                return@DownloadListener
             }
-            val manager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
-            manager.enqueue(request)
-            Toast.makeText(activity, "Download gestartet", Toast.LENGTH_SHORT).show()
-        } catch (_: Exception) {
-            Toast.makeText(activity, "Download konnte nicht gestartet werden.", Toast.LENGTH_LONG).show()
+
+            runCatching {
+                val fileName = URLUtil.guessFileName(url, contentDisposition, mimeType)
+                val resolvedMime = mimeType
+                    ?: MimeTypeMap.getSingleton().getMimeTypeFromExtension(fileName.substringAfterLast('.', ""))
+                val request = DownloadManager.Request(Uri.parse(url)).apply {
+                    resolvedMime?.let(::setMimeType)
+                    addRequestHeader("User-Agent", userAgent)
+                    CookieManager.getInstance().getCookie(url)?.let { addRequestHeader("Cookie", it) }
+                    setTitle(fileName)
+                    setDescription("MängelFix Download")
+                    setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+                    setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName)
+                }
+                val manager = activity.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+                manager.enqueue(request)
+            }.onSuccess {
+                Toast.makeText(activity, "Download gestartet", Toast.LENGTH_SHORT).show()
+            }.onFailure {
+                Toast.makeText(activity, "Download konnte nicht gestartet werden.", Toast.LENGTH_LONG).show()
+            }
         }
-    })
+    )
+}
+
+private fun injectGooglePlayBillingGuard(view: WebView?) {
+    view?.evaluateJavascript(
+        """
+        (() => {
+          document.documentElement.dataset.maengelFixAndroid = 'true';
+          if (!location.pathname.startsWith('/app')) return;
+          const styleId = 'mf-android-play-policy';
+          if (!document.getElementById(styleId)) {
+            const style = document.createElement('style');
+            style.id = styleId;
+            style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}';
+            document.head.appendChild(style);
+          }
+          const page = document.querySelector('.billingPage');
+          if (page && !document.getElementById('mf-android-billing-note')) {
+            const note = document.createElement('div');
+            note.id = 'mf-android-billing-note';
+            note.className = 'infoBox';
+            note.textContent = 'In der Android-App werden neue digitale Abos ausschließlich über Google Play angeboten. Dein bestehender Tarif und deine vorhandenen Funktionen bleiben nutzbar.';
+            page.prepend(note);
+          }
+        })();
+        """.trimIndent(),
+        null,
+    )
 }
