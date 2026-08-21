@@ -51,12 +51,40 @@ jobs:
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
           echo 'Checking Android 16 target...'
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
+          echo 'Checking Play Billing 9.1...'
+          grep -Fq 'com.android.billingclient:billing-ktx:9.1.0' android/app/build.gradle.kts
+          grep -Fq 'com.android.vending.BILLING' android/app/src/main/AndroidManifest.xml
+          echo 'Checking native Play purchase path...'
+          grep -Fq 'setObfuscatedAccountId(accountHash)' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          grep -Fq '/api/billing/google-play/verify' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          grep -Fq 'verifyWithServer(productId, purchase.purchaseToken)' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          grep -Fq 'acknowledgePurchase' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          grep -Fq 'ensurePurchaseAllowed()' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          grep -Fq 'maengelfix://play-billing' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          grep -Fq 'Käufe wiederherstellen' android/app/src/main/java/com/kamilunavo/maengelfix/PlayBillingSheet.kt
+          echo 'Checking all locked product IDs...'
+          for product in \
+            com.kamilunavo.maengelfix.privatepro.monthly \
+            com.kamilunavo.maengelfix.privatepro.yearly \
+            com.kamilunavo.maengelfix.managementstarter.monthly \
+            com.kamilunavo.maengelfix.managementstarter.yearly \
+            com.kamilunavo.maengelfix.managementpro.monthly \
+            com.kamilunavo.maengelfix.managementpro.yearly \
+            com.kamilunavo.maengelfix.managementbusiness.monthly \
+            com.kamilunavo.maengelfix.managementbusiness.yearly; do
+            grep -Fq "$product" android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+          done
           echo 'Checking Stripe API guard...'
           grep -Fq '/api/billing/checkout' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
           echo 'Checking Stripe navigation guard...'
           grep -Fq 'host == "stripe.com" || host.endsWith(".stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
           echo 'Checking Android source for server secrets...'
-          if grep -RFn --include='*.kt' --include='*.xml' -e 'STRIPE_SECRET' -e 'APPLE_IAP_PRIVATE' android/app/src; then
+          if grep -RFn --include='*.kt' --include='*.xml' \
+            -e 'STRIPE_SECRET' \
+            -e 'APPLE_IAP_PRIVATE' \
+            -e 'GOOGLE_PLAY_SERVICE_ACCOUNT' \
+            -e 'GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL' \
+            android/app/src; then
             echo 'Server-only secret marker found in Android source.' >&2
             exit 1
           fi
