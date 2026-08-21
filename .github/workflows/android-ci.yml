@@ -47,10 +47,15 @@ jobs:
           set -euo pipefail
           echo 'Checking release AAB...'
           test -f android/app/build/outputs/bundle/release/app-release.aab
-          echo 'Checking package identity...'
+          echo 'Checking package and version identity...'
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 2' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.1"' android/app/build.gradle.kts
           echo 'Checking Android 16 target...'
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
+          echo 'Checking branded launcher icon...'
+          grep -Fq 'android:icon="@drawable/ic_launcher"' android/app/src/main/AndroidManifest.xml
+          grep -Fq '#E5A31B' android/app/src/main/res/drawable/ic_launcher.xml
           echo 'Checking Play Billing 9.1...'
           grep -Fq 'com.android.billingclient:billing-ktx:9.1.0' android/app/build.gradle.kts
           grep -Fq 'com.android.vending.BILLING' android/app/src/main/AndroidManifest.xml
