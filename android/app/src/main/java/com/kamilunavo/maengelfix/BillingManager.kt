@@ -67,18 +67,23 @@ class BillingManager(
         billingClient.endConnection()
     }
 
+    fun isReady(): Boolean = ready
+
+    fun price(productId: String): String? {
+        val detail = details[productId] ?: return null
+        val offer = detail.subscriptionOfferDetails.orEmpty()
+            .firstOrNull { it.offerId == null }
+            ?: detail.subscriptionOfferDetails.orEmpty().firstOrNull()
+        return offer?.pricingPhases?.pricingPhaseList?.lastOrNull()?.formattedPrice
+    }
+
     fun catalogJson(): String {
         val products = JSONArray()
         productIds.forEach { id ->
-            val detail = details[id]
-            val offer = detail?.subscriptionOfferDetails.orEmpty()
-                .firstOrNull { it.offerId == null }
-                ?: detail?.subscriptionOfferDetails.orEmpty().firstOrNull()
-            val price = offer?.pricingPhases?.pricingPhaseList?.lastOrNull()?.formattedPrice
             products.put(
                 JSONObject()
                     .put("id", id)
-                    .put("price", price ?: JSONObject.NULL)
+                    .put("price", price(id) ?: JSONObject.NULL)
             )
         }
         return JSONObject()
@@ -101,6 +106,7 @@ class BillingManager(
 
         scope.launch {
             try {
+                ensureNoConflictingActiveSubscription()
                 val accountHash = fetchAuthenticatedAccountHash()
                 val offer = detail.subscriptionOfferDetails.orEmpty()
                     .firstOrNull { it.offerId == null }
@@ -228,6 +234,38 @@ class BillingManager(
             } catch (error: Exception) {
                 onMessage(error.message ?: "Der Google-Play-Kauf konnte serverseitig nicht bestätigt werden.")
             }
+        }
+    }
+
+    private suspend fun ensureNoConflictingActiveSubscription() = withContext(Dispatchers.IO) {
+        val connection = authenticatedConnection("/api/billing/plan", "GET")
+        try {
+            val status = connection.responseCode
+            val bytes = (if (status in 200..299) connection.inputStream else connection.errorStream)?.use { it.readBytes() } ?: ByteArray(0)
+            if (status !in 200..299) throw IllegalStateException("Dein aktueller MängelFix-Tarif konnte nicht geprüft werden.")
+            val root = JSONObject(bytes.toString(Charsets.UTF_8))
+            val plan = root.optJSONObject("plan") ?: JSONObject()
+            val provider = plan.optString("subscription_provider").trim()
+            val subscriptionStatus = plan.optString("subscription_status").trim().lowercase()
+            val activeFlag = plan.opt("active") as? Boolean
+            val active = activeFlag == true || subscriptionStatus in setOf("active", "trialing")
+
+            if (provider.isNotBlank() && active) {
+                val providerLabel = when (provider) {
+                    "google_play" -> "Google Play"
+                    "apple" -> "Apple App Store"
+                    "stripe" -> "MängelFix Web/Stripe"
+                    else -> provider
+                }
+                throw IllegalStateException(
+                    if (provider == "google_play")
+                        "Für dieses MängelFix-Konto ist bereits ein Google-Play-Abo aktiv. Nutze ‚Käufe wiederherstellen‘ oder verwalte das vorhandene Abo in Google Play."
+                    else
+                        "Für dieses MängelFix-Konto ist bereits ein aktives Abo über $providerLabel vorhanden. Um Doppelzahlungen zu vermeiden, startet Android kein zweites Abo."
+                )
+            }
+        } finally {
+            connection.disconnect()
         }
     }
 
