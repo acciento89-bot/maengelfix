@@ -37,6 +37,7 @@ android {
         create("releaseUpload") {
             if (!uploadKeystorePath.isNullOrBlank()) {
                 storeFile = file(uploadKeystorePath)
+                storeType = "JKS"
                 storePassword = uploadStorePassword
                 keyAlias = uploadKeyAlias
                 keyPassword = uploadKeyPassword
