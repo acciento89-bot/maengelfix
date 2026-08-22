@@ -1,0 +1,65 @@
+name: Apply MaengelFix final Android fixes
+
+on:
+  push:
+    branches:
+      - android/final-fixes-1.0.2-3
+    paths:
+      - .github/workflows/_apply-final-android-fixes.yml
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: android/final-fixes-1.0.2-3
+          fetch-depth: 0
+      - name: Apply release fixes
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          from pathlib import Path
+
+          main = Path('android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt')
+          s = main.read_text()
+          s = s.replace('import androidx.compose.foundation.layout.padding\n', 'import androidx.compose.foundation.layout.padding\nimport androidx.compose.foundation.layout.statusBarsPadding\n')
+          s = s.replace('Box(Modifier.fillMaxSize()) {', 'Box(Modifier.fillMaxSize().statusBarsPadding()) {', 1)
+          s = s.replace('userAgentString = "$userAgentString MaengelFixAndroid/1.0.0"', 'userAgentString = "$userAgentString MaengelFixAndroid/${BuildConfig.VERSION_NAME}"')
+
+          old_back = '''    BackHandler {\n        when {\n            showPlayBilling -> showPlayBilling = false\n            webView?.canGoBack() == true -> webView?.goBack()\n            else -> activity.finish()\n        }\n    }\n'''
+          new_back = '''    BackHandler {\n        if (showPlayBilling) {\n            showPlayBilling = false\n        } else {\n            webView?.evaluateJavascript(\n                """\n                (() => {\n                  const modalClose = document.querySelector('.modalBackdrop .iconButton');\n                  if (modalClose) { modalClose.click(); return 'handled'; }\n                  const backButton = document.querySelector('.backButton');\n                  if (backButton) { backButton.click(); return 'handled'; }\n                  const navButtons = [...document.querySelectorAll('.workspaceSidebar nav button')];\n                  const active = navButtons.find(button => button.classList.contains('active'));\n                  const overview = navButtons.find(button => button.textContent?.includes('Übersicht'));\n                  if (overview && active !== overview) { overview.click(); return 'handled'; }\n                  return 'root';\n                })();\n                """.trimIndent(),\n            ) { result ->\n                if (result?.contains("root") == true) activity.moveTaskToBack(true)\n            }\n        }\n    }\n'''
+          if old_back not in s:
+              raise SystemExit('MaengelFix BackHandler anchor missing')
+          s = s.replace(old_back, new_back, 1)
+
+          old_style = "style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}.mfPlayButton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;margin-top:12px;border:0;border-radius:12px;background:#1769E0;color:#fff;font:inherit;font-weight:700;text-decoration:none}';"
+          new_style = """style.textContent = `\n              .billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}\n              .mfPlayButton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;margin-top:12px;border:0;border-radius:12px;background:#1769E0;color:#fff;font:inherit;font-weight:700;text-decoration:none}\n              @media (max-width: 900px) {\n                .workspaceShell{display:block!important;min-height:100dvh!important}\n                .workspaceSidebar{position:sticky!important;top:0!important;z-index:60!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;padding:8px 10px!important;overflow:visible!important}\n                .workspaceSidebar .sidebarBrand,.workspaceSidebar .sidebarLabel,.workspaceSidebar .sidebarBottom{display:none!important}\n                .workspaceSidebar nav{display:flex!important;gap:6px!important;overflow-x:auto!important;overscroll-behavior-x:contain!important;padding:0!important;scrollbar-width:none!important}\n                .workspaceSidebar nav::-webkit-scrollbar{display:none!important}\n                .workspaceSidebar nav button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:44px!important;padding:9px 13px!important;border-radius:12px!important;white-space:nowrap!important}\n                .workspaceSidebar nav button>span{display:none!important}\n                .workspaceSidebar nav button>i{margin-left:6px!important}\n                .workspaceMain{width:100%!important;min-width:0!important;margin:0!important;padding:0!important}\n                .mobileWorkspaceBar{position:sticky!important;top:60px!important;z-index:50!important;display:flex!important;padding:10px 14px!important}\n                .workspacePage{padding-left:16px!important;padding-right:16px!important}\n                .workspaceHeading{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:14px!important}\n                .workspaceHeading .workspacePrimary{width:100%!important;min-height:50px!important}\n                .modalBackdrop{position:fixed!important;inset:0!important;z-index:9999!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;padding:0!important;overflow:hidden!important;background:rgba(10,18,28,.62)!important}\n                .modal.proModal{display:block!important;width:100%!important;max-width:none!important;height:auto!important;max-height:94dvh!important;margin:0!important;padding:0!important;border-radius:24px 24px 0 0!important;overflow-y:auto!important;overscroll-behavior:contain!important;background:#fff!important}\n                .modal.proModal .modalHeader{position:sticky!important;top:0!important;z-index:4!important;padding:18px 18px 14px!important;background:#fff!important;border-bottom:1px solid #e5e9ef!important}\n                .modal.proModal .caseForm{display:block!important;padding:18px 18px calc(28px + env(safe-area-inset-bottom))!important;overflow:visible!important}\n                .modal.proModal .formGrid.two{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}\n                .modal.proModal label{display:block!important;width:100%!important;margin-bottom:14px!important}\n                .modal.proModal input,.modal.proModal select,.modal.proModal textarea{width:100%!important;min-height:48px!important;box-sizing:border-box!important;font-size:16px!important}\n                .modal.proModal textarea{min-height:120px!important}\n                .modal.proModal .modalActions{position:sticky!important;bottom:0!important;display:grid!important;grid-template-columns:1fr!important;gap:8px!important;padding-top:12px!important;background:#fff!important}\n                .modal.proModal .modalActions button{width:100%!important;min-height:50px!important}\n              }\n            `;"""
+          if old_style not in s:
+              raise SystemExit('MaengelFix injected style anchor missing')
+          s = s.replace(old_style, new_style, 1)
+          main.write_text(s)
+
+          gradle = Path('android/app/build.gradle.kts')
+          g = gradle.read_text().replace('versionCode = 2', 'versionCode = 3').replace('versionName = "1.0.1"', 'versionName = "1.0.2"')
+          gradle.write_text(g)
+
+          for name in ['.github/workflows/android-ci.yml', '.github/workflows/android-release.yml', 'GOOGLE_PLAY.md']:
+              p = Path(name)
+              if not p.exists():
+                  continue
+              x = p.read_text()
+              x = x.replace('versionCode = 2', 'versionCode = 3')
+              x = x.replace('versionName = "1.0.1"', 'versionName = "1.0.2"')
+              x = x.replace('1.0.1 (2)', '1.0.2 (3)').replace('1.0.1-2', '1.0.2-3')
+              p.write_text(x)
+          PY
+          git config user.name 'Kamilunavo Release Bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add android GOOGLE_PLAY.md .github/workflows/android-ci.yml .github/workflows/android-release.yml
+          git diff --cached --check
+          git commit -m 'fix(android): repair mobile navigation and new-case sheet in 1.0.2 (3)'
+          git push origin HEAD:android/final-fixes-1.0.2-3
