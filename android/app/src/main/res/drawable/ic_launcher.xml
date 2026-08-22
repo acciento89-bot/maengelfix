@@ -1,25 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
 <vector xmlns:android="http://schemas.android.com/apk/res/android"
     android:width="108dp"
     android:height="108dp"
-    android:viewportWidth="64"
-    android:viewportHeight="64">
+    android:viewportWidth="108"
+    android:viewportHeight="108">
+
+    <!-- Deep cobalt field: strong contrast on light and dark launchers. -->
     <path
-        android:fillColor="#18212B"
-        android:pathData="M0,0h64v64h-64z" />
+        android:fillColor="#0A2A5E"
+        android:pathData="M0,0h108v108h-108z" />
+
+    <!-- Subtle technical panel gives the icon depth without tiny details. -->
+    <path
+        android:fillColor="#12489B"
+        android:pathData="M0,76L76,0H108V34L34,108H0Z" />
+
+    <!-- Inspection document. -->
     <path
         android:fillColor="#FFFFFF"
-        android:pathData="M18,13h22l9,9v29H18z" />
+        android:pathData="M28,18H61L78,35V79C78,86 73,91 66,91H28C21,91 16,86 16,79V30C16,23 21,18 28,18Z" />
+
+    <!-- Folded page corner. -->
+    <path
+        android:fillColor="#CFE1FF"
+        android:pathData="M61,18V35H78Z" />
     <path
         android:fillColor="@android:color/transparent"
-        android:strokeColor="#2457D6"
-        android:strokeWidth="3"
+        android:strokeColor="#7FA7E8"
+        android:strokeWidth="2.5"
         android:strokeLineJoin="round"
-        android:pathData="M40,13v10h10" />
+        android:pathData="M61,18V35H78" />
+
+    <!-- Minimal document lines: readable even at launcher size. -->
     <path
         android:fillColor="@android:color/transparent"
-        android:strokeColor="#E5A31B"
-        android:strokeWidth="5"
+        android:strokeColor="#B6C5D8"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M30,43H52M30,54H47" />
+
+    <!-- Signature MängelFix check: warm amber against technical blue. -->
+    <path
+        android:fillColor="@android:color/transparent"
+        android:strokeColor="#FFB21A"
+        android:strokeWidth="9"
         android:strokeLineCap="round"
         android:strokeLineJoin="round"
-        android:pathData="M24,36l6,6 13,-16" />
+        android:pathData="M31,69L43,80L67,51" />
+
+    <!-- Small repair spark keeps the icon from looking like a generic checklist. -->
+    <path
+        android:fillColor="#FFB21A"
+        android:pathData="M83,63L86,70L93,73L86,76L83,83L80,76L73,73L80,70Z" />
 </vector>
