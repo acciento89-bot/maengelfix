@@ -30,6 +30,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -112,7 +113,7 @@ private fun MaengelFixApp(activity: MainActivity) {
             onSurface = Color(0xFF101828),
         )
     ) {
-        Box(Modifier.fillMaxSize()) {
+        Box(Modifier.fillMaxSize().statusBarsPadding()) {
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory = { context ->
@@ -190,10 +191,26 @@ private fun MaengelFixApp(activity: MainActivity) {
     }
 
     BackHandler {
-        when {
-            showPlayBilling -> showPlayBilling = false
-            webView?.canGoBack() == true -> webView?.goBack()
-            else -> activity.finish()
+        if (showPlayBilling) {
+            showPlayBilling = false
+        } else {
+            webView?.evaluateJavascript(
+                """
+                (() => {
+                  const modalClose = document.querySelector('.modalBackdrop .iconButton');
+                  if (modalClose) { modalClose.click(); return 'handled'; }
+                  const backButton = document.querySelector('.backButton');
+                  if (backButton) { backButton.click(); return 'handled'; }
+                  const navButtons = [...document.querySelectorAll('.workspaceSidebar nav button')];
+                  const active = navButtons.find(button => button.classList.contains('active'));
+                  const overview = navButtons.find(button => button.textContent?.includes('Übersicht'));
+                  if (overview && active !== overview) { overview.click(); return 'handled'; }
+                  return 'root';
+                })();
+                """.trimIndent(),
+            ) { result ->
+                if (result?.contains("root") == true) activity.moveTaskToBack(true)
+            }
         }
     }
 
@@ -230,7 +247,7 @@ private fun WebView.configureMaengelFixWebView(
         allowContentAccess = true
         javaScriptCanOpenWindowsAutomatically = false
         setSupportMultipleWindows(false)
-        userAgentString = "$userAgentString MaengelFixAndroid/1.0.0"
+        userAgentString = "$userAgentString MaengelFixAndroid/${BuildConfig.VERSION_NAME}"
     }
 
     CookieManager.getInstance().apply {
@@ -358,7 +375,33 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
           if (!document.getElementById(styleId)) {
             const style = document.createElement('style');
             style.id = styleId;
-            style.textContent = '.billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}.mfPlayButton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;margin-top:12px;border:0;border-radius:12px;background:#1769E0;color:#fff;font:inherit;font-weight:700;text-decoration:none}';
+            style.textContent = `
+              .billingPage .primaryButton,.billingPage .secondaryButton{display:none!important}
+              .mfPlayButton{display:inline-flex;align-items:center;justify-content:center;width:100%;min-height:48px;padding:12px 16px;margin-top:12px;border:0;border-radius:12px;background:#1769E0;color:#fff;font:inherit;font-weight:700;text-decoration:none}
+              @media (max-width:900px){
+                .workspaceShell{display:block!important;min-height:100dvh!important}
+                .workspaceSidebar{position:sticky!important;top:0!important;z-index:60!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;padding:8px 10px!important;overflow:visible!important}
+                .workspaceSidebar .sidebarBrand,.workspaceSidebar .sidebarLabel,.workspaceSidebar .sidebarBottom{display:none!important}
+                .workspaceSidebar nav{display:flex!important;gap:6px!important;overflow-x:auto!important;padding:0!important;scrollbar-width:none!important}
+                .workspaceSidebar nav::-webkit-scrollbar{display:none!important}
+                .workspaceSidebar nav button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:44px!important;padding:9px 13px!important;border-radius:12px!important;white-space:nowrap!important}
+                .workspaceSidebar nav button>span{display:none!important}
+                .workspaceMain{width:100%!important;min-width:0!important;margin:0!important;padding:0!important}
+                .mobileWorkspaceBar{position:sticky!important;top:60px!important;z-index:50!important;display:flex!important;padding:10px 14px!important}
+                .workspacePage{padding-left:16px!important;padding-right:16px!important}
+                .workspaceHeading{display:flex!important;flex-direction:column!important;align-items:flex-start!important;gap:14px!important}
+                .workspaceHeading .workspacePrimary{width:100%!important;min-height:50px!important}
+                .modalBackdrop{position:fixed!important;inset:0!important;z-index:9999!important;display:flex!important;align-items:flex-end!important;justify-content:center!important;padding:0!important;overflow:hidden!important;background:rgba(10,18,28,.62)!important}
+                .modal.proModal{display:block!important;width:100%!important;max-width:none!important;height:auto!important;max-height:94dvh!important;margin:0!important;padding:0!important;border-radius:24px 24px 0 0!important;overflow-y:auto!important;overscroll-behavior:contain!important;background:#fff!important}
+                .modal.proModal .modalHeader{position:sticky!important;top:0!important;z-index:4!important;padding:18px!important;background:#fff!important;border-bottom:1px solid #e5e9ef!important}
+                .modal.proModal .caseForm{display:block!important;padding:18px 18px calc(28px + env(safe-area-inset-bottom))!important;overflow:visible!important}
+                .modal.proModal .formGrid.two{display:grid!important;grid-template-columns:1fr!important;gap:14px!important}
+                .modal.proModal label{display:block!important;width:100%!important;margin-bottom:14px!important}
+                .modal.proModal input,.modal.proModal select,.modal.proModal textarea{width:100%!important;min-height:48px!important;box-sizing:border-box!important;font-size:16px!important}
+                .modal.proModal textarea{min-height:120px!important}
+                .modal.proModal .modalActions{position:sticky!important;bottom:0!important;display:grid!important;grid-template-columns:1fr!important;gap:8px!important;padding-top:12px!important;background:#fff!important}
+                .modal.proModal .modalActions button{width:100%!important;min-height:50px!important}
+              }`;
             document.head.appendChild(style);
           }
           const page = document.querySelector('.billingPage');
