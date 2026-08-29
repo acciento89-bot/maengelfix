@@ -312,7 +312,8 @@ function LegalPage({ type, navigate }) {
       sections: [
         ['Angaben gemäß § 5 DDG', <><p><b>Kamilunavo</b><br />Inhaber: Piotr Kaminski<br />Otto-Braun-Straße 14<br />40595 Düsseldorf<br />Deutschland</p><p>„Kamilunavo“ ist die verwendete Geschäftsbezeichnung. Diensteanbieter und verantwortlich für MängelFix ist die oben genannte natürliche Person.</p></>],
         ['Kontakt', <p>E-Mail: <a href="mailto:contact@kamilunavo.com">contact@kamilunavo.com</a></p>],
-        ['Verantwortlich für Inhalte', <p>Piotr Kaminski, Anschrift wie oben.</p>],
+        ['Wirtschafts-Identifikationsnummer', <p>Wirtschafts-Identifikationsnummer gemäß § 139c AO: DE464473083-00001</p>],
+    ['Verantwortlich für Inhalte', <p>Piotr Kaminski, Anschrift wie oben.</p>],
         ['Verbraucherstreitbeilegung', <p>Wir sind nicht verpflichtet und derzeit nicht bereit, an einem Streitbeilegungsverfahren vor einer Verbraucherschlichtungsstelle teilzunehmen.</p>],
         ['Hinweis zum Angebot', <p>MängelFix unterstützt bei Dokumentation und Organisation von Mängeln. Das Angebot ersetzt keine individuelle Rechtsberatung und trifft keine verbindliche rechtliche Bewertung eines Falls.</p>]
       ]
