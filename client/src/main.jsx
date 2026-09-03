@@ -6,6 +6,7 @@ import './maengelfix-pro.css';
 import './v03.css';
 import './v019.css';
 import './v019-landing.css';
+import './design-system.css';
 
 createRoot(document.getElementById('root')).render(
   <React.StrictMode>
