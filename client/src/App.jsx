@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { SEO_META, SEO_PAGES, SITE_URL } from './seo-content.js';
 
 const statusLabels = { draft:'Entwurf', sent:'Versendet', reply:'Rückmeldung', received:'Eingegangen', reviewing:'In Prüfung', commissioned:'Auftrag erstellt', scheduled:'Termin geplant', in_progress:'In Ausführung', resolved:'Erledigt' };
 const managementStatusLabels = { received:'Eingegangen', reviewing:'In Prüfung', commissioned:'Auftrag erstellt', scheduled:'Termin geplant', in_progress:'In Ausführung', resolved:'Erledigt' };
@@ -58,6 +59,48 @@ function usePath() {
   return [path, navigate];
 }
 
+function useSeo(path) {
+  useEffect(() => {
+    const meta = SEO_META[path];
+    const page = meta || {
+      locale: path.startsWith('/en') ? 'en' : 'de',
+      title: 'MängelFix',
+      description: 'Mängel strukturiert dokumentieren und nachhalten.'
+    };
+    document.documentElement.lang = page.locale;
+    document.title = page.title;
+    const setMeta = (selector, attribute, value) => {
+      let element = document.head.querySelector(selector);
+      if (!element) {
+        element = document.createElement('meta');
+        const [key, name] = selector.match(/meta\[([^=]+)="([^"]+)"\]/)?.slice(1) || [];
+        if (key) element.setAttribute(key, name);
+        document.head.appendChild(element);
+      }
+      element.setAttribute(attribute, value);
+    };
+    setMeta('meta[name="description"]', 'content', page.description);
+    setMeta('meta[property="og:title"]', 'content', page.title);
+    setMeta('meta[property="og:description"]', 'content', page.description);
+    setMeta('meta[property="og:type"]', 'content', 'website');
+    setMeta('meta[property="og:url"]', 'content', `${SITE_URL}${path === '/' ? '' : path}`);
+    setMeta('meta[name="twitter:card"]', 'content', 'summary');
+    const indexable = Boolean(meta) || ['/support', '/impressum', '/datenschutz', '/nutzungsbedingungen'].includes(path);
+    setMeta('meta[name="robots"]', 'content', indexable ? 'index, follow' : 'noindex, nofollow');
+    let canonical = document.head.querySelector('link[rel="canonical"]');
+    if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
+    canonical.href = `${SITE_URL}${path === '/' ? '' : path}`;
+    document.head.querySelectorAll('link[rel="alternate"][hreflang]').forEach(element => element.remove());
+    if (page.alternate) {
+      const dePath = page.locale === 'de' ? path : page.alternate;
+      const enPath = page.locale === 'en' ? path : page.alternate;
+      [['de', dePath], ['en', enPath], ['x-default', dePath]].forEach(([language, href]) => {
+        const link = document.createElement('link'); link.rel = 'alternate'; link.hreflang = language; link.href = `${SITE_URL}${href === '/' ? '' : href}`; document.head.appendChild(link);
+      });
+    }
+  }, [path]);
+}
+
 function Logo({ inverse = false, compact = false }) {
   return (
     <div className={`mfLogo ${inverse ? 'inverse' : ''} ${compact ? 'compact' : ''}`}>
@@ -99,20 +142,22 @@ function Icon({ name }) {
   return <svg className="uiIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{iconPaths[name] || iconPaths.overview}</svg>;
 }
 
-function PublicHeader({ user, navigate }) {
+function PublicHeader({ user, navigate, locale = 'de' }) {
+  const english = locale === 'en';
   return (
     <header className="publicHeader">
-      <button className="brandButton" onClick={() => navigate('/')}><Logo /></button>
+      <button className="brandButton" onClick={() => navigate(english ? '/en' : '/')}><Logo /></button>
       <nav className="publicNav">
-        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })); }}>So funktioniert's</button>
-        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('funktionen')?.scrollIntoView({ behavior: 'smooth' })); }}>Funktionen</button>
-        <button type="button" onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('tarife')?.scrollIntoView({ behavior: 'smooth' })); }}>Tarife</button>
+        <button type="button" onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })); }}>{english ? 'How it works' : "So funktioniert's"}</button>
+        <button type="button" onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('funktionen')?.scrollIntoView({ behavior: 'smooth' })); }}>{english ? 'Features' : 'Funktionen'}</button>
+        <button type="button" onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('tarife')?.scrollIntoView({ behavior: 'smooth' })); }}>{english ? 'Plans' : 'Tarife'}</button>
+        <button className="languageSwitch" type="button" onClick={() => navigate(english ? '/' : '/en')} aria-label={english ? 'Deutsche Version öffnen' : 'Open English version'}>{english ? 'DE' : 'EN'}</button>
         {user ? (
-          <button className="navPrimary" onClick={() => navigate('/app')}>Zur App</button>
+          <button className="navPrimary" onClick={() => navigate('/app')}>{english ? 'Open app' : 'Zur App'}</button>
         ) : (
           <>
-            <button className="navGhost" onClick={() => navigate('/anmelden')}>Anmelden</button>
-            <button className="navPrimary" onClick={() => navigate('/registrieren')}>Kostenlos starten</button>
+            <button className="navGhost" onClick={() => navigate('/anmelden')}>{english ? 'Sign in' : 'Anmelden'}</button>
+            <button className="navPrimary" onClick={() => navigate('/registrieren')}>{english ? 'Start free' : 'Kostenlos starten'}</button>
           </>
         )}
       </nav>
@@ -120,15 +165,16 @@ function PublicHeader({ user, navigate }) {
   );
 }
 
-function PublicFooter({ navigate }) {
+function PublicFooter({ navigate, locale = 'de' }) {
+  const english = locale === 'en';
   return (
     <footer className="publicFooter">
       <div className="footerMain">
-        <div className="footerBrand"><Logo inverse /><p>Vom ersten Foto bis zur erledigten Rückmeldung: Dein vollständiger Mängelvorgang an einem Ort.</p><div className="footerAvailability"><span>WEB-APP</span><span>iPHONE & iPAD</span></div></div>
-        <div className="footerNavGroup"><span>PRODUKT</span><button onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('ablauf')?.scrollIntoView()); }}>So funktioniert's</button><button onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('funktionen')?.scrollIntoView()); }}>Funktionen</button><button onClick={() => { navigate('/'); requestAnimationFrame(() => document.getElementById('tarife')?.scrollIntoView()); }}>Tarife</button></div>
-        <div className="footerNavGroup"><span>SERVICE & RECHTLICHES</span><button onClick={() => navigate('/support')}>Support</button><button onClick={() => navigate('/impressum')}>Impressum</button><button onClick={() => navigate('/datenschutz')}>Datenschutz</button><button onClick={() => navigate('/nutzungsbedingungen')}>Nutzungsbedingungen</button></div>
+        <div className="footerBrand"><Logo inverse /><p>{english ? 'From the first photo to the final response: your complete defect case in one place.' : 'Vom ersten Foto bis zur erledigten Rückmeldung: Dein vollständiger Mängelvorgang an einem Ort.'}</p><div className="footerAvailability"><span>WEB APP</span><span>iPHONE & iPAD</span></div></div>
+        <div className="footerNavGroup"><span>{english ? 'PRODUCT' : 'PRODUKT'}</span><button onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('ablauf')?.scrollIntoView()); }}>{english ? 'How it works' : "So funktioniert's"}</button><button onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('funktionen')?.scrollIntoView()); }}>{english ? 'Features' : 'Funktionen'}</button><button onClick={() => { navigate(english ? '/en' : '/'); requestAnimationFrame(() => document.getElementById('tarife')?.scrollIntoView()); }}>{english ? 'Plans' : 'Tarife'}</button></div>
+        <div className="footerNavGroup"><span>{english ? 'SERVICE & LEGAL' : 'SERVICE & RECHTLICHES'}</span><button onClick={() => navigate('/support')}>Support</button><button onClick={() => navigate('/impressum')}>{english ? 'Legal notice' : 'Impressum'}</button><button onClick={() => navigate('/datenschutz')}>{english ? 'Privacy' : 'Datenschutz'}</button><button onClick={() => navigate('/nutzungsbedingungen')}>{english ? 'Terms' : 'Nutzungsbedingungen'}</button></div>
       </div>
-      <div className="footerBottom"><small>© 2026 Kamilunavo · MängelFix</small><span><i /> System bereit</span></div>
+      <div className="footerBottom"><small>© 2026 Kamilunavo · MängelFix</small><span><i /> {english ? 'System ready' : 'System bereit'}</span></div>
     </footer>
   );
 }
@@ -232,12 +278,78 @@ function Landing({ user, navigate }) {
           <button className="managementStartButton" onClick={() => navigate(user ? '/app' : '/registrieren/verwaltung')}>{user ? 'Verwaltung einrichten' : '14 Tage kostenlos testen'} →</button>
         </section>
 
+        <section className="seoGuideHub">
+          <div><span>RATGEBER</span><h2>Mängel je nach Situation richtig festhalten.</h2><p>Kurze, praktische Anleitungen führen direkt zum passenden MängelFix-Ablauf.</p></div>
+          <nav>
+            <a href="/maengelanzeige-erstellen"><span>GRUNDLAGE</span><b>Mängelanzeige erstellen</b><i>→</i></a>
+            <a href="/mietmangel-dokumentieren"><span>WOHNEN</span><b>Mietmangel dokumentieren</b><i>→</i></a>
+            <a href="/lieferung-beschaedigt"><span>LIEFERUNG</span><b>Transportschaden festhalten</b><i>→</i></a>
+            <a href="/handwerkermangel-dokumentieren"><span>DIENSTLEISTUNG</span><b>Handwerkermangel dokumentieren</b><i>→</i></a>
+            <a href="/hausverwaltung-maengelmanagement"><span>VERWALTUNG</span><b>Mängelmanagement organisieren</b><i>→</i></a>
+          </nav>
+        </section>
+
         <section className="landingCta">
           <div><span>BEREIT FÜR DEN ERSTEN VORGANG?</span><h2>Dokumentiere lieber einmal sauber als später aus dem Gedächtnis.</h2></div>
           <button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Zur App' : 'MängelFix kostenlos starten'} →</button>
         </section>
       </main>
       <PublicFooter navigate={navigate} />
+    </div>
+  );
+}
+
+function EnglishLanding({ user, navigate }) {
+  return (
+    <div className="landingPage englishLanding">
+      <PublicHeader user={user} navigate={navigate} locale="en" />
+      <main>
+        <section className="landingHero">
+          <div className="heroText">
+            <div className="landingEyebrow"><span /> THE DIGITAL DEFECT CASE</div>
+            <h1>Turn a problem into a <em>clear case.</em></h1>
+            <p>Secure evidence, track follow-ups and keep the complete timeline in one place — for personal claims and professional property management.</p>
+            <div className="heroActions">
+              <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Open MängelFix' : 'Document your first defect'} <span>→</span></button>
+              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>See how it works</button>
+            </div>
+            <div className="heroProof"><div><strong>01</strong><span>Capture</span></div><i /><div><strong>02</strong><span>Document</span></div><i /><div><strong>03</strong><span>Follow up</span></div></div>
+            <div className="heroStoreCta" aria-label="MängelFix for iPhone and iPad"><div className="heroStoreCopy"><strong>Web & iOS</strong><span>Continue your case anywhere</span></div><a className="heroStoreBadge textStoreBadge" href="https://apps.apple.com/de/app/maengelfix/id6801253878" target="_blank" rel="noreferrer"><small>Download on the</small><b>App Store</b></a></div>
+          </div>
+          <div className="heroWorkspace" aria-label="Preview of the MängelFix workspace">
+            <div className="heroWorkspaceTop"><span><i /> MängelFix</span><b>+ New defect</b></div>
+            <div className="heroWorkspaceBody"><aside><span className="active"><Icon name="overview" /> Overview</span><span><Icon name="cases" /> Cases <b>4</b></span><span><Icon name="deadlines" /> Follow-ups</span><span><Icon name="documents" /> Documents</span></aside><section><div className="heroPanelHeading"><div><small>TODAY</small><h3>What needs attention</h3></div><span>4 open cases</span></div><div className="heroStats"><article><small>OPEN</small><strong>4</strong><span>2 new this week</span></article><article className="urgent"><small>DUE</small><strong>2</strong><span>Next in 3 days</span></article><article><small>DONE</small><strong>12</strong><span>Clearly documented</span></article></div><div className="heroCaseList"><div className="heroCaseHead"><span>RECENT CASES</span><b>View all</b></div><article><i className="caseSymbol"><Icon name="cases" /></i><div><strong>Heating stays cold</strong><span>Apartment · Bathroom</span></div><em>Review</em><b>3 days</b></article><article><i className="caseSymbol blue"><Icon name="documents" /></i><div><strong>Delivery damaged</strong><span>Order #2481</span></div><em className="sent">Sent</em><b>8 days</b></article><article><i className="caseSymbol green"><Icon name="tasks" /></i><div><strong>Workshop paint damage</strong><span>Vehicle · Tailgate</span></div><em className="done">Done</em><b>Today</b></article></div></section></div>
+            <div className="heroFloat"><Icon name="documents" /><span><b>PDF created</b><small>Photos & timeline included</small></span></div>
+          </div>
+        </section>
+        <section className="problemStrip"><div className="problemLead"><span>ORDER INSTEAD OF SCATTERED NOTES</span><strong>One place for everything that may matter later.</strong></div><div><Icon name="cases" /><span><b>Case</b>Every detail kept together</span></div><div><Icon name="documents" /><span><b>Evidence</b>Photos assigned correctly</span></div><div><Icon name="deadlines" /><span><b>Follow-ups</b>Next steps stay visible</span></div></section>
+        <section className="audienceSection"><div className="sectionIntro"><span>TWO WORKFLOWS · ONE MÄNGELFIX</span><h2>For your own claim. Or an entire property portfolio.</h2><p>Private users can document many types of defects. Property teams get a focused workflow for rental defects, responsibilities and contractors.</p></div><div className="audienceGrid"><article className="privateAudience"><span>PRIVATE</span><h3>Something went wrong?</h3><p>Document the facts even if the retailer, workshop, landlord or provider does not use MängelFix.</p><div className="audienceChips"><b>Delivery</b><b>Product</b><b>Rental</b><b>Workshop</b><b>Travel</b><b>Service</b></div><ul><li>Enter any recipient yourself</li><li>Photos and a basic PDF included in Free</li><li>Optional digital property-manager connection</li></ul></article><article className="managementAudience"><span>PROPERTY MANAGEMENT</span><h3>A workflow from report to completion.</h3><p>Organize tenant reports, team ownership and contractor jobs.</p><div className="managementFlow"><b>Tenant</b><i>→</i><b>Defect</b><i>→</i><b>Team</b><i>→</i><b>Contractor</b><i>→</i><b>Done</b></div><ul><li>Assign properties and units</li><li>Manage teams, tasks and appointments</li><li>Create contractor jobs and inspection reports</li></ul></article></div></section>
+        <section className="landingSection" id="ablauf"><div className="sectionIntro"><span>HOW MÄNGELFIX WORKS</span><h2>From first observation to completion.</h2><p>A clear process that keeps important details from getting lost.</p></div><div className="stepRail"><article><b>01</b><h3>Capture the defect</h3><p>Record what happened, where and when it was first noticed.</p></article><article><b>02</b><h3>Add evidence</h3><p>Attach photos, recipient details and the expected follow-up.</p></article><article><b>03</b><h3>Create the document</h3><p>Turn your information into an organized PDF record.</p></article><article><b>04</b><h3>Track the timeline</h3><p>Keep responses, notes and status changes in chronological order.</p></article></div></section>
+        <section className="featureSection" id="funktionen"><div className="featureHeading"><span>YOUR DIGITAL DEFECT FILE</span><h2>One tool for the complete case history.</h2></div><div className="featureGrid"><article className="featureLarge"><div className="featureNumber">01</div><h3>Every case at a glance</h3><p>See immediately which cases are open, sent, in progress or completed.</p><div className="miniCaseList"><span><i className="dot amber" />Damaged parcel <b>OPEN</b></span><span><i className="dot blue" />Workshop follow-up <b>SENT</b></span><span><i className="dot green" />Bathroom defect <b>DONE</b></span></div></article><article><div className="featureNumber">02</div><h3>Follow-ups</h3><p>Expected response dates remain visible instead of disappearing in messages.</p></article><article><div className="featureNumber">03</div><h3>Photo evidence</h3><p>Images stay attached to the defect they document.</p></article><article><div className="featureNumber">04</div><h3>Sender profile</h3><p>Store your details once and reuse them in your documents.</p></article><article><div className="featureNumber">05</div><h3>Case history</h3><p>Notes and status updates create a traceable timeline.</p></article></div></section>
+        <section className="pricingSection" id="tarife"><div className="sectionIntro"><span>PLANS</span><h2>Simple for individuals. Predictable for property teams.</h2><p>Private Free remains available for occasional cases. Property management plans are based on the number of managed units, not reported defects.</p></div><div className="pricingPrivateRow"><article className="pricingCard privatePlan"><div className="planTag">PRIVATE FREE</div><h3>Start at no cost</h3><div className="planPrice"><strong>€0</strong><span>free without expiry</span></div><ul><li>Up to 5 active cases</li><li>Up to 3 photos per case</li><li>Core defect capture and basic PDF</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren/privat')}>Start free →</button></article><article className="pricingCard privatePlan featuredPlan"><div className="planTag">PRIVATE PRO</div><h3>For regular documentation</h3><div className="planPrice"><strong>€4.99</strong><span>/ month · or €49.99 / year</span></div><ul><li>Unlimited active cases</li><li>Advanced evidence and PDFs</li><li>Tasks, dates, archive and insights</li></ul><button onClick={() => navigate(user ? '/app' : '/registrieren/privat')}>Start Private Pro →</button></article></div><div className="managementPricingIntro"><span>PROPERTY MANAGEMENT</span><h3>Try all management features free for 14 days</h3><p>Continue with a unit-based plan only after the trial.</p></div><button className="managementStartButton" onClick={() => navigate(user ? '/app' : '/registrieren/verwaltung')}>Start 14-day trial →</button></section>
+        <section className="seoGuideHub"><div><span>GUIDES</span><h2>Document each type of defect with the right details.</h2><p>Practical guides take you directly to the appropriate MängelFix workflow.</p></div><nav><a href="/en/create-defect-report"><span>FOUNDATION</span><b>Create a defect report</b><i>→</i></a><a href="/en/rental-defect-documentation"><span>RENTAL</span><b>Document a rental defect</b><i>→</i></a><a href="/en/damaged-delivery"><span>DELIVERY</span><b>Record transport damage</b><i>→</i></a><a href="/en/contractor-defect-documentation"><span>SERVICE</span><b>Document contractor defects</b><i>→</i></a><a href="/en/property-defect-management"><span>PROPERTY TEAM</span><b>Organize defect management</b><i>→</i></a></nav></section>
+        <section className="landingCta"><div><span>READY FOR YOUR FIRST CASE?</span><h2>Document it clearly now instead of reconstructing it later.</h2></div><button onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'Open the app' : 'Start MängelFix free'} →</button></section>
+      </main>
+      <PublicFooter navigate={navigate} locale="en" />
+    </div>
+  );
+}
+
+function SeoLandingPage({ page, user, navigate }) {
+  const english = page.locale === 'en';
+  const startPath = user ? '/app' : '/registrieren/privat';
+  const related = Object.entries(SEO_PAGES).filter(([, item]) => item.locale === page.locale && item !== page).slice(0, 3);
+  return (
+    <div className="landingPage seoLandingPage">
+      <PublicHeader user={user} navigate={navigate} locale={page.locale} />
+      <main>
+        <section className="seoHero"><div className="seoHeroCopy"><div className="landingEyebrow"><span /> {page.eyebrow}</div><h1>{page.title}</h1><p>{page.lead}</p><div className="heroActions"><button className="landingPrimary" onClick={() => navigate(startPath)}>{english ? 'Start documenting free' : 'Kostenlos dokumentieren'} <span>→</span></button><button className="landingSecondary" onClick={() => document.getElementById('schritte')?.scrollIntoView({ behavior: 'smooth' })}>{english ? 'View the process' : 'Ablauf ansehen'}</button></div></div><aside className="seoSummary"><span>{english ? 'SUITABLE FOR' : 'PASSEND FÜR'}</span><p>{page.intent}</p><ul>{page.benefits.map(item => <li key={item}>{item}</li>)}</ul></aside></section>
+        <section className="seoProcess" id="schritte"><div className="sectionIntro"><span>{english ? 'A CLEAR PROCESS' : 'KLARER ABLAUF'}</span><h2>{english ? 'Keep the complete case traceable.' : 'Halte den gesamten Vorgang nachvollziehbar.'}</h2></div><div className="stepRail">{page.steps.map(([title, text], index) => <article key={title}><b>{String(index + 1).padStart(2, '0')}</b><h3>{title}</h3><p>{text}</p></article>)}</div></section>
+        <section className="seoProduct"><div><span>{english ? 'MORE THAN A TEMPLATE' : 'MEHR ALS EINE VORLAGE'}</span><h2>{english ? 'Your evidence, PDF and timeline remain connected.' : 'Belege, PDF und Verlauf bleiben miteinander verbunden.'}</h2><p>{english ? 'MängelFix is a working case file rather than a one-off letter generator. Continue adding information as the situation develops.' : 'MängelFix ist kein einmaliger Briefgenerator, sondern ein geordneter Vorgang. Ergänze Antworten, Termine und neue Belege, sobald sich etwas verändert.'}</p><button onClick={() => navigate(startPath)}>{english ? 'Create a free case' : 'Kostenlosen Vorgang anlegen'} →</button></div><div className="seoProductStack"><article><Icon name="documents" /><b>PDF</b><span>{english ? 'Clear documentation generated from your information' : 'Übersichtliche Dokumentation aus deinen Angaben'}</span></article><article><Icon name="deadlines" /><b>{english ? 'Follow-up' : 'Fristen'}</b><span>{english ? 'Next expected response remains visible' : 'Nächste erwartete Rückmeldung bleibt sichtbar'}</span></article><article><Icon name="cases" /><b>{english ? 'Timeline' : 'Verlauf'}</b><span>{english ? 'Notes and status changes in chronological order' : 'Notizen und Statusänderungen chronologisch geordnet'}</span></article></div></section>
+        <section className="seoFaq"><div className="sectionIntro"><span>FAQ</span><h2>{english ? 'Frequently asked questions' : 'Häufige Fragen'}</h2></div><div>{page.faq.map(([question, answer]) => <details key={question}><summary>{question}</summary><p>{answer}</p></details>)}</div></section>
+        <section className="seoRelated"><div><span>{english ? 'RELATED GUIDES' : 'WEITERE ANWENDUNGSFÄLLE'}</span><h2>{english ? 'Document other types of defects' : 'Weitere Mängel sauber dokumentieren'}</h2></div><nav>{related.map(([path, item]) => <a key={path} href={path}><span>{item.eyebrow}</span><b>{item.title}</b><i>→</i></a>)}</nav></section>
+      </main>
+      <PublicFooter navigate={navigate} locale={page.locale} />
     </div>
   );
 }
@@ -873,6 +985,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
 export default function App() {
   const [path, navigate] = usePath();
   const [state, setState] = useState({ loading: true, user: null });
+  useSeo(path);
 
   useEffect(() => {
     api('/api/me').then(data => setState({ loading: false, user: data.user })).catch(() => setState({ loading: false, user: null }));
@@ -885,6 +998,8 @@ export default function App() {
   }
 
   if (state.loading) return <div className="brandSplash"><Logo /><div className="loader" /></div>;
+  if (SEO_PAGES[path]) return <SeoLandingPage page={SEO_PAGES[path]} user={state.user} navigate={navigate} />;
+  if (path === '/en') return <EnglishLanding user={state.user} navigate={navigate} />;
   if (path === '/support') return <LegalPage type="support" navigate={navigate} />;
   if (path === '/impressum') return <LegalPage type="impressum" navigate={navigate} />;
   if (path === '/datenschutz') return <LegalPage type="datenschutz" navigate={navigate} />;

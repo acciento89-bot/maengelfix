@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url><loc>https://maengelfix.kamilunavo.com/</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en"/><xhtml:link rel="alternate" hreflang="x-default" href="https://maengelfix.kamilunavo.com/"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en"/><xhtml:link rel="alternate" hreflang="x-default" href="https://maengelfix.kamilunavo.com/"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/maengelanzeige-erstellen</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/maengelanzeige-erstellen"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en/create-defect-report"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/mietmangel-dokumentieren</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/mietmangel-dokumentieren"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en/rental-defect-documentation"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/lieferung-beschaedigt</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/lieferung-beschaedigt"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en/damaged-delivery"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/handwerkermangel-dokumentieren</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/handwerkermangel-dokumentieren"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en/contractor-defect-documentation"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/hausverwaltung-maengelmanagement</loc><xhtml:link rel="alternate" hreflang="de" href="https://maengelfix.kamilunavo.com/hausverwaltung-maengelmanagement"/><xhtml:link rel="alternate" hreflang="en" href="https://maengelfix.kamilunavo.com/en/property-defect-management"/></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en/create-defect-report</loc></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en/rental-defect-documentation</loc></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en/damaged-delivery</loc></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en/contractor-defect-documentation</loc></url>
+  <url><loc>https://maengelfix.kamilunavo.com/en/property-defect-management</loc></url>
+</urlset>

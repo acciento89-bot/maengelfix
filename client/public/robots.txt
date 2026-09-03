@@ -1,0 +1,11 @@
+User-agent: *
+Allow: /
+Disallow: /app
+Disallow: /anmelden
+Disallow: /registrieren
+Disallow: /einladung/
+Disallow: /auftrag/
+Disallow: /api/
+
+Sitemap: https://maengelfix.kamilunavo.com/sitemap.xml
+

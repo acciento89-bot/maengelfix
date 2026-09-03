@@ -5,6 +5,7 @@ import { fileURLToPath } from 'node:url';
 import { promisify } from 'node:util';
 import express from 'express';
 import helmet from 'helmet';
+import { renderSeoHtml } from './seo.js';
 import cookieParser from 'cookie-parser';
 import multer from 'multer';
 import PDFDocument from 'pdfkit';
@@ -2144,7 +2145,7 @@ app.use((req, res, next) => {
       'Cache-Control': 'no-store',
       'X-Content-Type-Options': 'nosniff'
     })
-    .send(indexHtml);
+    .send(renderSeoHtml(indexHtml, req.path));
 });
 
 app.use((error, _req, res, _next) => {
