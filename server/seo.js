@@ -23,7 +23,15 @@ export function renderSeoHtml(template, requestPath) {
   const page = pages[normalizedPath];
   if (!page) {
     const privatePath = ['/app', '/anmelden', '/registrieren', '/einladung/', '/auftrag/', '/passwort-', '/email-bestaetigen/'].some(path => normalizedPath.startsWith(path));
-    return privatePath ? template.replace('</head>', '    <meta name="robots" content="noindex, nofollow">\n  </head>') : template;
+    if (!privatePath) return template;
+    const privateTitle = normalizedPath === '/anmelden'
+      ? 'Sicher anmelden | MängelFix'
+      : normalizedPath.startsWith('/registrieren')
+        ? 'MängelFix-Konto erstellen | MängelFix'
+        : 'Sicherer Kontobereich | MängelFix';
+    return template
+      .replace(/<title>[^<]*<\/title>/, `<title>${privateTitle}</title>`)
+      .replace('</head>', '    <meta name="robots" content="noindex, nofollow, noarchive">\n  </head>');
   }
   const [locale, alternate, title, description] = page;
   const dePath = locale === 'de' ? normalizedPath : alternate;

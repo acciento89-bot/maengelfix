@@ -400,16 +400,17 @@ function Auth({ mode, onSignedIn, navigate, initialAccountType = 'private' }) {
             <button type="button" className={accountType === 'private' ? 'accountTypeCard selected' : 'accountTypeCard'} onClick={() => setAccountType('private')}><span>PRIVAT</span><strong>Für eigene Mängel</strong><small>Dauerhaft kostenlos starten. Pro später optional.</small></button>
             <button type="button" className={accountType === 'management' ? 'accountTypeCard selected management' : 'accountTypeCard management'} onClick={() => setAccountType('management')}><span>HAUSVERWALTUNG</span><strong>Für Verwaltung & Team</strong><small>14 Tage alle Verwaltungsfunktionen testen.</small></button>
           </div>}
-          <form onSubmit={submit} className="formStack">
-            {register && <label>{management ? 'Dein Name' : 'Name'}<input required value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} autoComplete="name" placeholder="Vor- und Nachname" /></label>}
-            {management && <label>Name der Hausverwaltung<input required value={form.organizationName} onChange={e => setForm({ ...form, organizationName: e.target.value })} placeholder="z. B. Muster Hausverwaltung GmbH" /></label>}
-            <label>E-Mail<input required type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} autoComplete="email" placeholder="name@beispiel.de" /></label>
-            <label>Passwort<input required minLength="8" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} autoComplete={register ? 'new-password' : 'current-password'} placeholder="Mindestens 8 Zeichen" /></label>
+          <form action={register ? '/api/auth/register' : '/api/auth/login'} method="post" onSubmit={submit} className="formStack">
+            {register && <label>{management ? 'Dein Name' : 'Name'}<input required name="name" value={form.name} onChange={e => setForm({ ...form, name: e.target.value })} autoComplete="name" placeholder="Vor- und Nachname" /></label>}
+            {management && <label>Name der Hausverwaltung<input required name="organizationName" value={form.organizationName} onChange={e => setForm({ ...form, organizationName: e.target.value })} autoComplete="organization" placeholder="z. B. Muster Hausverwaltung GmbH" /></label>}
+            <label>E-Mail<input required name="email" type="email" value={form.email} onChange={e => setForm({ ...form, email: e.target.value })} autoComplete="email" placeholder="name@beispiel.de" /></label>
+            <label>Passwort<input required minLength="8" name="password" type="password" value={form.password} onChange={e => setForm({ ...form, password: e.target.value })} autoComplete={register ? 'new-password' : 'current-password'} placeholder="Mindestens 8 Zeichen" /></label>
             {management && <div className="managementTrialHint"><b>14 Tage kostenlos</b><span>Keine Zahlung bei der Registrierung. Danach wählst du den passenden Verwaltungstarif.</span></div>}
             {error && <div className="errorBox">{error}</div>}
             <button className="primaryButton authSubmit" disabled={busy}>{busy ? 'Einen Moment…' : register ? (management ? '14 Tage kostenlos testen' : 'Privatkonto erstellen') : 'Anmelden'}</button>
           </form>
           {!register && <div className="authForgot"><button onClick={() => navigate('/passwort-vergessen')}>Passwort vergessen?</button></div>}
+          <div className="authSecurityNote" role="note"><b>🔒 Offizielle MängelFix-Anmeldung</b><span>Deine Zugangsdaten werden ausschließlich auf maengelfix.kamilunavo.com verarbeitet. Wir fragen niemals nach deinem E-Mail-, Bank- oder Apple-Passwort.</span></div>
           <div className="authSwitch">{register ? 'Du hast bereits ein Konto?' : 'Noch kein MängelFix-Konto?'} <button onClick={() => navigate(register ? '/anmelden' : '/registrieren')}>{register ? 'Anmelden' : 'Kostenlos registrieren'}</button></div>
           <p className="legalHint">Mit der Nutzung gelten unsere <button onClick={() => navigate('/nutzungsbedingungen')}>Nutzungsbedingungen</button> und <button onClick={() => navigate('/datenschutz')}>Datenschutzhinweise</button>.</p>
         </section>

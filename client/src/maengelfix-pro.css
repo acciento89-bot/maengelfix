@@ -175,6 +175,9 @@ a { color: inherit; }
 .authSwitch { margin-top: 22px; padding-top: 20px; border-top: 1px solid #e4e8eb; color: #6d7781; font-size: 12px; }
 .authSwitch button, .legalHint button { border: 0; padding: 0; background: transparent; color: #2457d6; font-weight: 800; }
 .authBox .legalHint { font-size: 10px; }
+.authSecurityNote { margin-top: 20px; padding: 13px 14px; display: grid; gap: 5px; border: 1px solid #cfe3dc; border-radius: 9px; background: #f1faf7; }
+.authSecurityNote b { color: #176b53; font-size: 11px; }
+.authSecurityNote span { color: #4f6b62; font-size: 10px; line-height: 1.5; }
 
 /* Legal */
 .legalWrap { width: min(900px, calc(100% - 48px)); margin: 0 auto; padding: 55px 0 90px; }
