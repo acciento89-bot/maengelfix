@@ -62,9 +62,16 @@ function usePath() {
 function useSeo(path) {
   useEffect(() => {
     const meta = SEO_META[path];
+    const privateTitle = path === '/anmelden'
+      ? 'Sicher anmelden | MängelFix'
+      : path.startsWith('/registrieren')
+        ? 'MängelFix-Konto erstellen | MängelFix'
+        : path.startsWith('/app') || path.startsWith('/passwort-') || path.startsWith('/email-bestaetigen/')
+          ? 'Sicherer Kontobereich | MängelFix'
+          : 'MängelFix';
     const page = meta || {
       locale: path.startsWith('/en') ? 'en' : 'de',
-      title: 'MängelFix',
+      title: privateTitle,
       description: 'Mängel strukturiert dokumentieren und nachhalten.'
     };
     document.documentElement.lang = page.locale;
@@ -86,7 +93,7 @@ function useSeo(path) {
     setMeta('meta[property="og:url"]', 'content', `${SITE_URL}${path === '/' ? '' : path}`);
     setMeta('meta[name="twitter:card"]', 'content', 'summary');
     const indexable = Boolean(meta) || ['/support', '/impressum', '/datenschutz', '/nutzungsbedingungen'].includes(path);
-    setMeta('meta[name="robots"]', 'content', indexable ? 'index, follow' : 'noindex, nofollow');
+    setMeta('meta[name="robots"]', 'content', indexable ? 'index, follow' : 'noindex, nofollow, noarchive');
     let canonical = document.head.querySelector('link[rel="canonical"]');
     if (!canonical) { canonical = document.createElement('link'); canonical.rel = 'canonical'; document.head.appendChild(canonical); }
     canonical.href = `${SITE_URL}${path === '/' ? '' : path}`;
