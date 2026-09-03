@@ -82,7 +82,7 @@ const authRateBuckets = new Map();
 function authRateLimit({ windowMs, max }) {
   return (req, res, next) => {
     const now = Date.now();
-    const key = `${req.ip}:${req.route?.path || req.path}`;
+    const key = `${req.ip}:${req.baseUrl || req.route?.path || req.path}`;
     const current = authRateBuckets.get(key);
     const bucket = !current || current.resetAt <= now ? { count: 0, resetAt: now + windowMs } : current;
     bucket.count += 1;
@@ -100,6 +100,10 @@ function authRateLimit({ windowMs, max }) {
 const authLoginLimit = authRateLimit({ windowMs: 15 * 60 * 1000, max: 20 });
 const authRegisterLimit = authRateLimit({ windowMs: 60 * 60 * 1000, max: 10 });
 const authRecoveryLimit = authRateLimit({ windowMs: 60 * 60 * 1000, max: 8 });
+app.use('/api/auth/login', authLoginLimit);
+app.use('/api/auth/register', authRegisterLimit);
+app.use('/api/auth/forgot-password', authRecoveryLimit);
+app.use('/api/auth/reset-password', authRecoveryLimit);
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),
   filename: (_req, file, cb) => {
@@ -455,7 +459,7 @@ app.post('/api/billing/apple/notifications', async (req, res) => {
   }
 });
 
-app.post('/api/auth/register', authRegisterLimit, async (req, res, next) => {
+app.post('/api/auth/register', async (req, res, next) => {
   const client = await pool.connect();
   let transactionOpen = false;
   try {
@@ -519,7 +523,7 @@ app.post('/api/auth/register', authRegisterLimit, async (req, res, next) => {
   }
 });
 
-app.post('/api/auth/login', authLoginLimit, async (req, res, next) => {
+app.post('/api/auth/login', async (req, res, next) => {
   try {
     const email = cleanText(req.body.email, 254)?.toLowerCase();
     const password = String(req.body.password || '');
@@ -563,7 +567,7 @@ app.get('/api/auth/verify-email/:token', async (req,res,next)=>{
   } catch(error){await client.query('ROLLBACK');next(error);} finally{client.release();}
 });
 
-app.post('/api/auth/forgot-password', authRecoveryLimit, async (req,res,next)=>{
+app.post('/api/auth/forgot-password', async (req,res,next)=>{
   try {
     const email=cleanText(req.body.email,254)?.toLowerCase();
     const result=await pool.query('SELECT id,name,email FROM users WHERE email=$1',[email]);
@@ -578,7 +582,7 @@ app.post('/api/auth/forgot-password', authRecoveryLimit, async (req,res,next)=>{
   } catch(error){next(error);}
 });
 
-app.post('/api/auth/reset-password/:token', authRecoveryLimit, async (req,res,next)=>{
+app.post('/api/auth/reset-password/:token', async (req,res,next)=>{
   const client=await pool.connect();
   try {
     const password=String(req.body.password||'');
