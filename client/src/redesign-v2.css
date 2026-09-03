@@ -13,8 +13,36 @@
 
 .uiIcon { width: 20px; height: 20px; display: block; }
 
-/* Public site: vivid product-led first impression */
-.landingPage { background: #fff; }
+/* Public site: vivid product-led first impression.
+   Keep the marketing surface light even when the operating system prefers dark
+   colors. The authenticated product can still follow the system theme. */
+.landingPage {
+  color-scheme: light;
+  --bg: #f1f6fc;
+  --surface: #ffffff;
+  --surface-2: #f7f9fc;
+  --text: #10213c;
+  --muted: #60738c;
+  --line: #d8e4f1;
+  --primary: #175cd3;
+  --primary-strong: #0b4dab;
+  --primary-soft: #e8f1ff;
+  --accent: #ffb547;
+  background: #fff;
+  color: var(--mf-copy);
+}
+
+/* Defensive contrast rules for plan cards, whose base styles use theme tokens. */
+.landingPage .pricingCard {
+  background: #ffffff;
+  color: var(--mf-copy);
+}
+.landingPage .pricingCard h3,
+.landingPage .pricingCard .planPrice strong { color: var(--mf-copy); }
+.landingPage .pricingCard li { color: #344b6c; }
+.landingPage .pricingCard .planTag,
+.landingPage .pricingCard .planLead,
+.landingPage .pricingCard .planPrice span { color: #60738c; }
 .publicHeader {
   position: relative;
   z-index: 20;
