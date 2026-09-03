@@ -72,6 +72,33 @@ function Logo({ inverse = false, compact = false }) {
   );
 }
 
+const iconPaths = {
+  overview: <><path d="M4 4h6v6H4zM14 4h6v6h-6zM4 14h6v6H4zM14 14h6v6h-6z" /></>,
+  analytics: <><path d="M5 20V10M12 20V4M19 20v-7" /></>,
+  cases: <><path d="M7 3h10l3 3v15H4V3zM8 9h8M8 13h8M8 17h5" /></>,
+  search: <><circle cx="11" cy="11" r="7"/><path d="m16 16 5 5" /></>,
+  connections: <><path d="M9 15 15 9M7 17H5a4 4 0 0 1 0-8h4M15 7h4a4 4 0 0 1 0 8h-4" /></>,
+  objects: <><path d="m3 11 9-8 9 8M5 10v11h14V10M9 21v-7h6v7" /></>,
+  deadlines: <><circle cx="12" cy="13" r="8"/><path d="M12 9v5l3 2M8 3h8" /></>,
+  documents: <><path d="M6 2h9l4 4v16H6zM14 2v5h5M9 12h6M9 16h6" /></>,
+  providers: <><path d="M3 20h18M6 20v-8h12v8M8 12V7h8v5M10 7V4h4v3" /></>,
+  orders: <><path d="M6 3h12v18H6zM9 3V1h6v2M9 9h6M9 13h6M9 17h4" /></>,
+  inspections: <><path d="M5 3h14v18H5zM9 3V1h6v2M8 11l2 2 5-5M8 17h8" /></>,
+  calendar: <><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M8 3v4M16 3v4M3 10h18" /></>,
+  tasks: <><path d="m4 7 2 2 4-4M12 7h8M4 14l2 2 4-4M12 14h8" /></>,
+  notifications: <><path d="M18 9a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9M10 21h4" /></>,
+  billing: <><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 10h18M7 15h3" /></>,
+  team: <><circle cx="9" cy="8" r="3"/><circle cx="17" cy="9" r="2"/><path d="M3 20c0-4 2-7 6-7s6 3 6 7M15 14c4 0 6 2 6 6" /></>,
+  profile: <><circle cx="12" cy="8" r="4"/><path d="M4 21c0-5 3-8 8-8s8 3 8 8" /></>,
+  help: <><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.7 2.7 0 1 1 4 2.4c-1 .5-1.5 1.1-1.5 2.1M12 18h.01" /></>,
+  home: <><path d="m3 11 9-8 9 8M5 10v11h14V10" /></>,
+  admin: <><path d="M12 2 4 5v6c0 5 3 9 8 11 5-2 8-6 8-11V5zM9 12l2 2 4-5" /></>
+};
+
+function Icon({ name }) {
+  return <svg className="uiIcon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">{iconPaths[name] || iconPaths.overview}</svg>;
+}
+
 function PublicHeader({ user, navigate }) {
   return (
     <header className="publicHeader">
@@ -115,52 +142,49 @@ function Landing({ user, navigate }) {
       <main>
         <section className="landingHero">
           <div className="heroText">
-            <div className="landingEyebrow"><span /> MÄNGEL. BEWEISE. EIN KLARER VORGANG.</div>
-            <h1>Mängel dokumentieren. <em>Egal, wo sie entstehen.</em></h1>
-            <p>Vom beschädigten Paket über die Werkstatt bis zum Mietmangel: Privat sammelst du Beweise und Unterlagen an einem Ort. Hausverwaltungen steuern zusätzlich Mieter, Zuständigkeiten, Termine und Dienstleister.</p>
+            <div className="landingEyebrow"><span /> DER DIGITALE MÄNGELVORGANG</div>
+            <h1>Aus einem Problem wird ein <em>klarer Vorgang.</em></h1>
+            <p>Beweise sichern, Fristen setzen und den gesamten Verlauf an einem Ort behalten – für private Reklamationen und professionelle Hausverwaltungen.</p>
             <div className="heroActions">
-              <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Kostenlos starten'} <span>→</span></button>
-              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>So funktioniert's</button>
+              <button className="landingPrimary" onClick={() => navigate(user ? '/app' : '/registrieren')}>{user ? 'MängelFix öffnen' : 'Ersten Mangel erfassen'} <span>→</span></button>
+              <button type="button" className="landingSecondary" onClick={() => document.getElementById('ablauf')?.scrollIntoView({ behavior: 'smooth' })}>Ablauf ansehen</button>
+            </div>
+            <div className="heroProof">
+              <div><strong>01</strong><span>Erfassen</span></div>
+              <i />
+              <div><strong>02</strong><span>Dokumentieren</span></div>
+              <i />
+              <div><strong>03</strong><span>Nachhalten</span></div>
             </div>
             <div className="heroStoreCta" aria-label="MängelFix für iPhone und iPad">
-              <div className="heroStoreCopy">
-                <strong>Auch als App</strong>
-                <span>Für iPhone und iPad</span>
-              </div>
-              <a
-                className="heroStoreBadge"
-                href="https://apps.apple.com/de/app/maengelfix/id6801253878"
-                target="_blank"
-                rel="noreferrer"
-                aria-label="MängelFix im App Store laden"
-              >
-                <img src="/badges/app-store-de.svg" alt="Laden im App Store" />
-              </a>
+              <div className="heroStoreCopy"><strong>Web & iOS</strong><span>Überall am Vorgang weiterarbeiten</span></div>
+              <a className="heroStoreBadge" href="https://apps.apple.com/de/app/maengelfix/id6801253878" target="_blank" rel="noreferrer" aria-label="MängelFix im App Store laden"><img src="/badges/app-store-de.svg" alt="Laden im App Store" /></a>
             </div>
-            <div className="heroTrust"><span>✓</span> Privat & Verwaltung <span>✓</span> Professionelle PDFs <span>✓</span> Gegenstelle braucht kein Konto</div>
           </div>
-          <div className="heroVisual" aria-label="Vorschau einer MängelFix-Dokumentation">
-            <div className="visualBack visualBackOne" />
-            <div className="visualBack visualBackTwo" />
-            <div className="documentPreview">
-              <div className="docTop"><Logo compact inverse /><div><small>VORGANG</small><b>A14F39C2</b></div></div>
-              <div className="docBody">
-                <small>MÄNGELANZEIGE</small>
-                <h3>Lieferung beschädigt angekommen</h3>
-                <div className="docStatus">IN BEARBEITUNG</div>
-                <div className="docFacts"><span><small>Produkt</small><b>Kaffeevollautomat · Bestellung #2481</b></span><span><small>Frist</small><b>15.08.2026</b></span></div>
-                <div className="docLine" /><div className="docLine medium" /><div className="docLine short" />
-                <div className="docPhotoRow"><div /><div /></div>
-              </div>
+          <div className="heroWorkspace" aria-label="Vorschau des MängelFix Arbeitsbereichs">
+            <div className="heroWorkspaceTop"><span><i /> MängelFix</span><b>+ Neuer Mangel</b></div>
+            <div className="heroWorkspaceBody">
+              <aside><span className="active"><Icon name="overview" /> Übersicht</span><span><Icon name="cases" /> Vorgänge <b>4</b></span><span><Icon name="deadlines" /> Fristen</span><span><Icon name="documents" /> Dokumente</span></aside>
+              <section>
+                <div className="heroPanelHeading"><div><small>HEUTE</small><h3>Was Aufmerksamkeit braucht</h3></div><span>4 offene Vorgänge</span></div>
+                <div className="heroStats"><article><small>OFFEN</small><strong>4</strong><span>2 neu diese Woche</span></article><article className="urgent"><small>FRISTEN</small><strong>2</strong><span>Nächste in 3 Tagen</span></article><article><small>ERLEDIGT</small><strong>12</strong><span>Sauber dokumentiert</span></article></div>
+                <div className="heroCaseList">
+                  <div className="heroCaseHead"><span>AKTUELLE VORGÄNGE</span><b>Alle anzeigen</b></div>
+                  <article><i className="caseSymbol"><Icon name="cases" /></i><div><strong>Heizung bleibt kalt</strong><span>Wohnung · Badezimmer</span></div><em>In Prüfung</em><b>3 Tage</b></article>
+                  <article><i className="caseSymbol blue"><Icon name="documents" /></i><div><strong>Lieferung beschädigt</strong><span>Bestellung #2481</span></div><em className="sent">Versendet</em><b>8 Tage</b></article>
+                  <article><i className="caseSymbol green"><Icon name="tasks" /></i><div><strong>Lackschaden nach Werkstatt</strong><span>Fahrzeug · Heckklappe</span></div><em className="done">Erledigt</em><b>Heute</b></article>
+                </div>
+              </section>
             </div>
-            <div className="floatingBadge"><b>PDF</b><span>Professionell vorbereitet</span></div>
+            <div className="heroFloat"><Icon name="documents" /><span><b>PDF erstellt</b><small>Mit Fotos & Verlauf</small></span></div>
           </div>
         </section>
 
         <section className="problemStrip">
-          <div><strong>Ein Mangel.</strong><span>Nicht fünf Chats, drei Fotosammlungen und ein vergessener Zettel.</span></div>
-          <div className="stripRule" />
-          <div><strong>Ein Vorgang.</strong><span>Alles nachvollziehbar an einer Stelle.</span></div>
+          <div className="problemLead"><span>ORDNUNG STATT ZETTELWIRTSCHAFT</span><strong>Ein Ort für alles, was später wichtig wird.</strong></div>
+          <div><Icon name="cases" /><span><b>Vorgang</b>Alle Angaben sauber gebündelt</span></div>
+          <div><Icon name="documents" /><span><b>Beweise</b>Fotos und Dokumente zugeordnet</span></div>
+          <div><Icon name="deadlines" /><span><b>Fristen</b>Nächste Schritte im Blick</span></div>
         </section>
 
         <section className="audienceSection">
@@ -798,6 +822,7 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   const hasPro=Boolean(entitlements?.pro);
   const selectView=(next,proOnly=false)=>{setSelected(null);if(proOnly&&!hasPro&&!management?.organization){setView('billing');return}setView(next)};
   const finishOnboarding=(updated,useCase)=>{setUser(updated);setShowOnboarding(false);if(useCase==='management'){setSelected(null);setView('overview');refreshWorkspaceState()}};
+  const navItem=(key,label,icon,options={})=><button className={(view===key||(key==='cases'&&selected)||(key==='overview'&&!selected&&view==='overview'))?'active':''} onClick={()=>options.pro?selectView(key,true):(setSelected(null),setView(key))}><span><Icon name={icon}/></span>{label}{options.count>0&&<b>{options.count}</b>}{options.pro&&!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button>;
 
   let content;
   if (selected) content = <CaseDetail caseId={selected} onBack={() => setSelected(null)} onUpdated={loadCases} user={user} onProfile={goProfile} pro={hasPro} onUpgrade={()=>setView('billing')} />;
@@ -823,7 +848,28 @@ function Workspace({ user, setUser, onLogout, navigate }) {
   else if (view === 'team') content = <TeamView onWorkspaceChanged={refreshWorkspaceState} />;
   else content = <ProfileView user={user} onSaved={setUser} />;
 
-  return <div className="workspaceShell"><aside className="workspaceSidebar"><button className="sidebarBrand" onClick={() => setView('overview')}><Logo inverse /></button><div className="sidebarLabel">ARBEITSBEREICH</div><nav><button className={view === 'overview' && !selected ? 'active' : ''} onClick={() => { setSelected(null); setView('overview'); }}><span>Ü</span>Übersicht</button><button className={view === 'analytics' ? 'active' : ''} onClick={() => selectView('analytics',true)}><span>Q</span>{management?.organization?'Analyse':'Auswertung'}{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'cases' || selected ? 'active' : ''} onClick={() => { setSelected(null); setView('cases'); }}><span>M</span>Mängel <b>{cases.filter(x => x.status !== 'resolved').length}</b></button><button className={view === 'search' ? 'active' : ''} onClick={() => selectView('search',true)}><span>S</span>Suche & Archiv{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button>{!management?.organization&&<button className={view === 'connections' ? 'active' : ''} onClick={() => { setSelected(null); setView('connections'); }}><span>V</span>Verknüpfte Verwaltungen</button>}<button className={view === 'objects' ? 'active' : ''} onClick={() => { setSelected(null); setView('objects'); }}><span>O</span>Objekte</button><button className={view === 'deadlines' ? 'active' : ''} onClick={() => selectView('deadlines',true)}><span>F</span>Fristen <b>{cases.filter(x => x.deadline_on && x.status !== 'resolved').length}</b>{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'documents' ? 'active' : ''} onClick={() => { setSelected(null); setView('documents'); }}><span>D</span>Dokumente</button>{management?.organization&&<><button className={view === 'providers' ? 'active' : ''} onClick={() => { setSelected(null); setView('providers'); }}><span>H</span>Dienstleister</button><button className={view === 'orders' ? 'active' : ''} onClick={() => { setSelected(null); setView('orders'); }}><span>A</span>Aufträge</button></>}<button className={view === 'inspections' ? 'active' : ''} onClick={() => selectView('inspections',true)}><span>Ü</span>Übergabe / Abnahme{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'calendar' ? 'active' : ''} onClick={() => selectView('calendar',true)}><span>K</span>Kalender{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'tasks' ? 'active' : ''} onClick={() => selectView('tasks',true)}><span>✓</span>Aufgaben{!management?.organization&&!hasPro&&<i className="proNavTag">PRO</i>}</button><button className={view === 'notifications' ? 'active' : ''} onClick={() => { setSelected(null); setView('notifications'); }}><span>B</span>Benachrichtigungen {unreadNotifications>0&&<b>{unreadNotifications}</b>}</button>{management?.organization&&<button className={view === 'audit' ? 'active' : ''} onClick={() => { setSelected(null); setView('audit'); }}><span>A</span>Aktivitätsprotokoll</button>}<button className={view === 'billing' ? 'active' : ''} onClick={() => { setSelected(null); setView('billing'); }}><span>€</span>Tarif & Abrechnung</button><button className={view === 'team' ? 'active' : ''} onClick={() => { setSelected(null); setView('team'); }}><span>T</span>{management?.organization ? 'Team' : 'Verwaltung'}</button>{isAdmin&&<button className={view === 'admin' ? 'active' : ''} onClick={() => { setSelected(null); setView('admin'); }}><span>K</span>Kamilunavo Admin</button>}</nav><div className="sidebarBottom"><button className={view === 'profile' ? 'active' : ''} onClick={goProfile}><span>P</span>Profil {!profileComplete && <i />}</button><button onClick={()=>setShowOnboarding(true)}><span>?</span>Einführung</button><button onClick={() => navigate('/')}><span>↗</span>Startseite</button><div className="sidebarUser"><div>{user.name.slice(0, 1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div></div></aside><main className="workspaceMain"><div className="mobileWorkspaceBar"><Logo compact /><button onClick={() => setShowNew(true)}>+ Neuer Mangel</button></div>{!management?.organization&&entitlements&&!hasPro&&<div className="freePlanTop"><span><b>Privat Free</b> {entitlements.usage?.activeCases||0} / 5 aktive Vorgänge · 3 Fotos je Vorgang</span><button onClick={()=>setView('billing')}>Pro freischalten · 4,99 € →</button></div>}{error && <div className="workspaceGlobalError">{error}</div>}{content}</main>{showNew && <NewCase pro={hasPro} entitlements={entitlements} onClose={() => setShowNew(false)} onCreated={created => { setShowNew(false); loadCases(); api('/api/entitlements').then(setEntitlements).catch(()=>{}); setSelected(created.id); }} />}{showOnboarding&&<OnboardingFlow user={user} onDone={finishOnboarding}/>}</div>;
+  return <div className="workspaceShell">
+    <aside className="workspaceSidebar">
+      <div className="sidebarTop"><button className="sidebarBrand" onClick={()=>setView('overview')}><Logo inverse /></button><span className="workspaceMode">{management?.organization?'VERWALTUNG':'PRIVATBEREICH'}</span></div>
+      <nav>
+        <div className="navGroup"><div className="sidebarLabel">Übersicht</div>{navItem('overview','Dashboard','overview')}{navItem('cases','Vorgänge','cases',{count:cases.filter(x=>x.status!=='resolved').length})}{navItem('deadlines','Fristen','deadlines',{count:cases.filter(x=>x.deadline_on&&x.status!=='resolved').length,pro:true})}</div>
+        <div className="navGroup"><div className="sidebarLabel">Organisation</div>{navItem('objects','Objekte','objects')}{!management?.organization&&navItem('connections','Verwaltungen','connections')}{management?.organization&&navItem('providers','Dienstleister','providers')}{management?.organization&&navItem('orders','Aufträge','orders')}{navItem('tasks','Aufgaben','tasks',{pro:true})}{navItem('calendar','Kalender','calendar',{pro:true})}</div>
+        <div className="navGroup"><div className="sidebarLabel">Dokumentation</div>{navItem('documents','Dokumente','documents')}{navItem('inspections','Übergabe & Abnahme','inspections',{pro:true})}{navItem('search','Suche & Archiv','search',{pro:true})}{navItem('analytics',management?.organization?'Analyse':'Auswertung','analytics',{pro:true})}</div>
+        <div className="navGroup compactGroup">{navItem('notifications','Benachrichtigungen','notifications',{count:unreadNotifications})}{navItem('billing','Tarif & Abrechnung','billing')}{navItem('team',management?.organization?'Team':'Verwaltung','team')}{management?.organization&&navItem('audit','Aktivitätsprotokoll','tasks')}{isAdmin&&navItem('admin','Kamilunavo Admin','admin')}</div>
+      </nav>
+      <div className="sidebarBottom">
+        <button className={view==='profile'?'active':''} onClick={goProfile}><span><Icon name="profile"/></span>Profil {!profileComplete&&<i/>}</button>
+        <button onClick={()=>setShowOnboarding(true)}><span><Icon name="help"/></span>Einführung</button>
+        <button onClick={()=>navigate('/')}><span><Icon name="home"/></span>Startseite</button>
+        <div className="sidebarUser"><div>{user.name.slice(0,1).toUpperCase()}</div><p><b>{user.name}</b><span>{user.email}</span></p><button onClick={onLogout} title="Abmelden">↪</button></div>
+      </div>
+    </aside>
+    <main className="workspaceMain">
+      <div className="workspaceTopbar"><div><button className="topbarHome" onClick={()=>{setSelected(null);setView('overview')}}><Logo compact/></button><span>{management?.organization?management.organization.name:'Mein MängelFix'}</span></div><div className="topbarActions"><button className="topbarNotification" onClick={()=>setView('notifications')} aria-label="Benachrichtigungen"><Icon name="notifications"/>{unreadNotifications>0&&<b>{unreadNotifications}</b>}</button><button className="topbarCreate" onClick={()=>setShowNew(true)}>+ Neuer Mangel</button></div></div>
+      {!management?.organization&&entitlements&&!hasPro&&<div className="freePlanTop"><span><b>Privat Free</b> {entitlements.usage?.activeCases||0} von 5 aktiven Vorgängen genutzt</span><button onClick={()=>setView('billing')}>Pro freischalten →</button></div>}
+      {error&&<div className="workspaceGlobalError">{error}</div>}{content}
+    </main>
+    {showNew&&<NewCase pro={hasPro} entitlements={entitlements} onClose={()=>setShowNew(false)} onCreated={created=>{setShowNew(false);loadCases();api('/api/entitlements').then(setEntitlements).catch(()=>{});setSelected(created.id)}}/>}{showOnboarding&&<OnboardingFlow user={user} onDone={finishOnboarding}/>}</div>;
 }
 
 export default function App() {
