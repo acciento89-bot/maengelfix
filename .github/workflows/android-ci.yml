@@ -47,18 +47,24 @@ jobs:
           set -euo pipefail
           test -f android/app/build/outputs/bundle/release/app-release.aab
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 3' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.2"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 4' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.3"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
           grep -Fq 'android:roundIcon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
           test -s android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
           test -s android/app/src/main/res/drawable/maengelfix_launcher_background.xml
           test -s android/app/src/main/res/drawable/maengelfix_launcher_foreground.xml
-          grep -Fq 'statusBarsPadding' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          grep -Fq 'modalClose = document.querySelector' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          grep -Fq '.workspaceSidebar nav button>span{display:none!important}' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          grep -Fq '.modal.proModal' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          grep -Fq 'class MainActivity : ComponentActivity()' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
+          grep -Fq 'private val MfPrimary = Color(0xFF2457D6)' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
+          grep -Fq 'CreateCaseScreen' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
+          grep -Fq 'CaseDetailScreen' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
+          grep -Fq 'ManagementOverview' android/app/src/main/java/com/kamilunavo/maengelfix/Models.kt
+          grep -Fq 'uploadImages' android/app/src/main/java/com/kamilunavo/maengelfix/NativeApiClient.kt
+          if grep -RFn --include='*.kt' -e 'AndroidView' -e 'WebView(' android/app/src/main/java; then
+            echo 'WebView wrapper found: MängelFix Android must remain fully native.' >&2
+            exit 1
+          fi
           grep -Fq 'com.android.billingclient:billing-ktx:9.1.0' android/app/build.gradle.kts
           grep -Fq 'com.android.vending.BILLING' android/app/src/main/AndroidManifest.xml
           grep -Fq 'setObfuscatedAccountId(accountHash)' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
@@ -66,7 +72,7 @@ jobs:
           grep -Fq 'verifyWithServer(productId, purchase.purchaseToken)' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
           grep -Fq 'acknowledgePurchase' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
           grep -Fq 'ensurePurchaseAllowed()' android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
-          grep -Fq 'maengelfix://play-billing' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
+          grep -Fq 'Google-Play-Angebote ansehen' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'Käufe wiederherstellen' android/app/src/main/java/com/kamilunavo/maengelfix/PlayBillingSheet.kt
           for product in \
             com.kamilunavo.maengelfix.privatepro.monthly \
@@ -79,8 +85,6 @@ jobs:
             com.kamilunavo.maengelfix.managementbusiness.yearly; do
             grep -Fq "$product" android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
           done
-          grep -Fq '/api/billing/checkout' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
-          grep -Fq 'host == "stripe.com" || host.endsWith(".stripe.com")' android/app/src/main/java/com/kamilunavo/maengelfix/MainActivity.kt
           if grep -RFn --include='*.kt' --include='*.xml' \
             -e 'STRIPE_SECRET' \
             -e 'APPLE_IAP_PRIVATE' \
@@ -93,7 +97,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MaengelFix-1.0.2-3-unsigned-release-aab
+          name: MaengelFix-1.0.3-4-unsigned-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
