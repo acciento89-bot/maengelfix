@@ -11,8 +11,8 @@ android {
         applicationId = "com.kamilunavo.maengelfix"
         minSdk = 26
         targetSdk = 36
-        versionCode = 3
-        versionName = "1.0.2"
+        versionCode = 4
+        versionName = "1.0.3"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "APP_URL", "\"https://maengelfix.kamilunavo.com/app\"")
         buildConfigField("String", "ALLOWED_HOST", "\"maengelfix.kamilunavo.com\"")
@@ -46,6 +46,7 @@ dependencies {
     implementation(platform("androidx.compose:compose-bom:2026.06.00"))
     implementation("androidx.compose.foundation:foundation")
     implementation("androidx.compose.material3:material3")
+    implementation("androidx.compose.material:material-icons-extended")
     implementation("com.android.billingclient:billing-ktx:9.1.0")
 
     testImplementation("junit:junit:4.13.2")

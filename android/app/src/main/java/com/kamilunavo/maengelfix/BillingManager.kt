@@ -269,7 +269,7 @@ class BillingManager(
     }
 
     private suspend fun fetchAuthenticatedAccountHash(): String = withContext(Dispatchers.IO) {
-        val connection = authenticatedConnection("/api/auth/me", "GET")
+        val connection = authenticatedConnection("/api/me", "GET")
         try {
             val status = connection.responseCode
             val bytes = (if (status in 200..299) connection.inputStream else connection.errorStream)?.use { it.readBytes() } ?: ByteArray(0)
