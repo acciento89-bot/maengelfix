@@ -11,8 +11,8 @@ android {
         applicationId = "com.kamilunavo.maengelfix"
         minSdk = 26
         targetSdk = 36
-        versionCode = 4
-        versionName = "1.0.3"
+        versionCode = 5
+        versionName = "1.0.4"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "APP_URL", "\"https://maengelfix.kamilunavo.com/app\"")
         buildConfigField("String", "ALLOWED_HOST", "\"maengelfix.kamilunavo.com\"")
