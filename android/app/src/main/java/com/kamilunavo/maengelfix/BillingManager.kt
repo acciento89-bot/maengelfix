@@ -33,14 +33,14 @@ class BillingManager(
 
     companion object {
         val productIds = listOf(
-            "com.kamilunavo.maengelfix.privatepro.monthly",
-            "com.kamilunavo.maengelfix.privatepro.yearly",
-            "com.kamilunavo.maengelfix.managementstarter.monthly",
-            "com.kamilunavo.maengelfix.managementstarter.yearly",
-            "com.kamilunavo.maengelfix.managementpro.monthly",
-            "com.kamilunavo.maengelfix.managementpro.yearly",
-            "com.kamilunavo.maengelfix.managementbusiness.monthly",
-            "com.kamilunavo.maengelfix.managementbusiness.yearly",
+            "maengelfix.private.monthly",
+            "maengelfix.private.yearly",
+            "maengelfix.starter.monthly",
+            "maengelfix.starter.yearly",
+            "maengelfix.pro.monthly",
+            "maengelfix.pro.yearly",
+            "maengelfix.business.monthly",
+            "maengelfix.business.yearly",
         )
         private val knownProducts = productIds.toSet()
     }
