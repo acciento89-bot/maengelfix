@@ -47,8 +47,8 @@ jobs:
           set -euo pipefail
           test -f android/app/build/outputs/bundle/release/app-release.aab
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 4' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.3"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 5' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.4"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
           grep -Fq 'android:roundIcon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
@@ -75,14 +75,14 @@ jobs:
           grep -Fq 'Google-Play-Angebote ansehen' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'Käufe wiederherstellen' android/app/src/main/java/com/kamilunavo/maengelfix/PlayBillingSheet.kt
           for product in \
-            com.kamilunavo.maengelfix.privatepro.monthly \
-            com.kamilunavo.maengelfix.privatepro.yearly \
-            com.kamilunavo.maengelfix.managementstarter.monthly \
-            com.kamilunavo.maengelfix.managementstarter.yearly \
-            com.kamilunavo.maengelfix.managementpro.monthly \
-            com.kamilunavo.maengelfix.managementpro.yearly \
-            com.kamilunavo.maengelfix.managementbusiness.monthly \
-            com.kamilunavo.maengelfix.managementbusiness.yearly; do
+            maengelfix.private.monthly \
+            maengelfix.private.yearly \
+            maengelfix.starter.monthly \
+            maengelfix.starter.yearly \
+            maengelfix.pro.monthly \
+            maengelfix.pro.yearly \
+            maengelfix.business.monthly \
+            maengelfix.business.yearly; do
             grep -Fq "$product" android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
           done
           if grep -RFn --include='*.kt' --include='*.xml' \
@@ -97,7 +97,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MaengelFix-1.0.3-4-unsigned-release-aab
+          name: MaengelFix-1.0.4-5-unsigned-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
