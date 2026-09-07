@@ -33,26 +33,26 @@ private val playPlans = listOf(
     PlayPlan(
         title = "Privat Pro",
         subtitle = "Für private Mängelfälle und erweiterte Dokumentation",
-        monthlyId = "com.kamilunavo.maengelfix.privatepro.monthly",
-        yearlyId = "com.kamilunavo.maengelfix.privatepro.yearly",
+        monthlyId = "maengelfix.private.monthly",
+        yearlyId = "maengelfix.private.yearly",
     ),
     PlayPlan(
         title = "Management Starter",
         subtitle = "Für kleinere Hausverwaltungen",
-        monthlyId = "com.kamilunavo.maengelfix.managementstarter.monthly",
-        yearlyId = "com.kamilunavo.maengelfix.managementstarter.yearly",
+        monthlyId = "maengelfix.starter.monthly",
+        yearlyId = "maengelfix.starter.yearly",
     ),
     PlayPlan(
         title = "Management Pro",
         subtitle = "Für wachsende Verwaltungs-Teams",
-        monthlyId = "com.kamilunavo.maengelfix.managementpro.monthly",
-        yearlyId = "com.kamilunavo.maengelfix.managementpro.yearly",
+        monthlyId = "maengelfix.pro.monthly",
+        yearlyId = "maengelfix.pro.yearly",
     ),
     PlayPlan(
         title = "Management Business",
         subtitle = "Für größere Organisationen und Teams",
-        monthlyId = "com.kamilunavo.maengelfix.managementbusiness.monthly",
-        yearlyId = "com.kamilunavo.maengelfix.managementbusiness.yearly",
+        monthlyId = "maengelfix.business.monthly",
+        yearlyId = "maengelfix.business.yearly",
     ),
 )
 
