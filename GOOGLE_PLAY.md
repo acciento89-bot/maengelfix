@@ -28,14 +28,14 @@ Stripe Checkout/Billing Portal remains blocked in the Play-distributed app both 
 
 | Plan | Period | Subscription ID | Base plan | DE price |
 | --- | --- | --- | --- | ---: |
-| Private Pro | Monthly | `com.kamilunavo.maengelfix.privatepro.monthly` | `monthly` | €4.99 |
-| Private Pro | Yearly | `com.kamilunavo.maengelfix.privatepro.yearly` | `yearly` | €49.99 |
-| Management Starter | Monthly | `com.kamilunavo.maengelfix.managementstarter.monthly` | `monthly` | €29.99 |
-| Management Starter | Yearly | `com.kamilunavo.maengelfix.managementstarter.yearly` | `yearly` | €299.99 |
-| Management Pro | Monthly | `com.kamilunavo.maengelfix.managementpro.monthly` | `monthly` | €59.99 |
-| Management Pro | Yearly | `com.kamilunavo.maengelfix.managementpro.yearly` | `yearly` | €599.99 |
-| Management Business | Monthly | `com.kamilunavo.maengelfix.managementbusiness.monthly` | `monthly` | €119.99 |
-| Management Business | Yearly | `com.kamilunavo.maengelfix.managementbusiness.yearly` | `yearly` | €1,199.99 |
+| Private Pro | Monthly | `maengelfix.private.monthly` | `monthly` | €4.99 |
+| Private Pro | Yearly | `maengelfix.private.yearly` | `yearly` | €49.99 |
+| Management Starter | Monthly | `maengelfix.starter.monthly` | `monthly` | €29.99 |
+| Management Starter | Yearly | `maengelfix.starter.yearly` | `yearly` | €299.99 |
+| Management Pro | Monthly | `maengelfix.pro.monthly` | `monthly` | €59.99 |
+| Management Pro | Yearly | `maengelfix.pro.yearly` | `yearly` | €599.99 |
+| Management Business | Monthly | `maengelfix.business.monthly` | `monthly` | €119.99 |
+| Management Business | Yearly | `maengelfix.business.yearly` | `yearly` | €1,199.99 |
 
 All eight are auto-renewing subscriptions. No introductory trial is required for the v1 Play launch.
 
