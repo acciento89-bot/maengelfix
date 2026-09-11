@@ -81,7 +81,7 @@ jobs:
             ['MAGCalc', 'de.kamilunavo.magcalc']
           ];
 
-          const trackCandidates = ['production', 'beta', 'qa', 'alpha'];
+          const trackCandidates = ['production', 'internal', 'beta', 'qa', 'alpha'];
 
           async function api(url) {
             return fetch(url, {
@@ -230,13 +230,31 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
+          SNAPSHOT="$RUNNER_TEMP/google-store-status.json"
+          cp "$FEED_PATH" "$SNAPSHOT"
           git config user.name 'kamilunavo-ops-bot'
           git config user.email 'actions@users.noreply.github.com'
-          git add "$FEED_PATH"
-          if git diff --cached --quiet; then
-            echo 'Google store feed unchanged.'
-            exit 0
-          fi
-          git commit -m 'chore: refresh NavoOps Google Play feed'
-          git pull --rebase origin "$GITHUB_REF_NAME"
-          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            mkdir -p "$(dirname "$FEED_PATH")"
+            cp "$SNAPSHOT" "$FEED_PATH"
+            git add "$FEED_PATH"
+
+            if git diff --cached --quiet; then
+              echo 'Google store feed unchanged.'
+              exit 0
+            fi
+
+            git commit -m 'chore: refresh NavoOps Google Play feed'
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+
+            echo "Push raced with another feed update; retrying ($attempt/3)."
+            sleep $((attempt * 2))
+          done
+
+          echo 'Unable to publish Google store feed after retries.' >&2
+          exit 1
