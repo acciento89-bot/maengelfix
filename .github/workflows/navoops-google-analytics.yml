@@ -1,0 +1,299 @@
+name: NavoOps Google Analytics
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '52 * * * *'
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/navoops-google-analytics.yml'
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: navoops-google-analytics-${{ github.ref }}
+  cancel-in-progress: false
+
+env:
+  ANALYTICS_PATH: generated/navoops/google-analytics.json
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout bridge repository
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google with GitHub OIDC
+        id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: |
+            https://www.googleapis.com/auth/androidpublisher
+            https://www.googleapis.com/auth/playdeveloperreporting
+
+      - name: Collect Google analytics
+        env:
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$ANALYTICS_PATH")"
+          NOW=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+          test -n "${GOOGLE_ACCESS_TOKEN:-}"
+
+          ANALYTICS_PATH="$ANALYTICS_PATH" GENERATED_AT="$NOW" GOOGLE_ACCESS_TOKEN="$GOOGLE_ACCESS_TOKEN" node <<'NODE'
+          const fs = require('fs');
+
+          const token = process.env.GOOGLE_ACCESS_TOKEN;
+          const generatedAt = process.env.GENERATED_AT;
+          const feedPath = process.env.ANALYTICS_PATH;
+          const publisher = 'https://androidpublisher.googleapis.com/androidpublisher/v3';
+          const reporting = 'https://playdeveloperreporting.googleapis.com/v1beta1';
+
+          const fallbackApps = [
+            ['NavoKids', 'com.kamilunavo.navokids'],
+            ['ZweiCheck', 'de.kamilunavo.zweicheck'],
+            ['ArbeitsKlar', 'de.kamilunavo.arbeitsklar'],
+            ['WärmeTakt', 'de.kamilunavo.waermetakt'],
+            ['Reklaio', 'de.kamilunavo.reklaio'],
+            ['MängelFix', 'com.kamilunavo.maengelfix'],
+            ['Kintaroq', 'com.kamilunavo.kintaroq'],
+            ['NavoPass', 'de.kamilunavo.navopass'],
+            ['99,9 %', 'de.kamilunavo.ninenine'],
+            ['KälteCalc', 'de.kamilunav.kaltecalc'],
+            ['LüftungsCalc', 'de.kamilunavo.luftungscalc'],
+            ['HeizkörperCalc', 'de.kamilunavo.heizkorpercalc'],
+            ['RohrCalc', 'de.kamilunavo.rohrcalc'],
+            ['AnlagenCheck', 'de.kamilunavo.servicecheck'],
+            ['VolumeCalc', 'de.kamilunavo.volumecalc'],
+            ['KeepMeter', 'de.kamilunavo.keepmeter'],
+            ['Schon erledigt?', 'com.kamilunavo.schonerledigt'],
+            ['BrennerCalc', 'de.kamilunavo.brennercalc'],
+            ['HydroCalc', 'de.kamilunavo.hydrocalc'],
+            ['MAGCalc', 'de.kamilunavo.magcalc']
+          ];
+
+          async function api(url, options = {}) {
+            return fetch(url, {
+              ...options,
+              headers: {
+                authorization: `Bearer ${token}`,
+                accept: 'application/json',
+                ...(options.body ? {'content-type': 'application/json'} : {}),
+                ...(options.headers || {})
+              }
+            });
+          }
+
+          async function jsonOrNull(response) {
+            if (!response.ok) return null;
+            return response.json().catch(() => null);
+          }
+
+          async function discoverApps() {
+            const response = await api(`${reporting}/apps:search?pageSize=1000`);
+            const payload = await jsonOrNull(response);
+            if (!payload?.apps?.length) return null;
+            return payload.apps.map(app => [app.displayName || app.packageName, app.packageName]);
+          }
+
+          async function monetization(packageName) {
+            const subscriptionsResponse = await api(`${publisher}/applications/${encodeURIComponent(packageName)}/subscriptions?pageSize=1000`);
+            const productsResponse = await api(`${publisher}/applications/${encodeURIComponent(packageName)}/oneTimeProducts?pageSize=1000`);
+            const subscriptionsPayload = await jsonOrNull(subscriptionsResponse);
+            const productsPayload = await jsonOrNull(productsResponse);
+
+            const subscriptions = subscriptionsPayload?.subscriptions || [];
+            const products = productsPayload?.oneTimeProducts || [];
+            const accessible = subscriptionsPayload !== null || productsPayload !== null;
+
+            let needsAction = 0;
+            for (const subscription of subscriptions) {
+              const plans = subscription.basePlans || [];
+              if (plans.length && !plans.some(plan => plan.state === 'ACTIVE')) needsAction += 1;
+            }
+            for (const product of products) {
+              const options = product.purchaseOptions || [];
+              if (options.length && !options.some(option => option.state === 'ACTIVE')) needsAction += 1;
+            }
+
+            return {
+              accessible,
+              subscriptionProducts: subscriptionsPayload === null ? null : subscriptions.length,
+              oneTimeProducts: productsPayload === null ? null : products.length,
+              productsNeedingAction: accessible ? needsAction : null
+            };
+          }
+
+          function civilDateMinus(dateTime, days) {
+            const date = new Date(Date.UTC(Number(dateTime.year), Number(dateTime.month) - 1, Number(dateTime.day)));
+            date.setUTCDate(date.getUTCDate() - days);
+            return {
+              year: date.getUTCFullYear(),
+              month: date.getUTCMonth() + 1,
+              day: date.getUTCDate(),
+              timeZone: dateTime.timeZone || {id: 'America/Los_Angeles'}
+            };
+          }
+
+          function metricValue(payload, metric) {
+            const rows = payload?.rows || [];
+            for (let index = rows.length - 1; index >= 0; index -= 1) {
+              const value = (rows[index].metrics || []).find(item => item.metric === metric);
+              const raw = value?.decimalValue?.value ?? value?.decimal_value?.value ?? value?.decimal_value;
+              const parsed = Number(raw);
+              if (Number.isFinite(parsed)) return parsed;
+            }
+            return null;
+          }
+
+          async function metricSet(packageName, kind, metrics) {
+            const resource = kind === 'crash' ? 'crashRateMetricSet' : 'anrRateMetricSet';
+            const metadataResponse = await api(`${reporting}/apps/${encodeURIComponent(packageName)}/${resource}`);
+            const metadata = await jsonOrNull(metadataResponse);
+            if (!metadata) return null;
+
+            const freshnesses = metadata.freshnessInfo?.freshnesses || metadata.freshness_info?.freshness || [];
+            const daily = freshnesses.find(item => (item.aggregationPeriod || item.aggregation_period) === 'DAILY') || freshnesses[0];
+            const end = daily?.latestEndTime || daily?.latest_end_time;
+            if (!end?.year || !end?.month || !end?.day) return null;
+
+            const body = {
+              timelineSpec: {
+                aggregationPeriod: 'DAILY',
+                startTime: civilDateMinus(end, 8),
+                endTime: end
+              },
+              metrics,
+              pageSize: 20
+            };
+
+            const response = await api(`${reporting}/apps/${encodeURIComponent(packageName)}/${resource}:query`, {
+              method: 'POST',
+              body: JSON.stringify(body)
+            });
+            return jsonOrNull(response);
+          }
+
+          async function vitals(packageName) {
+            const crashMetrics = ['crashRate7dUserWeighted', 'userPerceivedCrashRate7dUserWeighted'];
+            const anrMetrics = ['anrRate7dUserWeighted', 'userPerceivedAnrRate7dUserWeighted'];
+            const [crash, anr] = await Promise.all([
+              metricSet(packageName, 'crash', crashMetrics),
+              metricSet(packageName, 'anr', anrMetrics)
+            ]);
+
+            return {
+              accessible: crash !== null || anr !== null,
+              crashRate: metricValue(crash, 'crashRate7dUserWeighted'),
+              userPerceivedCrashRate: metricValue(crash, 'userPerceivedCrashRate7dUserWeighted'),
+              anrRate: metricValue(anr, 'anrRate7dUserWeighted'),
+              userPerceivedAnrRate: metricValue(anr, 'userPerceivedAnrRate7dUserWeighted')
+            };
+          }
+
+          (async () => {
+            const discovered = await discoverApps();
+            const appsToCheck = discovered || fallbackApps;
+            const notes = [];
+            if (!discovered) {
+              notes.push('Play Developer Reporting app discovery is unavailable; NavoOps used the verified Kamilunavo package inventory as fallback.');
+            }
+
+            const apps = [];
+            let googleAvailable = false;
+            let reliabilityAvailable = false;
+
+            for (const [appName, packageName] of appsToCheck) {
+              const [money, reliability] = await Promise.all([
+                monetization(packageName),
+                vitals(packageName)
+              ]);
+
+              if (!money.accessible && !reliability.accessible) continue;
+              googleAvailable = true;
+              if (reliability.accessible) reliabilityAvailable = true;
+
+              apps.push({
+                provider: 'google',
+                appName,
+                externalID: packageName,
+                bundleOrPackageID: packageName,
+                periodStart: generatedAt,
+                periodEnd: generatedAt,
+                units: null,
+                downloads: null,
+                proceeds: [],
+                activeSubscriptions: null,
+                subscriptionProducts: money.subscriptionProducts,
+                oneTimeProducts: money.oneTimeProducts,
+                productsNeedingAction: money.productsNeedingAction,
+                crashRate: reliability.crashRate,
+                userPerceivedCrashRate: reliability.userPerceivedCrashRate,
+                anrRate: reliability.anrRate,
+                userPerceivedAnrRate: reliability.userPerceivedAnrRate,
+                detail: 'Google Play monetization inventory and Play Developer Reporting vitals'
+              });
+            }
+
+            if (!reliabilityAvailable) {
+              notes.push('Google Play Vitals are unavailable. The service account needs Play Developer Reporting read access for the apps.');
+            }
+            notes.push('Aggregate Google Play revenue/download totals are not fabricated; they remain unavailable until a dedicated reporting export source is connected.');
+
+            fs.writeFileSync(feedPath, JSON.stringify({
+              schemaVersion: 1,
+              generatedAt,
+              sourceRepository: process.env.GITHUB_REPOSITORY || 'acciento89-bot/maengelfix',
+              appleAvailable: false,
+              googleAvailable,
+              commercialAvailable: false,
+              reliabilityAvailable,
+              apps,
+              notes
+            }, null, 2) + '\n');
+            console.log(`Google analytics snapshots: ${apps.length}; Vitals: ${reliabilityAvailable ? 'available' : 'unavailable'}`);
+          })().catch(error => {
+            console.error(error.stack || error.message || error);
+            process.exit(1);
+          });
+          NODE
+
+          jq empty "$ANALYTICS_PATH"
+
+      - name: Commit refreshed analytics feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          SNAPSHOT="$RUNNER_TEMP/google-analytics.json"
+          cp "$ANALYTICS_PATH" "$SNAPSHOT"
+          git config user.name 'kamilunavo-ops-bot'
+          git config user.email 'actions@users.noreply.github.com'
+
+          for attempt in 1 2 3; do
+            git fetch origin "$GITHUB_REF_NAME"
+            git reset --hard "origin/$GITHUB_REF_NAME"
+            mkdir -p "$(dirname "$ANALYTICS_PATH")"
+            cp "$SNAPSHOT" "$ANALYTICS_PATH"
+            git add "$ANALYTICS_PATH"
+            if git diff --cached --quiet; then
+              echo 'Google analytics feed unchanged.'
+              exit 0
+            fi
+            git commit -m 'chore: refresh NavoOps Google analytics'
+            if git push origin "HEAD:${GITHUB_REF_NAME}"; then
+              exit 0
+            fi
+            sleep $((attempt * 2))
+          done
+          exit 1
