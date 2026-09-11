@@ -13,6 +13,7 @@ on:
 
 permissions:
   contents: write
+  id-token: write
 
 concurrency:
   group: navoops-google-store-feed-${{ github.ref }}
@@ -20,6 +21,8 @@ concurrency:
 
 env:
   FEED_PATH: generated/navoops/google-store-status.json
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
 
 jobs:
   snapshot:
@@ -29,38 +32,32 @@ jobs:
       - name: Checkout bridge repository
         uses: actions/checkout@v5
 
+      - name: Authenticate to Google Cloud with GitHub OIDC
+        id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+
       - name: Collect Google Play state
         env:
-          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64 }}
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p "$(dirname "$FEED_PATH")"
           NOW=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
 
-          if [[ -z "${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64:-}" ]]; then
-            jq -n \
-              --arg generatedAt "$NOW" \
-              --arg sourceRepository "$GITHUB_REPOSITORY" \
-              '{schemaVersion:1,generatedAt:$generatedAt,sourceRepository:$sourceRepository,appleAvailable:false,googleAvailable:false,apps:[]}' \
-              > "$FEED_PATH"
-            echo 'Google Play service-account secret is not configured in this bridge repository.'
-            exit 0
-          fi
+          test -n "${GOOGLE_ACCESS_TOKEN:-}"
 
-          KEY_JSON="$RUNNER_TEMP/google-play-service-account.json"
-          if ! printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64" | base64 --decode > "$KEY_JSON" 2>/dev/null; then
-            printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64" > "$KEY_JSON"
-          fi
-          jq -e '.client_email and .private_key' "$KEY_JSON" >/dev/null
-
-          GOOGLE_KEY_JSON="$KEY_JSON" FEED_PATH="$FEED_PATH" GENERATED_AT="$NOW" node <<'NODE'
+          FEED_PATH="$FEED_PATH" GENERATED_AT="$NOW" GOOGLE_ACCESS_TOKEN="$GOOGLE_ACCESS_TOKEN" node <<'NODE'
           const fs = require('fs');
-          const crypto = require('crypto');
 
-          const service = JSON.parse(fs.readFileSync(process.env.GOOGLE_KEY_JSON, 'utf8'));
           const generatedAt = process.env.GENERATED_AT;
           const feedPath = process.env.FEED_PATH;
+          const token = process.env.GOOGLE_ACCESS_TOKEN;
           const packages = [
             ['NavoKids', 'com.kamilunavo.navokids'],
             ['ZweiCheck', 'de.kamilunavo.zweicheck'],
@@ -83,39 +80,10 @@ jobs:
             ['HydroCalc', 'de.kamilunavo.hydrocalc'],
             ['MAGCalc', 'de.kamilunavo.magcalc']
           ];
-          // Google documents these default track IDs. Closed-test tracks can have custom IDs;
-          // add them here later only when a Kamilunavo app actually uses one.
+
           const trackCandidates = ['production', 'beta', 'qa', 'alpha'];
 
-          const b64url = value => Buffer.from(JSON.stringify(value)).toString('base64url');
-
-          async function accessToken() {
-            const now = Math.floor(Date.now() / 1000);
-            const tokenUri = service.token_uri || 'https://oauth2.googleapis.com/token';
-            const header = b64url({alg: 'RS256', typ: 'JWT'});
-            const claims = b64url({
-              iss: service.client_email,
-              scope: 'https://www.googleapis.com/auth/androidpublisher',
-              aud: tokenUri,
-              iat: now,
-              exp: now + 3600
-            });
-            const input = `${header}.${claims}`;
-            const signature = crypto.sign('RSA-SHA256', Buffer.from(input), service.private_key).toString('base64url');
-            const assertion = `${input}.${signature}`;
-            const response = await fetch(tokenUri, {
-              method: 'POST',
-              headers: {'content-type': 'application/x-www-form-urlencoded'},
-              body: new URLSearchParams({grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion})
-            });
-            const payload = await response.json().catch(() => ({}));
-            if (!response.ok || !payload.access_token) {
-              throw new Error(`Google OAuth failed (${response.status}).`);
-            }
-            return payload.access_token;
-          }
-
-          async function api(token, url) {
+          async function api(url) {
             return fetch(url, {
               headers: {
                 authorization: `Bearer ${token}`,
@@ -175,7 +143,6 @@ jobs:
           }
 
           (async () => {
-            const token = await accessToken();
             const apps = [];
             let accessible = 0;
 
@@ -186,10 +153,8 @@ jobs:
               for (const track of trackCandidates) {
                 const parent = `applications/${packageName}/tracks/${track}`;
                 const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/${parent}/releases`;
-                const response = await api(token, url);
+                const response = await api(url);
                 if (!response.ok) {
-                  // Missing tracks are normal. 403 across every track means the service account
-                  // has not been granted access to this Play Console app.
                   if (response.status !== 404) {
                     console.log(`${packageName}/${track}: unavailable (${response.status})`);
                   }
@@ -221,7 +186,7 @@ jobs:
                   rawState: 'none',
                   state: 'development',
                   updatedAt: generatedAt,
-                  detail: 'No active release found on production, open, internal or alpha tracks.'
+                  detail: 'No active release found on configured Google Play tracks.'
                 });
                 continue;
               }
@@ -275,8 +240,3 @@ jobs:
           git commit -m 'chore: refresh NavoOps Google Play feed'
           git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:${GITHUB_REF_NAME}"
-
-      - name: Remove Google credential material
-        if: always()
-        shell: bash
-        run: rm -f "$RUNNER_TEMP/google-play-service-account.json"
