@@ -14,6 +14,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: navoops-google-store-feed-${{ github.ref }}
+  cancel-in-progress: false
+
 env:
   FEED_PATH: generated/navoops/google-store-status.json
 
@@ -219,6 +223,7 @@ jobs:
             exit 0
           fi
           git commit -m 'chore: refresh NavoOps Google Play feed'
+          git pull --rebase origin "$GITHUB_REF_NAME"
           git push origin "HEAD:${GITHUB_REF_NAME}"
 
       - name: Remove Google credential material
