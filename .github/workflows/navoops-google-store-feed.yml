@@ -83,8 +83,12 @@ jobs:
             ['HydroCalc', 'de.kamilunavo.hydrocalc'],
             ['MAGCalc', 'de.kamilunavo.magcalc']
           ];
+          // Google documents these default track IDs. Closed-test tracks can have custom IDs;
+          // add them here later only when a Kamilunavo app actually uses one.
+          const trackCandidates = ['production', 'beta', 'qa', 'alpha'];
 
           const b64url = value => Buffer.from(JSON.stringify(value)).toString('base64url');
+
           async function accessToken() {
             const now = Math.floor(Date.now() / 1000);
             const tokenUri = service.token_uri || 'https://oauth2.googleapis.com/token';
@@ -105,51 +109,69 @@ jobs:
               body: new URLSearchParams({grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion})
             });
             const payload = await response.json().catch(() => ({}));
-            if (!response.ok || !payload.access_token) throw new Error(`Google OAuth failed (${response.status}).`);
+            if (!response.ok || !payload.access_token) {
+              throw new Error(`Google OAuth failed (${response.status}).`);
+            }
             return payload.access_token;
           }
 
-          function classify(tracks) {
-            const normalized = (tracks || []).map(track => ({
-              name: String(track.track || ''),
-              releases: Array.isArray(track.releases) ? track.releases : []
-            }));
-            const production = normalized.find(item => item.name === 'production');
-            const prodRelease = production?.releases?.[0];
-            if (prodRelease) {
-              const status = String(prodRelease.status || 'unknown');
-              if (status === 'completed' || status === 'inProgress') return {state: 'live', track: 'production', release: prodRelease};
-              if (status === 'halted') return {state: 'attention', track: 'production', release: prodRelease};
-              return {state: 'development', track: 'production', release: prodRelease};
-            }
-
-            const preferred = ['open', 'beta', 'closed', 'alpha', 'internal'];
-            for (const wanted of preferred) {
-              const track = normalized.find(item => item.name === wanted || item.name.startsWith(`${wanted}:`));
-              const release = track?.releases?.[0];
-              if (release) return {state: 'internalTest', track: track.name, release};
-            }
-
-            const anyTrack = normalized.find(item => item.releases.length > 0);
-            if (anyTrack) return {state: 'internalTest', track: anyTrack.name, release: anyTrack.releases[0]};
-            return {state: 'development', track: 'none', release: null};
+          async function api(token, url) {
+            return fetch(url, {
+              headers: {
+                authorization: `Bearer ${token}`,
+                accept: 'application/json'
+              }
+            });
           }
 
           function maxVersionCode(release) {
-            const codes = (release?.versionCodes || []).map(Number).filter(Number.isFinite);
-            return codes.length ? String(Math.max(...codes)) : null;
+            const codes = (release?.activeArtifacts || [])
+              .map(item => Number(item.versionCode))
+              .filter(Number.isFinite);
+            return codes.length ? Math.max(...codes) : null;
           }
 
-          async function api(token, url, options = {}) {
-            return fetch(url, {
-              ...options,
-              headers: {
-                authorization: `Bearer ${token}`,
-                accept: 'application/json',
-                'content-type': 'application/json',
-                ...(options.headers || {})
-              }
-            });
+          function stateFor(track, lifecycle) {
+            switch (lifecycle) {
+              case 'RELEASE_LIFECYCLE_STATE_DRAFT':
+                return 'development';
+              case 'RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW':
+              case 'RELEASE_LIFECYCLE_STATE_APPROVED_NOT_PUBLISHED':
+                return 'attention';
+              case 'RELEASE_LIFECYCLE_STATE_IN_REVIEW':
+                return 'review';
+              case 'RELEASE_LIFECYCLE_STATE_NOT_APPROVED':
+                return 'rejected';
+              case 'RELEASE_LIFECYCLE_STATE_PUBLISHED':
+                return track === 'production' ? 'live' : 'internalTest';
+              default:
+                return 'processing';
+            }
+          }
+
+          function lifecyclePriority(lifecycle) {
+            switch (lifecycle) {
+              case 'RELEASE_LIFECYCLE_STATE_NOT_APPROVED': return 70;
+              case 'RELEASE_LIFECYCLE_STATE_APPROVED_NOT_PUBLISHED': return 60;
+              case 'RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW': return 55;
+              case 'RELEASE_LIFECYCLE_STATE_IN_REVIEW': return 50;
+              case 'RELEASE_LIFECYCLE_STATE_DRAFT': return 40;
+              case 'RELEASE_LIFECYCLE_STATE_PUBLISHED': return 20;
+              default: return 10;
+            }
+          }
+
+          function chooseRelease(releases) {
+            if (!releases.length) return null;
+            return [...releases].sort((a, b) => {
+              const priority = lifecyclePriority(b.releaseLifecycleState) - lifecyclePriority(a.releaseLifecycleState);
+              if (priority !== 0) return priority;
+              const build = (maxVersionCode(b) || 0) - (maxVersionCode(a) || 0);
+              if (build !== 0) return build;
+              if (a.track === 'production' && b.track !== 'production') return -1;
+              if (b.track === 'production' && a.track !== 'production') return 1;
+              return 0;
+            })[0];
           }
 
           (async () => {
@@ -158,40 +180,68 @@ jobs:
             let accessible = 0;
 
             for (const [appName, packageName] of packages) {
-              const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${encodeURIComponent(packageName)}`;
-              const editResponse = await api(token, `${base}/edits`, {method: 'POST', body: '{}'});
-              if (!editResponse.ok) {
-                console.log(`${packageName}: unavailable (${editResponse.status})`);
-                continue;
-              }
-              accessible += 1;
-              const edit = await editResponse.json();
-              const editID = edit.id;
-              try {
-                const tracksResponse = await api(token, `${base}/edits/${encodeURIComponent(editID)}/tracks`);
-                if (!tracksResponse.ok) {
-                  console.log(`${packageName}: tracks unavailable (${tracksResponse.status})`);
+              const releases = [];
+              let appAccessible = false;
+
+              for (const track of trackCandidates) {
+                const parent = `applications/${packageName}/tracks/${track}`;
+                const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/${parent}/releases`;
+                const response = await api(token, url);
+                if (!response.ok) {
+                  // Missing tracks are normal. 403 across every track means the service account
+                  // has not been granted access to this Play Console app.
+                  if (response.status !== 404) {
+                    console.log(`${packageName}/${track}: unavailable (${response.status})`);
+                  }
                   continue;
                 }
-                const tracksPayload = await tracksResponse.json();
-                const classification = classify(tracksPayload.tracks || []);
-                const status = classification.release?.status || 'none';
-                const rawState = `${classification.track}:${status}`;
+
+                appAccessible = true;
+                const payload = await response.json().catch(() => ({}));
+                for (const release of payload.releases || []) {
+                  releases.push({...release, track: release.track || track});
+                }
+              }
+
+              if (!appAccessible) {
+                console.log(`${packageName}: no readable Google Play track`);
+                continue;
+              }
+
+              accessible += 1;
+              const release = chooseRelease(releases);
+              if (!release) {
                 apps.push({
                   provider: 'google',
                   appName,
                   externalID: packageName,
                   bundleOrPackageID: packageName,
-                  version: classification.release?.name || null,
-                  build: maxVersionCode(classification.release),
-                  rawState,
-                  state: classification.state,
+                  version: null,
+                  build: null,
+                  rawState: 'none',
+                  state: 'development',
                   updatedAt: generatedAt,
-                  detail: rawState
+                  detail: 'No active release found on production, open, internal or alpha tracks.'
                 });
-              } finally {
-                await api(token, `${base}/edits/${encodeURIComponent(editID)}`, {method: 'DELETE'}).catch(() => {});
+                continue;
               }
+
+              const lifecycle = String(release.releaseLifecycleState || 'RELEASE_LIFECYCLE_STATE_UNSPECIFIED');
+              const track = String(release.track || 'unknown');
+              const rawState = `${track}:${lifecycle}`;
+              const build = maxVersionCode(release);
+              apps.push({
+                provider: 'google',
+                appName,
+                externalID: packageName,
+                bundleOrPackageID: packageName,
+                version: release.releaseName || null,
+                build: build == null ? null : String(build),
+                rawState,
+                state: stateFor(track, lifecycle),
+                updatedAt: generatedAt,
+                detail: rawState
+              });
             }
 
             fs.writeFileSync(feedPath, JSON.stringify({
@@ -202,7 +252,7 @@ jobs:
               googleAvailable: accessible > 0,
               apps
             }, null, 2) + '\n');
-            console.log(`Google Play apps accessible: ${accessible}; snapshots: ${apps.length}`);
+            console.log(`Google Play apps readable: ${accessible}; snapshots: ${apps.length}`);
           })().catch(error => {
             console.error(error.stack || error.message || error);
             process.exit(1);
