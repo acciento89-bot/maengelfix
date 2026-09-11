@@ -21,7 +21,7 @@ concurrency:
 
 env:
   FEED_PATH: generated/navoops/google-store-status.json
-  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
   GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
 
 jobs:
