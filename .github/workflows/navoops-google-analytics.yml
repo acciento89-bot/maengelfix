@@ -298,4 +298,4 @@ jobs:
           done
           exit 1
 
-# Manual refresh after Play Developer Reporting permission update: 2026-09-11T20:44:00Z
+# Manual refresh after enabling Google Play Developer Reporting API
