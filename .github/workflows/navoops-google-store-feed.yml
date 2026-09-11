@@ -98,7 +98,7 @@ jobs:
             const response = await fetch(tokenUri, {
               method: 'POST',
               headers: {'content-type': 'application/x-www-form-urlencoded'},
-              body: new URLSearchParams({grant_type: 'urn:ietf:params:oauth-type:jwt-bearer', assertion})
+              body: new URLSearchParams({grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion})
             });
             const payload = await response.json().catch(() => ({}));
             if (!response.ok || !payload.access_token) throw new Error(`Google OAuth failed (${response.status}).`);
