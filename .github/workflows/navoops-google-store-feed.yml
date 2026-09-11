@@ -1,0 +1,223 @@
+name: NavoOps Google Play Feed
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '32 * * * *'
+  push:
+    branches:
+      - main
+      - feature/navoops-google-store-feed
+    paths:
+      - '.github/workflows/navoops-google-store-feed.yml'
+
+permissions:
+  contents: write
+
+env:
+  FEED_PATH: generated/navoops/google-store-status.json
+
+jobs:
+  snapshot:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout bridge repository
+        uses: actions/checkout@v5
+
+      - name: Collect Google Play state
+        env:
+          GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64 }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$FEED_PATH")"
+          NOW=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+
+          if [[ -z "${GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64:-}" ]]; then
+            jq -n \
+              --arg generatedAt "$NOW" \
+              --arg sourceRepository "$GITHUB_REPOSITORY" \
+              '{schemaVersion:1,generatedAt:$generatedAt,sourceRepository:$sourceRepository,appleAvailable:false,googleAvailable:false,apps:[]}' \
+              > "$FEED_PATH"
+            echo 'Google Play service-account secret is not configured in this bridge repository.'
+            exit 0
+          fi
+
+          KEY_JSON="$RUNNER_TEMP/google-play-service-account.json"
+          if ! printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64" | base64 --decode > "$KEY_JSON" 2>/dev/null; then
+            printf '%s' "$GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64" > "$KEY_JSON"
+          fi
+          jq -e '.client_email and .private_key' "$KEY_JSON" >/dev/null
+
+          GOOGLE_KEY_JSON="$KEY_JSON" FEED_PATH="$FEED_PATH" GENERATED_AT="$NOW" node <<'NODE'
+          const fs = require('fs');
+          const crypto = require('crypto');
+
+          const service = JSON.parse(fs.readFileSync(process.env.GOOGLE_KEY_JSON, 'utf8'));
+          const generatedAt = process.env.GENERATED_AT;
+          const feedPath = process.env.FEED_PATH;
+          const packages = [
+            ['NavoKids', 'com.kamilunavo.navokids'],
+            ['ZweiCheck', 'de.kamilunavo.zweicheck'],
+            ['ArbeitsKlar', 'de.kamilunavo.arbeitsklar'],
+            ['WärmeTakt', 'de.kamilunavo.waermetakt'],
+            ['Reklaio', 'de.kamilunavo.reklaio'],
+            ['MängelFix', 'com.kamilunavo.maengelfix'],
+            ['Kintaroq', 'com.kamilunavo.kintaroq'],
+            ['NavoPass', 'de.kamilunavo.navopass'],
+            ['99,9 %', 'de.kamilunavo.ninenine'],
+            ['KälteCalc', 'de.kamilunav.kaltecalc'],
+            ['VolumeCalc', 'de.kamilunavo.volumecalc'],
+            ['KeepMeter', 'de.kamilunavo.keepmeter'],
+            ['Schon erledigt?', 'com.kamilunavo.schonerledigt'],
+            ['BrennerCalc', 'de.kamilunavo.brennercalc'],
+            ['HydroCalc', 'de.kamilunavo.hydrocalc'],
+            ['MAGCalc', 'de.kamilunavo.magcalc']
+          ];
+
+          const b64url = value => Buffer.from(JSON.stringify(value)).toString('base64url');
+          async function accessToken() {
+            const now = Math.floor(Date.now() / 1000);
+            const tokenUri = service.token_uri || 'https://oauth2.googleapis.com/token';
+            const header = b64url({alg: 'RS256', typ: 'JWT'});
+            const claims = b64url({
+              iss: service.client_email,
+              scope: 'https://www.googleapis.com/auth/androidpublisher',
+              aud: tokenUri,
+              iat: now,
+              exp: now + 3600
+            });
+            const input = `${header}.${claims}`;
+            const signature = crypto.sign('RSA-SHA256', Buffer.from(input), service.private_key).toString('base64url');
+            const assertion = `${input}.${signature}`;
+            const response = await fetch(tokenUri, {
+              method: 'POST',
+              headers: {'content-type': 'application/x-www-form-urlencoded'},
+              body: new URLSearchParams({grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer', assertion})
+            });
+            const payload = await response.json().catch(() => ({}));
+            if (!response.ok || !payload.access_token) throw new Error(`Google OAuth failed (${response.status}).`);
+            return payload.access_token;
+          }
+
+          function classify(tracks) {
+            const normalized = (tracks || []).map(track => ({
+              name: String(track.track || ''),
+              releases: Array.isArray(track.releases) ? track.releases : []
+            }));
+            const production = normalized.find(item => item.name === 'production');
+            const prodRelease = production?.releases?.[0];
+            if (prodRelease) {
+              const status = String(prodRelease.status || 'unknown');
+              if (status === 'completed' || status === 'inProgress') return {state: 'live', track: 'production', release: prodRelease};
+              if (status === 'halted') return {state: 'attention', track: 'production', release: prodRelease};
+              return {state: 'development', track: 'production', release: prodRelease};
+            }
+
+            const preferred = ['open', 'beta', 'closed', 'alpha', 'internal'];
+            for (const wanted of preferred) {
+              const track = normalized.find(item => item.name === wanted || item.name.startsWith(`${wanted}:`));
+              const release = track?.releases?.[0];
+              if (release) return {state: 'internalTest', track: track.name, release};
+            }
+
+            const anyTrack = normalized.find(item => item.releases.length > 0);
+            if (anyTrack) return {state: 'internalTest', track: anyTrack.name, release: anyTrack.releases[0]};
+            return {state: 'development', track: 'none', release: null};
+          }
+
+          function maxVersionCode(release) {
+            const codes = (release?.versionCodes || []).map(Number).filter(Number.isFinite);
+            return codes.length ? String(Math.max(...codes)) : null;
+          }
+
+          async function api(token, url, options = {}) {
+            return fetch(url, {
+              ...options,
+              headers: {
+                authorization: `Bearer ${token}`,
+                accept: 'application/json',
+                'content-type': 'application/json',
+                ...(options.headers || {})
+              }
+            });
+          }
+
+          (async () => {
+            const token = await accessToken();
+            const apps = [];
+            let accessible = 0;
+
+            for (const [appName, packageName] of packages) {
+              const base = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${encodeURIComponent(packageName)}`;
+              const editResponse = await api(token, `${base}/edits`, {method: 'POST', body: '{}'});
+              if (!editResponse.ok) {
+                console.log(`${packageName}: unavailable (${editResponse.status})`);
+                continue;
+              }
+              accessible += 1;
+              const edit = await editResponse.json();
+              const editID = edit.id;
+              try {
+                const tracksResponse = await api(token, `${base}/edits/${encodeURIComponent(editID)}/tracks`);
+                if (!tracksResponse.ok) {
+                  console.log(`${packageName}: tracks unavailable (${tracksResponse.status})`);
+                  continue;
+                }
+                const tracksPayload = await tracksResponse.json();
+                const classification = classify(tracksPayload.tracks || []);
+                const status = classification.release?.status || 'none';
+                const rawState = `${classification.track}:${status}`;
+                apps.push({
+                  provider: 'google',
+                  appName,
+                  externalID: packageName,
+                  bundleOrPackageID: packageName,
+                  version: classification.release?.name || null,
+                  build: maxVersionCode(classification.release),
+                  rawState,
+                  state: classification.state,
+                  updatedAt: generatedAt,
+                  detail: rawState
+                });
+              } finally {
+                await api(token, `${base}/edits/${encodeURIComponent(editID)}`, {method: 'DELETE'}).catch(() => {});
+              }
+            }
+
+            fs.writeFileSync(feedPath, JSON.stringify({
+              schemaVersion: 1,
+              generatedAt,
+              sourceRepository: process.env.GITHUB_REPOSITORY || 'acciento89-bot/maengelfix',
+              appleAvailable: false,
+              googleAvailable: accessible > 0,
+              apps
+            }, null, 2) + '\n');
+            console.log(`Google Play apps accessible: ${accessible}; snapshots: ${apps.length}`);
+          })().catch(error => {
+            console.error(error.stack || error.message || error);
+            process.exit(1);
+          });
+          NODE
+
+          jq empty "$FEED_PATH"
+
+      - name: Commit refreshed feed
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'kamilunavo-ops-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$FEED_PATH"
+          if git diff --cached --quiet; then
+            echo 'Google store feed unchanged.'
+            exit 0
+          fi
+          git commit -m 'chore: refresh NavoOps Google Play feed'
+          git push origin "HEAD:${GITHUB_REF_NAME}"
+
+      - name: Remove Google credential material
+        if: always()
+        shell: bash
+        run: rm -f "$RUNNER_TEMP/google-play-service-account.json"
