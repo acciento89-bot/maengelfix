@@ -1,9 +1,14 @@
 {
-  "schemaVersion": 2,
-  "generatedAt": "2026-09-12T18:37:30Z",
+  "schemaVersion": 3,
+  "generatedAt": "2026-09-12T20:21:31Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
+  "summary": {
+    "readableApps": 21,
+    "publiclyAvailable": 14,
+    "pendingReviewWithoutPublicProduction": 0
+  },
   "apps": [
     {
       "provider": "google",
@@ -14,7 +19,11 @@
       "build": "7",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": true,
+      "publicBuild": "7",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -26,7 +35,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "NavoKids 0.4.0 – Acht Lerninseln",
+          "build": 7
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "6 (0.3.2)",
+          "build": 6
+        }
+      ]
     },
     {
       "provider": "google",
@@ -37,7 +60,11 @@
       "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": true,
+      "publicBuild": "3",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -49,7 +76,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "ZweiCheck",
+          "build": 3
+        }
+      ]
     },
     {
       "provider": "google",
@@ -60,7 +101,11 @@
       "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "rejected",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -72,7 +117,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+          "releaseName": "4 (1.0.1)",
+          "build": 4
+        },
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
     },
     {
       "provider": "google",
@@ -81,10 +140,14 @@
       "bundleOrPackageID": "de.kamilunavo.waermetakt",
       "version": "3 (1.0.1)",
       "build": "3",
-      "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "alpha · Draft",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "3",
+      "updateState": "development",
+      "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 3 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -95,7 +158,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
+        },
+        {
+          "track": "alpha",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
+        }
+      ]
     },
     {
       "provider": "google",
@@ -106,7 +183,11 @@
       "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": true,
+      "publicBuild": "8",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -118,7 +199,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "8 (0.4.3)",
+          "build": 8
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "8 (0.4.3)",
+          "build": 8
+        }
+      ]
     },
     {
       "provider": "google",
@@ -127,10 +222,14 @@
       "bundleOrPackageID": "com.kamilunavo.maengelfix",
       "version": "MängelFix 1.0.4 – Native Android",
       "build": "5",
-      "rawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "state": "internalTest",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "internal · Published",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "3",
+      "updateState": "internalTest",
+      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 3 · pending/current update: internal · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -141,7 +240,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "MängelFix 1.0.4 – Native Android",
+          "build": 5
+        }
+      ]
     },
     {
       "provider": "google",
@@ -150,21 +263,33 @@
       "bundleOrPackageID": "com.kamilunavo.kintaroq",
       "version": "Kintaroq icon consistency update (3)",
       "build": "3",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "state": "review",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · In review",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "3",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "Kintaroq icon consistency update (3)",
+          "build": 3
+        }
+      ]
     },
     {
       "provider": "google",
@@ -173,21 +298,33 @@
       "bundleOrPackageID": "de.kamilunavo.navopass",
       "version": "NavoPass 1.0.4 (9)",
       "build": "9",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "state": "review",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · In review",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "9",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "NavoPass 1.0.4 (9)",
+          "build": 9
+        }
+      ]
     },
     {
       "provider": "google",
@@ -198,7 +335,11 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "rejected",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -210,133 +351,42 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW",
+          "releaseName": "4 (1.0.3)",
+          "build": 4
+        },
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+          "releaseName": "1.0.0 (2)",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
     },
     {
       "provider": "google",
-      "appName": "KälteCalc",
-      "externalID": "de.kamilunav.kaltecalc",
-      "bundleOrPackageID": "de.kamilunav.kaltecalc",
-      "version": "KälteCalc 1.0.1 (2)",
-      "build": "2",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · Draft",
-      "review": {
-        "submissionID": null,
-        "submissionState": null,
-        "itemStates": [],
-        "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-        "reason": null,
-        "reasonAvailability": "consoleOnly",
-        "consoleURL": "https://play.google.com/console"
-      }
-    },
-    {
-      "provider": "google",
-      "appName": "LüftungsCalc",
-      "externalID": "de.kamilunavo.luftungscalc",
-      "bundleOrPackageID": "de.kamilunavo.luftungscalc",
-      "version": "LüftungsCalc 1.0.1 (2)",
-      "build": "2",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · Draft",
-      "review": {
-        "submissionID": null,
-        "submissionState": null,
-        "itemStates": [],
-        "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-        "reason": null,
-        "reasonAvailability": "consoleOnly",
-        "consoleURL": "https://play.google.com/console"
-      }
-    },
-    {
-      "provider": "google",
-      "appName": "HeizkörperCalc",
-      "externalID": "de.kamilunavo.heizkorpercalc",
-      "bundleOrPackageID": "de.kamilunavo.heizkorpercalc",
-      "version": "HeizkörperCalc 1.0.1 (2)",
-      "build": "2",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · Draft",
-      "review": {
-        "submissionID": null,
-        "submissionState": null,
-        "itemStates": [],
-        "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-        "reason": null,
-        "reasonAvailability": "consoleOnly",
-        "consoleURL": "https://play.google.com/console"
-      }
-    },
-    {
-      "provider": "google",
-      "appName": "RohrCalc",
-      "externalID": "de.kamilunavo.rohrcalc",
-      "bundleOrPackageID": "de.kamilunavo.rohrcalc",
-      "version": null,
-      "build": null,
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · Draft",
-      "review": {
-        "submissionID": null,
-        "submissionState": null,
-        "itemStates": [],
-        "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-        "reason": null,
-        "reasonAvailability": "consoleOnly",
-        "consoleURL": "https://play.google.com/console"
-      }
-    },
-    {
-      "provider": "google",
-      "appName": "AnlagenCheck",
-      "externalID": "de.kamilunavo.servicecheck",
-      "bundleOrPackageID": "de.kamilunavo.servicecheck",
-      "version": "AnlagenCheck 1.0.1 (2)",
-      "build": "2",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "state": "review",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "production · In review",
-      "review": {
-        "submissionID": null,
-        "submissionState": null,
-        "itemStates": [],
-        "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-        "reason": null,
-        "reasonAvailability": "consoleOnly",
-        "consoleURL": "https://play.google.com/console"
-      }
-    },
-    {
-      "provider": "google",
-      "appName": "VolumeCalc",
-      "externalID": "de.kamilunavo.volumecalc",
-      "bundleOrPackageID": "de.kamilunavo.volumecalc",
-      "version": "1.0 (2)",
-      "build": "2",
+      "appName": "NavoTap",
+      "externalID": "com.kamilunavo.onemoretap",
+      "bundleOrPackageID": "com.kamilunavo.onemoretap",
+      "version": "6 (1.0.5)",
+      "build": "6",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": true,
+      "publicBuild": "6",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -348,7 +398,243 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "6 (1.0.5)",
+          "build": 6
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "6 (1.0.5)",
+          "build": 6
+        },
+        {
+          "track": "alpha",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "NavoTap",
+          "build": 5
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "KälteCalc",
+      "externalID": "de.kamilunav.kaltecalc",
+      "bundleOrPackageID": "de.kamilunav.kaltecalc",
+      "version": "KälteCalc 1.0.1 (2)",
+      "build": "2",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "state": "development",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "KälteCalc 1.0.1 (2)",
+          "build": 2
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "LüftungsCalc",
+      "externalID": "de.kamilunavo.luftungscalc",
+      "bundleOrPackageID": "de.kamilunavo.luftungscalc",
+      "version": "LüftungsCalc 1.0.1 (2)",
+      "build": "2",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "state": "development",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "LüftungsCalc 1.0.1 (2)",
+          "build": 2
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "HeizkörperCalc",
+      "externalID": "de.kamilunavo.heizkorpercalc",
+      "bundleOrPackageID": "de.kamilunavo.heizkorpercalc",
+      "version": "HeizkörperCalc 1.0.1 (2)",
+      "build": "2",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "state": "development",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "HeizkörperCalc 1.0.1 (2)",
+          "build": 2
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "RohrCalc",
+      "externalID": "de.kamilunavo.rohrcalc",
+      "bundleOrPackageID": "de.kamilunavo.rohrcalc",
+      "version": null,
+      "build": null,
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "state": "development",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "AnlagenCheck",
+      "externalID": "de.kamilunavo.servicecheck",
+      "bundleOrPackageID": "de.kamilunavo.servicecheck",
+      "version": null,
+      "build": null,
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "2",
+      "updateState": "development",
+      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 2 · pending/current update: internal · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "internal",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "AnlagenCheck 1.0.1 (2)",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "VolumeCalc",
+      "externalID": "de.kamilunavo.volumecalc",
+      "bundleOrPackageID": "de.kamilunavo.volumecalc",
+      "version": "1.0 (2)",
+      "build": "2",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "2",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "production · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "1.0 (2)",
+          "build": 2
+        }
+      ]
     },
     {
       "provider": "google",
@@ -357,10 +643,14 @@
       "bundleOrPackageID": "de.kamilunavo.keepmeter",
       "version": null,
       "build": null,
-      "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "alpha · Draft",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "4",
+      "updateState": "development",
+      "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 4 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -371,7 +661,27 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.3)",
+          "build": 4
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "KeepMeter",
+          "build": 2
+        },
+        {
+          "track": "alpha",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
     },
     {
       "provider": "google",
@@ -380,10 +690,14 @@
       "bundleOrPackageID": "com.kamilunavo.schonerledigt",
       "version": "4 (1.0.1)",
       "build": "4",
-      "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "internal · Draft",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "4",
+      "updateState": "development",
+      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 4 · pending/current update: internal · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -394,7 +708,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "Schon erledigt? 1.0.1",
+          "build": 4
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "4 (1.0.1)",
+          "build": 4
+        }
+      ]
     },
     {
       "provider": "google",
@@ -403,10 +731,14 @@
       "bundleOrPackageID": "de.kamilunavo.brennercalc",
       "version": null,
       "build": null,
-      "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "internal · Draft",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "2",
+      "updateState": "development",
+      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 2 · pending/current update: internal · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -417,7 +749,27 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "BrennerCalc 1.0.1",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "BrennerCalc",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
     },
     {
       "provider": "google",
@@ -426,10 +778,14 @@
       "bundleOrPackageID": "de.kamilunavo.hydrocalc",
       "version": null,
       "build": null,
-      "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "state": "development",
-      "updatedAt": "2026-09-12T18:37:30Z",
-      "detail": "internal · Draft",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "2",
+      "updateState": "development",
+      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-12T20:21:31Z",
+      "detail": "Production published · build 2 · pending/current update: internal · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -440,7 +796,27 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "HydroCalc 1.0.1",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "HydroCalc",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        }
+      ]
     },
     {
       "provider": "google",
@@ -451,7 +827,11 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T18:37:30Z",
+      "publiclyAvailable": false,
+      "publicBuild": null,
+      "updateState": "rejected",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+      "updatedAt": "2026-09-12T20:21:31Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -463,7 +843,21 @@
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
-      }
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+          "releaseName": "2 (1.0.1)",
+          "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "MAGCalc",
+          "build": 2
+        }
+      ]
     }
   ]
 }
