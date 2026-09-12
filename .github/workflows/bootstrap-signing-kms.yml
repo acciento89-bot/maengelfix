@@ -1,0 +1,90 @@
+name: Bootstrap Android signing KMS bridge
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/bootstrap-signing-kms.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  id-token: write
+
+env:
+  PROJECT_ID: emerald-caster-508318-f2
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+  KMS_LOCATION: global
+  KMS_KEYRING: kamilunavo-signing
+  KMS_KEY: android-upload-key-wrap
+
+jobs:
+  bootstrap:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: ${{ env.PROJECT_ID }}
+
+      - name: Create persistent asymmetric wrapping key
+        shell: bash
+        run: |
+          set -euo pipefail
+          gcloud services enable cloudkms.googleapis.com --project "$PROJECT_ID"
+          if ! gcloud kms keyrings describe "$KMS_KEYRING" --location "$KMS_LOCATION" --project "$PROJECT_ID" >/dev/null 2>&1; then
+            gcloud kms keyrings create "$KMS_KEYRING" --location "$KMS_LOCATION" --project "$PROJECT_ID"
+          fi
+          if ! gcloud kms keys describe "$KMS_KEY" --keyring "$KMS_KEYRING" --location "$KMS_LOCATION" --project "$PROJECT_ID" >/dev/null 2>&1; then
+            gcloud kms keys create "$KMS_KEY" \
+              --keyring "$KMS_KEYRING" \
+              --location "$KMS_LOCATION" \
+              --purpose asymmetric-encryption \
+              --default-algorithm rsa-decrypt-oaep-4096-sha256 \
+              --protection-level software \
+              --project "$PROJECT_ID"
+          fi
+          gcloud kms keys add-iam-policy-binding "$KMS_KEY" \
+            --keyring "$KMS_KEYRING" \
+            --location "$KMS_LOCATION" \
+            --member "serviceAccount:$GOOGLE_SERVICE_ACCOUNT" \
+            --role roles/cloudkms.cryptoKeyDecrypter \
+            --project "$PROJECT_ID" >/dev/null
+
+      - name: Export public wrapping key
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p generated
+          gcloud kms keys versions get-public-key 1 \
+            --key "$KMS_KEY" \
+            --keyring "$KMS_KEYRING" \
+            --location "$KMS_LOCATION" \
+            --project "$PROJECT_ID" \
+            --output-file generated/signing-bridge-public.pem
+          openssl pkey -pubin -in generated/signing-bridge-public.pem -text -noout | grep -q '4096 bit'
+
+      - name: Persist public key only
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'Kamilunavo Automation'
+          git config user.email 'automation@kamilunavo.com'
+          git add generated/signing-bridge-public.pem
+          if git diff --cached --quiet; then
+            echo 'Public key already current.'
+            exit 0
+          fi
+          git commit -m 'chore: publish Android signing wrapping public key'
+          git push
