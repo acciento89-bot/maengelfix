@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-09-12T07:43:37Z",
+  "generatedAt": "2026-09-12T08:19:40Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -14,7 +14,7 @@
       "build": "7",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -37,7 +37,7 @@
       "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -60,7 +60,7 @@
       "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -83,7 +83,7 @@
       "build": "3",
       "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "alpha · Draft",
       "review": {
         "submissionID": null,
@@ -106,7 +106,7 @@
       "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -129,7 +129,7 @@
       "build": "5",
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "internalTest",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "internal · Published",
       "review": {
         "submissionID": null,
@@ -152,7 +152,7 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW",
       "state": "attention",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Ready for review · developer action required",
       "review": {
         "submissionID": null,
@@ -175,7 +175,7 @@
       "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -198,7 +198,7 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -221,7 +221,7 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -244,7 +244,7 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -267,7 +267,7 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -290,7 +290,7 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -309,19 +309,19 @@
       "appName": "AnlagenCheck",
       "externalID": "de.kamilunavo.servicecheck",
       "bundleOrPackageID": "de.kamilunavo.servicecheck",
-      "version": "1.0",
-      "build": "1",
-      "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
-      "detail": "production · In review",
+      "version": null,
+      "build": null,
+      "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "state": "development",
+      "updatedAt": "2026-09-12T08:19:40Z",
+      "detail": "internal · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "track": "internal",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -336,7 +336,7 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -359,7 +359,7 @@
       "build": null,
       "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "alpha · Draft",
       "review": {
         "submissionID": null,
@@ -382,7 +382,7 @@
       "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -405,7 +405,7 @@
       "build": null,
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "internal · Draft",
       "review": {
         "submissionID": null,
@@ -428,7 +428,7 @@
       "build": null,
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "internal · Draft",
       "review": {
         "submissionID": null,
@@ -451,7 +451,7 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T07:43:37Z",
+      "updatedAt": "2026-09-12T08:19:40Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
