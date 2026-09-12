@@ -1,0 +1,195 @@
+name: Sync all canonical Google Play icons
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/sync-all-play-icons.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: sync-all-play-icons
+  cancel-in-progress: false
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v5
+
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+
+      - name: Install icon tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin imagemagick jq
+
+      - name: Sync canonical icons to Google Play
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/play-icons
+          report="$RUNNER_TEMP/play-icon-sync.tsv"
+          : > "$report"
+
+          cat > "$RUNNER_TEMP/targets.tsv" <<'EOF'
+          NavoKids|com.kamilunavo.navokids|https://raw.githubusercontent.com/acciento89-bot/navokids/main/assets/app-icon.png
+          ZweiCheck|de.kamilunavo.zweicheck|https://raw.githubusercontent.com/acciento89-bot/zweicheck/main/store/google-play/icon.svg
+          ArbeitsKlar|de.kamilunavo.arbeitsklar|https://raw.githubusercontent.com/acciento89-bot/arbeitsklar/main/store/google-play/icon-512.png
+          WärmeTakt|de.kamilunavo.waermetakt|https://raw.githubusercontent.com/acciento89-bot/w-rmetakt/main/store/google-play/icon.svg
+          Reklaio|de.kamilunavo.reklaio|https://raw.githubusercontent.com/acciento89-bot/reklaio/main/mobile/assets/icon.png
+          MängelFix|com.kamilunavo.maengelfix|https://raw.githubusercontent.com/acciento89-bot/maengelfix/main/android/store/google-play/icon.svg
+          Kintaroq|com.kamilunavo.kintaroq|https://raw.githubusercontent.com/acciento89-bot/maengelfix/main/generated/navoops/play-icon-fixes/kintaroq-512.png
+          NavoPass|de.kamilunavo.navopass|https://raw.githubusercontent.com/acciento89-bot/navopass/main/android/store/google-play/icon.svg
+          99,9 %|de.kamilunavo.ninenine|https://raw.githubusercontent.com/acciento89-bot/99-9/main/store/google-play/icon-512.png
+          NavoTap|com.kamilunavo.onemoretap|https://raw.githubusercontent.com/acciento89-bot/onemoretap/main/OneMoreTap/Assets.xcassets/AppIcon.appiconset/AppIcon.png
+          KälteCalc|de.kamilunav.kaltecalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/kaltecalc.svg
+          LüftungsCalc|de.kamilunavo.luftungscalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/lueftungscalc.svg
+          HeizkörperCalc|de.kamilunavo.heizkorpercalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/heizkoerpercalc.svg
+          RohrCalc|de.kamilunavo.rohrcalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/rohrcalc.svg
+          AnlagenCheck|de.kamilunavo.servicecheck|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/anlagencheck.svg
+          VolumeCalc|de.kamilunavo.volumecalc|https://raw.githubusercontent.com/acciento89-bot/AnlagenVolumen/main/android/store/google-play/icon.svg
+          KeepMeter|de.kamilunavo.keepmeter|https://raw.githubusercontent.com/acciento89-bot/keepmeter/main/store/google-play/icon.svg
+          Schon erledigt?|com.kamilunavo.schonerledigt|https://raw.githubusercontent.com/acciento89-bot/schonerledigt/main/store/google-play/icon-512.png
+          BrennerCalc|de.kamilunavo.brennercalc|https://raw.githubusercontent.com/acciento89-bot/BrennerCalc/main/store/google-play/icon.svg
+          HydroCalc|de.kamilunavo.hydrocalc|https://raw.githubusercontent.com/acciento89-bot/HydroCalc/main/store/google-play/icon.svg
+          MAGCalc|de.kamilunavo.magcalc|https://raw.githubusercontent.com/acciento89-bot/MAGCalc/main/store/google-play/icon-512.png
+          EOF
+
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
+
+          render_icon() {
+            local name="$1" url="$2" slug="$3"
+            local src="/tmp/play-icons/$slug-source"
+            local out="/tmp/play-icons/$slug.png"
+            curl -fsSL "$url" -o "$src"
+            if grep -aq '<svg' "$src"; then
+              rsvg-convert -w 512 -h 512 "$src" -o "$out"
+            else
+              convert "$src" -resize 512x512\! PNG32:"$out"
+            fi
+            test "$(identify -format '%wx%h' "$out")" = '512x512'
+            test "$(stat -c%s "$out")" -lt 1048576
+            printf '%s' "$out"
+          }
+
+          sync_one() {
+            local name="$1" package="$2" url="$3"
+            local slug icon expected edit langs body status verify fresh actual
+            slug=$(printf '%s' "$package" | tr '.-' '__')
+            echo "=== $name ($package) ==="
+
+            if ! icon=$(render_icon "$name" "$url" "$slug"); then
+              printf '%s\t%s\tSOURCE_FAILED\n' "$name" "$package" >> "$report"
+              return 0
+            fi
+            expected=$(sha256sum "$icon" | cut -d' ' -f1)
+
+            body=$(mktemp)
+            status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' \
+              "$api/applications/$package/edits")
+            if [[ "$status" != 2* ]]; then
+              printf '%s\t%s\tEDIT_%s\t%s\n' "$name" "$package" "$status" "$(tr '\n' ' ' < "$body")" >> "$report"
+              return 0
+            fi
+            edit=$(jq -r '.id' "$body")
+
+            body=$(mktemp)
+            status=$(curl -sS -o "$body" -w '%{http_code}' \
+              -H "Authorization: Bearer $TOKEN" \
+              "$api/applications/$package/edits/$edit/listings")
+            if [[ "$status" != 2* ]]; then
+              printf '%s\t%s\tLISTINGS_%s\t%s\n' "$name" "$package" "$status" "$(tr '\n' ' ' < "$body")" >> "$report"
+              curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+              return 0
+            fi
+            langs=$(jq -r '.listings[]?.language' "$body")
+            if [[ -z "$langs" ]]; then
+              printf '%s\t%s\tNO_LISTINGS\n' "$name" "$package" >> "$report"
+              curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+              return 0
+            fi
+
+            while IFS= read -r lang; do
+              body=$(mktemp)
+              status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+                -H "Authorization: Bearer $TOKEN" -H 'Content-Type: image/png' --data-binary "@$icon" \
+                "$upload/applications/$package/edits/$edit/listings/$lang/icon?uploadType=media")
+              if [[ "$status" != 2* ]]; then
+                printf '%s\t%s\tUPLOAD_%s_%s\t%s\n' "$name" "$package" "$lang" "$status" "$(tr '\n' ' ' < "$body")" >> "$report"
+                curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+                return 0
+              fi
+              actual=$(jq -r '.image.sha256 // empty' "$body")
+              if [[ -n "$actual" && "$actual" != "$expected" ]]; then
+                printf '%s\t%s\tSHA_MISMATCH_%s\n' "$name" "$package" "$lang" >> "$report"
+                curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+                return 0
+              fi
+            done <<< "$langs"
+
+            body=$(mktemp)
+            status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' \
+              "$api/applications/$package/edits/$edit:commit")
+
+            if [[ "$status" != 2* ]]; then
+              echo "$package normal commit HTTP $status: $(cat "$body")"
+              body=$(mktemp)
+              status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+                -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' \
+                "$api/applications/$package/edits/$edit:commit?changesNotSentForReview=true")
+            fi
+
+            if [[ "$status" != 2* ]]; then
+              printf '%s\t%s\tCOMMIT_%s\t%s\n' "$name" "$package" "$status" "$(tr '\n' ' ' < "$body")" >> "$report"
+              curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+              return 0
+            fi
+
+            fresh=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id')
+            verify=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$fresh/listings")
+            langs=$(jq -r '.listings[]?.language' <<< "$verify")
+            while IFS= read -r lang; do
+              actual=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$fresh/listings/$lang/icon" | jq -r '.images[0].sha256 // empty')
+              if [[ "$actual" != "$expected" ]]; then
+                printf '%s\t%s\tVERIFY_MISMATCH_%s\t%s\t%s\n' "$name" "$package" "$lang" "$actual" "$expected" >> "$report"
+                curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$fresh" >/dev/null || true
+                return 0
+              fi
+            done <<< "$langs"
+            curl -fsS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$fresh" >/dev/null
+            printf '%s\t%s\tOK\t%s\n' "$name" "$package" "$expected" >> "$report"
+          }
+
+          while IFS='|' read -r name package url; do
+            sync_one "$name" "$package" "$url"
+          done < "$RUNNER_TEMP/targets.tsv"
+
+          echo '--- Play icon sync report ---'
+          cat "$report"
+          if grep -v $'\tOK\t' "$report" | grep -q .; then
+            echo 'One or more Google Play icon updates did not complete.' >&2
+            exit 1
+          fi
