@@ -3,6 +3,7 @@ name: Android CI
 on:
   push:
     branches:
+      - main
       - 'android/**'
     paths:
       - 'android/**'
@@ -35,6 +36,30 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.0'
+      - name: Verify canonical launcher, splash and Play icon identity
+        shell: bash
+        run: |
+          set -euo pipefail
+          LEGACY='android/app/src/main/res/drawable/ic_launcher.xml'
+          BG='android/app/src/main/res/drawable/maengelfix_launcher_background.xml'
+          FG='android/app/src/main/res/drawable/maengelfix_launcher_foreground.xml'
+          PLAY='android/store/google-play/icon.svg'
+          for token in '#0A2A5E' '#12489B'; do
+            grep -Fq "$token" "$LEGACY"
+            grep -Fq "$token" "$BG"
+            grep -Fq "$token" "$PLAY"
+          done
+          for token in '#FFFFFF' '#CFE1FF' '#7FA7E8' '#B6C5D8' '#FFB21A'; do
+            grep -Fq "$token" "$LEGACY"
+            grep -Fq "$token" "$FG"
+            grep -Fq "$token" "$PLAY"
+          done
+          grep -Fq 'M31,69L43,80L67,51' "$LEGACY"
+          grep -Fq 'M31,69L43,80L67,51' "$FG"
+          grep -Fq 'm31 69 12 11 24-29' "$PLAY"
+          grep -Fq '@drawable/maengelfix_launcher_background' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          grep -Fq '@drawable/maengelfix_launcher_foreground' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          grep -Fq 'android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher' android/app/src/main/res/values-v31/themes.xml
       - name: Unit tests
         run: gradle -p android testDebugUnitTest --stacktrace
       - name: Build debug bundle
@@ -47,8 +72,8 @@ jobs:
           set -euo pipefail
           test -f android/app/build/outputs/bundle/release/app-release.aab
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 5' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.4"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 6' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.5"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
           grep -Fq 'android:roundIcon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
@@ -97,7 +122,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MaengelFix-1.0.4-5-unsigned-release-aab
+          name: MaengelFix-1.0.5-6-unsigned-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
