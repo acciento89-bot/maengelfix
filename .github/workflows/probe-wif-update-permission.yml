@@ -14,6 +14,7 @@ permissions:
 env:
   WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
   GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+  OWNER_ID: '309368001'
 
 jobs:
   configure:
@@ -27,19 +28,27 @@ jobs:
           service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
           token_format: access_token
           access_token_scopes: https://www.googleapis.com/auth/cloud-platform
-      - name: Allow every repository owned by acciento89-bot
+
+      - name: Configure provider for all acciento89-bot repositories
         env:
           TOKEN: ${{ steps.google-auth.outputs.access_token }}
         shell: bash
         run: |
           set -euo pipefail
           url='https://iam.googleapis.com/v1/projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions'
-          condition="assertion.repository_owner == 'acciento89-bot' && assertion.repository_owner_id == '309368001'"
-          payload=$(jq -n --arg condition "$condition" '{attributeCondition:$condition}')
+          condition="assertion.repository_owner == 'acciento89-bot' && assertion.repository_owner_id == '$OWNER_ID'"
+          payload=$(jq -n --arg condition "$condition" '{
+            attributeCondition:$condition,
+            attributeMapping:{
+              "google.subject":"assertion.sub",
+              "attribute.repository_owner_id":"assertion.repository_owner_id",
+              "attribute.repository":"assertion.repository"
+            }
+          }')
           body=$(mktemp)
           status=$(curl -sS -o "$body" -w '%{http_code}' -X PATCH \
             -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-            --data "$payload" "$url?updateMask=attributeCondition")
+            --data "$payload" "$url?updateMask=attributeCondition,attributeMapping")
           echo "PATCH HTTP $status"
           cat "$body" | jq . || cat "$body"
           [[ "$status" = 200 ]]
@@ -47,6 +56,7 @@ jobs:
           operation=$(jq -r '.name // empty' "$body")
           if [[ "$operation" == *'/operations/'* ]]; then
             operation_url="https://iam.googleapis.com/v1/$operation"
+            done_flag=false
             for i in $(seq 1 30); do
               op=$(mktemp)
               curl -fsS -H "Authorization: Bearer $TOKEN" "$operation_url" > "$op"
@@ -55,10 +65,12 @@ jobs:
                   cat "$op" >&2
                   exit 1
                 fi
+                done_flag=true
                 break
               fi
               sleep 2
             done
+            [[ "$done_flag" = true ]]
           fi
 
           verify=$(mktemp)
@@ -66,21 +78,54 @@ jobs:
           actual=$(jq -r '.attributeCondition' "$verify")
           echo "Verified provider condition: $actual"
           [[ "$actual" = "$condition" ]]
-      - name: Inspect service-account Workload Identity binding
+          [[ "$(jq -r '.attributeMapping["attribute.repository_owner_id"] // empty' "$verify")" = 'assertion.repository_owner_id' ]]
+          [[ "$(jq -r '.attributeMapping["attribute.repository"] // empty' "$verify")" = 'assertion.repository' ]]
+
+      - name: Grant Workload Identity User to all acciento89-bot repos
         env:
           TOKEN: ${{ steps.google-auth.outputs.access_token }}
         shell: bash
         run: |
           set -euo pipefail
-          sa='navoops@emerald-caster-508318-f2.iam.gserviceaccount.com'
-          url="https://iam.googleapis.com/v1/projects/-/serviceAccounts/$sa:getIamPolicy"
+          sa="$GOOGLE_SERVICE_ACCOUNT"
+          get_url="https://iam.googleapis.com/v1/projects/-/serviceAccounts/$sa:getIamPolicy"
+          set_url="https://iam.googleapis.com/v1/projects/-/serviceAccounts/$sa:setIamPolicy"
+          member="principalSet://iam.googleapis.com/projects/1058001477767/locations/global/workloadIdentityPools/github/attribute.repository_owner_id/$OWNER_ID"
+
+          current=$(mktemp)
+          status=$(curl -sS -o "$current" -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -d '{"options":{"requestedPolicyVersion":3}}' "$get_url")
+          echo "getIamPolicy HTTP $status"
+          [[ "$status" = 200 ]]
+
+          updated=$(mktemp)
+          jq --arg member "$member" '
+            if any(.bindings[]?; .role == "roles/iam.workloadIdentityUser") then
+              .bindings |= map(
+                if .role == "roles/iam.workloadIdentityUser" then
+                  .members = ((.members + [$member]) | unique)
+                else . end
+              )
+            else
+              .bindings += [{"role":"roles/iam.workloadIdentityUser","members":[$member]}]
+            end
+          ' "$current" > "$updated"
+
+          payload=$(mktemp)
+          jq -n --slurpfile policy "$updated" '{policy:$policy[0]}' > "$payload"
           body=$(mktemp)
           status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
             -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
-            -d '{"options":{"requestedPolicyVersion":3}}' "$url")
-          echo "IAM policy HTTP $status"
-          if [[ "$status" = 200 ]]; then
-            jq '{version,bindings:[.bindings[]? | select(.role=="roles/iam.workloadIdentityUser" or .role=="roles/iam.serviceAccountTokenCreator") | {role,members,condition}]}' "$body"
-          else
-            cat "$body"
+            --data-binary "@$payload" "$set_url")
+          echo "setIamPolicy HTTP $status"
+          if [[ "$status" != 200 ]]; then
+            cat "$body" >&2
+            exit 1
           fi
+
+          verify=$(mktemp)
+          curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -d '{"options":{"requestedPolicyVersion":3}}' "$get_url" > "$verify"
+          jq -e --arg member "$member" 'any(.bindings[]?; .role == "roles/iam.workloadIdentityUser" and (.members // [] | index($member) != null))' "$verify" >/dev/null
+          echo "Verified Workload Identity User member: $member"
