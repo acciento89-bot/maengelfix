@@ -1,4 +1,4 @@
-name: Prepare upload-key reset certificates
+name: Bootstrap central Kamilunavo Android upload key
 
 on:
   workflow_dispatch:
@@ -11,188 +11,191 @@ permissions:
   id-token: write
 
 concurrency:
-  group: pending-upload-key-resets-20260912
+  group: kamilunavo-central-android-upload-key
   cancel-in-progress: false
 
 jobs:
-  prepare:
+  bootstrap:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-java@v5
         with: {distribution: temurin, java-version: '17'}
-      - name: Preserve an existing pending reset package
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: emerald-caster-508318-f2
+      - name: Refuse to regenerate an existing central identity
         id: existing
         shell: bash
         run: |
           set -euo pipefail
-          if [ -s .github/signing/pending-upload-reset-20260912.json ]; then
+          if [ -s .github/signing/kamilunavo-central-upload-key.kms.json ]; then
             echo 'present=true' >> "$GITHUB_OUTPUT"
+            echo 'Central upload identity already exists; regeneration is intentionally blocked.' >> "$GITHUB_STEP_SUMMARY"
           else
             echo 'present=false' >> "$GITHUB_OUTPUT"
           fi
-      - name: Restore saved ArbeitsKlar reset candidate
-        if: steps.existing.outputs.present != 'true'
-        uses: acciento89-bot/maengelfix/.github/actions/restore-android-signing@main
-        with: {app-id: arbeitsklar}
-      - name: Stage ArbeitsKlar candidate privately
+      - name: Generate one central RSA-4096 upload identity and KMS-protected backup
         if: steps.existing.outputs.present != 'true'
         shell: bash
         run: |
           set -euo pipefail
           umask 077
+          root="$RUNNER_TEMP/kamilunavo-central-upload"
+          rm -rf "$root"
+          mkdir -p "$root"
+          password=$(openssl rand -base64 48 | tr -d '\n')
+          echo "::add-mask::$password"
+          export CENTRAL_KEY_PASSWORD="$password"
+          keytool -genkeypair \
+            -keystore "$root/kamilunavo-central-upload.p12" \
+            -storetype PKCS12 \
+            -storepass:env CENTRAL_KEY_PASSWORD \
+            -keypass:env CENTRAL_KEY_PASSWORD \
+            -alias kamilunavo-upload \
+            -keyalg RSA -keysize 4096 -sigalg SHA256withRSA \
+            -validity 9125 \
+            -dname 'CN=Kamilunavo Android Upload,O=Kamilunavo,C=DE' \
+            -noprompt
+          mkdir -p generated/signing-central .github/signing
+          keytool -exportcert -rfc \
+            -keystore "$root/kamilunavo-central-upload.p12" \
+            -storepass:env CENTRAL_KEY_PASSWORD \
+            -alias kamilunavo-upload \
+            -file generated/signing-central/kamilunavo-central-upload-certificate.pem >/dev/null
+          keytool -exportcert \
+            -keystore "$root/kamilunavo-central-upload.p12" \
+            -storepass:env CENTRAL_KEY_PASSWORD \
+            -alias kamilunavo-upload \
+            -file "$root/cert.der" >/dev/null
+          sha1=$(sha1sum "$root/cert.der" | cut -d' ' -f1 | tr '[:lower:]' '[:upper:]')
+          sha256=$(sha256sum "$root/cert.der" | cut -d' ' -f1 | tr '[:lower:]' '[:upper:]')
+          cat > "$root/manifest.json" <<EOF
+          {"schema":1,"id":"kamilunavo-central","keystore":"kamilunavo-central-upload.p12","alias":"kamilunavo-upload","store_password":"$password","key_password":"$password","certificate_sha1":"$sha1","certificate_sha256":"$sha256"}
+          EOF
+          tar -C "$root" -czf "$root/central.tar.gz" manifest.json kamilunavo-central-upload.p12
+          passphrase=$(openssl rand -base64 48 | tr -d '\n')
+          echo "::add-mask::$passphrase"
+          printf '%s' "$passphrase" > "$root/pass.txt"
+          openssl enc -aes-256-cbc -pbkdf2 -iter 600000 \
+            -in "$root/central.tar.gz" -out "$root/central.enc" -pass file:"$root/pass.txt"
+          openssl pkeyutl -encrypt -pubin -inkey generated/signing-bridge-public.pem \
+            -pkeyopt rsa_padding_mode:oaep -pkeyopt rsa_oaep_md:sha256 -pkeyopt rsa_mgf1_md:sha256 \
+            -in "$root/pass.txt" -out "$root/pass.kms"
+          gcloud kms asymmetric-decrypt \
+            --project emerald-caster-508318-f2 \
+            --location global \
+            --keyring kamilunavo-signing \
+            --key android-upload-key-wrap \
+            --version 1 \
+            --ciphertext-file "$root/pass.kms" \
+            --plaintext-file "$root/roundtrip-pass.txt" >/dev/null
+          cmp -s "$root/pass.txt" "$root/roundtrip-pass.txt"
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
+            -in "$root/central.enc" -out "$root/roundtrip.tar.gz" -pass file:"$root/roundtrip-pass.txt"
+          test "$(sha256sum "$root/central.tar.gz" | cut -d' ' -f1)" = "$(sha256sum "$root/roundtrip.tar.gz" | cut -d' ' -f1)"
           python3 - <<'PY'
-          import os, pathlib, shutil, json
-          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'pending-reset-private'
-          root.mkdir(mode=0o700, exist_ok=True)
-          shutil.copyfile(os.environ['ANDROID_UPLOAD_KEYSTORE_PATH'], root / 'arbeitsklar.jks')
-          entry = {'package': 'de.kamilunavo.arbeitsklar', 'keystore': 'arbeitsklar.jks',
-                   'alias': os.environ['ANDROID_UPLOAD_KEY_ALIAS'],
-                   'store_password': os.environ['ANDROID_UPLOAD_KEYSTORE_PASSWORD'],
-                   'key_password': os.environ['ANDROID_UPLOAD_KEY_PASSWORD'],
-                   'expected_sha256': 'BD1387D65A9E457B4A48C14D76444A0390DDC3E3EC31EED09757C04F2AFCD6E8',
-                   'source': 'existing_saved_key'}
-          (root / 'manifest.json').write_text(json.dumps({'apps': {'arbeitsklar': entry}}))
+          import base64, hashlib, json, pathlib
+          root = pathlib.Path(__import__('os').environ['RUNNER_TEMP']) / 'kamilunavo-central-upload'
+          cert_manifest = json.loads((root / 'manifest.json').read_text())
+          cipher = (root / 'central.enc').read_bytes()
+          wrapped = (root / 'pass.kms').read_bytes()
+          envelope = {
+            'schema': 1,
+            'id': 'kamilunavo-central',
+            'status': 'ACTIVE_LOCAL_IDENTITY',
+            'kms_key_version': 'projects/emerald-caster-508318-f2/locations/global/keyRings/kamilunavo-signing/cryptoKeys/android-upload-key-wrap/cryptoKeyVersions/1',
+            'encryption': 'AES-256-CBC-PBKDF2-SHA256-600000; RSA-OAEP-4096-SHA256',
+            'certificate_sha1': cert_manifest['certificate_sha1'],
+            'certificate_sha256': cert_manifest['certificate_sha256'],
+            'ciphertext_sha256': hashlib.sha256(cipher).hexdigest(),
+            'wrapped_passphrase_sha256': hashlib.sha256(wrapped).hexdigest(),
+            'ciphertext_base64': base64.b64encode(cipher).decode(),
+            'wrapped_passphrase_base64': base64.b64encode(wrapped).decode(),
+          }
+          pathlib.Path('.github/signing/kamilunavo-central-upload-key.kms.json').write_text(json.dumps(envelope, indent=2) + '\n')
+          public = {
+            'schema': 1,
+            'id': 'kamilunavo-central',
+            'algorithm': 'RSA-4096/SHA256withRSA',
+            'certificate_sha1': cert_manifest['certificate_sha1'],
+            'certificate_sha256': cert_manifest['certificate_sha256'],
+            'certificate_file': 'kamilunavo-central-upload-certificate.pem',
+            'private_key_storage': 'KMS-wrapped encrypted archive; never committed in plaintext',
+          }
+          pathlib.Path('generated/signing-central/central-upload-key-manifest.json').write_text(json.dumps(public, indent=2) + '\n')
+          apps = [
+            ('NavoKids','com.kamilunavo.navokids','MIGRATION_PLANNED'),
+            ('ZweiCheck','de.kamilunavo.zweicheck','MIGRATION_PLANNED'),
+            ('ArbeitsKlar','de.kamilunavo.arbeitsklar','RESET_REQUIRED_NOW'),
+            ('WaermeTakt','de.kamilunavo.waermetakt','RESET_REQUIRED_NOW'),
+            ('Reklaio','de.kamilunavo.reklaio','MIGRATION_PLANNED'),
+            ('MaengelFix','com.kamilunavo.maengelfix','MIGRATION_PLANNED'),
+            ('Kintaroq','com.kamilunavo.kintaroq','MIGRATION_PLANNED'),
+            ('NavoPass','de.kamilunavo.navopass','MIGRATION_PLANNED'),
+            ('99,9 %','de.kamilunavo.ninenine','MIGRATION_PLANNED'),
+            ('NavoTap','com.kamilunavo.onemoretap','MIGRATION_PLANNED'),
+            ('KaelteCalc','de.kamilunav.kaltecalc','MIGRATION_PLANNED'),
+            ('LueftungsCalc','de.kamilunavo.luftungscalc','MIGRATION_PLANNED'),
+            ('HeizkoerperCalc','de.kamilunavo.heizkorpercalc','MIGRATION_PLANNED'),
+            ('RohrCalc','de.kamilunavo.rohrcalc','RESET_REQUIRED_NOW'),
+            ('AnlagenCheck','de.kamilunavo.servicecheck','MIGRATION_PLANNED'),
+            ('VolumeCalc','de.kamilunavo.volumecalc','MIGRATION_PLANNED'),
+            ('KeepMeter','de.kamilunavo.keepmeter','MIGRATION_PLANNED'),
+            ('Schon erledigt?','com.kamilunavo.schonerledigt','RESET_REQUIRED_NOW'),
+            ('BrennerCalc','de.kamilunavo.brennercalc','MIGRATION_PLANNED'),
+            ('HydroCalc','de.kamilunavo.hydrocalc','MIGRATION_PLANNED'),
+            ('MAGCalc','de.kamilunavo.magcalc','MIGRATION_PLANNED'),
+          ]
+          migration = {'schema': 1, 'target_upload_certificate_sha1': cert_manifest['certificate_sha1'],
+                       'target_upload_certificate_sha256': cert_manifest['certificate_sha256'],
+                       'apps': [{'name': n, 'package': p, 'status': s} for n,p,s in apps]}
+          pathlib.Path('generated/signing-central/android-upload-key-migration.json').write_text(json.dumps(migration, indent=2) + '\n')
+          print('CENTRAL_UPLOAD_SHA1=' + cert_manifest['certificate_sha1'])
+          print('CENTRAL_UPLOAD_SHA256=' + cert_manifest['certificate_sha256'])
           PY
-      - name: Restore saved Schon erledigt reset candidate
-        if: steps.existing.outputs.present != 'true'
-        uses: acciento89-bot/maengelfix/.github/actions/restore-android-signing@main
-        with: {app-id: schonerledigt}
-      - name: Stage Schon erledigt candidate privately
-        if: steps.existing.outputs.present != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          umask 077
-          python3 - <<'PY'
-          import os, pathlib, shutil, json
-          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'pending-reset-private'
-          shutil.copyfile(os.environ['ANDROID_UPLOAD_KEYSTORE_PATH'], root / 'schonerledigt.jks')
-          manifest = json.loads((root / 'manifest.json').read_text())
-          manifest['apps']['schonerledigt'] = {
-              'package': 'com.kamilunavo.schonerledigt', 'keystore': 'schonerledigt.jks',
-              'alias': os.environ['ANDROID_UPLOAD_KEY_ALIAS'],
-              'store_password': os.environ['ANDROID_UPLOAD_KEYSTORE_PASSWORD'],
-              'key_password': os.environ['ANDROID_UPLOAD_KEY_PASSWORD'],
-              'expected_sha256': 'D8A6BB8065FD2B1E50AD5596FE0A4BD59EDDC7A0493E3CF8B45C9D4B2FB20A09',
-              'source': 'existing_saved_key'}
-          (root / 'manifest.json').write_text(json.dumps(manifest))
-          PY
-      - name: Generate missing candidates, export certificates and encrypt recoverable backup
-        if: steps.existing.outputs.present != 'true'
-        shell: bash
-        run: |
-          set -euo pipefail
-          umask 077
-          python3 - <<'PY'
-          import os, pathlib, json, subprocess, secrets, hashlib, base64, tarfile, re, hmac
-          root = pathlib.Path(os.environ['RUNNER_TEMP']) / 'pending-reset-private'
-          manifest = json.loads((root / 'manifest.json').read_text())
-          def run(args, env=None):
-              result = subprocess.run(args, env=env, capture_output=True, check=False)
-              if result.returncode:
-                  raise RuntimeError('Command failed: ' + args[0] + '; private command output withheld')
-              return result.stdout
-          for app, package in [('rohrcalc', 'de.kamilunavo.rohrcalc'), ('waermetakt', 'de.kamilunavo.waermetakt')]:
-              password = secrets.token_urlsafe(48)
-              print('::add-mask::' + password, flush=True)
-              env = os.environ.copy()
-              env['PENDING_KEY_PASSWORD'] = password
-              run(['keytool', '-genkeypair', '-keystore', str(root / (app + '.p12')),
-                   '-storetype', 'PKCS12', '-storepass:env', 'PENDING_KEY_PASSWORD',
-                   '-keypass:env', 'PENDING_KEY_PASSWORD', '-alias', 'upload',
-                   '-keyalg', 'RSA', '-keysize', '4096', '-sigalg', 'SHA256withRSA',
-                   '-validity', '9125', '-dname', 'CN=' + app + ' Upload,O=Kamilunavo,C=DE', '-noprompt'], env)
-              manifest['apps'][app] = {'package': package, 'keystore': app + '.p12',
-                  'alias': 'upload', 'store_password': password, 'key_password': password,
-                  'source': 'new_pending_key'}
-          public = pathlib.Path('generated/upload-key-reset-20260912')
-          public.mkdir(parents=True, exist_ok=True)
-          report = []
-          for app, entry in sorted(manifest['apps'].items()):
-              env = os.environ.copy()
-              env['PENDING_KEY_PASSWORD'] = entry['store_password']
-              der = run(['keytool', '-exportcert', '-keystore', str(root / entry['keystore']),
-                  '-storepass:env', 'PENDING_KEY_PASSWORD', '-alias', entry['alias']], env)
-              sha1, sha256 = hashlib.sha1(der).hexdigest().upper(), hashlib.sha256(der).hexdigest().upper()
-              if entry.get('expected_sha256') and entry['expected_sha256'] != sha256:
-                  raise RuntimeError('Saved candidate certificate mismatch: ' + app)
-              entry['certificate_sha1'], entry['certificate_sha256'] = sha1, sha256
-              pem = run(['keytool', '-exportcert', '-rfc', '-keystore', str(root / entry['keystore']),
-                  '-storepass:env', 'PENDING_KEY_PASSWORD', '-alias', entry['alias']], env)
-              if b'PRIVATE KEY' in pem or not pem.startswith(b'-----BEGIN CERTIFICATE-----'):
-                  raise RuntimeError('Invalid public certificate')
-              (public / (app + '-upload-certificate.pem')).write_bytes(pem)
-              report.append({'app': app, 'package': entry['package'], 'sha1': sha1, 'sha256': sha256,
-                             'source': entry['source'], 'requestStatus': 'PREPARED_NOT_REQUESTED'})
-          (root / 'manifest.json').write_text(json.dumps(manifest))
-          archive = root / 'pending.tar.gz'
-          with tarfile.open(archive, 'w:gz') as tar:
-              tar.add(root / 'manifest.json', arcname='manifest.json')
-              for entry in manifest['apps'].values():
-                  tar.add(root / entry['keystore'], arcname=entry['keystore'])
-          passphrase = secrets.token_urlsafe(48).encode()
-          print('::add-mask::' + passphrase.decode(), flush=True)
-          (root / 'pass.txt').write_bytes(passphrase)
-          public_key = pathlib.Path('generated/signing-bridge-public.pem')
-          if not public_key.exists():
-              raise RuntimeError('Existing KMS wrapping public key is missing')
-          run(['openssl', 'enc', '-aes-256-cbc', '-pbkdf2', '-iter', '600000',
-               '-in', str(archive), '-out', str(root / 'vault.enc'), '-pass', 'file:' + str(root / 'pass.txt')])
-          run(['openssl', 'pkeyutl', '-encrypt', '-pubin', '-inkey', str(public_key),
-               '-pkeyopt', 'rsa_padding_mode:oaep', '-pkeyopt', 'rsa_oaep_md:sha256',
-               '-pkeyopt', 'rsa_mgf1_md:sha256', '-in', str(root / 'pass.txt'), '-out', str(root / 'pass.kms')])
-          run(['gcloud', 'kms', 'asymmetric-decrypt', '--project', 'emerald-caster-508318-f2',
-               '--location', 'global', '--keyring', 'kamilunavo-signing', '--key', 'android-upload-key-wrap',
-               '--version', '1', '--ciphertext-file', str(root / 'pass.kms'), '--plaintext-file', str(root / 'roundtrip-pass.txt')])
-          if not hmac.compare_digest((root / 'roundtrip-pass.txt').read_bytes(), passphrase):
-              raise RuntimeError('KMS round-trip failed')
-          run(['openssl', 'enc', '-d', '-aes-256-cbc', '-pbkdf2', '-iter', '600000',
-               '-in', str(root / 'vault.enc'), '-out', str(root / 'roundtrip.tar.gz'),
-               '-pass', 'file:' + str(root / 'roundtrip-pass.txt')])
-          if not hmac.compare_digest(hashlib.sha256(archive.read_bytes()).digest(),
-                                     hashlib.sha256((root / 'roundtrip.tar.gz').read_bytes()).digest()):
-              raise RuntimeError('Backup round-trip failed')
-          cipher, wrapped = (root / 'vault.enc').read_bytes(), (root / 'pass.kms').read_bytes()
-          envelope = {'schema': 1, 'status': 'PREPARED_NOT_REQUESTED',
-              'kms_key_version': 'projects/emerald-caster-508318-f2/locations/global/keyRings/kamilunavo-signing/cryptoKeys/android-upload-key-wrap/cryptoKeyVersions/1',
-              'encryption': 'AES-256-CBC-PBKDF2-SHA256-600000; RSA-OAEP-4096-SHA256',
-              'ciphertext_sha256': hashlib.sha256(cipher).hexdigest(),
-              'wrapped_passphrase_sha256': hashlib.sha256(wrapped).hexdigest(),
-              'ciphertext_base64': base64.b64encode(cipher).decode(),
-              'wrapped_passphrase_base64': base64.b64encode(wrapped).decode(), 'certificates': report}
-          target = pathlib.Path('.github/signing/pending-upload-reset-20260912.json')
-          target.parent.mkdir(parents=True, exist_ok=True)
-          target.write_text(json.dumps(envelope, indent=2) + '\n')
-          (public / 'reset-certificate-manifest.json').write_text(json.dumps({'status': 'PREPARED_NOT_REQUESTED', 'certificates': report}, indent=2) + '\n')
-          print('RESET_CERTIFICATES ' + json.dumps(report), flush=True)
-          PY
-      - name: Persist encrypted backup and public certificates only
+      - name: Remove obsolete per-app reset candidates and persist central identity
         if: steps.existing.outputs.present != 'true'
         shell: bash
         run: |
           set -euo pipefail
           git config user.name 'Kamilunavo Automation'
           git config user.email 'automation@kamilunavo.com'
-          git add .github/signing/pending-upload-reset-20260912.json generated/upload-key-reset-20260912/*.pem generated/upload-key-reset-20260912/reset-certificate-manifest.json
-          test "$(git diff --cached --name-only | wc -l)" -eq 6
-          if git diff --cached --name-only | grep -E '\.(jks|p12|keystore)$'; then exit 1; fi
-          if git diff --cached --no-color | grep -E 'BEGIN (RSA |EC |ENCRYPTED )?PRIVATE KEY'; then exit 1; fi
-          git commit -m 'security: preserve pending upload reset keys encrypted under existing KMS'
+          git rm -f .github/signing/pending-upload-reset-20260912.json 2>/dev/null || true
+          git rm -rf generated/upload-key-reset-20260912 2>/dev/null || true
+          git add .github/signing/kamilunavo-central-upload-key.kms.json generated/signing-central/
+          if git diff --cached --name-only | grep -E '\.(jks|p12|keystore)$'; then
+            echo '::error::Plaintext keystore must never be committed.'
+            exit 1
+          fi
+          if git diff --cached --no-color | grep -E 'BEGIN (RSA |EC |ENCRYPTED )?PRIVATE KEY'; then
+            echo '::error::Private key material detected in staged diff.'
+            exit 1
+          fi
+          git commit -m 'security: adopt one central Kamilunavo Android upload key'
           git pull --rebase origin main
           git push origin HEAD:main
-          echo 'Four certificates prepared; encrypted backup round-trip verified. No Google reset request sent and no active signing key changed.' >> "$GITHUB_STEP_SUMMARY"
-      - name: Export public reset certificates
+          echo 'One central Kamilunavo Android upload identity created, KMS round-trip verified and old per-app reset candidates retired.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Export central public certificate for Play Console resets
+        if: steps.existing.outputs.present != 'true'
         uses: actions/upload-artifact@v4
         with:
-          name: google-play-upload-reset-certificates-20260912
-          path: generated/upload-key-reset-20260912/
+          name: kamilunavo-central-google-play-upload-certificate
+          path: |
+            generated/signing-central/kamilunavo-central-upload-certificate.pem
+            generated/signing-central/central-upload-key-manifest.json
+            generated/signing-central/android-upload-key-migration.json
           if-no-files-found: error
-          retention-days: 30
-      - name: Destroy temporary private signing material
+          retention-days: 90
+      - name: Destroy temporary plaintext signing material
         if: always()
         shell: bash
-        run: |
-          rm -rf "$RUNNER_TEMP/pending-reset-private" "$RUNNER_TEMP/kamilunavo-signing-vault"
-          rm -f "$RUNNER_TEMP/kamilunavo-upload.jks"
+        run: rm -rf "$RUNNER_TEMP/kamilunavo-central-upload"
