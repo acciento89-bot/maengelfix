@@ -1,0 +1,65 @@
+name: Repair RohrCalc Play icon
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/repair-rohrcalc-play-icon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - name: Upload, commit and verify RohrCalc icon
+        env:
+          TOKEN: ${{ steps.auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          package='de.kamilunavo.rohrcalc'
+          icon='generated/navoops/play-icon-fixes/rohrcalc-512.png'
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
+          expected=$(sha256sum "$icon" | cut -d' ' -f1)
+          edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id')
+          langs=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit/listings" | jq -r '.listings[]?.language')
+          test -n "$langs"
+          while IFS= read -r lang; do
+            response=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: image/png' --data-binary "@$icon" "$upload/applications/$package/edits/$edit/listings/$lang/icon?uploadType=media")
+            actual=$(jq -r '.image.sha256 // empty' <<<"$response")
+            echo "$package/$lang staged=$actual expected=$expected"
+            test "$actual" = "$expected"
+          done <<<"$langs"
+          body=$(mktemp)
+          status=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits/$edit:commit")
+          echo "commit HTTP $status"
+          if [[ "$status" != 2* ]]; then
+            cat "$body" >&2
+            curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+            exit 1
+          fi
+          check=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id')
+          while IFS= read -r lang; do
+            actual=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$check/listings/$lang/icon" | jq -r '.images[0].sha256 // empty')
+            echo "$package/$lang committed=$actual expected=$expected"
+            test "$actual" = "$expected"
+          done <<<"$langs"
+          curl -fsS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$check" >/dev/null
