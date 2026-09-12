@@ -46,12 +46,18 @@ jobs:
           print('Service-account credential decoded successfully.')
           PY
 
-      - name: Render exact launcher artwork for Google Play
+      - name: Install rendering and Google Play dependencies
         shell: bash
         run: |
           set -euo pipefail
           sudo apt-get update -qq
           sudo apt-get install -y -qq librsvg2-bin
+          python3 -m pip install --disable-pip-version-check -q google-auth requests pillow
+
+      - name: Render exact launcher artwork for Google Play
+        shell: bash
+        run: |
+          set -euo pipefail
           out="$RUNNER_TEMP/play-icons"
           mkdir -p "$out"
           for app in kaltecalc lueftungscalc heizkoerpercalc rohrcalc anlagencheck; do
@@ -65,7 +71,10 @@ jobs:
           from PIL import Image
           import os
           root=Path(os.environ['RUNNER_TEMP'])/'play-icons'
-          for p in sorted(root.glob('*.png')):
+          files=sorted(root.glob('*.png'))
+          if len(files) != 6:
+              raise SystemExit(f'Expected 6 Play icons, found {len(files)}')
+          for p in files:
               with Image.open(p) as im:
                   if im.size != (512, 512):
                       raise SystemExit(f'{p.name}: invalid size {im.size}')
@@ -73,9 +82,6 @@ jobs:
                   raise SystemExit(f'{p.name}: exceeds 1 MiB')
               print(f'{p.name}: 512x512, {p.stat().st_size} bytes')
           PY
-
-      - name: Install Google auth and image validation dependencies
-        run: python3 -m pip install --disable-pip-version-check -q google-auth requests pillow
 
       - name: Update live Google Play listing icons
         shell: bash
