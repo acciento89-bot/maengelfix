@@ -1,0 +1,73 @@
+name: Sync MängelFix Google Play icon
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'android/store/google-play/icon.svg'
+      - '.github/workflows/sync-maengelfix-play-icon.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+  PACKAGE_NAME: com.kamilunavo.maengelfix
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - name: Render canonical 512px icon
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick
+          convert -background none android/store/google-play/icon.svg /tmp/maengelfix-play.png
+          identify -format '%wx%h' /tmp/maengelfix-play.png | grep -Fx '512x512'
+          test "$(stat -c%s /tmp/maengelfix-play.png)" -lt 1048576
+      - name: Upload canonical icon to every Google Play listing
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
+          icon='/tmp/maengelfix-play.png'
+          expected=$(sha256sum "$icon" | cut -d' ' -f1)
+          edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits" | jq -r '.id')
+          langs=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$edit/listings" | jq -r '.listings[]?.language')
+          test -n "$langs"
+          while IFS= read -r lang; do
+            response=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: image/png' --data-binary "@$icon" "$upload/applications/$PACKAGE_NAME/edits/$edit/listings/$lang/icon?uploadType=media")
+            actual=$(jq -r '.image.sha256 // empty' <<<"$response")
+            echo "$PACKAGE_NAME/$lang staged=$actual expected=$expected"
+            test "$actual" = "$expected"
+          done <<<"$langs"
+          body=$(mktemp)
+          status=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits/$edit:commit?changesInReviewBehavior=ERROR_IF_IN_REVIEW")
+          echo "commit HTTP $status: $(cat "$body")"
+          if [[ "$status" != 2* ]]; then
+            curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$edit" >/dev/null || true
+            exit 1
+          fi
+          check=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits" | jq -r '.id')
+          fresh_langs=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$check/listings" | jq -r '.listings[]?.language')
+          while IFS= read -r lang; do
+            actual=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$check/listings/$lang/icon" | jq -r '.images[0].sha256 // empty')
+            echo "$PACKAGE_NAME/$lang committed=$actual expected=$expected"
+            test "$actual" = "$expected"
+          done <<<"$fresh_langs"
+          curl -fsS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$check" >/dev/null
