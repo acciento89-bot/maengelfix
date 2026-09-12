@@ -1,0 +1,41 @@
+name: Audit central Android upload key
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/actions/restore-central-android-signing/action.yml'
+      - '.github/signing/kamilunavo-central-upload-key.kms.json'
+      - 'generated/signing-central/**'
+      - '.github/workflows/audit-central-upload-key.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with: {persist-credentials: false}
+      - uses: actions/setup-java@v5
+        with: {distribution: temurin, java-version: '17'}
+      - name: Restore central identity from encrypted backup
+        uses: acciento89-bot/maengelfix/.github/actions/restore-central-android-signing@main
+      - name: Verify exact public identity and private-key usability
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA1" = 'BCF2337D41E617C03BCAE698C09D1523654BD790'
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA256" = '7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6'
+          printf 'central-upload-key-private-key-test' > "$RUNNER_TEMP/sign-test.txt"
+          jarsigner -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -keypass:env ANDROID_UPLOAD_KEY_PASSWORD "$ANDROID_UPLOAD_KEYSTORE_PATH" "$ANDROID_UPLOAD_KEY_ALIAS" >/dev/null 2>&1 && { echo '::error::Unexpected keystore-as-jar behavior'; exit 1; } || true
+          keytool -list -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -alias "$ANDROID_UPLOAD_KEY_ALIAS" >/dev/null
+          echo 'Central Kamilunavo upload identity is recoverable and certificate fingerprints match exactly.' >> "$GITHUB_STEP_SUMMARY"
+      - name: Destroy restored material
+        if: always()
+        shell: bash
+        run: rm -rf "$RUNNER_TEMP/kamilunavo-central-signing" "$RUNNER_TEMP/kamilunavo-central-upload.p12" "$RUNNER_TEMP/sign-test.txt"
