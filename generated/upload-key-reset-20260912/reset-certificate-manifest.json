@@ -1,0 +1,37 @@
+{
+  "status": "PREPARED_NOT_REQUESTED",
+  "certificates": [
+    {
+      "app": "arbeitsklar",
+      "package": "de.kamilunavo.arbeitsklar",
+      "sha1": "82CE4DBDD9B530B68EE2170831D19B5E55710294",
+      "sha256": "BD1387D65A9E457B4A48C14D76444A0390DDC3E3EC31EED09757C04F2AFCD6E8",
+      "source": "existing_saved_key",
+      "requestStatus": "PREPARED_NOT_REQUESTED"
+    },
+    {
+      "app": "rohrcalc",
+      "package": "de.kamilunavo.rohrcalc",
+      "sha1": "2256507F1B277033DFB7788F182E5C33D7E74233",
+      "sha256": "2299A70A400481819BFC62FA1D78F6C6BC50B1A1F256847C4515D0A4D980B5CE",
+      "source": "new_pending_key",
+      "requestStatus": "PREPARED_NOT_REQUESTED"
+    },
+    {
+      "app": "schonerledigt",
+      "package": "com.kamilunavo.schonerledigt",
+      "sha1": "E6FFE87A5023B85B888C7D1E419072A47EC64413",
+      "sha256": "D8A6BB8065FD2B1E50AD5596FE0A4BD59EDDC7A0493E3CF8B45C9D4B2FB20A09",
+      "source": "existing_saved_key",
+      "requestStatus": "PREPARED_NOT_REQUESTED"
+    },
+    {
+      "app": "waermetakt",
+      "package": "de.kamilunavo.waermetakt",
+      "sha1": "B13C385996996D6EE8790C27CF3A087CD4F659A7",
+      "sha256": "FEE0901265EAC612233ED70305EA4F1F703353F3AF4FE4E16466E018422D842E",
+      "source": "new_pending_key",
+      "requestStatus": "PREPARED_NOT_REQUESTED"
+    }
+  ]
+}
