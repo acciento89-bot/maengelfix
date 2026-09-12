@@ -41,14 +41,31 @@ jobs:
             -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
             --data "$payload" "$url?updateMask=attributeCondition")
           echo "PATCH HTTP $status"
-          cat "$body" | jq '{name,attributeCondition,attributeMapping}' || cat "$body"
+          cat "$body" | jq . || cat "$body"
           [[ "$status" = 200 ]]
+
+          operation=$(jq -r '.name // empty' "$body")
+          if [[ "$operation" == *'/operations/'* ]]; then
+            operation_url="https://iam.googleapis.com/v1/$operation"
+            for i in $(seq 1 30); do
+              op=$(mktemp)
+              curl -fsS -H "Authorization: Bearer $TOKEN" "$operation_url" > "$op"
+              if [[ "$(jq -r '.done // false' "$op")" = true ]]; then
+                if jq -e '.error' "$op" >/dev/null; then
+                  cat "$op" >&2
+                  exit 1
+                fi
+                break
+              fi
+              sleep 2
+            done
+          fi
 
           verify=$(mktemp)
           curl -fsS -H "Authorization: Bearer $TOKEN" "$url" > "$verify"
           actual=$(jq -r '.attributeCondition' "$verify")
-          [[ "$actual" = "$condition" ]]
           echo "Verified provider condition: $actual"
+          [[ "$actual" = "$condition" ]]
       - name: Inspect service-account Workload Identity binding
         env:
           TOKEN: ${{ steps.google-auth.outputs.access_token }}
