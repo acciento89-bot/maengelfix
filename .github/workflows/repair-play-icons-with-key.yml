@@ -13,11 +13,20 @@ permissions:
 jobs:
   repair:
     runs-on: ubuntu-latest
-    timeout-minutes: 15
+    timeout-minutes: 20
     env:
       SA_B64: ${{ secrets.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64 }}
     steps:
-      - uses: actions/checkout@v5
+      - name: Checkout release automation
+        uses: actions/checkout@v5
+
+      - name: Checkout canonical SHK Android artwork
+        uses: actions/checkout@v5
+        with:
+          repository: acciento89-bot/SHK
+          ref: main
+          path: _shk
+
       - name: Check credential availability
         shell: bash
         run: |
@@ -36,20 +45,50 @@ jobs:
           assert data.get('client_email')
           print('Service-account credential decoded successfully.')
           PY
-      - name: Install Google auth
-        run: python3 -m pip install --disable-pip-version-check -q google-auth requests
-      - name: Repair Kintaroq and RohrCalc listing icons
+
+      - name: Render exact launcher artwork for Google Play
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin
+          out="$RUNNER_TEMP/play-icons"
+          mkdir -p "$out"
+          for app in kaltecalc lueftungscalc heizkoerpercalc rohrcalc anlagencheck; do
+            src="$GITHUB_WORKSPACE/_shk/android/store/google-play/$app.svg"
+            test -s "$src"
+            rsvg-convert -w 512 -h 512 "$src" -o "$out/$app-512.png"
+          done
+          cp generated/navoops/play-icon-fixes/kintaroq-512.png "$out/kintaroq-512.png"
+          python3 - <<'PY'
+          from pathlib import Path
+          from PIL import Image
+          import os
+          root=Path(os.environ['RUNNER_TEMP'])/'play-icons'
+          for p in sorted(root.glob('*.png')):
+              with Image.open(p) as im:
+                  if im.size != (512, 512):
+                      raise SystemExit(f'{p.name}: invalid size {im.size}')
+              if p.stat().st_size >= 1024*1024:
+                  raise SystemExit(f'{p.name}: exceeds 1 MiB')
+              print(f'{p.name}: 512x512, {p.stat().st_size} bytes')
+          PY
+
+      - name: Install Google auth and image validation dependencies
+        run: python3 -m pip install --disable-pip-version-check -q google-auth requests pillow
+
+      - name: Update live Google Play listing icons
         shell: bash
         run: |
           set -euo pipefail
           python3 - <<'PY'
-          import hashlib, json, os, sys
+          import hashlib, os, sys
           import requests
           from google.oauth2 import service_account
           from google.auth.transport.requests import Request
 
-          root=os.environ['GITHUB_WORKSPACE']
           key=os.path.join(os.environ['RUNNER_TEMP'],'play-sa.json')
+          icon_root=os.path.join(os.environ['RUNNER_TEMP'],'play-icons')
           creds=service_account.Credentials.from_service_account_file(
               key, scopes=['https://www.googleapis.com/auth/androidpublisher'])
           creds.refresh(Request())
@@ -58,41 +97,54 @@ jobs:
           upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
 
           targets=[
-              ('com.kamilunavo.kintaroq', os.path.join(root,'generated/navoops/play-icon-fixes/kintaroq-512.png')),
-              ('de.kamilunavo.rohrcalc', os.path.join(root,'generated/navoops/play-icon-fixes/rohrcalc-512.png')),
+              ('de.kamilunav.kaltecalc', os.path.join(icon_root,'kaltecalc-512.png')),
+              ('de.kamilunavo.luftungscalc', os.path.join(icon_root,'lueftungscalc-512.png')),
+              ('de.kamilunavo.heizkoerpercalc', os.path.join(icon_root,'heizkoerpercalc-512.png')),
+              ('de.kamilunavo.rohrcalc', os.path.join(icon_root,'rohrcalc-512.png')),
+              ('de.kamilunavo.servicecheck', os.path.join(icon_root,'anlagencheck-512.png')),
+              ('com.kamilunavo.kintaroq', os.path.join(icon_root,'kintaroq-512.png')),
           ]
 
           for package, icon in targets:
               expected=hashlib.sha256(open(icon,'rb').read()).hexdigest()
-              r=requests.post(f'{api}/applications/{package}/edits', headers={**headers,'Content-Type':'application/json'}, json={}, timeout=30)
+              r=requests.post(
+                  f'{api}/applications/{package}/edits',
+                  headers={**headers,'Content-Type':'application/json'}, json={}, timeout=30)
               r.raise_for_status()
               edit=r.json()['id']
               try:
-                  r=requests.get(f'{api}/applications/{package}/edits/{edit}/listings', headers=headers, timeout=30)
+                  r=requests.get(
+                      f'{api}/applications/{package}/edits/{edit}/listings',
+                      headers=headers, timeout=30)
                   r.raise_for_status()
-                  langs=[x['language'] for x in r.json().get('listings',[])]
+                  langs=sorted({x['language'] for x in r.json().get('listings',[])})
                   if not langs:
-                      raise RuntimeError(f'{package}: no listings returned')
+                      raise RuntimeError(f'{package}: no store listings returned')
+
                   for lang in langs:
                       with open(icon,'rb') as fh:
                           r=requests.post(
                               f'{upload}/applications/{package}/edits/{edit}/listings/{lang}/icon?uploadType=media',
                               headers={**headers,'Content-Type':'image/png'}, data=fh, timeout=60)
                       r.raise_for_status()
-                      actual=r.json().get('image',{}).get('sha256')
-                      print(f'{package}/{lang}: staged sha256={actual}')
-                      if actual != expected:
-                          raise RuntimeError(f'{package}/{lang}: uploaded icon checksum mismatch')
+                      image=r.json().get('image',{})
+                      actual=image.get('sha256')
+                      if actual and actual != expected:
+                          raise RuntimeError(
+                              f'{package}/{lang}: uploaded icon checksum mismatch {actual} != {expected}')
+                      print(f'{package}/{lang}: icon staged ({expected})')
+
                   r=requests.post(
                       f'{api}/applications/{package}/edits/{edit}:commit',
                       headers={**headers,'Content-Type':'application/json'}, json={}, timeout=30)
                   if not r.ok:
                       print(f'{package}: commit failed HTTP {r.status_code}: {r.text}', file=sys.stderr)
                       r.raise_for_status()
-                  print(f'{package}: committed listing icon edit')
+                  print(f'{package}: Google Play listing icon committed')
               except Exception:
                   try:
-                      requests.delete(f'{api}/applications/{package}/edits/{edit}', headers=headers, timeout=15)
+                      requests.delete(
+                          f'{api}/applications/{package}/edits/{edit}', headers=headers, timeout=15)
                   except Exception:
                       pass
                   raise
