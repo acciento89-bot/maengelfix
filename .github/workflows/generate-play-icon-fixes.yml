@@ -1,0 +1,51 @@
+name: Generate Play icon fixes
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/generate-play-icon-fixes.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  generate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+      - name: Install renderer
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick
+      - name: Render Play-ready PNGs from canonical sources
+        shell: bash
+        run: |
+          set -euo pipefail
+          dir='generated/navoops/play-icon-fixes'
+          convert -background none "$dir/kintaroq.svg" "$dir/kintaroq-512.png"
+          convert -background none "$dir/rohrcalc.svg" "$dir/rohrcalc-512.png"
+          for f in "$dir"/*-512.png; do
+            dims=$(identify -format '%wx%h' "$f")
+            bytes=$(stat -c%s "$f")
+            echo "$f: $dims, $bytes bytes, sha256=$(sha256sum "$f" | cut -d' ' -f1)"
+            test "$dims" = '512x512'
+            test "$bytes" -lt 1048576
+          done
+      - name: Commit generated PNGs
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'kamilunavo-ops-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add generated/navoops/play-icon-fixes/kintaroq-512.png generated/navoops/play-icon-fixes/rohrcalc-512.png
+          if git diff --cached --quiet; then
+            echo 'Generated icon assets unchanged.'
+            exit 0
+          fi
+          git commit -m 'chore: generate Play-ready icon fixes'
+          git push origin HEAD:main
