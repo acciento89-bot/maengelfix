@@ -1,0 +1,107 @@
+name: Restore Kamilunavo Android signing
+
+description: Restore one Android upload keystore from the KMS-protected Kamilunavo signing vault.
+
+inputs:
+  app-id:
+    description: Signing-vault application id, for example magcalc or zweicheck.
+    required: true
+
+runs:
+  using: composite
+  steps:
+    - id: google-auth
+      uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+        service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+
+    - uses: google-github-actions/setup-gcloud@v3
+      with:
+        project_id: emerald-caster-508318-f2
+
+    - name: Restore selected upload key
+      shell: bash
+      env:
+        APP_ID: ${{ inputs.app-id }}
+      run: |
+        set -euo pipefail
+        umask 077
+
+        root="$RUNNER_TEMP/kamilunavo-signing-vault"
+        rm -rf "$root"
+        mkdir -p "$root/extracted"
+
+        base='https://raw.githubusercontent.com/acciento89-bot/maengelfix/main/generated/signing-vault'
+        : > "$root/vault.b64"
+        for part in 00 01 02 03 04 05 06 07; do
+          curl --fail --silent --show-error --location "$base/android-signing-bundle.enc.part$part" >> "$root/vault.b64"
+        done
+        base64 --decode "$root/vault.b64" > "$root/vault.enc"
+
+        actual_vault=$(sha256sum "$root/vault.enc" | cut -d' ' -f1)
+        expected_vault='5d8d06ea9c7a654b9037701f9b63ff20f25f017c140fbea4f28c439898bef3e8'
+        test "$actual_vault" = "$expected_vault"
+
+        curl --fail --silent --show-error --location \
+          "$base/android-signing-bundle.pass.kms.b64" > "$root/pass.kms.b64"
+        base64 --decode "$root/pass.kms.b64" > "$root/pass.kms"
+        actual_wrapped=$(sha256sum "$root/pass.kms" | cut -d' ' -f1)
+        expected_wrapped='6d6c0ae4b5c86f59195c20b9d84d413dbaa2efa19d7e57c26aec22fc18a55d49'
+        test "$actual_wrapped" = "$expected_wrapped"
+
+        gcloud kms asymmetric-decrypt \
+          --project emerald-caster-508318-f2 \
+          --location global \
+          --keyring kamilunavo-signing \
+          --key android-upload-key-wrap \
+          --version 1 \
+          --ciphertext-file "$root/pass.kms" \
+          --plaintext-file "$root/pass.txt" >/dev/null
+
+        openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
+          -in "$root/vault.enc" \
+          -out "$root/vault.tar.gz" \
+          -pass file:"$root/pass.txt"
+        tar -xzf "$root/vault.tar.gz" -C "$root/extracted"
+
+        manifest="$root/extracted/manifest.json"
+        test -s "$manifest"
+        jq -e --arg app "$APP_ID" '.apps[$app] != null' "$manifest" >/dev/null
+
+        key_rel=$(jq -r --arg app "$APP_ID" '.apps[$app].keystore' "$manifest")
+        store_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].store_password' "$manifest")
+        key_alias=$(jq -r --arg app "$APP_ID" '.apps[$app].key_alias' "$manifest")
+        key_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].key_password' "$manifest")
+
+        test -n "$key_rel"
+        test -n "$store_pass"
+        test -n "$key_alias"
+        test -n "$key_pass"
+        src="$root/extracted/$key_rel"
+        test -s "$src"
+
+        echo "::add-mask::$store_pass"
+        echo "::add-mask::$key_alias"
+        echo "::add-mask::$key_pass"
+
+        selected="$RUNNER_TEMP/kamilunavo-upload.jks"
+        cp "$src" "$selected"
+        chmod 600 "$selected"
+
+        if command -v keytool >/dev/null 2>&1; then
+          keytool -list -keystore "$selected" -storepass "$store_pass" -alias "$key_alias" >/dev/null
+        fi
+
+        {
+          echo "ANDROID_UPLOAD_KEYSTORE_PATH=$selected"
+          echo "ANDROID_UPLOAD_KEYSTORE_PASSWORD=$store_pass"
+          echo "ANDROID_UPLOAD_KEY_ALIAS=$key_alias"
+          echo "ANDROID_UPLOAD_KEY_PASSWORD=$key_pass"
+          echo "KAMILUNAVO_SIGNING_WORKDIR=$root"
+        } >> "$GITHUB_ENV"
+
+        rm -f "$root/pass.txt" "$root/vault.tar.gz" "$root/vault.enc" "$root/vault.b64" "$root/pass.kms" "$root/pass.kms.b64"
+        echo "Android signing identity restored for $APP_ID."
