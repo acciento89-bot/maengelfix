@@ -1,0 +1,192 @@
+name: NavoOps Google Play Icon Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/navoops-google-icon-audit.yml'
+
+permissions:
+  contents: write
+  id-token: write
+
+concurrency:
+  group: navoops-google-icon-audit
+  cancel-in-progress: false
+
+env:
+  AUDIT_PATH: generated/navoops/google-icon-audit.json
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Checkout bridge repository
+        uses: actions/checkout@v5
+
+      - name: Authenticate to Google Play with GitHub OIDC
+        id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+
+      - name: Read current Google Play listing icons
+        env:
+          GOOGLE_ACCESS_TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p "$(dirname "$AUDIT_PATH")"
+          NOW=$(date -u '+%Y-%m-%dT%H:%M:%SZ')
+          AUDIT_PATH="$AUDIT_PATH" GENERATED_AT="$NOW" GOOGLE_ACCESS_TOKEN="$GOOGLE_ACCESS_TOKEN" node <<'NODE'
+          const fs = require('fs');
+
+          const token = process.env.GOOGLE_ACCESS_TOKEN;
+          const auditPath = process.env.AUDIT_PATH;
+          const generatedAt = process.env.GENERATED_AT;
+          const packages = [
+            ['NavoKids', 'com.kamilunavo.navokids'],
+            ['ZweiCheck', 'de.kamilunavo.zweicheck'],
+            ['ArbeitsKlar', 'de.kamilunavo.arbeitsklar'],
+            ['WärmeTakt', 'de.kamilunavo.waermetakt'],
+            ['Reklaio', 'de.kamilunavo.reklaio'],
+            ['MängelFix', 'com.kamilunavo.maengelfix'],
+            ['Kintaroq', 'com.kamilunavo.kintaroq'],
+            ['NavoPass', 'de.kamilunavo.navopass'],
+            ['99,9 %', 'de.kamilunavo.ninenine'],
+            ['NavoTap', 'com.kamilunavo.onemoretap'],
+            ['KälteCalc', 'de.kamilunav.kaltecalc'],
+            ['LüftungsCalc', 'de.kamilunavo.luftungscalc'],
+            ['HeizkörperCalc', 'de.kamilunavo.heizkorpercalc'],
+            ['RohrCalc', 'de.kamilunavo.rohrcalc'],
+            ['AnlagenCheck', 'de.kamilunavo.servicecheck'],
+            ['VolumeCalc', 'de.kamilunavo.volumecalc'],
+            ['KeepMeter', 'de.kamilunavo.keepmeter'],
+            ['Schon erledigt?', 'com.kamilunavo.schonerledigt'],
+            ['BrennerCalc', 'de.kamilunavo.brennercalc'],
+            ['HydroCalc', 'de.kamilunavo.hydrocalc'],
+            ['MAGCalc', 'de.kamilunavo.magcalc']
+          ];
+
+          async function api(url, init = {}) {
+            return fetch(url, {
+              ...init,
+              headers: {
+                authorization: `Bearer ${token}`,
+                accept: 'application/json',
+                ...(init.body ? {'content-type': 'application/json'} : {}),
+                ...(init.headers || {})
+              }
+            });
+          }
+
+          function apiUrl(path) {
+            return `https://androidpublisher.googleapis.com/androidpublisher/v3/${path}`;
+          }
+
+          function selectPrimary(icons) {
+            const order = ['de-DE', 'de', 'en-US', 'en-GB'];
+            for (const language of order) {
+              const match = icons.find(item => item.language === language);
+              if (match) return match;
+            }
+            return icons[0] || null;
+          }
+
+          async function auditApp(appName, packageName) {
+            let editId = null;
+            const result = {appName, packageName, accessible: false, listings: [], icons: [], primaryIcon: null, error: null};
+            try {
+              const insert = await api(apiUrl(`applications/${packageName}/edits`), {method: 'POST', body: '{}'});
+              if (!insert.ok) {
+                result.error = `edit insert failed: ${insert.status} ${await insert.text()}`.slice(0, 600);
+                return result;
+              }
+              const edit = await insert.json();
+              editId = edit.id;
+              result.accessible = true;
+
+              const listingsResponse = await api(apiUrl(`applications/${packageName}/edits/${editId}/listings`));
+              if (!listingsResponse.ok) {
+                result.error = `listings failed: ${listingsResponse.status} ${await listingsResponse.text()}`.slice(0, 600);
+                return result;
+              }
+              const listingPayload = await listingsResponse.json().catch(() => ({}));
+              const listings = listingPayload.listings || [];
+              result.listings = listings.map(item => item.language).filter(Boolean);
+
+              for (const listing of listings) {
+                const language = String(listing.language || '');
+                if (!language) continue;
+                const imageResponse = await api(apiUrl(`applications/${packageName}/edits/${editId}/listings/${encodeURIComponent(language)}/icon`));
+                if (!imageResponse.ok) continue;
+                const imagePayload = await imageResponse.json().catch(() => ({}));
+                for (const image of imagePayload.images || []) {
+                  result.icons.push({
+                    language,
+                    id: image.id || null,
+                    sha1: image.sha1 || null,
+                    sha256: image.sha256 || null,
+                    url: image.url || null
+                  });
+                }
+              }
+              result.primaryIcon = selectPrimary(result.icons);
+              if (!result.icons.length && !result.error) result.error = 'No listing icon returned by Android Publisher API.';
+              return result;
+            } catch (error) {
+              result.error = String(error?.stack || error?.message || error).slice(0, 600);
+              return result;
+            } finally {
+              if (editId) {
+                const cleanup = await api(apiUrl(`applications/${packageName}/edits/${editId}`), {method: 'DELETE'}).catch(() => null);
+                if (cleanup && !cleanup.ok) {
+                  console.log(`${packageName}: temporary edit cleanup returned ${cleanup.status}`);
+                }
+              }
+            }
+          }
+
+          (async () => {
+            if (!token) throw new Error('Missing Google access token');
+            const apps = [];
+            for (const [appName, packageName] of packages) {
+              const result = await auditApp(appName, packageName);
+              apps.push(result);
+              console.log(`${packageName}: ${result.icons.length} icon(s), ${result.error || 'ok'}`);
+            }
+            const output = {
+              schemaVersion: 1,
+              generatedAt,
+              source: 'Google Play Android Publisher edits.images.list',
+              note: 'Read-only audit. Temporary edits are deleted without commit.',
+              apps
+            };
+            fs.writeFileSync(auditPath, JSON.stringify(output, null, 2) + '\n');
+          })().catch(error => {
+            console.error(error.stack || error.message || error);
+            process.exit(1);
+          });
+          NODE
+          jq empty "$AUDIT_PATH"
+
+      - name: Commit icon audit snapshot
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name 'kamilunavo-ops-bot'
+          git config user.email 'actions@users.noreply.github.com'
+          git add "$AUDIT_PATH"
+          if git diff --cached --quiet; then
+            echo 'Google icon audit unchanged.'
+            exit 0
+          fi
+          git commit -m 'chore: refresh Google Play icon audit'
+          git push origin HEAD:main
