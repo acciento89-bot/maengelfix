@@ -1,0 +1,161 @@
+name: Review verified icon-fix releases
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/review-icon-fix-releases.yml'
+      - '.github/play-review-20260912.json'
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: play-icon-fix-review-20260912
+  cancel-in-progress: false
+
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - uses: actions/checkout@v5
+        with: {persist-credentials: false}
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - name: Read actual review states and apply verified submission plan
+        env:
+          PLAY_ACCESS_TOKEN: ${{ steps.auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          python3 - <<'PY'
+          import json, os, pathlib, urllib.request, urllib.error, urllib.parse, datetime, time
+          API = 'https://androidpublisher.googleapis.com/androidpublisher/v3'
+          TARGETS = [
+              ('NavoPass', 'de.kamilunavo.navopass', 9),
+              ('AnlagenCheck', 'de.kamilunavo.servicecheck', 2),
+              ('Kintaroq', 'com.kamilunavo.kintaroq', 3),
+              ('KaelteCalc', 'de.kamilunav.kaltecalc', 2),
+              ('LueftungsCalc', 'de.kamilunavo.luftungscalc', 2),
+              ('HeizkoerperCalc', 'de.kamilunavo.heizkorpercalc', 2),
+              ('RohrCalc', 'de.kamilunavo.rohrcalc', 2),
+              ('ArbeitsKlar', 'de.kamilunavo.arbeitsklar', 6),
+              ('WaermeTakt', 'de.kamilunavo.waermetakt', 4),
+              ('Schon erledigt?', 'com.kamilunavo.schonerledigt', 6),
+          ]
+          ALLOWED = {p: v for _, p, v in TARGETS[:6]}
+          plan_path = pathlib.Path('.github/play-review-20260912.json')
+          plan = json.loads(plan_path.read_text()) if plan_path.exists() else {'schema': 1, 'releases': []}
+          if plan.get('schema') != 1 or not isinstance(plan.get('releases'), list):
+              raise SystemExit('Invalid review plan schema')
+          selected = {}
+          for item in plan['releases']:
+              package = item['package']
+              if package not in ALLOWED or item['versionCode'] != ALLOWED[package] or package in selected:
+                  raise SystemExit('Plan contains an unauthorized or duplicate release')
+              if not isinstance(item.get('sha256'), str) or len(item['sha256']) != 64:
+                  raise SystemExit('Plan requires the exact previously read bundle SHA-256')
+              if item.get('track') != 'production':
+                  raise SystemExit('Only the explicitly authorized production review track is supported')
+              selected[package] = item
+          def request(path, method='GET', body=None):
+              payload = None if body is None else json.dumps(body).encode()
+              req = urllib.request.Request(API + path, data=payload, method=method, headers={
+                  'Authorization': 'Bearer ' + os.environ['PLAY_ACCESS_TOKEN'], 'Content-Type': 'application/json'})
+              try:
+                  with urllib.request.urlopen(req, timeout=60) as res:
+                      content = res.read()
+                      return json.loads(content) if content else {}
+              except urllib.error.HTTPError as exc:
+                  text = exc.read().decode('utf-8', 'replace')
+                  try: detail = json.loads(text)
+                  except ValueError: detail = {'error': {'message': text[:1000]}}
+                  raise RuntimeError(json.dumps({'http': exc.code, 'response': detail})) from None
+          rows = []
+          for name, package, code in TARGETS:
+              row = {'name': name, 'package': package, 'targetVersionCode': code, 'operation': 'audit_only'}
+              edit = None
+              base = '/applications/' + package
+              try:
+                  row['lifecycleBefore'] = request(base + '/tracks/production/releases').get('releases', [])
+                  edit = request(base + '/edits', 'POST', {})['id']
+                  ep = base + '/edits/' + edit
+                  row['bundles'] = request(ep + '/bundles').get('bundles', [])
+                  row['tracks'] = request(ep + '/tracks').get('tracks', [])
+                  listings = request(ep + '/listings').get('listings', [])
+                  row['listingLanguages'] = [x['language'] for x in listings]
+                  row['icons'] = {}
+                  for listing in listings:
+                      lang = listing['language']
+                      images = request(ep + '/listings/' + urllib.parse.quote(lang, safe='') + '/icon').get('images', [])
+                      row['icons'][lang] = [{'sha256': x.get('sha256'), 'sha1': x.get('sha1'), 'url': x.get('url')} for x in images]
+                  if package in selected:
+                      item = selected[package]
+                      matching = [b for b in row['bundles'] if b['versionCode'] == code and b.get('sha256', '').lower() == item['sha256'].lower()]
+                      if len(matching) != 1:
+                          raise RuntimeError('Target bundle does not match the explicitly approved SHA-256')
+                      if any(b['versionCode'] > code for b in row['bundles']):
+                          raise RuntimeError('Newer uploaded bundle found; refusing to downgrade or overwrite concurrent work')
+                      done = {'RELEASE_LIFECYCLE_STATE_IN_REVIEW', 'RELEASE_LIFECYCLE_STATE_APPROVED_NOT_PUBLISHED', 'RELEASE_LIFECYCLE_STATE_PUBLISHED'}
+                      exact = [r for r in row['lifecycleBefore'] if any(a.get('versionCode') == code for a in r.get('activeArtifacts', []))]
+                      if any(r.get('releaseLifecycleState') in done for r in exact):
+                          row['operation'] = 'already_submitted_or_published'
+                      elif any(r.get('releaseLifecycleState') == 'RELEASE_LIFECYCLE_STATE_IN_REVIEW' for r in row['lifecycleBefore']):
+                          row['operation'] = 'blocked_existing_review_preserved'
+                      else:
+                          production = next((t for t in row['tracks'] if t['track'] == 'production'), {'releases': []})
+                          if any(r.get('status') in ('inProgress', 'halted') for r in production.get('releases', [])):
+                              raise RuntimeError('Existing staged or halted rollout requires individual handling')
+                          if not listings or any(not listing.get('title') or not listing.get('fullDescription') for listing in listings):
+                              raise RuntimeError('Required listing text is missing')
+                          if any(not row['icons'][lang] for lang in row['listingLanguages']):
+                              raise RuntimeError('A localized store icon is missing')
+                          release = {'name': item['releaseName'], 'versionCodes': [str(code)], 'status': 'completed', 'releaseNotes': item['releaseNotes']}
+                          request(ep + '/tracks/production', 'PUT', {'track': 'production', 'releases': [release]})
+                          request(ep + ':validate', 'POST', {})
+                          try:
+                              request(ep + ':commit?changesNotSentForReview=false&changesInReviewBehavior=ERROR_IF_IN_REVIEW', 'POST', {})
+                              edit = None
+                              row['operation'] = 'submission_committed'
+                          except RuntimeError as exc:
+                              row['submissionError'] = str(exc)
+                              if 'changesNotSentForReview' in str(exc) and 'CHANGES_ALREADY_IN_REVIEW' not in str(exc):
+                                  request(ep + ':commit?changesNotSentForReview=true&changesInReviewBehavior=ERROR_IF_IN_REVIEW', 'POST', {})
+                                  edit = None
+                                  row['operation'] = 'prepared_but_console_review_click_required'
+                              else:
+                                  raise
+                  row['lifecycleAfter'] = request(base + '/tracks/production/releases').get('releases', [])
+              except Exception as exc:
+                  row['error'] = str(exc)
+              finally:
+                  if edit is not None:
+                      try: request(base + '/edits/' + edit, 'DELETE')
+                      except Exception as exc: row['cleanupError'] = str(exc)
+              rows.append(row)
+              print('PLAY_RESULT ' + json.dumps(row, ensure_ascii=True), flush=True)
+          report = {'checkedAt': datetime.datetime.now(datetime.timezone.utc).isoformat(), 'releases': rows}
+          pathlib.Path('play-review-report.json').write_text(json.dumps(report, indent=2))
+          with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as out:
+              out.write('| App | Target version | Result |\n|---|---:|---|\n')
+              for row in rows:
+                  out.write('| ' + row['name'] + ' | ' + str(row['targetVersionCode']) + ' | ' + ('error' if 'error' in row else row['operation']) + ' |\n')
+          if any('error' in r for r in rows):
+              raise SystemExit('Some apps are blocked; inspect PLAY_RESULT records. Other apps were processed independently.')
+          PY
+      - name: Preserve non-secret review receipt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: play-review-report-${{ github.run_id }}
+          path: play-review-report.json
+          if-no-files-found: warn
+          retention-days: 7
