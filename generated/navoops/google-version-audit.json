@@ -1,0 +1,216 @@
+[
+  {
+    "name": "NavoKids",
+    "package": "com.kamilunavo.navokids",
+    "versionCodes": [
+      4,
+      5,
+      6,
+      7
+    ],
+    "maxVersionCode": 7,
+    "error": null
+  },
+  {
+    "name": "ZweiCheck",
+    "package": "de.kamilunavo.zweicheck",
+    "versionCodes": [
+      1,
+      2,
+      3
+    ],
+    "maxVersionCode": 3,
+    "error": null
+  },
+  {
+    "name": "ArbeitsKlar",
+    "package": "de.kamilunavo.arbeitsklar",
+    "versionCodes": [
+      4
+    ],
+    "maxVersionCode": 4,
+    "error": null
+  },
+  {
+    "name": "WärmeTakt",
+    "package": "de.kamilunavo.waermetakt",
+    "versionCodes": [
+      3
+    ],
+    "maxVersionCode": 3,
+    "error": null
+  },
+  {
+    "name": "Reklaio",
+    "package": "de.kamilunavo.reklaio",
+    "versionCodes": [
+      3,
+      5,
+      8
+    ],
+    "maxVersionCode": 8,
+    "error": null
+  },
+  {
+    "name": "MängelFix",
+    "package": "com.kamilunavo.maengelfix",
+    "versionCodes": [
+      1,
+      2,
+      3,
+      5
+    ],
+    "maxVersionCode": 5,
+    "error": null
+  },
+  {
+    "name": "Kintaroq",
+    "package": "com.kamilunavo.kintaroq",
+    "versionCodes": [
+      1,
+      2
+    ],
+    "maxVersionCode": 2,
+    "error": null
+  },
+  {
+    "name": "NavoPass",
+    "package": "de.kamilunavo.navopass",
+    "versionCodes": [
+      7,
+      8
+    ],
+    "maxVersionCode": 8,
+    "error": null
+  },
+  {
+    "name": "99,9 %",
+    "package": "de.kamilunavo.ninenine",
+    "versionCodes": [
+      1,
+      2,
+      4
+    ],
+    "maxVersionCode": 4,
+    "error": null
+  },
+  {
+    "name": "NavoTap",
+    "package": "com.kamilunavo.onemoretap",
+    "versionCodes": [
+      2,
+      3,
+      4,
+      5,
+      6
+    ],
+    "maxVersionCode": 6,
+    "error": null
+  },
+  {
+    "name": "KälteCalc",
+    "package": "de.kamilunav.kaltecalc",
+    "versionCodes": [
+      1
+    ],
+    "maxVersionCode": 1,
+    "error": null
+  },
+  {
+    "name": "LüftungsCalc",
+    "package": "de.kamilunavo.luftungscalc",
+    "versionCodes": [
+      1
+    ],
+    "maxVersionCode": 1,
+    "error": null
+  },
+  {
+    "name": "HeizkörperCalc",
+    "package": "de.kamilunavo.heizkorpercalc",
+    "versionCodes": [
+      1
+    ],
+    "maxVersionCode": 1,
+    "error": null
+  },
+  {
+    "name": "RohrCalc",
+    "package": "de.kamilunavo.rohrcalc",
+    "versionCodes": [
+      1
+    ],
+    "maxVersionCode": 1,
+    "error": null
+  },
+  {
+    "name": "AnlagenCheck",
+    "package": "de.kamilunavo.servicecheck",
+    "versionCodes": [
+      1
+    ],
+    "maxVersionCode": 1,
+    "error": null
+  },
+  {
+    "name": "VolumeCalc",
+    "package": "de.kamilunavo.volumecalc",
+    "versionCodes": [
+      2,
+      3
+    ],
+    "maxVersionCode": 3,
+    "error": null
+  },
+  {
+    "name": "KeepMeter",
+    "package": "de.kamilunavo.keepmeter",
+    "versionCodes": [
+      1,
+      2,
+      4
+    ],
+    "maxVersionCode": 4,
+    "error": null
+  },
+  {
+    "name": "Schon erledigt?",
+    "package": "com.kamilunavo.schonerledigt",
+    "versionCodes": [
+      4
+    ],
+    "maxVersionCode": 4,
+    "error": null
+  },
+  {
+    "name": "BrennerCalc",
+    "package": "de.kamilunavo.brennercalc",
+    "versionCodes": [
+      1,
+      2,
+      3
+    ],
+    "maxVersionCode": 3,
+    "error": null
+  },
+  {
+    "name": "HydroCalc",
+    "package": "de.kamilunavo.hydrocalc",
+    "versionCodes": [
+      1,
+      2
+    ],
+    "maxVersionCode": 2,
+    "error": null
+  },
+  {
+    "name": "MAGCalc",
+    "package": "de.kamilunavo.magcalc",
+    "versionCodes": [
+      1,
+      2
+    ],
+    "maxVersionCode": 2,
+    "error": null
+  }
+]
