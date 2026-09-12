@@ -1,0 +1,71 @@
+{
+  "schema": 1,
+  "releases": [
+    {
+      "package": "de.kamilunavo.navopass",
+      "versionCode": 9,
+      "sha256": "98fbad7e5277f1f37168b22a9974d4a1d517572ee68f1ca2e4fe97e21d3ea4fe",
+      "track": "production",
+      "releaseName": "NavoPass 1.0.4 (9)",
+      "releaseNotes": [
+        {"language": "en-US", "text": "The app icon and launch screen now consistently match the store icon."},
+        {"language": "de-DE", "text": "App-Symbol und Startbildschirm stimmen jetzt durchgängig mit dem Store-Symbol überein."}
+      ]
+    },
+    {
+      "package": "de.kamilunavo.servicecheck",
+      "versionCode": 2,
+      "sha256": "d1a526c435c734c2dd521f633d054e4ebbbeebfa3005c9f6873ffed3b7de6dd9",
+      "track": "production",
+      "releaseName": "AnlagenCheck 1.0.1 (2)",
+      "releaseNotes": [
+        {"language": "de-DE", "text": "App-Symbol und Startbildschirm stimmen jetzt durchgängig mit dem Store-Symbol überein."},
+        {"language": "en-US", "text": "The app icon and launch screen now consistently match the store icon."}
+      ]
+    },
+    {
+      "package": "com.kamilunavo.kintaroq",
+      "versionCode": 3,
+      "sha256": "f19543bb27bb0aefefa773592d80c3023e012caa3aa0071d4e0f8c2397082e2c",
+      "track": "production",
+      "releaseName": "Kintaroq icon consistency update (3)",
+      "releaseNotes": [
+        {"language": "de-DE", "text": "App-Symbol und Startbildschirm stimmen jetzt durchgängig mit dem Store-Symbol überein."},
+        {"language": "en-US", "text": "The app icon and launch screen now consistently match the store icon."}
+      ]
+    },
+    {
+      "package": "de.kamilunav.kaltecalc",
+      "versionCode": 2,
+      "sha256": "a4240f81fd9eaa8b2b132d978d33dcf889e3d236b4f5988577f004e406744911",
+      "track": "production",
+      "releaseName": "KälteCalc 1.0.1 (2)",
+      "releaseNotes": [
+        {"language": "de-DE", "text": "Android-Version mit einheitlichem App-Symbol, Startbildschirm und Store-Auftritt."},
+        {"language": "en-US", "text": "Android release with a consistent app icon, launch screen and store identity."}
+      ]
+    },
+    {
+      "package": "de.kamilunavo.luftungscalc",
+      "versionCode": 2,
+      "sha256": "a04d7281a7f19f27de127d2d2d845badd0d47036ff8f35267d3f207377c015db",
+      "track": "production",
+      "releaseName": "LüftungsCalc 1.0.1 (2)",
+      "releaseNotes": [
+        {"language": "de-DE", "text": "Android-Version mit einheitlichem App-Symbol, Startbildschirm und Store-Auftritt."},
+        {"language": "en-US", "text": "Android release with a consistent app icon, launch screen and store identity."}
+      ]
+    },
+    {
+      "package": "de.kamilunavo.heizkorpercalc",
+      "versionCode": 2,
+      "sha256": "8d8fb385ccfcdbcc4fdc011e39b6175b87547dae00745101dcf965a82687a4e0",
+      "track": "production",
+      "releaseName": "HeizkörperCalc 1.0.1 (2)",
+      "releaseNotes": [
+        {"language": "de-DE", "text": "Android-Version mit einheitlichem App-Symbol, Startbildschirm und Store-Auftritt."},
+        {"language": "en-US", "text": "Android release with a consistent app icon, launch screen and store identity."}
+      ]
+    }
+  ]
+}
