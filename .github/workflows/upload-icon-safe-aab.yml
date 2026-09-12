@@ -1,4 +1,5 @@
 name: Upload icon-safe AAB to Google Play
+# Retry after KMS signing action exports the Gradle-compatible store password alias.
 
 on:
   workflow_dispatch:
