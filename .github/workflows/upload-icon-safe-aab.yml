@@ -74,16 +74,28 @@ jobs:
           edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits" | jq -r '.id')
           body=$(mktemp)
           status=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/octet-stream' --data-binary "@$AAB_PATH" "$upload/applications/$PACKAGE_NAME/edits/$edit/bundles?uploadType=media")
-          test "$status" = 200
+          echo "$PACKAGE_NAME bundle upload HTTP $status"
+          if [[ "$status" != 200 ]]; then
+            cat "$body" >&2
+            curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$edit" >/dev/null || true
+            exit 1
+          fi
           actual=$(jq -r '.versionCode' "$body")
-          test "$actual" = "$EXPECTED_VERSION_CODE"
+          if [[ "$actual" != "$EXPECTED_VERSION_CODE" ]]; then
+            echo "Unexpected versionCode: $actual, expected $EXPECTED_VERSION_CODE" >&2
+            cat "$body" >&2
+            curl -sS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$PACKAGE_NAME/edits/$edit" >/dev/null || true
+            exit 1
+          fi
           body=$(mktemp)
           status=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits/$edit:commit")
           if [[ "$status" != 2* ]]; then
+            echo "$PACKAGE_NAME normal commit HTTP $status: $(cat "$body")"
             body=$(mktemp)
             status=$(curl -sS -o "$body" -w '%{http_code}' -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$PACKAGE_NAME/edits/$edit:commit?changesNotSentForReview=true")
           fi
           if [[ "$status" != 2* ]]; then
+            echo "$PACKAGE_NAME fallback commit HTTP $status" >&2
             cat "$body" >&2
             exit 1
           fi
