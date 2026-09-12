@@ -1,0 +1,521 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-12T08:51:10Z",
+  "source": "Google Play Android Publisher edits.images.list",
+  "note": "Read-only audit. Temporary edits are deleted without commit.",
+  "apps": [
+    {
+      "appName": "NavoKids",
+      "packageName": "com.kamilunavo.navokids",
+      "accessible": true,
+      "listings": [
+        "de-DE",
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "996015969019208889",
+          "sha1": "cac4f3dd386ce378fa17cb0501ddda513ab0d730",
+          "sha256": "b661e91a03751ae8498a6ec3110afa2b2dde31ac6d3415f357277e2ce0a3b4a8",
+          "url": "https://lh3.googleusercontent.com/_k1vij5KmDrEpiLLphafIZtyP3q3AQjoy4HHaV4kWcoQCoezjvRp8k2HVDuRYZ6K_bpC5oCNnSodiSrAMb4I9A"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "996015969019208889",
+        "sha1": "cac4f3dd386ce378fa17cb0501ddda513ab0d730",
+        "sha256": "b661e91a03751ae8498a6ec3110afa2b2dde31ac6d3415f357277e2ce0a3b4a8",
+        "url": "https://lh3.googleusercontent.com/_k1vij5KmDrEpiLLphafIZtyP3q3AQjoy4HHaV4kWcoQCoezjvRp8k2HVDuRYZ6K_bpC5oCNnSodiSrAMb4I9A"
+      },
+      "error": null
+    },
+    {
+      "appName": "ZweiCheck",
+      "packageName": "de.kamilunavo.zweicheck",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "1660463432607085928",
+          "sha1": "529f7d954ce90fc44dafe99afa6b55c4f8968757",
+          "sha256": "342ef8213487dca0c730d2a0b81f0527a393a3f73a257c5202b486e78566164c",
+          "url": "https://lh3.googleusercontent.com/6BKgmPFEQF-nlekm9FmJbR0kzrqw5_lNmsEdCEzXEVYhXldrFB-ZvAVgYj3LM3mlrAQ_OOEJR8vDnRjQ-cmv4g"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "1660463432607085928",
+        "sha1": "529f7d954ce90fc44dafe99afa6b55c4f8968757",
+        "sha256": "342ef8213487dca0c730d2a0b81f0527a393a3f73a257c5202b486e78566164c",
+        "url": "https://lh3.googleusercontent.com/6BKgmPFEQF-nlekm9FmJbR0kzrqw5_lNmsEdCEzXEVYhXldrFB-ZvAVgYj3LM3mlrAQ_OOEJR8vDnRjQ-cmv4g"
+      },
+      "error": null
+    },
+    {
+      "appName": "ArbeitsKlar",
+      "packageName": "de.kamilunavo.arbeitsklar",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "3664044647979864442",
+          "sha1": "48fc643ae59d61eb1f894d8f9fdac3631c4a6a69",
+          "sha256": "db13a3d37050498f46bff2a932a8d0b1ca1ea683e84a9ccd4523ccd14d17df82",
+          "url": "https://lh3.googleusercontent.com/cs9Kv6pjxn8U046SmfpO7k3Qf-suwu931ZYQlxjqEvgErZnOxKEIaO6f4qw8_NPs4vwMrjLQNq20M6x8VieA"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "3664044647979864442",
+        "sha1": "48fc643ae59d61eb1f894d8f9fdac3631c4a6a69",
+        "sha256": "db13a3d37050498f46bff2a932a8d0b1ca1ea683e84a9ccd4523ccd14d17df82",
+        "url": "https://lh3.googleusercontent.com/cs9Kv6pjxn8U046SmfpO7k3Qf-suwu931ZYQlxjqEvgErZnOxKEIaO6f4qw8_NPs4vwMrjLQNq20M6x8VieA"
+      },
+      "error": null
+    },
+    {
+      "appName": "WärmeTakt",
+      "packageName": "de.kamilunavo.waermetakt",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "14647730657615207657",
+          "sha1": "4137c4975f053dcccc993256cab0913ef3054c05",
+          "sha256": "89d65e509ab72cbb6d93ecd88f9a2fb499c079660833b009d5c327e71aecc5b4",
+          "url": "https://lh3.googleusercontent.com/A0PynqtdcaH9yYHbWo1dVARtAWFkIiSB9hdK72su3ldNP7M6kWMJHOWLdxW2CafIbygUMfrqQHwA8buXAmiihQ"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "14647730657615207657",
+        "sha1": "4137c4975f053dcccc993256cab0913ef3054c05",
+        "sha256": "89d65e509ab72cbb6d93ecd88f9a2fb499c079660833b009d5c327e71aecc5b4",
+        "url": "https://lh3.googleusercontent.com/A0PynqtdcaH9yYHbWo1dVARtAWFkIiSB9hdK72su3ldNP7M6kWMJHOWLdxW2CafIbygUMfrqQHwA8buXAmiihQ"
+      },
+      "error": null
+    },
+    {
+      "appName": "Reklaio",
+      "packageName": "de.kamilunavo.reklaio",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "14881977497618433034",
+          "sha1": "077ba0eb7523135651ebcde4b1d3f28b446c1edc",
+          "sha256": "85efcce0de467d17b7c02ae82d21df2d53f4185c8ef8471fe820a24171af840f",
+          "url": "https://lh3.googleusercontent.com/LdEClq63p_v4iq43gZLuGvgZ5_EjUm1LJZR9YZeducXncCG13u8c1FVxz0HHBeJwBt2UFY3XVZqVOw5wY39U-A"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "14881977497618433034",
+        "sha1": "077ba0eb7523135651ebcde4b1d3f28b446c1edc",
+        "sha256": "85efcce0de467d17b7c02ae82d21df2d53f4185c8ef8471fe820a24171af840f",
+        "url": "https://lh3.googleusercontent.com/LdEClq63p_v4iq43gZLuGvgZ5_EjUm1LJZR9YZeducXncCG13u8c1FVxz0HHBeJwBt2UFY3XVZqVOw5wY39U-A"
+      },
+      "error": null
+    },
+    {
+      "appName": "MängelFix",
+      "packageName": "com.kamilunavo.maengelfix",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "1209686616570838317",
+          "sha1": "711cba0666e50d1758f6185be1948ea7279c117d",
+          "sha256": "75049b8235d2fba41d94539d6b5928fda016a317ae661de8c4b55b7869b37798",
+          "url": "https://lh3.googleusercontent.com/mDejFGddhVeS7q0e-zFiJKsP5_eEowGZnlMYx5yucROs4MUV_RJVJGt-XKPN8Wsx4wIVUEX6fzd_T8UFH78zJg"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "1209686616570838317",
+        "sha1": "711cba0666e50d1758f6185be1948ea7279c117d",
+        "sha256": "75049b8235d2fba41d94539d6b5928fda016a317ae661de8c4b55b7869b37798",
+        "url": "https://lh3.googleusercontent.com/mDejFGddhVeS7q0e-zFiJKsP5_eEowGZnlMYx5yucROs4MUV_RJVJGt-XKPN8Wsx4wIVUEX6fzd_T8UFH78zJg"
+      },
+      "error": null
+    },
+    {
+      "appName": "Kintaroq",
+      "packageName": "com.kamilunavo.kintaroq",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "8386079602673564149",
+          "sha1": "4293a77269488a8eca7f5ff2ff91ea49dd5c268c",
+          "sha256": "6a70ad43066ab340b3a35e7029bc2479e738ac523e99fd59581261c97d579ff1",
+          "url": "https://lh3.googleusercontent.com/zBlc9lUz8_cce8ZOnHLgVz6-v8ckzX-42ge1y0RhDcDgN33hxqLZ0ITT1iRs_BaqX6l25nFgZReh1_UGFyzkBQ"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "8386079602673564149",
+        "sha1": "4293a77269488a8eca7f5ff2ff91ea49dd5c268c",
+        "sha256": "6a70ad43066ab340b3a35e7029bc2479e738ac523e99fd59581261c97d579ff1",
+        "url": "https://lh3.googleusercontent.com/zBlc9lUz8_cce8ZOnHLgVz6-v8ckzX-42ge1y0RhDcDgN33hxqLZ0ITT1iRs_BaqX6l25nFgZReh1_UGFyzkBQ"
+      },
+      "error": null
+    },
+    {
+      "appName": "NavoPass",
+      "packageName": "de.kamilunavo.navopass",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "11257684609092631368",
+          "sha1": "20aa0f13d07ad7370cf07baaeba577e6a1cd4e94",
+          "sha256": "fa9595fa93ed5fb9ae4d7c771bb0d5a78754ac411011b501aeb4c42364ff49f5",
+          "url": "https://lh3.googleusercontent.com/pO3H-t8zXVnsouVKD3Kssfi0GvMT0Gew9GxgiS5pPl_2L4pebKsVR4BbRxnzmrNtlphjubbQx4dxPcFtE5J8Xg"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "11257684609092631368",
+        "sha1": "20aa0f13d07ad7370cf07baaeba577e6a1cd4e94",
+        "sha256": "fa9595fa93ed5fb9ae4d7c771bb0d5a78754ac411011b501aeb4c42364ff49f5",
+        "url": "https://lh3.googleusercontent.com/pO3H-t8zXVnsouVKD3Kssfi0GvMT0Gew9GxgiS5pPl_2L4pebKsVR4BbRxnzmrNtlphjubbQx4dxPcFtE5J8Xg"
+      },
+      "error": null
+    },
+    {
+      "appName": "99,9 %",
+      "packageName": "de.kamilunavo.ninenine",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "7408070084992234832",
+          "sha1": "42809a0cea51ff9f4d210aee9600c306ab3f3ed7",
+          "sha256": "4fccf036980a09c3b5c0d09ebb0accd75ede4f9eb4e947a3720fc6f66bd7ca31",
+          "url": "https://lh3.googleusercontent.com/eg-F1IUgN4vDdveAsxd992yoUMc8o1ExKpFC8wfjx48Cj21Vm7M3GnAxGglcSj9BXiC7ceWZsRx_Wk0pdirL-F8"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "7408070084992234832",
+        "sha1": "42809a0cea51ff9f4d210aee9600c306ab3f3ed7",
+        "sha256": "4fccf036980a09c3b5c0d09ebb0accd75ede4f9eb4e947a3720fc6f66bd7ca31",
+        "url": "https://lh3.googleusercontent.com/eg-F1IUgN4vDdveAsxd992yoUMc8o1ExKpFC8wfjx48Cj21Vm7M3GnAxGglcSj9BXiC7ceWZsRx_Wk0pdirL-F8"
+      },
+      "error": null
+    },
+    {
+      "appName": "NavoTap",
+      "packageName": "com.kamilunavo.onemoretap",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "18349072787401853211",
+          "sha1": "45ba90916ea7f0fd2b65f904a140c0d5c8a222a3",
+          "sha256": "50a9a9d1f07e8482deb62ab1499826b514aee34a6a71c74a47d2a41a85d6433e",
+          "url": "https://lh3.googleusercontent.com/Pd7fSgZ9CmQGzQQJin1dmajxvesaNrt4_B_gmyhvCVwxLJZYpDEDeVgin7GdvWQmIDgmohCj9OzSy4TE15RWMw"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "18349072787401853211",
+        "sha1": "45ba90916ea7f0fd2b65f904a140c0d5c8a222a3",
+        "sha256": "50a9a9d1f07e8482deb62ab1499826b514aee34a6a71c74a47d2a41a85d6433e",
+        "url": "https://lh3.googleusercontent.com/Pd7fSgZ9CmQGzQQJin1dmajxvesaNrt4_B_gmyhvCVwxLJZYpDEDeVgin7GdvWQmIDgmohCj9OzSy4TE15RWMw"
+      },
+      "error": null
+    },
+    {
+      "appName": "KälteCalc",
+      "packageName": "de.kamilunav.kaltecalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "10228247776018309293",
+          "sha1": "9548cb78d982cf08944e1a2eda7743915a73f764",
+          "sha256": "008a88dee4e51937e46baacb84d69834bc23d05e49240bf529b747f0e18ed9a9",
+          "url": "https://lh3.googleusercontent.com/vJ67jquVulQD3-gAvDj7pfEVMgxhyaQ-ZfJBOfVUTEwpaaxJOpJgT8rN62iJG8zAIzbMBAmVBFedFMaoHRnEQkw"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "10228247776018309293",
+        "sha1": "9548cb78d982cf08944e1a2eda7743915a73f764",
+        "sha256": "008a88dee4e51937e46baacb84d69834bc23d05e49240bf529b747f0e18ed9a9",
+        "url": "https://lh3.googleusercontent.com/vJ67jquVulQD3-gAvDj7pfEVMgxhyaQ-ZfJBOfVUTEwpaaxJOpJgT8rN62iJG8zAIzbMBAmVBFedFMaoHRnEQkw"
+      },
+      "error": null
+    },
+    {
+      "appName": "LüftungsCalc",
+      "packageName": "de.kamilunavo.luftungscalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "5427957162500333045",
+          "sha1": "aeb3650d07120663ac749a0536b3165373c5e5c5",
+          "sha256": "b3d8830c542d3d734790f663dc22dc90c44b3164536c83f44419a465bbab56cf",
+          "url": "https://lh3.googleusercontent.com/opLilza5Ye-tMF0NmGnEm3KFES2d21xbgO8EzdA1Afk2FT5JPU8H2NBEqP01AkUxnONfzD3xvj1rrWy4Z_nvaw"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "5427957162500333045",
+        "sha1": "aeb3650d07120663ac749a0536b3165373c5e5c5",
+        "sha256": "b3d8830c542d3d734790f663dc22dc90c44b3164536c83f44419a465bbab56cf",
+        "url": "https://lh3.googleusercontent.com/opLilza5Ye-tMF0NmGnEm3KFES2d21xbgO8EzdA1Afk2FT5JPU8H2NBEqP01AkUxnONfzD3xvj1rrWy4Z_nvaw"
+      },
+      "error": null
+    },
+    {
+      "appName": "HeizkörperCalc",
+      "packageName": "de.kamilunavo.heizkorpercalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "15657260333295983556",
+          "sha1": "1ca226311b3dcfbeb0c6d4c92f2e90668a61b038",
+          "sha256": "bf75d1eb11aa50a77948cb77b651c7fd4e164da528f35d2a9dff36dd143cbed8",
+          "url": "https://lh3.googleusercontent.com/mi1ofcxh05vIN2pTxSoDRzORkMs6sZNTGjGuS4yjYEDyUJ4PsFFIkf8-Qgikp_nXVXC1rXayG4d92TDj4HjhJA"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "15657260333295983556",
+        "sha1": "1ca226311b3dcfbeb0c6d4c92f2e90668a61b038",
+        "sha256": "bf75d1eb11aa50a77948cb77b651c7fd4e164da528f35d2a9dff36dd143cbed8",
+        "url": "https://lh3.googleusercontent.com/mi1ofcxh05vIN2pTxSoDRzORkMs6sZNTGjGuS4yjYEDyUJ4PsFFIkf8-Qgikp_nXVXC1rXayG4d92TDj4HjhJA"
+      },
+      "error": null
+    },
+    {
+      "appName": "RohrCalc",
+      "packageName": "de.kamilunavo.rohrcalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [],
+      "primaryIcon": null,
+      "error": "No listing icon returned by Android Publisher API."
+    },
+    {
+      "appName": "AnlagenCheck",
+      "packageName": "de.kamilunavo.servicecheck",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "1899771903492875449",
+          "sha1": "2f5c019aa875683d45599c680d8130892f84ea90",
+          "sha256": "50f7fafa2974642d6ed38f9fda160496335d93ef43201452c67e4700b4d174d7",
+          "url": "https://lh3.googleusercontent.com/9JaZOJlbd9p6H1QmS9HwJkdtiNYBFD8A-IrL2JSOko676EwZ3sgT9WtfIgnnvHRT1hGN8ljVQ81ksjsWdFib0g"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "1899771903492875449",
+        "sha1": "2f5c019aa875683d45599c680d8130892f84ea90",
+        "sha256": "50f7fafa2974642d6ed38f9fda160496335d93ef43201452c67e4700b4d174d7",
+        "url": "https://lh3.googleusercontent.com/9JaZOJlbd9p6H1QmS9HwJkdtiNYBFD8A-IrL2JSOko676EwZ3sgT9WtfIgnnvHRT1hGN8ljVQ81ksjsWdFib0g"
+      },
+      "error": null
+    },
+    {
+      "appName": "VolumeCalc",
+      "packageName": "de.kamilunavo.volumecalc",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "10408526406934220713",
+          "sha1": "3345dc6e337c22c162c0c6092adbca4b6a38ba08",
+          "sha256": "e1dcf1d5fbebfdf04ca644c763baf5a8b3f9bb5afded99237b104d6aafcbd586",
+          "url": "https://lh3.googleusercontent.com/dK_IY3ViH2iULkoRgEl_K37DXpE39LKFfAwAFn1wR6o2Aogl7hydosNQ7deAMe4-NeJsbVrRReFkQ620Vy-q5w"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "10408526406934220713",
+        "sha1": "3345dc6e337c22c162c0c6092adbca4b6a38ba08",
+        "sha256": "e1dcf1d5fbebfdf04ca644c763baf5a8b3f9bb5afded99237b104d6aafcbd586",
+        "url": "https://lh3.googleusercontent.com/dK_IY3ViH2iULkoRgEl_K37DXpE39LKFfAwAFn1wR6o2Aogl7hydosNQ7deAMe4-NeJsbVrRReFkQ620Vy-q5w"
+      },
+      "error": null
+    },
+    {
+      "appName": "KeepMeter",
+      "packageName": "de.kamilunavo.keepmeter",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "15838283090930856363",
+          "sha1": "2cf143b73dc906e1ababb1edeef7bab9d5c0c9fb",
+          "sha256": "0b6a91ab40b252b588a328e31ae38511370030f16b7817504a285c1105883b0c",
+          "url": "https://lh3.googleusercontent.com/QhM6IjFjD5j4JyQGflF5qR67QoKMHKuoE_HiXh7i1ashauF1gZmrB3XPHln796iShJGMyqFwEQLS2RVrUfaMOGM"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "15838283090930856363",
+        "sha1": "2cf143b73dc906e1ababb1edeef7bab9d5c0c9fb",
+        "sha256": "0b6a91ab40b252b588a328e31ae38511370030f16b7817504a285c1105883b0c",
+        "url": "https://lh3.googleusercontent.com/QhM6IjFjD5j4JyQGflF5qR67QoKMHKuoE_HiXh7i1ashauF1gZmrB3XPHln796iShJGMyqFwEQLS2RVrUfaMOGM"
+      },
+      "error": null
+    },
+    {
+      "appName": "Schon erledigt?",
+      "packageName": "com.kamilunavo.schonerledigt",
+      "accessible": true,
+      "listings": [
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "en-US",
+          "id": "1690376322035210238",
+          "sha1": "512c51833ff88501cfacaf9eecbeb1eab5d16000",
+          "sha256": "5b3c04942f619f9badd17a67f707942a856f0a10d2c37c8552fb32d56cd38e60",
+          "url": "https://lh3.googleusercontent.com/4HUzErbLtIcYPGcgman3YD7JcI8VqfN5hoPDAbM1Mrl9_T70t7yso4R1badGY0CVFnZo5NRlBG5L9GKPziqQ"
+        }
+      ],
+      "primaryIcon": {
+        "language": "en-US",
+        "id": "1690376322035210238",
+        "sha1": "512c51833ff88501cfacaf9eecbeb1eab5d16000",
+        "sha256": "5b3c04942f619f9badd17a67f707942a856f0a10d2c37c8552fb32d56cd38e60",
+        "url": "https://lh3.googleusercontent.com/4HUzErbLtIcYPGcgman3YD7JcI8VqfN5hoPDAbM1Mrl9_T70t7yso4R1badGY0CVFnZo5NRlBG5L9GKPziqQ"
+      },
+      "error": null
+    },
+    {
+      "appName": "BrennerCalc",
+      "packageName": "de.kamilunavo.brennercalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "8130147668538869693",
+          "sha1": "178be799df83fadd5eca4c9825f5b5389b6b1bfc",
+          "sha256": "5936c240f21f679d3221e0de45afa566f3ac3726d8238c40da940ed50e14ea7e",
+          "url": "https://lh3.googleusercontent.com/1B41uUrX3LepY-PSaOG8frDdXUDRQF6TMefaaEiimU9zfDB5k3Gbx2RCdnfxQneGtDlA_AJOLdZsSSyzDdOYpg"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "8130147668538869693",
+        "sha1": "178be799df83fadd5eca4c9825f5b5389b6b1bfc",
+        "sha256": "5936c240f21f679d3221e0de45afa566f3ac3726d8238c40da940ed50e14ea7e",
+        "url": "https://lh3.googleusercontent.com/1B41uUrX3LepY-PSaOG8frDdXUDRQF6TMefaaEiimU9zfDB5k3Gbx2RCdnfxQneGtDlA_AJOLdZsSSyzDdOYpg"
+      },
+      "error": null
+    },
+    {
+      "appName": "HydroCalc",
+      "packageName": "de.kamilunavo.hydrocalc",
+      "accessible": true,
+      "listings": [
+        "de-DE",
+        "en-US"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "2139080353215239047",
+          "sha1": "173295b796a473349de93fd02003074e9c5fd6c6",
+          "sha256": "e92c1c97ec6641358e239fb77ff0a7b483d0a962addf3540fb6f1786f1823737",
+          "url": "https://lh3.googleusercontent.com/-TRdWbFIozu9l5HJ6kqYqdEobbyBH93GHN6Lk4gz7hdTaEFmEUG5lZJvCc70IjNXUf_gGEoPM3JbLDl-ccd3UR4"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "2139080353215239047",
+        "sha1": "173295b796a473349de93fd02003074e9c5fd6c6",
+        "sha256": "e92c1c97ec6641358e239fb77ff0a7b483d0a962addf3540fb6f1786f1823737",
+        "url": "https://lh3.googleusercontent.com/-TRdWbFIozu9l5HJ6kqYqdEobbyBH93GHN6Lk4gz7hdTaEFmEUG5lZJvCc70IjNXUf_gGEoPM3JbLDl-ccd3UR4"
+      },
+      "error": null
+    },
+    {
+      "appName": "MAGCalc",
+      "packageName": "de.kamilunavo.magcalc",
+      "accessible": true,
+      "listings": [
+        "de-DE"
+      ],
+      "icons": [
+        {
+          "language": "de-DE",
+          "id": "15250285156918274206",
+          "sha1": "2c1cb2009cca22a598c4a973f26686d82856ab99",
+          "sha256": "33d02b5f10978c39d5f4cab0add8f79f6abc7aa6f364a19489b2c6aaf6637808",
+          "url": "https://lh3.googleusercontent.com/eVDBCCOYIICRw14HG2NHjBTL7ighe_pnxWimuf3WKK6paKVHuRuBzfRm4R-5156Dw27-gdBrLWycrFwnS6Ra"
+        }
+      ],
+      "primaryIcon": {
+        "language": "de-DE",
+        "id": "15250285156918274206",
+        "sha1": "2c1cb2009cca22a598c4a973f26686d82856ab99",
+        "sha256": "33d02b5f10978c39d5f4cab0add8f79f6abc7aa6f364a19489b2c6aaf6637808",
+        "url": "https://lh3.googleusercontent.com/eVDBCCOYIICRw14HG2NHjBTL7ighe_pnxWimuf3WKK6paKVHuRuBzfRm4R-5156Dw27-gdBrLWycrFwnS6Ra"
+      },
+      "error": null
+    }
+  ]
+}
