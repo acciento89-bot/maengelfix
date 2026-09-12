@@ -1,0 +1,43 @@
+name: Probe WIF provider update permission
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/probe-wif-update-permission.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - name: Test provider update permission
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://iam.googleapis.com/v1/projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions:testIamPermissions'
+          body=$(mktemp)
+          status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+            -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
+            -d '{"permissions":["iam.workloadIdentityPoolProviders.update","iam.workloadIdentityPoolProviders.get"]}' "$url")
+          echo "HTTP $status"
+          cat "$body"
+          test "$status" = 200
