@@ -142,6 +142,32 @@ jobs:
             })[0];
           }
 
+          function detailFor(track, lifecycle) {
+            const readable = {
+              RELEASE_LIFECYCLE_STATE_DRAFT: 'Draft',
+              RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW: 'Ready for review · developer action required',
+              RELEASE_LIFECYCLE_STATE_IN_REVIEW: 'In review',
+              RELEASE_LIFECYCLE_STATE_APPROVED_NOT_PUBLISHED: 'Approved · manual publish required',
+              RELEASE_LIFECYCLE_STATE_NOT_APPROVED: 'Rejected in review · reason available only in Play Console',
+              RELEASE_LIFECYCLE_STATE_PUBLISHED: 'Published'
+            }[lifecycle] || lifecycle;
+            return `${track} · ${readable}`;
+          }
+
+          function reviewFor(track, lifecycle) {
+            return {
+              submissionID: null,
+              submissionState: null,
+              itemStates: [],
+              submittedAt: null,
+              track,
+              lifecycleState: lifecycle,
+              reason: null,
+              reasonAvailability: 'consoleOnly',
+              consoleURL: 'https://play.google.com/console'
+            };
+          }
+
           (async () => {
             const apps = [];
             let accessible = 0;
@@ -186,7 +212,8 @@ jobs:
                   rawState: 'none',
                   state: 'development',
                   updatedAt: generatedAt,
-                  detail: 'No active release found on configured Google Play tracks.'
+                  detail: 'No active release found on configured Google Play tracks.',
+                  review: null
                 });
                 continue;
               }
@@ -205,12 +232,13 @@ jobs:
                 rawState,
                 state: stateFor(track, lifecycle),
                 updatedAt: generatedAt,
-                detail: rawState
+                detail: detailFor(track, lifecycle),
+                review: reviewFor(track, lifecycle)
               });
             }
 
             fs.writeFileSync(feedPath, JSON.stringify({
-              schemaVersion: 1,
+              schemaVersion: 2,
               generatedAt,
               sourceRepository: process.env.GITHUB_REPOSITORY || 'acciento89-bot/maengelfix',
               appleAvailable: false,
@@ -218,6 +246,7 @@ jobs:
               apps
             }, null, 2) + '\n');
             console.log(`Google Play apps readable: ${accessible}; snapshots: ${apps.length}`);
+            console.log(`Google Play review records: ${apps.filter(app => app.review).length}`);
           })().catch(error => {
             console.error(error.stack || error.message || error);
             process.exit(1);
