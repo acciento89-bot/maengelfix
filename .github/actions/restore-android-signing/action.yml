@@ -43,6 +43,7 @@ runs:
 
         actual_vault=$(sha256sum "$root/vault.enc" | cut -d' ' -f1)
         expected_vault='5d8d06ea9c7a654b9037701f9b63ff20f25f017c140fbea4f28c439898bef3e8'
+        echo "Vault SHA-256: $actual_vault"
         test "$actual_vault" = "$expected_vault"
 
         curl --fail --silent --show-error --location \
@@ -50,8 +51,10 @@ runs:
         base64 --decode "$root/pass.kms.b64" > "$root/pass.kms"
         actual_wrapped=$(sha256sum "$root/pass.kms" | cut -d' ' -f1)
         expected_wrapped='6d6c0ae4b5c86f59195c20b9d84d413dbaa2efa19d7e57c26aec22fc18a55d49'
+        echo "Wrapped passphrase SHA-256: $actual_wrapped"
         test "$actual_wrapped" = "$expected_wrapped"
 
+        echo 'KMS unwrap starting'
         gcloud kms asymmetric-decrypt \
           --project emerald-caster-508318-f2 \
           --location global \
@@ -60,16 +63,19 @@ runs:
           --version 1 \
           --ciphertext-file "$root/pass.kms" \
           --plaintext-file "$root/pass.txt" >/dev/null
+        echo 'KMS unwrap complete'
 
         openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
           -in "$root/vault.enc" \
           -out "$root/vault.tar.gz" \
           -pass file:"$root/pass.txt"
+        echo 'Vault decrypt complete'
         tar -xzf "$root/vault.tar.gz" -C "$root/extracted"
 
         manifest="$root/extracted/manifest.json"
         test -s "$manifest"
         jq -e --arg app "$APP_ID" '.apps[$app] != null' "$manifest" >/dev/null
+        echo "Vault entry found for $APP_ID"
 
         key_rel=$(jq -r --arg app "$APP_ID" '.apps[$app].keystore' "$manifest")
         store_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].store_password' "$manifest")
@@ -94,6 +100,7 @@ runs:
         if command -v keytool >/dev/null 2>&1; then
           keytool -list -keystore "$selected" -storepass "$store_pass" -alias "$key_alias" >/dev/null
         fi
+        echo "Keystore verified for $APP_ID"
 
         {
           echo "ANDROID_UPLOAD_KEYSTORE_PATH=$selected"
