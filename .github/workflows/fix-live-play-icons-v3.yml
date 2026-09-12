@@ -1,0 +1,118 @@
+name: Repair live Google Play icons v3
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/fix-live-play-icons-v3.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  repair:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick
+      - name: Render canonical listing icons
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p /tmp/play-icons
+          cat >/tmp/play-icons/kintaroq.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 108 108"><rect width="108" height="108" fill="#055C45"/><circle cx="54" cy="54" r="36" fill="none" stroke="#FFFFFF" stroke-opacity=".15" stroke-width="2"/><path d="M38 30V78M42 54L70 31M50 49L72 78" fill="none" stroke="#F2FFFB" stroke-width="9.5" stroke-linecap="round" stroke-linejoin="round"/><circle cx="78" cy="28" r="6" fill="#A8FFE0"/><circle cx="78" cy="79" r="5" fill="#7DE4BE"/><circle cx="20" cy="56.5" r="4.5" fill="#D7FFF1"/></svg>
+          SVG
+          cat >/tmp/play-icons/rohrcalc.svg <<'SVG'
+          <svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 108 108"><rect width="108" height="108" fill="#07182A"/><rect x="24" y="24" width="60" height="60" fill="#225460"/><path d="M30 42H67V73" fill="none" stroke="#68F0CA" stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/><path d="M25 42H34M67 68V78" fill="none" stroke="#ECF7FA" stroke-width="4" stroke-linecap="round"/><circle cx="67" cy="42" r="8" fill="#5AD2FF"/><circle cx="67" cy="42" r="3" fill="#225460"/></svg>
+          SVG
+          convert -background none /tmp/play-icons/kintaroq.svg /tmp/play-icons/kintaroq.png
+          convert -background none /tmp/play-icons/rohrcalc.svg /tmp/play-icons/rohrcalc.png
+          for f in /tmp/play-icons/*.png; do
+            test "$(identify -format '%wx%h' "$f")" = 512x512
+            test "$(stat -c%s "$f")" -lt 1048576
+            sha256sum "$f"
+          done
+      - name: Upload and stage listing icon repairs
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
+          : > /tmp/staged-edits.tsv
+          stage() {
+            package="$1"; icon="$2"
+            edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id')
+            test -n "$edit" && test "$edit" != null
+            langs=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit/listings" | jq -r '.listings[]?.language')
+            test -n "$langs"
+            while IFS= read -r lang; do
+              test -n "$lang"
+              response=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: image/png' --data-binary "@$icon" "$upload/applications/$package/edits/$edit/listings/$lang/icon?uploadType=media")
+              actual=$(jq -r '.image.sha256 // empty' <<<"$response")
+              expected=$(sha256sum "$icon" | cut -d' ' -f1)
+              echo "$package/$lang uploaded=$actual expected=$expected"
+              test "$actual" = "$expected"
+            done <<<"$langs"
+            curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits/$edit:validate" >/dev/null
+            printf '%s\t%s\n' "$package" "$edit" >> /tmp/staged-edits.tsv
+          }
+          stage com.kamilunavo.kintaroq /tmp/play-icons/kintaroq.png
+          stage de.kamilunavo.rohrcalc /tmp/play-icons/rohrcalc.png
+      - name: Commit repairs without automatically sending for review
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          while IFS=$'\t' read -r package edit; do
+            test -n "$package" && test -n "$edit"
+            body=$(mktemp)
+            status=$(curl -sS -o "$body" -w '%{http_code}' -X POST \
+              -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' \
+              "$api/applications/$package/edits/$edit:commit?changesNotSentForReview=true")
+            echo "$package commit HTTP $status: $(cat "$body")"
+            if [[ "$status" != 2* ]]; then
+              exit 1
+            fi
+            jq -e '.id != null' "$body" >/dev/null
+          done < /tmp/staged-edits.tsv
+      - name: Verify committed listing icons
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          verify() {
+            package="$1"; icon="$2"; expected=$(sha256sum "$icon" | cut -d' ' -f1)
+            edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id')
+            langs=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit/listings" | jq -r '.listings[]?.language')
+            while IFS= read -r lang; do
+              actual=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit/listings/$lang/icon" | jq -r '.images[0].sha256 // empty')
+              echo "$package/$lang expected=$expected actual=$actual"
+              test "$actual" = "$expected"
+            done <<<"$langs"
+            curl -fsS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null
+          }
+          verify com.kamilunavo.kintaroq /tmp/play-icons/kintaroq.png
+          verify de.kamilunavo.rohrcalc /tmp/play-icons/rohrcalc.png
