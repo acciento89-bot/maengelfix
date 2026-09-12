@@ -42,6 +42,7 @@ jobs:
             attributeMapping:{
               "google.subject":"assertion.sub",
               "attribute.repository_owner_id":"assertion.repository_owner_id",
+              "attribute.repository_owner":"assertion.repository_owner",
               "attribute.repository":"assertion.repository"
             }
           }')
@@ -79,9 +80,28 @@ jobs:
           echo "Verified provider condition: $actual"
           [[ "$actual" = "$condition" ]]
           [[ "$(jq -r '.attributeMapping["attribute.repository_owner_id"] // empty' "$verify")" = 'assertion.repository_owner_id' ]]
+          [[ "$(jq -r '.attributeMapping["attribute.repository_owner"] // empty' "$verify")" = 'assertion.repository_owner' ]]
           [[ "$(jq -r '.attributeMapping["attribute.repository"] // empty' "$verify")" = 'assertion.repository' ]]
 
-      - name: Grant Workload Identity User to all acciento89-bot repos
+      - name: Verify the pool has only the locked GitHub provider
+        id: pool-check
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          url='https://iam.googleapis.com/v1/projects/1058001477767/locations/global/workloadIdentityPools/github/providers'
+          body=$(mktemp)
+          curl -fsS -H "Authorization: Bearer $TOKEN" "$url" > "$body"
+          jq '{providers:[.workloadIdentityPoolProviders[]? | {name,state,attributeCondition}]}' "$body"
+          count=$(jq '[.workloadIdentityPoolProviders[]? | select(.state != "DELETED")] | length' "$body")
+          only=$(jq -r '[.workloadIdentityPoolProviders[]? | select(.state != "DELETED")][0].name // empty' "$body")
+          [[ "$count" = 1 ]]
+          [[ "$only" = 'projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions' ]]
+          echo 'single_provider=true' >> "$GITHUB_OUTPUT"
+
+      - name: Grant the locked GitHub pool Workload Identity User
+        if: steps.pool-check.outputs.single_provider == 'true'
         env:
           TOKEN: ${{ steps.google-auth.outputs.access_token }}
         shell: bash
@@ -90,7 +110,8 @@ jobs:
           sa="$GOOGLE_SERVICE_ACCOUNT"
           get_url="https://iam.googleapis.com/v1/projects/-/serviceAccounts/$sa:getIamPolicy"
           set_url="https://iam.googleapis.com/v1/projects/-/serviceAccounts/$sa:setIamPolicy"
-          member="principalSet://iam.googleapis.com/projects/1058001477767/locations/global/workloadIdentityPools/github/attribute.repository_owner_id/$OWNER_ID"
+          owner_member="principalSet://iam.googleapis.com/projects/1058001477767/locations/global/workloadIdentityPools/github/attribute.repository_owner_id/$OWNER_ID"
+          pool_member='principalSet://iam.googleapis.com/projects/1058001477767/locations/global/workloadIdentityPools/github/*'
 
           current=$(mktemp)
           status=$(curl -sS -o "$current" -w '%{http_code}' -X POST \
@@ -100,15 +121,15 @@ jobs:
           [[ "$status" = 200 ]]
 
           updated=$(mktemp)
-          jq --arg member "$member" '
+          jq --arg owner_member "$owner_member" --arg pool_member "$pool_member" '
             if any(.bindings[]?; .role == "roles/iam.workloadIdentityUser") then
               .bindings |= map(
                 if .role == "roles/iam.workloadIdentityUser" then
-                  .members = ((.members + [$member]) | unique)
+                  .members = ((.members + [$owner_member, $pool_member]) | unique)
                 else . end
               )
             else
-              .bindings += [{"role":"roles/iam.workloadIdentityUser","members":[$member]}]
+              .bindings += [{"role":"roles/iam.workloadIdentityUser","members":[$owner_member,$pool_member]}]
             end
           ' "$current" > "$updated"
 
@@ -127,5 +148,5 @@ jobs:
           verify=$(mktemp)
           curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' \
             -d '{"options":{"requestedPolicyVersion":3}}' "$get_url" > "$verify"
-          jq -e --arg member "$member" 'any(.bindings[]?; .role == "roles/iam.workloadIdentityUser" and (.members // [] | index($member) != null))' "$verify" >/dev/null
-          echo "Verified Workload Identity User member: $member"
+          jq -e --arg member "$pool_member" 'any(.bindings[]?; .role == "roles/iam.workloadIdentityUser" and (.members // [] | index($member) != null))' "$verify" >/dev/null
+          echo "Verified Workload Identity User member: $pool_member"
