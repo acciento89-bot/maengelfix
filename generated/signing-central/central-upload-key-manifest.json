@@ -1,0 +1,9 @@
+{
+  "schema": 1,
+  "id": "kamilunavo-central",
+  "algorithm": "RSA-4096/SHA256withRSA",
+  "certificate_sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+  "certificate_sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "certificate_file": "kamilunavo-central-upload-certificate.pem",
+  "private_key_storage": "KMS-wrapped encrypted archive; never committed in plaintext"
+}

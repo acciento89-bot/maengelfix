@@ -1,0 +1,112 @@
+{
+  "schema": 1,
+  "target_upload_certificate_sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+  "target_upload_certificate_sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "apps": [
+    {
+      "name": "NavoKids",
+      "package": "com.kamilunavo.navokids",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "ZweiCheck",
+      "package": "de.kamilunavo.zweicheck",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "ArbeitsKlar",
+      "package": "de.kamilunavo.arbeitsklar",
+      "status": "RESET_REQUIRED_NOW"
+    },
+    {
+      "name": "WaermeTakt",
+      "package": "de.kamilunavo.waermetakt",
+      "status": "RESET_REQUIRED_NOW"
+    },
+    {
+      "name": "Reklaio",
+      "package": "de.kamilunavo.reklaio",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "MaengelFix",
+      "package": "com.kamilunavo.maengelfix",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "Kintaroq",
+      "package": "com.kamilunavo.kintaroq",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "NavoPass",
+      "package": "de.kamilunavo.navopass",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "99,9 %",
+      "package": "de.kamilunavo.ninenine",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "NavoTap",
+      "package": "com.kamilunavo.onemoretap",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "KaelteCalc",
+      "package": "de.kamilunav.kaltecalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "LueftungsCalc",
+      "package": "de.kamilunavo.luftungscalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "HeizkoerperCalc",
+      "package": "de.kamilunavo.heizkorpercalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "RohrCalc",
+      "package": "de.kamilunavo.rohrcalc",
+      "status": "RESET_REQUIRED_NOW"
+    },
+    {
+      "name": "AnlagenCheck",
+      "package": "de.kamilunavo.servicecheck",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "VolumeCalc",
+      "package": "de.kamilunavo.volumecalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "KeepMeter",
+      "package": "de.kamilunavo.keepmeter",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "Schon erledigt?",
+      "package": "com.kamilunavo.schonerledigt",
+      "status": "RESET_REQUIRED_NOW"
+    },
+    {
+      "name": "BrennerCalc",
+      "package": "de.kamilunavo.brennercalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "HydroCalc",
+      "package": "de.kamilunavo.hydrocalc",
+      "status": "MIGRATION_PLANNED"
+    },
+    {
+      "name": "MAGCalc",
+      "package": "de.kamilunavo.magcalc",
+      "status": "MIGRATION_PLANNED"
+    }
+  ]
+}
