@@ -1,0 +1,70 @@
+name: NavoOps Google Play Bundle Audit
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/navoops-google-bundle-audit.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - name: List uploaded app bundles
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          cat > "$RUNNER_TEMP/packages.tsv" <<'EOF'
+          NavoKids|com.kamilunavo.navokids
+          ZweiCheck|de.kamilunavo.zweicheck
+          ArbeitsKlar|de.kamilunavo.arbeitsklar
+          WärmeTakt|de.kamilunavo.waermetakt
+          Reklaio|de.kamilunavo.reklaio
+          MängelFix|com.kamilunavo.maengelfix
+          Kintaroq|com.kamilunavo.kintaroq
+          NavoPass|de.kamilunavo.navopass
+          99,9 %|de.kamilunavo.ninenine
+          NavoTap|com.kamilunavo.onemoretap
+          KälteCalc|de.kamilunav.kaltecalc
+          LüftungsCalc|de.kamilunavo.luftungscalc
+          HeizkörperCalc|de.kamilunavo.heizkorpercalc
+          RohrCalc|de.kamilunavo.rohrcalc
+          AnlagenCheck|de.kamilunavo.servicecheck
+          VolumeCalc|de.kamilunavo.volumecalc
+          KeepMeter|de.kamilunavo.keepmeter
+          Schon erledigt?|com.kamilunavo.schonerledigt
+          BrennerCalc|de.kamilunavo.brennercalc
+          HydroCalc|de.kamilunavo.hydrocalc
+          MAGCalc|de.kamilunavo.magcalc
+          EOF
+          while IFS='|' read -r name package; do
+            echo "=== $name ($package) ==="
+            edit=$(curl -fsS -X POST -H "Authorization: Bearer $TOKEN" -H 'Content-Type: application/json' -d '{}' "$api/applications/$package/edits" | jq -r '.id') || { echo EDIT_FAILED; continue; }
+            if bundles=$(curl -fsS -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit/bundles"); then
+              jq -r '[.bundles[]?.versionCode] | sort | map(tostring) | join(",")' <<< "$bundles"
+            else
+              echo BUNDLES_FAILED
+            fi
+            curl -fsS -X DELETE -H "Authorization: Bearer $TOKEN" "$api/applications/$package/edits/$edit" >/dev/null || true
+          done < "$RUNNER_TEMP/packages.tsv"
