@@ -1,6 +1,6 @@
 {
-  "schemaVersion": 1,
-  "generatedAt": "2026-09-12T04:56:20Z",
+  "schemaVersion": 2,
+  "generatedAt": "2026-09-12T07:43:37Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -14,8 +14,19 @@
       "build": "7",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -26,8 +37,19 @@
       "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -38,8 +60,19 @@
       "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Rejected in review · reason available only in Play Console",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -50,8 +83,19 @@
       "build": "3",
       "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "alpha · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "alpha",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -62,8 +106,19 @@
       "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -74,8 +129,19 @@
       "build": "5",
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "internalTest",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "internal · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "internal",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -86,8 +152,19 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW",
       "state": "attention",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Ready for review · developer action required",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -98,8 +175,19 @@
       "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -110,8 +198,19 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Rejected in review · reason available only in Play Console",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -122,8 +221,19 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -134,8 +244,19 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -146,8 +267,19 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -158,8 +290,19 @@
       "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -170,8 +313,19 @@
       "build": "1",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -182,8 +336,19 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -194,8 +359,19 @@
       "build": null,
       "rawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "alpha · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "alpha",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -206,8 +382,19 @@
       "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
       "state": "review",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · In review",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -218,8 +405,19 @@
       "build": null,
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "internal:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "internal · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "internal",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -230,8 +428,19 @@
       "build": null,
       "rawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "internal:RELEASE_LIFECYCLE_STATE_DRAFT"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "internal · Draft",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "internal",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     },
     {
       "provider": "google",
@@ -242,8 +451,19 @@
       "build": "2",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
       "state": "rejected",
-      "updatedAt": "2026-09-12T04:56:20Z",
-      "detail": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED"
+      "updatedAt": "2026-09-12T07:43:37Z",
+      "detail": "production · Rejected in review · reason available only in Play Console",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      }
     }
   ]
 }
