@@ -105,6 +105,7 @@ runs:
         {
           echo "ANDROID_UPLOAD_KEYSTORE_PATH=$selected"
           echo "ANDROID_UPLOAD_KEYSTORE_PASSWORD=$store_pass"
+          echo "ANDROID_UPLOAD_STORE_PASSWORD=$store_pass"
           echo "ANDROID_UPLOAD_KEY_ALIAS=$key_alias"
           echo "ANDROID_UPLOAD_KEY_PASSWORD=$key_pass"
           echo "KAMILUNAVO_SIGNING_WORKDIR=$root"
