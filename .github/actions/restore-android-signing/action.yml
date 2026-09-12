@@ -77,10 +77,10 @@ runs:
         jq -e --arg app "$APP_ID" '.apps[$app] != null' "$manifest" >/dev/null
         echo "Vault entry found for $APP_ID"
 
-        key_rel=$(jq -r --arg app "$APP_ID" '.apps[$app].keystore' "$manifest")
-        store_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].store_password' "$manifest")
-        key_alias=$(jq -r --arg app "$APP_ID" '.apps[$app].key_alias' "$manifest")
-        key_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].key_password' "$manifest")
+        key_rel=$(jq -r --arg app "$APP_ID" '.apps[$app].keystore // empty' "$manifest")
+        store_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].store_password // empty' "$manifest")
+        key_alias=$(jq -r --arg app "$APP_ID" '.apps[$app].alias // empty' "$manifest")
+        key_pass=$(jq -r --arg app "$APP_ID" '.apps[$app].key_password // empty' "$manifest")
 
         test -n "$key_rel"
         test -n "$store_pass"
