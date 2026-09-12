@@ -68,6 +68,7 @@ jobs:
             ['Kintaroq', 'com.kamilunavo.kintaroq'],
             ['NavoPass', 'de.kamilunavo.navopass'],
             ['99,9 %', 'de.kamilunavo.ninenine'],
+            ['NavoTap', 'com.kamilunavo.onemoretap'],
             ['KälteCalc', 'de.kamilunav.kaltecalc'],
             ['LüftungsCalc', 'de.kamilunavo.luftungscalc'],
             ['HeizkörperCalc', 'de.kamilunavo.heizkorpercalc'],
@@ -142,8 +143,17 @@ jobs:
             })[0];
           }
 
-          function detailFor(track, lifecycle) {
-            const readable = {
+          function choosePublicProductionRelease(releases) {
+            const published = releases.filter(release =>
+              release.track === 'production' &&
+              release.releaseLifecycleState === 'RELEASE_LIFECYCLE_STATE_PUBLISHED'
+            );
+            if (!published.length) return null;
+            return [...published].sort((a, b) => (maxVersionCode(b) || 0) - (maxVersionCode(a) || 0))[0];
+          }
+
+          function readableLifecycle(lifecycle) {
+            return {
               RELEASE_LIFECYCLE_STATE_DRAFT: 'Draft',
               RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW: 'Ready for review · developer action required',
               RELEASE_LIFECYCLE_STATE_IN_REVIEW: 'In review',
@@ -151,7 +161,10 @@ jobs:
               RELEASE_LIFECYCLE_STATE_NOT_APPROVED: 'Rejected in review · reason available only in Play Console',
               RELEASE_LIFECYCLE_STATE_PUBLISHED: 'Published'
             }[lifecycle] || lifecycle;
-            return `${track} · ${readable}`;
+          }
+
+          function detailFor(track, lifecycle) {
+            return `${track} · ${readableLifecycle(lifecycle)}`;
           }
 
           function reviewFor(track, lifecycle) {
@@ -200,8 +213,11 @@ jobs:
               }
 
               accessible += 1;
-              const release = chooseRelease(releases);
-              if (!release) {
+              const selectedRelease = chooseRelease(releases);
+              const publicRelease = choosePublicProductionRelease(releases);
+              const publiclyAvailable = Boolean(publicRelease);
+
+              if (!selectedRelease) {
                 apps.push({
                   provider: 'google',
                   appName,
@@ -211,41 +227,74 @@ jobs:
                   build: null,
                   rawState: 'none',
                   state: 'development',
+                  publiclyAvailable: false,
+                  publicBuild: null,
+                  updateState: 'development',
+                  updateRawState: 'none',
                   updatedAt: generatedAt,
                   detail: 'No active release found on configured Google Play tracks.',
-                  review: null
+                  review: null,
+                  tracks: []
                 });
                 continue;
               }
 
-              const lifecycle = String(release.releaseLifecycleState || 'RELEASE_LIFECYCLE_STATE_UNSPECIFIED');
-              const track = String(release.track || 'unknown');
-              const rawState = `${track}:${lifecycle}`;
-              const build = maxVersionCode(release);
+              const lifecycle = String(selectedRelease.releaseLifecycleState || 'RELEASE_LIFECYCLE_STATE_UNSPECIFIED');
+              const track = String(selectedRelease.track || 'unknown');
+              const updateRawState = `${track}:${lifecycle}`;
+              const updateState = stateFor(track, lifecycle);
+              const build = maxVersionCode(selectedRelease);
+              const publicBuild = publicRelease ? maxVersionCode(publicRelease) : null;
+              const state = publiclyAvailable ? 'live' : updateState;
+              const detail = publiclyAvailable && updateState !== 'live'
+                ? `Production published${publicBuild == null ? '' : ` · build ${publicBuild}`} · pending/current update: ${detailFor(track, lifecycle)}`
+                : detailFor(track, lifecycle);
+              const trackSnapshots = releases.map(release => ({
+                track: String(release.track || 'unknown'),
+                lifecycleState: String(release.releaseLifecycleState || 'RELEASE_LIFECYCLE_STATE_UNSPECIFIED'),
+                releaseName: release.releaseName || null,
+                build: maxVersionCode(release)
+              })).sort((a, b) => {
+                if (a.track === 'production' && b.track !== 'production') return -1;
+                if (b.track === 'production' && a.track !== 'production') return 1;
+                return (b.build || 0) - (a.build || 0);
+              });
+
               apps.push({
                 provider: 'google',
                 appName,
                 externalID: packageName,
                 bundleOrPackageID: packageName,
-                version: release.releaseName || null,
+                version: selectedRelease.releaseName || null,
                 build: build == null ? null : String(build),
-                rawState,
-                state: stateFor(track, lifecycle),
+                rawState: publiclyAvailable ? `production:RELEASE_LIFECYCLE_STATE_PUBLISHED` : updateRawState,
+                state,
+                publiclyAvailable,
+                publicBuild: publicBuild == null ? null : String(publicBuild),
+                updateState,
+                updateRawState,
                 updatedAt: generatedAt,
-                detail: detailFor(track, lifecycle),
-                review: reviewFor(track, lifecycle)
+                detail,
+                review: reviewFor(track, lifecycle),
+                tracks: trackSnapshots
               });
             }
 
             fs.writeFileSync(feedPath, JSON.stringify({
-              schemaVersion: 2,
+              schemaVersion: 3,
               generatedAt,
               sourceRepository: process.env.GITHUB_REPOSITORY || 'acciento89-bot/maengelfix',
               appleAvailable: false,
               googleAvailable: accessible > 0,
+              summary: {
+                readableApps: accessible,
+                publiclyAvailable: apps.filter(app => app.publiclyAvailable).length,
+                pendingReviewWithoutPublicProduction: apps.filter(app => !app.publiclyAvailable && app.updateState === 'review').length
+              },
               apps
             }, null, 2) + '\n');
             console.log(`Google Play apps readable: ${accessible}; snapshots: ${apps.length}`);
+            console.log(`Public production apps: ${apps.filter(app => app.publiclyAvailable).length}`);
             console.log(`Google Play review records: ${apps.filter(app => app.review).length}`);
           })().catch(error => {
             console.error(error.stack || error.message || error);
