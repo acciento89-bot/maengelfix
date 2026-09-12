@@ -1,0 +1,81 @@
+name: Audit signing vault certificate fingerprints
+
+on:
+  push:
+    branches: [main]
+    paths: ['.github/workflows/audit-signing-vault-fingerprints.yml']
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+
+jobs:
+  audit:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-java@v5
+        with: {distribution: temurin, java-version: '17'}
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          project_id: emerald-caster-508318-f2
+      - name: Decrypt vault and print certificate fingerprints only
+        shell: bash
+        run: |
+          set -euo pipefail
+          umask 077
+          root="$RUNNER_TEMP/signing-vault-audit"
+          rm -rf "$root"
+          mkdir -p "$root/extracted"
+          base='https://raw.githubusercontent.com/acciento89-bot/maengelfix/main/generated/signing-vault'
+          : > "$root/vault.b64"
+          for part in 00 01 02 03 04 05 06 07; do
+            curl --fail --silent --show-error --location "$base/android-signing-bundle.enc.part$part" >> "$root/vault.b64"
+          done
+          base64 --decode "$root/vault.b64" > "$root/vault.enc"
+          test "$(sha256sum "$root/vault.enc" | cut -d' ' -f1)" = '5d8d06ea9c7a654b9037701f9b63ff20f25f017c140fbea4f28c439898bef3e8'
+          curl --fail --silent --show-error --location "$base/android-signing-bundle.pass.kms.b64" > "$root/pass.kms.b64"
+          base64 --decode "$root/pass.kms.b64" > "$root/pass.kms"
+          test "$(sha256sum "$root/pass.kms" | cut -d' ' -f1)" = '6d6c0ae4b5c86f59195c20b9d84d413dbaa2efa19d7e57c26aec22fc18a55d49'
+          gcloud kms asymmetric-decrypt \
+            --project emerald-caster-508318-f2 \
+            --location global \
+            --keyring kamilunavo-signing \
+            --key android-upload-key-wrap \
+            --version 1 \
+            --ciphertext-file "$root/pass.kms" \
+            --plaintext-file "$root/pass.txt" >/dev/null
+          openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
+            -in "$root/vault.enc" \
+            -out "$root/vault.tar.gz" \
+            -pass file:"$root/pass.txt"
+          tar -xzf "$root/vault.tar.gz" -C "$root/extracted"
+          manifest="$root/extracted/manifest.json"
+          test -s "$manifest"
+          jq -e '.apps | type == "object"' "$manifest" >/dev/null
+          while IFS= read -r app; do
+            key_rel=$(jq -r --arg app "$app" '.apps[$app].keystore // empty' "$manifest")
+            store_pass=$(jq -r --arg app "$app" '.apps[$app].store_password // empty' "$manifest")
+            alias=$(jq -r --arg app "$app" '.apps[$app].alias // empty' "$manifest")
+            test -n "$key_rel" && test -n "$store_pass" && test -n "$alias"
+            key="$root/extracted/$key_rel"
+            test -s "$key"
+            sha1=$(keytool -list -v -keystore "$key" -storepass "$store_pass" -alias "$alias" | sed -n 's/^[[:space:]]*SHA1: //p' | head -n1 | tr -d ':')
+            sha256=$(keytool -list -v -keystore "$key" -storepass "$store_pass" -alias "$alias" | sed -n 's/^[[:space:]]*SHA256: //p' | head -n1 | tr -d ':')
+            test -n "$sha1" && test -n "$sha256"
+            echo "VAULT_APP=$app SHA1=$sha1 SHA256=$sha256"
+          done < <(jq -r '.apps | keys[]' "$manifest" | sort)
+          rm -rf "$root"
