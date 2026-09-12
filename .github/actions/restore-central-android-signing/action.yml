@@ -1,0 +1,79 @@
+name: Restore central Kamilunavo Android upload signing
+
+description: Restore the single KMS-protected Kamilunavo Android upload identity for Play uploads.
+
+runs:
+  using: composite
+  steps:
+    - id: google-auth
+      uses: google-github-actions/auth@v3
+      with:
+        workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+        service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+        token_format: access_token
+        access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+    - uses: google-github-actions/setup-gcloud@v3
+      with:
+        project_id: emerald-caster-508318-f2
+    - name: Restore and verify central upload identity
+      shell: bash
+      run: |
+        set -euo pipefail
+        umask 077
+        root="$RUNNER_TEMP/kamilunavo-central-signing"
+        rm -rf "$root"
+        mkdir -p "$root/extracted"
+        base='https://raw.githubusercontent.com/acciento89-bot/maengelfix/main'
+        curl --fail --silent --show-error --location "$base/.github/signing/kamilunavo-central-upload-key.kms.json" > "$root/envelope.json"
+        curl --fail --silent --show-error --location "$base/generated/signing-central/central-upload-key-manifest.json" > "$root/public-manifest.json"
+        jq -er '.ciphertext_base64' "$root/envelope.json" | base64 --decode > "$root/central.enc"
+        jq -er '.wrapped_passphrase_base64' "$root/envelope.json" | base64 --decode > "$root/pass.kms"
+        actual_cipher=$(sha256sum "$root/central.enc" | cut -d' ' -f1)
+        actual_wrapped=$(sha256sum "$root/pass.kms" | cut -d' ' -f1)
+        test "$actual_cipher" = "$(jq -er '.ciphertext_sha256' "$root/envelope.json")"
+        test "$actual_wrapped" = "$(jq -er '.wrapped_passphrase_sha256' "$root/envelope.json")"
+        gcloud kms asymmetric-decrypt \
+          --project emerald-caster-508318-f2 \
+          --location global \
+          --keyring kamilunavo-signing \
+          --key android-upload-key-wrap \
+          --version 1 \
+          --ciphertext-file "$root/pass.kms" \
+          --plaintext-file "$root/pass.txt" >/dev/null
+        openssl enc -d -aes-256-cbc -pbkdf2 -iter 600000 \
+          -in "$root/central.enc" -out "$root/central.tar.gz" -pass file:"$root/pass.txt"
+        tar -xzf "$root/central.tar.gz" -C "$root/extracted"
+        manifest="$root/extracted/manifest.json"
+        test -s "$manifest"
+        key_rel=$(jq -er '.keystore' "$manifest")
+        store_pass=$(jq -er '.store_password' "$manifest")
+        key_alias=$(jq -er '.alias' "$manifest")
+        key_pass=$(jq -er '.key_password' "$manifest")
+        expected_sha1=$(jq -er '.certificate_sha1' "$root/public-manifest.json")
+        expected_sha256=$(jq -er '.certificate_sha256' "$root/public-manifest.json")
+        echo "::add-mask::$store_pass"
+        echo "::add-mask::$key_alias"
+        echo "::add-mask::$key_pass"
+        selected="$RUNNER_TEMP/kamilunavo-central-upload.p12"
+        cp "$root/extracted/$key_rel" "$selected"
+        chmod 600 "$selected"
+        export CENTRAL_STORE_PASSWORD="$store_pass"
+        keytool -J-Duser.language=en -list -v -keystore "$selected" -storepass:env CENTRAL_STORE_PASSWORD -alias "$key_alias" > "$root/certificate.txt"
+        actual_sha1=$(sed -n 's/^[[:space:]]*SHA1: //p' "$root/certificate.txt" | tr -d ':\r\n ')
+        actual_sha256=$(sed -n 's/^[[:space:]]*SHA256: //p' "$root/certificate.txt" | tr -d ':\r\n ')
+        test "$actual_sha1" = "$expected_sha1"
+        test "$actual_sha256" = "$expected_sha256"
+        test "$actual_sha1" = "$(jq -er '.certificate_sha1' "$root/envelope.json")"
+        test "$actual_sha256" = "$(jq -er '.certificate_sha256' "$root/envelope.json")"
+        {
+          echo "ANDROID_UPLOAD_KEYSTORE_PATH=$selected"
+          echo "ANDROID_UPLOAD_KEYSTORE_PASSWORD=$store_pass"
+          echo "ANDROID_UPLOAD_STORE_PASSWORD=$store_pass"
+          echo "ANDROID_UPLOAD_KEY_ALIAS=$key_alias"
+          echo "ANDROID_UPLOAD_KEY_PASSWORD=$key_pass"
+          echo "KAMILUNAVO_CENTRAL_UPLOAD_SHA1=$actual_sha1"
+          echo "KAMILUNAVO_CENTRAL_UPLOAD_SHA256=$actual_sha256"
+          echo "KAMILUNAVO_SIGNING_WORKDIR=$root"
+        } >> "$GITHUB_ENV"
+        rm -f "$root/pass.txt" "$root/pass.kms" "$root/central.enc" "$root/central.tar.gz"
+        echo "Central Kamilunavo Android upload identity restored and verified: SHA-1 $actual_sha1"
