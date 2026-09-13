@@ -71,7 +71,7 @@ tap_by_text() {
   local label="$1"
   local coordinates
   adb shell uiautomator dump /sdcard/window.xml >/dev/null
-  coordinates="$(adb exec-out cat /sdcard/window.xml | python3 -c 'import re,sys; label=sys.argv[1]; data=sys.stdin.read(); node=next((n for n in re.findall(r"<node [^>]+>", data) if f"text=\"{label}\"" in n), None); assert node, f"Visible text not found: {label}"; x1,y1,x2,y2=map(int,re.search(r"bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"",node).groups()); print((x1+x2)//2,(y1+y2)//2)' "$label")"
+  coordinates="$(adb exec-out cat /sdcard/window.xml | python3 -c 'import re,sys; label=sys.argv[1]; data=sys.stdin.read(); node=next((n for n in re.findall(r"<node [^>]+>", data) if f"text=\"{label}\"" in n), None); assert node, f"Visible text not found: {label}"; x1,y1,x2,y2=map(int,re.search(r"bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"",node).groups()); print((x1+x2)//2,y1+max(1,(y2-y1)//4))' "$label")"
   read -r tap_x tap_y <<<"$coordinates"
   adb shell input tap "$tap_x" "$tap_y"
 }
