@@ -35,6 +35,9 @@ jobs:
         run: |
           sdkmanager 'platforms;android-36' 'build-tools;36.0.0'
           gradle -p android assembleDebug --stacktrace
+      - name: Enable KVM acceleration
+        run: sudo chmod 666 /dev/kvm
+
       - name: Capture real native UI
         uses: reactivecircus/android-emulator-runner@v2
         with:
@@ -43,7 +46,7 @@ jobs:
           profile: pixel_7
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: PACKAGE_NAME='com.kamilunavo.maengelfix' APK_PATH='android/app/build/outputs/apk/debug/app-debug.apk' OUTPUT_DIR='android/store/google-play/screenshots/de-DE' SECOND_ACTION='swipe' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
+          script: PACKAGE_NAME='com.kamilunavo.maengelfix' APK_PATH='android/app/build/outputs/apk/debug/app-debug.apk' OUTPUT_DIR='android/store/google-play/screenshots/de-DE' WAIT_TEXT='Willkommen zurück' SECOND_ACTION='swipe' SECOND_WAIT_TEXT='Passwort' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
       - uses: actions/upload-artifact@v4
         with:
           name: MaengelFix-authentic-Android-store-screenshots

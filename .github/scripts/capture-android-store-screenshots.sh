@@ -4,23 +4,38 @@ set -euo pipefail
 : "${PACKAGE_NAME:?PACKAGE_NAME is required}"
 : "${APK_PATH:?APK_PATH is required}"
 : "${OUTPUT_DIR:?OUTPUT_DIR is required}"
+: "${WAIT_TEXT:?WAIT_TEXT is required}"
 : "${SECOND_ACTION:?SECOND_ACTION is required}"
 
 readonly apk_path="$GITHUB_WORKSPACE/$APK_PATH"
 readonly output_dir="$GITHUB_WORKSPACE/$OUTPUT_DIR"
 
 current_focus() {
-  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
+  adb shell dumpsys window | grep "mCurrentFocus" | head -n 1 || true
+}
+
+hide_error_dialogs() {
+  adb shell settings put global hide_error_dialogs 1 || true
+  adb shell settings put global anr_show_background 0 || true
+  adb shell am broadcast -a android.intent.action.CLOSE_SYSTEM_DIALOGS >/dev/null 2>&1 || true
+}
+
+assert_no_system_dialog() {
+  local focus
+  focus="$(current_focus)"
+  if [[ "$focus" != *"$PACKAGE_NAME"* ]]; then
+    echo "Unexpected foreground window; refusing to capture: $focus" >&2
+    return 1
+  fi
 }
 
 wait_for_foreground() {
   local attempt
-  local focus
   for attempt in $(seq 1 45); do
-    focus="$(current_focus)"
-    if [[ "$focus" == *"$PACKAGE_NAME"* ]]; then
+    if [[ "$(current_focus)" == *"$PACKAGE_NAME"* ]]; then
       return 0
     fi
+    hide_error_dialogs
     sleep 1
   done
   echo "Timed out waiting for $PACKAGE_NAME to become the foreground app." >&2
@@ -28,21 +43,37 @@ wait_for_foreground() {
   return 1
 }
 
-launch_app() {
-  adb shell am force-stop "$PACKAGE_NAME"
-  adb shell monkey -p "$PACKAGE_NAME" -c android.intent.category.LAUNCHER 1
-  wait_for_foreground
-  sleep 10
+wait_for_ui_text() {
+  local expected="$1"
+  local attempt
+  for attempt in $(seq 1 45); do
+    if adb exec-out uiautomator dump /dev/tty 2>/dev/null | grep -Fq "$expected"; then
+      return 0
+    fi
+    assert_no_system_dialog
+    sleep 1
+  done
+  echo "Timed out waiting for visible app text: $expected" >&2
+  adb exec-out uiautomator dump /dev/tty >&2 || true
+  return 1
 }
 
-assert_clean_foreground() {
-  local focus
-  focus="$(current_focus)"
-  if [[ "$focus" != *"$PACKAGE_NAME"* ]]; then
-    echo "Expected $PACKAGE_NAME in the foreground; refusing to capture." >&2
-    printf '%s\n' "$focus" >&2
-    return 1
-  fi
+launch_app() {
+  adb shell am force-stop "$PACKAGE_NAME"
+  hide_error_dialogs
+  adb shell am start -W -n "$PACKAGE_NAME/.MainActivity"
+  wait_for_foreground
+  wait_for_ui_text "$WAIT_TEXT"
+  assert_no_system_dialog
+}
+
+tap_by_text() {
+  local label="$1"
+  local coordinates
+  adb shell uiautomator dump /sdcard/window.xml >/dev/null
+  coordinates="$(adb exec-out cat /sdcard/window.xml | python3 -c 'import re,sys; label=sys.argv[1]; data=sys.stdin.read(); node=next((n for n in re.findall(r"<node [^>]+>", data) if f"text=\"{label}\"" in n), None); assert node, f"Visible text not found: {label}"; x1,y1,x2,y2=map(int,re.search(r"bounds=\"\[(\d+),(\d+)\]\[(\d+),(\d+)\]\"",node).groups()); print((x1+x2)//2,(y1+y2)//2)' "$label")"
+  read -r tap_x tap_y <<<"$coordinates"
+  adb shell input tap "$tap_x" "$tap_y"
 }
 
 mkdir -p "$output_dir"
@@ -54,17 +85,15 @@ adb shell settings put system user_rotation 0
 adb shell cmd locale set-app-locales "$PACKAGE_NAME" --user 0 de-DE || true
 
 launch_app
-assert_clean_foreground
 adb exec-out screencap -p > "$output_dir/01-current-ui.png"
 
 case "$SECOND_ACTION" in
   tap)
-    adb shell input tap "${TAP_X:-540}" "${TAP_Y:-1900}"
-    sleep 4
+    : "${SECOND_TEXT:?SECOND_TEXT is required for tap}"
+    tap_by_text "$SECOND_TEXT"
     ;;
   swipe)
     adb shell input swipe 540 1900 540 650 600
-    sleep 4
     ;;
   dark)
     adb shell cmd uimode night yes
@@ -76,7 +105,11 @@ case "$SECOND_ACTION" in
     ;;
 esac
 
-assert_clean_foreground
+if [[ "$SECOND_ACTION" != dark ]]; then
+  wait_for_foreground
+  wait_for_ui_text "${SECOND_WAIT_TEXT:-$WAIT_TEXT}"
+fi
+assert_no_system_dialog
 adb exec-out screencap -p > "$output_dir/02-current-ui-detail.png"
 
 python3 - "$output_dir" <<'PY'
