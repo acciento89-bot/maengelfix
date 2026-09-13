@@ -1,0 +1,20 @@
+name: Android upload-key inventory audit
+
+on:
+  pull_request:
+    paths:
+      - '.github/scripts/test-upload-key-migration-inventory.py'
+      - '.github/workflows/upload-key-inventory-audit.yml'
+      - 'generated/signing-central/android-upload-key-migration.json'
+
+permissions:
+  contents: read
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - name: Validate audited Play upload-key inventory
+        run: python .github/scripts/test-upload-key-migration-inventory.py
