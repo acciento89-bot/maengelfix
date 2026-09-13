@@ -9,19 +9,22 @@ set -euo pipefail
 readonly apk_path="$GITHUB_WORKSPACE/$APK_PATH"
 readonly output_dir="$GITHUB_WORKSPACE/$OUTPUT_DIR"
 
+current_focus() {
+  adb shell dumpsys window | grep -E "mCurrentFocus|mFocusedApp" || true
+}
+
 wait_for_foreground() {
   local attempt
+  local focus
   for attempt in $(seq 1 45); do
-    if adb shell dumpsys window |
-      grep -E "mCurrentFocus|mFocusedApp" |
-      grep -Fq "$PACKAGE_NAME"; then
+    focus="$(current_focus)"
+    if [[ "$focus" == *"$PACKAGE_NAME"* ]]; then
       return 0
     fi
     sleep 1
   done
   echo "Timed out waiting for $PACKAGE_NAME to become the foreground app." >&2
-  adb shell dumpsys window |
-    grep -E "mCurrentFocus|mFocusedApp" >&2 || true
+  current_focus >&2
   return 1
 }
 
@@ -33,12 +36,11 @@ launch_app() {
 }
 
 assert_clean_foreground() {
-  if ! adb shell dumpsys window |
-    grep -E "mCurrentFocus|mFocusedApp" |
-    grep -Fq "$PACKAGE_NAME"; then
+  local focus
+  focus="$(current_focus)"
+  if [[ "$focus" != *"$PACKAGE_NAME"* ]]; then
     echo "Expected $PACKAGE_NAME in the foreground; refusing to capture." >&2
-    adb shell dumpsys window |
-      grep -E "mCurrentFocus|mFocusedApp" >&2 || true
+    printf '%s\n' "$focus" >&2
     return 1
   fi
 }
