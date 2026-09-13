@@ -46,7 +46,7 @@ jobs:
           profile: pixel_7
           disable-animations: true
           emulator-options: -no-window -gpu swiftshader_indirect -noaudio -no-boot-anim
-          script: PACKAGE_NAME='com.kamilunavo.maengelfix' APK_PATH='android/app/build/outputs/apk/debug/app-debug.apk' OUTPUT_DIR='android/store/google-play/screenshots/de-DE' WAIT_TEXT='Willkommen zurück' SECOND_ACTION='swipe' SECOND_WAIT_TEXT='Passwort' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
+          script: PACKAGE_NAME='com.kamilunavo.maengelfix' APK_PATH='android/app/build/outputs/apk/debug/app-debug.apk' OUTPUT_DIR='android/store/google-play/screenshots/de-DE' WAIT_TEXT='Willkommen zurück' SECOND_ACTION='tap' SECOND_TEXT='Registrieren' SECOND_WAIT_TEXT='Dein Name' bash "$GITHUB_WORKSPACE/.github/scripts/capture-android-store-screenshots.sh"
       - uses: actions/upload-artifact@v4
         with:
           name: MaengelFix-authentic-Android-store-screenshots
