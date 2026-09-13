@@ -1,112 +1,191 @@
 {
-  "schema": 1,
+  "schema": 2,
+  "audited_at": "2026-09-13",
   "target_upload_certificate_sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
   "target_upload_certificate_sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
   "apps": [
     {
-      "name": "NavoKids",
-      "package": "com.kamilunavo.navokids",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "ZweiCheck",
-      "package": "de.kamilunavo.zweicheck",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "ArbeitsKlar",
-      "package": "de.kamilunavo.arbeitsklar",
-      "status": "RESET_REQUIRED_NOW"
-    },
-    {
-      "name": "WaermeTakt",
-      "package": "de.kamilunavo.waermetakt",
-      "status": "RESET_REQUIRED_NOW"
-    },
-    {
-      "name": "Reklaio",
-      "package": "de.kamilunavo.reklaio",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "MaengelFix",
-      "package": "com.kamilunavo.maengelfix",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "Kintaroq",
-      "package": "com.kamilunavo.kintaroq",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "NavoPass",
-      "package": "de.kamilunavo.navopass",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
       "name": "99,9 %",
       "package": "de.kamilunavo.ninenine",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "NavoTap",
-      "package": "com.kamilunavo.onemoretap",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "KaelteCalc",
-      "package": "de.kamilunav.kaltecalc",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "LueftungsCalc",
-      "package": "de.kamilunavo.luftungscalc",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "HeizkoerperCalc",
-      "package": "de.kamilunavo.heizkorpercalc",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "RohrCalc",
-      "package": "de.kamilunavo.rohrcalc",
-      "status": "RESET_REQUIRED_NOW"
+      "play_app_id": "4974328164143625978",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "6BB692C0EDB85C08F0699F955C5B61AF4E714296",
+      "current_upload_certificate_sha256": "DEEAF5167E72D8B19A435DA04F4D83BEDE00A95B990F9AAE1EAC5B1588D2F370"
     },
     {
       "name": "AnlagenCheck",
       "package": "de.kamilunavo.servicecheck",
-      "status": "MIGRATION_PLANNED"
+      "play_app_id": "4973563938353126131",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B9EB4B6BD26968A1FB49E4B19D38833A0EBD0CEB",
+      "current_upload_certificate_sha256": "8942FFF5023AB8B1E5B8301671BF219D34F9E8C3EC1A253E5D9C72A5D3D67A56"
     },
     {
-      "name": "VolumeCalc",
-      "package": "de.kamilunavo.volumecalc",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "KeepMeter",
-      "package": "de.kamilunavo.keepmeter",
-      "status": "MIGRATION_PLANNED"
-    },
-    {
-      "name": "Schon erledigt?",
-      "package": "com.kamilunavo.schonerledigt",
-      "status": "RESET_REQUIRED_NOW"
+      "name": "ArbeitsKlar",
+      "package": "de.kamilunavo.arbeitsklar",
+      "play_app_id": "4973171468866946305",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "E8CA39C034F53490D9998DB093C157FC67E1B6C1",
+      "current_upload_certificate_sha256": "765E1CF30C96CF322FD113D455D430B4D50971A94AA00A0302549946E240D667"
     },
     {
       "name": "BrennerCalc",
       "package": "de.kamilunavo.brennercalc",
-      "status": "MIGRATION_PLANNED"
+      "play_app_id": "4972910786875040173",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "65E0A0AEBC2CE0F2FDCC007473274BB8CEE79750",
+      "current_upload_certificate_sha256": "15DAC942F17A9D3B8B2A5B9D335D8659501DF9969BCEA04A3C34441A67B73613"
+    },
+    {
+      "name": "HeizkoerperCalc",
+      "package": "de.kamilunavo.heizkorpercalc",
+      "play_app_id": "4974315985387813561",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B9EB4B6BD26968A1FB49E4B19D38833A0EBD0CEB",
+      "current_upload_certificate_sha256": "8942FFF5023AB8B1E5B8301671BF219D34F9E8C3EC1A253E5D9C72A5D3D67A56"
     },
     {
       "name": "HydroCalc",
       "package": "de.kamilunavo.hydrocalc",
-      "status": "MIGRATION_PLANNED"
+      "play_app_id": "4974000193850560698",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "D0EC05720BCA531D7476FA8B20B01989042A80AE",
+      "current_upload_certificate_sha256": "2A2452261067CCA1D0A551CB52FDA2625563EF611D6794108C356E6F4FF0C8AF"
+    },
+    {
+      "name": "Idle Handwerker",
+      "package": "de.kamilunavo.idlehandwerker",
+      "play_app_id": "4975522377690050503",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "3B344AC38E7C28A35A335E5F18B668DA8D4E9B09",
+      "current_upload_certificate_sha256": "C289800806F5A09923053A664021850C6880A256FE7966CE91A961D6F2F17844"
+    },
+    {
+      "name": "KeepMeter",
+      "package": "de.kamilunavo.keepmeter",
+      "play_app_id": "4976457773432493246",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "D4DDC647EECC75D4DE59AC5223DAE3CFE7B5B977",
+      "current_upload_certificate_sha256": "75F4A34DECF368B09934BF011554C717D1B1736328CA982B463CF8E0EF6FB937"
+    },
+    {
+      "name": "Kintaroq",
+      "package": "com.kamilunavo.kintaroq",
+      "play_app_id": "4975367480674472056",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B9EB4B6BD26968A1FB49E4B19D38833A0EBD0CEB",
+      "current_upload_certificate_sha256": "8942FFF5023AB8B1E5B8301671BF219D34F9E8C3EC1A253E5D9C72A5D3D67A56"
+    },
+    {
+      "name": "KaelteCalc",
+      "package": "de.kamilunav.kaltecalc",
+      "play_app_id": "4976278646146162006",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B9EB4B6BD26968A1FB49E4B19D38833A0EBD0CEB",
+      "current_upload_certificate_sha256": "8942FFF5023AB8B1E5B8301671BF219D34F9E8C3EC1A253E5D9C72A5D3D67A56"
+    },
+    {
+      "name": "LueftungsCalc",
+      "package": "de.kamilunavo.luftungscalc",
+      "play_app_id": "4973912976306987936",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B9EB4B6BD26968A1FB49E4B19D38833A0EBD0CEB",
+      "current_upload_certificate_sha256": "8942FFF5023AB8B1E5B8301671BF219D34F9E8C3EC1A253E5D9C72A5D3D67A56"
     },
     {
       "name": "MAGCalc",
       "package": "de.kamilunavo.magcalc",
-      "status": "MIGRATION_PLANNED"
+      "play_app_id": "4973345418335817990",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "D66493E0D09FD01EFCED392C404ED96F0FFC3C8F",
+      "current_upload_certificate_sha256": "74507A5BCF1D985894C13C6A1FCE657F05AC49CC843AFF582C834A1C13EBABB5"
+    },
+    {
+      "name": "MaengelFix",
+      "package": "com.kamilunavo.maengelfix",
+      "play_app_id": "4974666039863842830",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "5CC27E89BA7FCD4628840F20E74A2442867A7EE4",
+      "current_upload_certificate_sha256": "546A292C188F9032D98F9EA0529A7EC2CBD816E7478C1390C4B00D1021A8E034"
+    },
+    {
+      "name": "NavoPass",
+      "package": "de.kamilunavo.navopass",
+      "play_app_id": "4973499767022511783",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "3778A59F65AA5E84A0E8800131B82D6084D1357D",
+      "current_upload_certificate_sha256": "0F474B9F33C9B975AD470B73530FEC5B7E2B4F0CCB4ED024CC5EC6B1051BB56E"
+    },
+    {
+      "name": "NavoTap",
+      "package": "com.kamilunavo.onemoretap",
+      "play_app_id": "4975659079068694931",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "D5F926F1E4F556FE31E300C3509D777306D10043",
+      "current_upload_certificate_sha256": "F1BD1BE0BDC05420B4371604DCFB7C1EDF3891304A5B5ACF27C0F93A129197F9"
+    },
+    {
+      "name": "Rapport AI",
+      "package": "de.kamilunavo.rapportai",
+      "play_app_id": "4974080898449522968",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "1A47D5B2712B9D9F979ED58D25E295045D97E513",
+      "current_upload_certificate_sha256": "E49D22E37DB9C8DD7ADC32BF164757985CC4DCE751FAAEDC2A330F8C09773F1A"
+    },
+    {
+      "name": "Reklaio",
+      "package": "de.kamilunavo.reklaio",
+      "play_app_id": "4972633172712985073",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "89AEC188B844709A33A7987B01DAD2FDC7F95938",
+      "current_upload_certificate_sha256": "E4AAF00E6D97D1954FDCBCC0223F714DA37F440F2C12F0AE0F72D1FC5F89DA5E"
+    },
+    {
+      "name": "RohrCalc",
+      "package": "de.kamilunavo.rohrcalc",
+      "play_app_id": "4976457980416180102",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "20239FD226FBA03E6A059ED32E416213722BD958",
+      "current_upload_certificate_sha256": "A5B3AC40988DEE330F905EAF82E57D19D0349FE831CC42D1F17DCF86FFA30611"
+    },
+    {
+      "name": "Schon erledigt?",
+      "package": "com.kamilunavo.schonerledigt",
+      "play_app_id": "4973032774754369480",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "F84C618C731B6264D77718D38592CE65F7D7DCEC",
+      "current_upload_certificate_sha256": "8B2C67F512982AB77B23B3B27D02306E6D8A53B3BE3A463EF00EA37967E3A66D"
+    },
+    {
+      "name": "VolumeCalc",
+      "package": "de.kamilunavo.volumecalc",
+      "play_app_id": "4974671101179945496",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "4A1B39602C0F6358853E39F8DD219B93B7DC4843",
+      "current_upload_certificate_sha256": "95C61085C6DC0A6696882A69E46DE3CCBED69379C52AD400DF98571148A8FB7C"
+    },
+    {
+      "name": "WaermeTakt",
+      "package": "de.kamilunavo.waermetakt",
+      "play_app_id": "4972128532542830752",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "B11EE210ADCC516825A01EE543B2DA17B81B321A",
+      "current_upload_certificate_sha256": "771823AAE7C6BB3F777CF8027D8E039645E26BF943A006586F583FC7615372AF"
+    },
+    {
+      "name": "ZweiCheck",
+      "package": "de.kamilunavo.zweicheck",
+      "play_app_id": "4975977374520913421",
+      "status": "RESET_REQUIRED_NOW",
+      "current_upload_certificate_sha1": "BA678A714864918B60146474DF59AAB9828763E3",
+      "current_upload_certificate_sha256": "47C99A03FDA31DE36FF9EFCD73C184804442E562175C09CAA136221C2F522BFD"
+    }
+  ],
+  "excluded_apps": [
+    {
+      "name": "NavoKids",
+      "package": "com.kamilunavo.navokids",
+      "reason": "Already correct and explicitly excluded from this migration"
     }
   ]
 }
