@@ -1,0 +1,81 @@
+name: Sync authentic Android Play screenshots
+
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/play-screenshots/**'
+      - '.github/scripts/prepare-play-screenshots.sh'
+      - '.github/scripts/sync-all-play-screenshots.sh'
+      - '.github/scripts/test-sync-all-play-screenshots.sh'
+      - '.github/workflows/sync-all-play-screenshots.yml'
+  push:
+    branches: [main]
+    paths:
+      - '.github/play-screenshots/**'
+      - '.github/scripts/prepare-play-screenshots.sh'
+      - '.github/scripts/sync-all-play-screenshots.sh'
+      - '.github/scripts/test-sync-all-play-screenshots.sh'
+      - '.github/workflows/sync-all-play-screenshots.yml'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-all-play-screenshots
+  cancel-in-progress: false
+
+env:
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+  MANIFEST: .github/play-screenshots/targets.tsv
+  PREPARED: prepared-play-screenshots
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install image tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick jq
+      - name: Test immutable Android-only screenshot contract
+        run: bash .github/scripts/test-sync-all-play-screenshots.sh
+      - name: Prepare Play-compatible authentic screenshots
+        run: bash .github/scripts/prepare-play-screenshots.sh "$MANIFEST" "$PREPARED"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: authentic-android-play-screenshots
+          path: prepared-play-screenshots/
+          if-no-files-found: error
+          retention-days: 30
+
+  sync:
+    needs: validate
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v5
+      - id: google-auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+      - name: Install image and API tools
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq imagemagick jq
+      - name: Prepare exact verified Android screenshots
+        run: bash .github/scripts/prepare-play-screenshots.sh "$MANIFEST" "$PREPARED"
+      - name: Replace Play phone screenshots and verify committed SHA-256 values
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        run: bash .github/scripts/sync-all-play-screenshots.sh "$MANIFEST" "$PREPARED"
