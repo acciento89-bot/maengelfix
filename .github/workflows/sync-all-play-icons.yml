@@ -2,14 +2,22 @@ name: Sync all canonical Google Play icons
 
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - '.github/workflows/sync-all-play-icons.yml'
+      - '.github/play-icons/targets.tsv'
+      - '.github/scripts/test-sync-all-play-icons.sh'
+      - '.github/scripts/validate-play-icon-sources.sh'
   push:
     branches: [main]
     paths:
       - '.github/workflows/sync-all-play-icons.yml'
+      - '.github/play-icons/targets.tsv'
+      - '.github/scripts/test-sync-all-play-icons.sh'
+      - '.github/scripts/validate-play-icon-sources.sh'
 
 permissions:
   contents: read
-  id-token: write
 
 concurrency:
   group: sync-all-play-icons
@@ -20,9 +28,33 @@ env:
   GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
 
 jobs:
+  validate:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+
+      - name: Install icon tools
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update -qq
+          sudo apt-get install -y -qq librsvg2-bin imagemagick
+
+      - name: Validate immutable sync contract
+        run: bash .github/scripts/test-sync-all-play-icons.sh
+
+      - name: Validate every canonical icon source
+        run: bash .github/scripts/validate-play-icon-sources.sh
+
   sync:
+    needs: validate
+    if: github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: read
+      id-token: write
     steps:
       - uses: actions/checkout@v5
 
@@ -50,31 +82,6 @@ jobs:
           mkdir -p /tmp/play-icons
           report="$RUNNER_TEMP/play-icon-sync.tsv"
           : > "$report"
-
-          # NavoKids is intentionally excluded: its current Android assets and
-          # Play listing are already correct and must remain untouched.
-          # MängelFix is handled by its separately gated live-listing workflow.
-          cat > "$RUNNER_TEMP/targets.tsv" <<'EOF'
-          ZweiCheck|de.kamilunavo.zweicheck|https://raw.githubusercontent.com/acciento89-bot/zweicheck/main/store/google-play/icon-512.png
-          ArbeitsKlar|de.kamilunavo.arbeitsklar|https://raw.githubusercontent.com/acciento89-bot/arbeitsklar/main/store/google-play/icon-512.png
-          WärmeTakt|de.kamilunavo.waermetakt|https://raw.githubusercontent.com/acciento89-bot/w-rmetakt/main/store/google-play/icon.svg
-          Reklaio|de.kamilunavo.reklaio|https://raw.githubusercontent.com/acciento89-bot/reklaio/main/mobile/assets/icon.png
-          Kintaroq|com.kamilunavo.kintaroq|https://raw.githubusercontent.com/acciento89-bot/maengelfix/main/generated/navoops/play-icon-fixes/kintaroq-512.png
-          NavoPass|de.kamilunavo.navopass|https://raw.githubusercontent.com/acciento89-bot/navopass/main/android/store/google-play/icon.svg
-          99,9 %|de.kamilunavo.ninenine|https://raw.githubusercontent.com/acciento89-bot/99-9/main/store/google-play/icon-512.png
-          NavoTap|com.kamilunavo.onemoretap|https://raw.githubusercontent.com/acciento89-bot/onemoretap/main/OneMoreTap/Assets.xcassets/AppIcon.appiconset/AppIcon.png
-          KälteCalc|de.kamilunav.kaltecalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/kaltecalc.png
-          LüftungsCalc|de.kamilunavo.luftungscalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/lueftungscalc.png
-          HeizkörperCalc|de.kamilunavo.heizkorpercalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/heizkoerpercalc.png
-          RohrCalc|de.kamilunavo.rohrcalc|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/rohrcalc.png
-          AnlagenCheck|de.kamilunavo.servicecheck|https://raw.githubusercontent.com/acciento89-bot/SHK/main/android/store/google-play/anlagencheck.png
-          VolumeCalc|de.kamilunavo.volumecalc|https://raw.githubusercontent.com/acciento89-bot/AnlagenVolumen/main/android/store/google-play/icon.svg
-          KeepMeter|de.kamilunavo.keepmeter|https://raw.githubusercontent.com/acciento89-bot/keepmeter/main/store/google-play/icon.svg
-          Schon erledigt?|com.kamilunavo.schonerledigt|https://raw.githubusercontent.com/acciento89-bot/schonerledigt/main/store/google-play/icon-512.png
-          BrennerCalc|de.kamilunavo.brennercalc|https://raw.githubusercontent.com/acciento89-bot/BrennerCalc/main/store/google-play/icon.svg
-          HydroCalc|de.kamilunavo.hydrocalc|https://raw.githubusercontent.com/acciento89-bot/HydroCalc/main/store/google-play/icon.svg
-          MAGCalc|de.kamilunavo.magcalc|https://raw.githubusercontent.com/acciento89-bot/MAGCalc/main/store/google-play/icon-512.png
-          EOF
 
           api='https://androidpublisher.googleapis.com/androidpublisher/v3'
           upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
@@ -186,7 +193,7 @@ jobs:
 
           while IFS='|' read -r name package url; do
             sync_one "$name" "$package" "$url"
-          done < "$RUNNER_TEMP/targets.tsv"
+          done < .github/play-icons/targets.tsv
 
           echo '--- Play icon sync report ---'
           cat "$report"
