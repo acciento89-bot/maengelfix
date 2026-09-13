@@ -12,7 +12,7 @@ readonly output_dir="$GITHUB_WORKSPACE/$OUTPUT_DIR"
 wait_for_foreground() {
   local attempt
   for attempt in $(seq 1 45); do
-    if adb shell dumpsys window windows |
+    if adb shell dumpsys window |
       grep -E "mCurrentFocus|mFocusedApp" |
       grep -Fq "$PACKAGE_NAME"; then
       return 0
@@ -20,7 +20,7 @@ wait_for_foreground() {
     sleep 1
   done
   echo "Timed out waiting for $PACKAGE_NAME to become the foreground app." >&2
-  adb shell dumpsys window windows |
+  adb shell dumpsys window |
     grep -E "mCurrentFocus|mFocusedApp" >&2 || true
   return 1
 }
@@ -33,11 +33,11 @@ launch_app() {
 }
 
 assert_clean_foreground() {
-  if ! adb shell dumpsys window windows |
+  if ! adb shell dumpsys window |
     grep -E "mCurrentFocus|mFocusedApp" |
     grep -Fq "$PACKAGE_NAME"; then
     echo "Expected $PACKAGE_NAME in the foreground; refusing to capture." >&2
-    adb shell dumpsys window windows |
+    adb shell dumpsys window |
       grep -E "mCurrentFocus|mFocusedApp" >&2 || true
     return 1
   fi
@@ -94,4 +94,3 @@ for path in paths:
     digests.add(hashlib.sha256(data).hexdigest())
 assert len(digests) == 2, 'Screenshots must show two distinct real app states'
 PY
-
