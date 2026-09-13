@@ -33,7 +33,16 @@ jobs:
       - name: Verify canonical 512px icon derived from App Store artwork
         run: |
           cp android/store/google-play/icon-512.png /tmp/maengelfix-play.png
-          identify -format '%wx%h' /tmp/maengelfix-play.png | grep -Fx '512x512'
+          python3 - <<'PY'
+          import struct
+          with open('/tmp/maengelfix-play.png', 'rb') as icon:
+              signature = icon.read(24)
+          if signature[:8] != b'\\x89PNG\\r\\n\\x1a\\n':
+              raise SystemExit('Play icon is not a PNG')
+          width, height = struct.unpack('>II', signature[16:24])
+          if (width, height) != (512, 512):
+              raise SystemExit(f'Play icon must be 512x512, got {width}x{height}')
+          PY
           test "$(stat -c%s /tmp/maengelfix-play.png)" -lt 1048576
       - name: Upload canonical icon to every Google Play listing
         env:
