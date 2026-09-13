@@ -27,12 +27,16 @@ Stand: 2026-09-13
 | NavoPass | `navopass` | Jetpack Compose | TODO AUDIT | iOS-Parität, Systemleisten, Navigation, Screenshots |
 | 99,9 % | `99-9` | zu prüfen | TODO AUDIT | vollständige Android-/iOS-Parität, Icon/Store-Assets |
 | NavoTap | `onemoretap` | Jetpack Compose | TODO AUDIT | iOS-Parität, Tipp-Erkennung, Systemleisten, Screenshots |
+| Family Life OS | `appideenchatgpt` | Projektbasis prüfen | TODO AUDIT | Android-Produkt gegen iOS-Version, Systemleisten, Datenfluss, Screenshots |
+| Kamilunavo Trace | `appideenchatgpt` | Projektbasis prüfen | TODO AUDIT | Android-Produkt gegen iOS-Version, Systemleisten, Export/PDF, Screenshots |
+| Idle Handwerker | `appideenchatgpt/apps/005-idle-handwerker` | Godot | TODO AUDIT | native Godot-Android-Ausgabe statt WebView/Wrapper, HUD/Safe-Area, Billing/Ads, Screenshots |
+| Rapport AI | `appideenchatgpt` | Projektbasis prüfen | TODO AUDIT | Android-Produkt gegen iOS-Version, Aufnahme/PDF, Systemleisten, Billing, Screenshots |
 | KälteCalc | `SHK` | Jetpack Compose Flavor | TODO AUDIT | iOS-Parität, Statusbar, Store-Preis, Screenshots |
 | LüftungsCalc | `SHK` | Jetpack Compose Flavor | TODO AUDIT | iOS-Parität, Statusbar, Store-Preis, Screenshots |
 | HeizkörperCalc | `SHK` | Jetpack Compose Flavor | TODO AUDIT | iOS-Parität, Statusbar, Store-Preis, Screenshots |
 | RohrCalc | `SHK` | Jetpack Compose Flavor | TODO AUDIT | iOS-Parität, Statusbar, Upload-Key-Reset, Screenshots |
 | AnlagenCheck | `SHK` | Jetpack Compose Flavor | TODO AUDIT | iOS-Parität, Statusbar, Screenshots |
-| VolumeCalc | `AnlagenVolumen` | Jetpack Compose | TODO AUDIT | iOS-Parität, Top-/Statusbar, Kontrast, Screenshots |
+| VolumeCalc | `AnlagenVolumen` | Jetpack Compose | AUDITED / REBUILD NEEDED | Android ist aktuell dunkel/einseitig, iOS hell mit Inventar + Füllabgleich; vollständige Parität inkl. Top-/Statusbar nötig |
 | KeepMeter | `keepmeter` | Jetpack Compose | TODO AUDIT | iOS-Parität, Inset-Dopplung prüfen, Screenshots |
 | Schon erledigt? | `schonerledigt` | Jetpack Compose | TODO AUDIT | iOS-Parität, Systemleisten, Billing, Screenshots |
 | BrennerCalc | `BrennerCalc` | Jetpack Compose | TODO AUDIT | iOS-Parität, Systemleisten, Billing/Preis, Screenshots |
@@ -67,6 +71,14 @@ Stand: 2026-09-13
 - Safe-Area-Werte für Top/Bottom verwenden; keine hart codierten Statusbar-Höhen.
 - Navigation Bar und Splash/Launcher-Farbe an die tatsächliche App-Oberfläche angleichen.
 
+### Godot
+
+- Display-Cutout/Safe-Area explizit auswerten und HUD/Buttons außerhalb von Status- und Gestenbereichen halten.
+- Kein WebView-/HTML-Wrapper als Ersatz für die native Spielausgabe.
+- Google Billing und Ads nur über native Android-Integration; Store-Screenshots direkt aus dem finalen Godot-Android-Build.
+
 ## Aktiver erster Umbau
 
 Kintaroq: Draft-PR `#59` in `acciento89-bot/kamilunavo` auf Branch `fix/kintaroq-android-ios-parity`. Keine Production-Freigabe vor grünem Build, visueller Screenshot-Prüfung und vollständiger Google-Play-Purchase-Verifikation.
+
+VolumeCalc ist bereits als klarer zweiter Vollumbau markiert: die aktuelle Android-Version entspricht der iOS-Produktstruktur nicht und wird nicht nur kosmetisch nachgebessert.
