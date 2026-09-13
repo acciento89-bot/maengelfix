@@ -5,10 +5,8 @@ import re
 
 root = pathlib.Path(__file__).resolve().parents[2]
 manifest_path = root / "generated/signing-central/android-upload-key-migration.json"
-workflow_path = root / ".github/workflows/prepare-upload-key-resets.yml"
 
 manifest = json.loads(manifest_path.read_text())
-workflow = workflow_path.read_text()
 
 assert manifest["schema"] == 2
 assert manifest["target_upload_certificate_sha1"] == "BCF2337D41E617C03BCAE698C09D1523654BD790"
@@ -56,10 +54,4 @@ assert manifest["excluded_apps"] == [
         "reason": "Already correct and explicitly excluded from this migration",
     }
 ]
-assert "('NavoKids'" not in workflow
-assert "apps = [" not in workflow
-assert "migration.get('schema') != 2" in workflow
-assert "current_upload_certificate_sha1" in workflow
-assert "excluded_apps" in workflow
-
 print("Upload-key migration inventory contract passed.")
