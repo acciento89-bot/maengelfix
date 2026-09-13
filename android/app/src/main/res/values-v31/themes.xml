@@ -7,6 +7,6 @@
         <item name="android:navigationBarColor">#FFFFFF</item>
         <item name="android:windowLightNavigationBar">true</item>
         <item name="android:windowSplashScreenBackground">#0A2A5E</item>
-        <item name="android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/maengelfix_app_icon</item>
     </style>
 </resources>

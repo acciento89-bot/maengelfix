@@ -7,10 +7,12 @@ on:
       - 'android/**'
     paths:
       - 'android/**'
+      - 'store/apple/app-icon-1024.png'
       - '.github/workflows/android-ci.yml'
   pull_request:
     paths:
       - 'android/**'
+      - 'store/apple/app-icon-1024.png'
       - '.github/workflows/android-ci.yml'
   workflow_dispatch:
 
@@ -36,30 +38,23 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: '9.5.0'
-      - name: Verify canonical launcher, splash and Play icon identity
+      - name: Verify exact App Store, Android launcher and splash icon identity
         shell: bash
         run: |
           set -euo pipefail
-          LEGACY='android/app/src/main/res/drawable/ic_launcher.xml'
-          BG='android/app/src/main/res/drawable/maengelfix_launcher_background.xml'
-          FG='android/app/src/main/res/drawable/maengelfix_launcher_foreground.xml'
-          PLAY='android/store/google-play/icon.svg'
-          for token in '#0A2A5E' '#12489B'; do
-            grep -Fq "$token" "$LEGACY"
-            grep -Fq "$token" "$BG"
-            grep -Fq "$token" "$PLAY"
-          done
-          for token in '#FFFFFF' '#CFE1FF' '#7FA7E8' '#B6C5D8' '#FFB21A'; do
-            grep -Fq "$token" "$LEGACY"
-            grep -Fq "$token" "$FG"
-            grep -Fq "$token" "$PLAY"
-          done
-          grep -Fq 'M31,69L43,80L67,51' "$LEGACY"
-          grep -Fq 'M31,69L43,80L67,51' "$FG"
-          grep -Fq 'm31 69 12 11 24-29' "$PLAY"
-          grep -Fq '@drawable/maengelfix_launcher_background' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          grep -Fq '@drawable/maengelfix_launcher_foreground' android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          grep -Fq 'android:windowSplashScreenAnimatedIcon">@mipmap/ic_launcher' android/app/src/main/res/values-v31/themes.xml
+          ios_icon='store/apple/app-icon-1024.png'
+          android_icon='android/app/src/main/res/drawable-nodpi/maengelfix_app_icon.png'
+          play_icon='android/store/google-play/icon-512.png'
+          test -s "$ios_icon" && test -s "$android_icon" && test -s "$play_icon"
+          cmp -s "$ios_icon" "$android_icon"
+          grep -Fq 'android:icon="@drawable/maengelfix_app_icon"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
+          grep -Fq 'android:windowSplashScreenAnimatedIcon">@drawable/maengelfix_app_icon' android/app/src/main/res/values-v31/themes.xml
+          test ! -e android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
+          test ! -e android/app/src/main/res/drawable/ic_launcher.xml
+          test ! -e android/app/src/main/res/drawable/maengelfix_launcher_background.xml
+          test ! -e android/app/src/main/res/drawable/maengelfix_launcher_foreground.xml
+          sha256sum "$ios_icon" "$android_icon" "$play_icon"
       - name: Unit tests
         run: gradle -p android testDebugUnitTest --stacktrace
       - name: Build debug bundle
@@ -75,11 +70,8 @@ jobs:
           grep -Fq 'versionCode = 6' android/app/build.gradle.kts
           grep -Fq 'versionName = "1.0.5"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
-          grep -Fq 'android:icon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          grep -Fq 'android:roundIcon="@mipmap/ic_launcher"' android/app/src/main/AndroidManifest.xml
-          test -s android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml
-          test -s android/app/src/main/res/drawable/maengelfix_launcher_background.xml
-          test -s android/app/src/main/res/drawable/maengelfix_launcher_foreground.xml
+          grep -Fq 'android:icon="@drawable/maengelfix_app_icon"' android/app/src/main/AndroidManifest.xml
+          ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
           grep -Fq 'class MainActivity : ComponentActivity()' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'private val MfPrimary = Color(0xFF2457D6)' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'CreateCaseScreen' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
