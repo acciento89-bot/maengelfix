@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-09-15T18:24:19Z",
+  "generatedAt": "2026-09-15T21:39:47Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -23,7 +23,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -56,23 +56,23 @@
       "appName": "ZweiCheck",
       "externalID": "de.kamilunavo.zweicheck",
       "bundleOrPackageID": "de.kamilunavo.zweicheck",
-      "version": "3 (1.0.2)",
-      "build": "3",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "3",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "production · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 3 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -85,10 +85,16 @@
           "build": 3
         },
         {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        },
+        {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "ZweiCheck",
-          "build": 3
+          "releaseName": "4 (1.0.3)",
+          "build": 4
         }
       ]
     },
@@ -105,7 +111,7 @@
       "publicBuild": null,
       "updateState": "rejected",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -121,15 +127,21 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "6 (1.0.3)",
+          "build": 6
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
           "releaseName": "4 (1.0.1)",
           "build": 4
         },
         {
-          "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "6 (1.0.3)",
+          "build": 6
         }
       ]
     },
@@ -138,22 +150,22 @@
       "appName": "WärmeTakt",
       "externalID": "de.kamilunavo.waermetakt",
       "bundleOrPackageID": "de.kamilunavo.waermetakt",
-      "version": "3 (1.0.1)",
-      "build": "3",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "3",
       "updateState": "development",
-      "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 3 · pending/current update: alpha · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 3 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "alpha",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
@@ -167,10 +179,16 @@
           "build": 3
         },
         {
-          "track": "alpha",
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": "3 (1.0.1)",
-          "build": 3
+          "releaseName": null,
+          "build": null
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.2)",
+          "build": 4
         }
       ]
     },
@@ -179,23 +197,23 @@
       "appName": "Reklaio",
       "externalID": "de.kamilunavo.reklaio",
       "bundleOrPackageID": "de.kamilunavo.reklaio",
-      "version": "Reklaio 0.4.3 (10)",
-      "build": "10",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "8",
-      "updateState": "internalTest",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 8 · pending/current update: internal · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 8 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -208,10 +226,10 @@
           "build": 8
         },
         {
-          "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "Reklaio 0.4.3 (10)",
-          "build": 10
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
         }
       ]
     },
@@ -220,23 +238,23 @@
       "appName": "MängelFix",
       "externalID": "com.kamilunavo.maengelfix",
       "bundleOrPackageID": "com.kamilunavo.maengelfix",
-      "version": "MängelFix 1.0.4 – Native Android",
-      "build": "5",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "3",
-      "updateState": "internalTest",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 3 · pending/current update: internal · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 3 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -249,10 +267,16 @@
           "build": 3
         },
         {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        },
+        {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "MängelFix 1.0.4 – Native Android",
-          "build": 5
+          "releaseName": "6 (1.0.5)",
+          "build": 6
         }
       ]
     },
@@ -261,23 +285,23 @@
       "appName": "Kintaroq",
       "externalID": "com.kamilunavo.kintaroq",
       "bundleOrPackageID": "com.kamilunavo.kintaroq",
-      "version": "Kintaroq icon consistency update (3)",
-      "build": "3",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "3",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "production · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 3 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -288,6 +312,18 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "Kintaroq icon consistency update (3)",
           "build": 3
+        },
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.1.0)",
+          "build": 4
         }
       ]
     },
@@ -296,23 +332,23 @@
       "appName": "NavoPass",
       "externalID": "de.kamilunavo.navopass",
       "bundleOrPackageID": "de.kamilunavo.navopass",
-      "version": "NavoPass 1.0.4 (9)",
-      "build": "9",
+      "version": "10 (1.0.4)",
+      "build": "10",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "9",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "production · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 9 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -320,9 +356,21 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "10 (1.0.4)",
+          "build": 10
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "NavoPass 1.0.4 (9)",
           "build": 9
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "10 (1.0.4)",
+          "build": 10
         }
       ]
     },
@@ -339,7 +387,7 @@
       "publicBuild": null,
       "updateState": "rejected",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -355,6 +403,12 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "5 (1.0.3)",
+          "build": 5
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_SENT_FOR_REVIEW",
           "releaseName": "4 (1.0.3)",
           "build": 4
@@ -366,16 +420,10 @@
           "build": 2
         },
         {
-          "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
-        },
-        {
           "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "5 (1.0.3)",
+          "build": 5
         }
       ]
     },
@@ -384,23 +432,23 @@
       "appName": "NavoTap",
       "externalID": "com.kamilunavo.onemoretap",
       "bundleOrPackageID": "com.kamilunavo.onemoretap",
-      "version": "6 (1.0.5)",
-      "build": "6",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "6",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "production · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 6 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -413,10 +461,16 @@
           "build": 6
         },
         {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        },
+        {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "6 (1.0.5)",
-          "build": 6
+          "releaseName": "7 (1.0.5)",
+          "build": 7
         },
         {
           "track": "alpha",
@@ -432,14 +486,14 @@
       "externalID": "de.kamilunav.kaltecalc",
       "bundleOrPackageID": "de.kamilunav.kaltecalc",
       "version": "KälteCalc 1.0.1 (2)",
-      "build": "2",
+      "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
       "publiclyAvailable": false,
       "publicBuild": null,
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -457,7 +511,13 @@
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
           "releaseName": "KälteCalc 1.0.1 (2)",
-          "build": 2
+          "build": 3
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
         }
       ]
     },
@@ -474,7 +534,7 @@
       "publicBuild": null,
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -493,6 +553,12 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
           "releaseName": "LüftungsCalc 1.0.1 (2)",
           "build": 2
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
         }
       ]
     },
@@ -502,14 +568,14 @@
       "externalID": "de.kamilunavo.heizkorpercalc",
       "bundleOrPackageID": "de.kamilunavo.heizkorpercalc",
       "version": "HeizkörperCalc 1.0.1 (2)",
-      "build": "2",
+      "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
       "state": "development",
       "publiclyAvailable": false,
       "publicBuild": null,
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -527,7 +593,13 @@
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
           "releaseName": "HeizkörperCalc 1.0.1 (2)",
-          "build": 2
+          "build": 3
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
         }
       ]
     },
@@ -544,7 +616,7 @@
       "publicBuild": null,
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Draft",
       "review": {
         "submissionID": null,
@@ -563,6 +635,12 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
           "releaseName": null,
           "build": null
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
         }
       ]
     },
@@ -571,22 +649,22 @@
       "appName": "AnlagenCheck",
       "externalID": "de.kamilunavo.servicecheck",
       "bundleOrPackageID": "de.kamilunavo.servicecheck",
-      "version": null,
-      "build": null,
+      "version": "3 (1.0.1)",
+      "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "2",
       "updateState": "development",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 2 · pending/current update: internal · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 2 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
@@ -595,15 +673,21 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "AnlagenCheck 1.0.1 (2)",
           "build": 2
         },
         {
           "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.1)",
+          "build": 3
         }
       ]
     },
@@ -612,23 +696,23 @@
       "appName": "VolumeCalc",
       "externalID": "de.kamilunavo.volumecalc",
       "bundleOrPackageID": "de.kamilunavo.volumecalc",
-      "version": "1.0 (2)",
-      "build": "2",
+      "version": null,
+      "build": null,
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "2",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "production · Published",
+      "updateState": "development",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 2 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -639,6 +723,18 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "1.0 (2)",
           "build": 2
+        },
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": null,
+          "build": null
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.1)",
+          "build": 4
         }
       ]
     },
@@ -647,28 +743,34 @@
       "appName": "KeepMeter",
       "externalID": "de.kamilunavo.keepmeter",
       "bundleOrPackageID": "de.kamilunavo.keepmeter",
-      "version": null,
-      "build": null,
+      "version": "5 (1.0.4)",
+      "build": "5",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "4",
       "updateState": "development",
-      "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 4 · pending/current update: alpha · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 4 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "alpha",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
       },
       "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "5 (1.0.4)",
+          "build": 5
+        },
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
@@ -678,8 +780,8 @@
         {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "KeepMeter",
-          "build": 2
+          "releaseName": "5 (1.0.4)",
+          "build": 5
         },
         {
           "track": "alpha",
@@ -694,22 +796,22 @@
       "appName": "Schon erledigt?",
       "externalID": "com.kamilunavo.schonerledigt",
       "bundleOrPackageID": "com.kamilunavo.schonerledigt",
-      "version": "4 (1.0.1)",
-      "build": "4",
+      "version": "5 (1.0.2)",
+      "build": "5",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "4",
       "updateState": "development",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 4 · pending/current update: internal · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 4 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
@@ -718,15 +820,21 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "5 (1.0.2)",
+          "build": 5
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "Schon erledigt? 1.0.1",
           "build": 4
         },
         {
           "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "4 (1.0.1)",
-          "build": 4
+          "build": 5
         }
       ]
     },
@@ -735,28 +843,34 @@
       "appName": "BrennerCalc",
       "externalID": "de.kamilunavo.brennercalc",
       "bundleOrPackageID": "de.kamilunavo.brennercalc",
-      "version": null,
-      "build": null,
+      "version": "4 (1.0.2)",
+      "build": "4",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "2",
       "updateState": "development",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 2 · pending/current update: internal · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 2 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
       },
       "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "4 (1.0.2)",
+          "build": 4
+        },
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
@@ -766,14 +880,8 @@
         {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "BrennerCalc",
-          "build": 2
-        },
-        {
-          "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "releaseName": "4 (1.0.2)",
+          "build": 4
         }
       ]
     },
@@ -782,28 +890,34 @@
       "appName": "HydroCalc",
       "externalID": "de.kamilunavo.hydrocalc",
       "bundleOrPackageID": "de.kamilunavo.hydrocalc",
-      "version": null,
-      "build": null,
+      "version": "3 (1.0.2)",
+      "build": "3",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "2",
       "updateState": "development",
-      "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-09-15T18:24:19Z",
-      "detail": "Production published · build 2 · pending/current update: internal · Draft",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
+      "updatedAt": "2026-09-15T21:39:47Z",
+      "detail": "Production published · build 2 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
-        "track": "internal",
+        "track": "production",
         "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
       },
       "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
+        },
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
@@ -813,14 +927,8 @@
         {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "HydroCalc",
-          "build": 2
-        },
-        {
-          "track": "internal",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "releaseName": "3 (1.0.2)",
+          "build": 3
         }
       ]
     },
@@ -837,7 +945,7 @@
       "publicBuild": null,
       "updateState": "rejected",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
-      "updatedAt": "2026-09-15T18:24:19Z",
+      "updatedAt": "2026-09-15T21:39:47Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -853,6 +961,12 @@
       "tracks": [
         {
           "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
+        },
+        {
+          "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
           "releaseName": "2 (1.0.1)",
           "build": 2
@@ -860,8 +974,8 @@
         {
           "track": "internal",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "MAGCalc",
-          "build": 2
+          "releaseName": "3 (1.0.2)",
+          "build": 3
         }
       ]
     }
