@@ -67,7 +67,8 @@ jobs:
           printf '%s  %s\n' "$BUNDLETOOL_SHA256" "$RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
           AAB="$(find signed -type f -name '*.aab' -print -quit)"
           test -s "$AAB"
-          sha256sum --check "$AAB.sha256"
+          expected_aab_sha256="$(awk '{print $1}' "$AAB.sha256")"
+          printf '%s  %s\\n' "$expected_aab_sha256" "$AAB" | sha256sum --check --strict
           jarsigner -verify "$AAB" > "$RUNNER_TEMP/jarsigner.txt"
           grep -Fq 'jar verified.' "$RUNNER_TEMP/jarsigner.txt"
           keytool -J-Duser.language=en -printcert -jarfile "$AAB" > "$RUNNER_TEMP/certificate.txt"
