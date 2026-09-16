@@ -1,0 +1,261 @@
+name: WonderCaps Build 9 to Google Play
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  id-token: write
+
+concurrency:
+  group: wondercaps-build9-google-play
+  cancel-in-progress: false
+
+env:
+  SOURCE_REPOSITORY: acciento89-bot/Wunderkapseln
+  SOURCE_COMMIT: d453694919ef4e00aed84aada79bafcd28bc48cc
+  PACKAGE_NAME: com.kamilunavo.wunderkapseln
+  VERSION_CODE: '9'
+  VERSION_NAME: 0.5.0
+  WIF_PROVIDER: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+  GOOGLE_SERVICE_ACCOUNT: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+  CENTRAL_SHA1: BCF2337D41E617C03BCAE698C09D1523654BD790
+  CENTRAL_SHA256: 7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6
+  BUNDLETOOL_URL: https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar
+  BUNDLETOOL_SHA256: 378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584
+
+jobs:
+  build-sign-publish:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 55
+    steps:
+      - name: Check out immutable WonderCaps source
+        uses: actions/checkout@v5
+        with:
+          repository: ${{ env.SOURCE_REPOSITORY }}
+          ref: ${{ env.SOURCE_COMMIT }}
+          persist-credentials: false
+          fetch-depth: 2
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+
+      - uses: actions/setup-java@v5
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Verify immutable source and tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(git rev-parse HEAD)" = "$SOURCE_COMMIT"
+          npm ci --ignore-scripts
+          npm run assets
+          npm test
+          npm run check:build -- --source-only
+          node -e "const a=require('./app.json').expo; if(a.android.package!==process.env.PACKAGE_NAME||String(a.android.versionCode)!==process.env.VERSION_CODE||a.version!==process.env.VERSION_NAME) process.exit(1)"
+
+      - name: Install Android API 36 and generate native project
+        shell: bash
+        run: |
+          set -euo pipefail
+          sdk="${ANDROID_HOME:?Android SDK is required}"
+          manager="$sdk/cmdline-tools/latest/bin/sdkmanager"
+          test -x "$manager"
+          set +o pipefail
+          yes | "$manager" --licenses >/dev/null
+          set -o pipefail
+          "$manager" 'platforms;android-36' 'build-tools;36.0.0'
+          npx --no-install expo prebuild --platform android --no-install
+
+      - name: Build release AAB
+        working-directory: android
+        shell: bash
+        run: ./gradlew bundleRelease --no-daemon --console=plain
+
+      - name: Install pinned official bundletool
+        shell: bash
+        run: |
+          set -euo pipefail
+          curl --fail --silent --show-error --location "$BUNDLETOOL_URL" -o "$RUNNER_TEMP/bundletool.jar"
+          printf '%s  %s\n' "$BUNDLETOOL_SHA256" "$RUNNER_TEMP/bundletool.jar" | sha256sum --check --strict
+
+      - name: Remove generated development signature and validate payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p release
+          AAB="$(find android/app/build/outputs/bundle/release -maxdepth 1 -type f -name '*.aab' -print -quit)"
+          test -s "$AAB"
+          python3 - "$AAB" release/wondercaps-${VERSION_NAME}-${VERSION_CODE}.aab <<'PY'
+          import re, sys, zipfile
+          source, target = sys.argv[1:]
+          signature = re.compile(r"META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC)|SIG-[^/]+)$", re.I)
+          with zipfile.ZipFile(source) as src, zipfile.ZipFile(target, "w") as dst:
+              names = src.namelist()
+              assert len(names) == len(set(names)), "Duplicate entries in generated bundle"
+              for info in src.infolist():
+                  if not signature.fullmatch(info.filename):
+                      dst.writestr(info, src.read(info.filename))
+          PY
+          AAB="release/wondercaps-${VERSION_NAME}-${VERSION_CODE}.aab"
+          python3 - "$AAB" > release/payload-before.json <<'PY'
+          import hashlib, json, re, sys, zipfile
+          signature = re.compile(r"META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC)|SIG-[^/]+)$", re.I)
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              names = z.namelist()
+              assert len(names) == len(set(names)), "Duplicate bundle entries"
+              assert not any(signature.fullmatch(n) for n in names), "Signature removal failed"
+              assert all(not n.startswith("/") and ".." not in n.split("/") for n in names), "Unsafe entry path"
+              payload = {n: hashlib.sha256(z.read(n)).hexdigest() for n in sorted(names)}
+              assert "base/manifest/AndroidManifest.xml" in payload
+              print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+          PY
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle="$AAB"
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" --xpath=/manifest/@package)" = "$PACKAGE_NAME"
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" --xpath=/manifest/@android:versionCode)" = "$VERSION_CODE"
+          test "$(java -jar "$RUNNER_TEMP/bundletool.jar" dump manifest --bundle="$AAB" --xpath=/manifest/@android:versionName)" = "$VERSION_NAME"
+          echo "AAB_PATH=$AAB" >> "$GITHUB_ENV"
+
+      - name: Restore central Kamilunavo upload identity
+        uses: acciento89-bot/maengelfix/.github/actions/restore-central-android-signing@main
+
+      - name: Sign and verify exact certificate and unchanged payload
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA1" = "$CENTRAL_SHA1"
+          test "$KAMILUNAVO_CENTRAL_UPLOAD_SHA256" = "$CENTRAL_SHA256"
+          jarsigner -keystore "$ANDROID_UPLOAD_KEYSTORE_PATH" -storepass:env ANDROID_UPLOAD_KEYSTORE_PASSWORD -keypass:env ANDROID_UPLOAD_KEY_PASSWORD -sigalg SHA256withRSA -digestalg SHA-256 "$AAB_PATH" "$ANDROID_UPLOAD_KEY_ALIAS"
+          jarsigner -verify "$AAB_PATH" > "$RUNNER_TEMP/jarsigner.txt"
+          grep -Fq 'jar verified.' "$RUNNER_TEMP/jarsigner.txt"
+          keytool -J-Duser.language=en -printcert -jarfile "$AAB_PATH" > release/upload-certificate.txt
+          actual_sha1="$(sed -n 's/^[[:space:]]*SHA1: //p' release/upload-certificate.txt | tr -d ':\r\n ')"
+          actual_sha256="$(sed -n 's/^[[:space:]]*SHA256: //p' release/upload-certificate.txt | tr -d ':\r\n ')"
+          test "$actual_sha1" = "$CENTRAL_SHA1"
+          test "$actual_sha256" = "$CENTRAL_SHA256"
+          python3 - "$AAB_PATH" > release/payload-after.json <<'PY'
+          import hashlib, json, re, sys, zipfile
+          signature = re.compile(r"META-INF/(?:MANIFEST\.MF|[^/]+\.(?:SF|RSA|DSA|EC)|SIG-[^/]+)$", re.I)
+          with zipfile.ZipFile(sys.argv[1]) as z:
+              names = z.namelist()
+              assert len(names) == len(set(names)), "Duplicate signed bundle entries"
+              payload = {n: hashlib.sha256(z.read(n)).hexdigest() for n in sorted(names) if not signature.fullmatch(n)}
+              print(json.dumps(payload, sort_keys=True, separators=(",", ":")))
+          PY
+          cmp release/payload-before.json release/payload-after.json
+          java -jar "$RUNNER_TEMP/bundletool.jar" validate --bundle="$AAB_PATH"
+          sha256sum "$AAB_PATH" > "$AAB_PATH.sha256"
+
+      - id: google-auth
+        name: Authenticate to Google Play without repository secrets
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ env.WIF_PROVIDER }}
+          service_account: ${{ env.GOOGLE_SERVICE_ACCOUNT }}
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/androidpublisher
+
+      - name: Upload or reuse version 9, publish internal, keep production draft
+        env:
+          TOKEN: ${{ steps.google-auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          api='https://androidpublisher.googleapis.com/androidpublisher/v3'
+          upload='https://androidpublisher.googleapis.com/upload/androidpublisher/v3'
+          auth=(-H "Authorization: Bearer $TOKEN")
+          json=(-H 'Content-Type: application/json')
+
+          edit="$(curl -fsS -X POST "${auth[@]}" "${json[@]}" -d '{}' "$api/applications/$PACKAGE_NAME/edits" | jq -er '.id')"
+          cleanup() {
+            curl -fsS -X DELETE "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$edit" >/dev/null 2>&1 || true
+          }
+          trap cleanup EXIT
+
+          bundles="$(curl -fsS "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$edit/bundles")"
+          if jq -e --argjson code "$VERSION_CODE" '.bundles | any(.versionCode == $code)' <<<"$bundles" >/dev/null; then
+            echo "Reusing existing $PACKAGE_NAME versionCode $VERSION_CODE"
+          else
+            response="$RUNNER_TEMP/upload.json"
+            status="$(curl -sS -o "$response" -w '%{http_code}' -X POST "${auth[@]}" -H 'Content-Type: application/octet-stream' --data-binary "@$AAB_PATH" "$upload/applications/$PACKAGE_NAME/edits/$edit/bundles?uploadType=media")"
+            test "$status" = 200 || { cat "$response" >&2; exit 1; }
+            test "$(jq -r '.versionCode' "$response")" = "$VERSION_CODE"
+          fi
+
+          tracks="$(curl -fsS "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$edit/tracks")"
+          jq -e --arg code "$VERSION_CODE" '
+            [.tracks[]? | select(.track=="production") | .releases[]?]
+            | all(.status=="draft" and ((.versionCodes // []) | all(.==$code)))
+          ' <<<"$tracks" >/dev/null || { echo "Refusing to overwrite a non-draft or unrelated production release" >&2; exit 1; }
+
+          jq -n --arg code "$VERSION_CODE" --arg name "$VERSION_NAME ($VERSION_CODE)" '{
+            track:"internal",
+            releases:[{
+              name:$name,
+              versionCodes:[$code],
+              status:"completed",
+              releaseNotes:[
+                {language:"en-US",text:"WonderCaps Build 9: native store purchases and release hardening."},
+                {language:"de-DE",text:"WonderCaps Build 9: native Store-Käufe und technische Release-Absicherung."}
+              ]
+            }]
+          }' > "$RUNNER_TEMP/internal.json"
+          curl -fsS -X PUT "${auth[@]}" "${json[@]}" --data-binary "@$RUNNER_TEMP/internal.json" "$api/applications/$PACKAGE_NAME/edits/$edit/tracks/internal" > "$RUNNER_TEMP/internal-result.json"
+          jq -e --arg code "$VERSION_CODE" '.track=="internal" and (.releases | any(.status=="completed" and (.versionCodes | index($code))))' "$RUNNER_TEMP/internal-result.json" >/dev/null
+
+          jq -n --arg code "$VERSION_CODE" --arg name "$VERSION_NAME ($VERSION_CODE) production draft" '{
+            track:"production",
+            releases:[{name:$name,versionCodes:[$code],status:"draft"}]
+          }' > "$RUNNER_TEMP/production.json"
+          curl -fsS -X PUT "${auth[@]}" "${json[@]}" --data-binary "@$RUNNER_TEMP/production.json" "$api/applications/$PACKAGE_NAME/edits/$edit/tracks/production" > "$RUNNER_TEMP/production-result.json"
+          jq -e --arg code "$VERSION_CODE" '.track=="production" and (.releases | length)==1 and (.releases[0].status=="draft") and (.releases[0].versionCodes | index($code))' "$RUNNER_TEMP/production-result.json" >/dev/null
+
+          commit="$RUNNER_TEMP/commit.json"
+          status="$(curl -sS -o "$commit" -w '%{http_code}' -X POST "${auth[@]}" "${json[@]}" -d '{}' "$api/applications/$PACKAGE_NAME/edits/$edit:commit?changesNotSentForReview=true")"
+          [[ "$status" == 2* ]] || { cat "$commit" >&2; exit 1; }
+          trap - EXIT
+
+          verify_edit="$(curl -fsS -X POST "${auth[@]}" "${json[@]}" -d '{}' "$api/applications/$PACKAGE_NAME/edits" | jq -er '.id')"
+          verify_cleanup() {
+            curl -fsS -X DELETE "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$verify_edit" >/dev/null 2>&1 || true
+          }
+          trap verify_cleanup EXIT
+          internal="$(curl -fsS "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$verify_edit/tracks/internal")"
+          production="$(curl -fsS "${auth[@]}" "$api/applications/$PACKAGE_NAME/edits/$verify_edit/tracks/production")"
+          jq -e --arg code "$VERSION_CODE" '.releases | any(.status=="completed" and (.versionCodes | index($code)))' <<<"$internal" >/dev/null
+          jq -e --arg code "$VERSION_CODE" '(.releases | length)==1 and (.releases[0].status=="draft") and (.releases[0].versionCodes | index($code))' <<<"$production" >/dev/null
+          printf '%s\n' "$internal" > release/play-internal-track.json
+          printf '%s\n' "$production" > release/play-production-track.json
+          echo "Internal test published; production remains draft. No production rollout or review submission was made." >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Write release provenance
+        if: always()
+        shell: bash
+        run: |
+          python3 - <<'PY'
+          import json, os, pathlib
+          keys = ["SOURCE_REPOSITORY","SOURCE_COMMIT","PACKAGE_NAME","VERSION_CODE","VERSION_NAME","CENTRAL_SHA1","CENTRAL_SHA256","GITHUB_REPOSITORY","GITHUB_SHA","GITHUB_RUN_ID","GITHUB_RUN_ATTEMPT"]
+          pathlib.Path("release").mkdir(exist_ok=True)
+          pathlib.Path("release/provenance.json").write_text(json.dumps({k: os.environ.get(k) for k in keys}, indent=2) + "\n")
+          PY
+
+      - name: Destroy restored signing material
+        if: always()
+        shell: bash
+        run: |
+          rm -rf "$RUNNER_TEMP/kamilunavo-central-signing"
+          rm -f "$RUNNER_TEMP/kamilunavo-central-upload.p12"
+
+      - name: Keep verified signed AAB and Play evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: wondercaps-${{ env.VERSION_NAME }}-${{ env.VERSION_CODE }}-central-signed-play-evidence
+          path: release/
+          if-no-files-found: warn
+          retention-days: 30
