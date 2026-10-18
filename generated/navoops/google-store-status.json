@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-18T18:49:04Z",
+  "generatedAt": "2026-10-18T21:43:24Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -23,7 +23,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -64,7 +64,7 @@
       "publicBuild": "3",
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 3 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
@@ -111,7 +111,7 @@
       "publicBuild": null,
       "updateState": "review",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -152,7 +152,7 @@
       "publicBuild": "3",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 3 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -205,7 +205,7 @@
       "publicBuild": "8",
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 8 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
@@ -244,23 +244,23 @@
       "appName": "MängelFix",
       "externalID": "com.kamilunavo.maengelfix",
       "bundleOrPackageID": "com.kamilunavo.maengelfix",
-      "version": null,
-      "build": null,
+      "version": "1.0.7 (8)",
+      "build": "8",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "3",
-      "updateState": "development",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
-      "detail": "Production published · build 3 · pending/current update: production · Draft",
+      "publicBuild": "8",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-10-18T21:43:24Z",
+      "detail": "production · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -269,14 +269,8 @@
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "3 (1.0.2)",
-          "build": 3
-        },
-        {
-          "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "releaseName": "1.0.7 (8)",
+          "build": 8
         },
         {
           "track": "internal",
@@ -291,23 +285,23 @@
       "appName": "Kintaroq",
       "externalID": "com.kamilunavo.kintaroq",
       "bundleOrPackageID": "com.kamilunavo.kintaroq",
-      "version": null,
-      "build": null,
+      "version": "1.1.2 (6) – DeepCheck packs",
+      "build": "6",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "3",
-      "updateState": "development",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
-      "detail": "Production published · build 3 · pending/current update: production · Draft",
+      "publicBuild": "6",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-10-18T21:43:24Z",
+      "detail": "production · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -316,14 +310,8 @@
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "Kintaroq icon consistency update (3)",
-          "build": 3
-        },
-        {
-          "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_DRAFT",
-          "releaseName": null,
-          "build": null
+          "releaseName": "1.1.2 (6) – DeepCheck packs",
+          "build": 6
         },
         {
           "track": "internal",
@@ -346,7 +334,7 @@
       "publicBuild": "10",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -387,7 +375,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -428,7 +416,7 @@
       "publicBuild": "6",
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 6 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
@@ -481,7 +469,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -522,7 +510,7 @@
       "publicBuild": "2",
       "updateState": "internalTest",
       "updateRawState": "internal:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 2 · pending/current update: internal · Published",
       "review": {
         "submissionID": null,
@@ -563,7 +551,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -604,7 +592,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -645,7 +633,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -686,7 +674,7 @@
       "publicBuild": "2",
       "updateState": "development",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 2 · pending/current update: production · Draft",
       "review": {
         "submissionID": null,
@@ -733,7 +721,7 @@
       "publicBuild": "5",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "Production published · build 5 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -780,7 +768,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -821,7 +809,7 @@
       "publicBuild": "4",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -862,7 +850,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -903,7 +891,7 @@
       "publicBuild": "3",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-18T18:49:04Z",
+      "updatedAt": "2026-10-18T21:43:24Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
