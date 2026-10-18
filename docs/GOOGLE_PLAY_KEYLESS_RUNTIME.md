@@ -18,6 +18,14 @@ The actual production bundle 3 (1.0.2), SHA-256 8bed1149424e18b4d062d67f9a9d2595
 
 Google rejects creation of these legacy identifiers as malformed; they cannot be mirrored into the modern catalog. No product was created or activated by the rejected attempt. A production-compatible Android patch is therefore required. It must retain the complete already published workspace and update its BillingClient integration to the existing valid maengelfix.* identifiers. Business remains monthly only. The limited unreleased native preview must not replace the current complete workspace as a side effect of this billing repair.
 
+## Subscription lifecycle without policy exceptions
+
+The existing iam.allowedPolicyMemberDomains restriction blocks Google Play's fixed external Pub/Sub publishing identity. The policy was not weakened. Instead, Google subscription receipts are authenticated, encrypted with AES-256-GCM using a separately mounted server key and bound to user ID plus token hash. A recurring server worker refreshes due receipts directly through Google and applies renewals, grace states, cancellations and expirations. Google tokens and event metadata must not be logged in plaintext. Superseded receipts are deleted after 30 days and account deletion cascades to receipts.
+
+Entitlement delivery, billing event and encrypted receipt commit in one transaction with a per-user advisory lock and row locks on the actual private account or organization. Background refresh checks that the token is still current after locking that entitlement row, so an old token cannot overwrite a newer purchase. Google entitlement checks respect the verified end date even if a refresh temporarily fails. The expiry boundary is checked promptly. The optional pre-existing RTDN handler remains disabled unless explicitly configured.
+
+GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY_FILE points to the persistent 32-byte base64 server key in the existing read-only runtime secret mount. Generate it only once and preserve it across deployments; never rotate it by overwriting the file while receipts depend on it. The Android preflight must see googlePlayReady=true before starting checkout. The owner has waived repeated checkout tests; automated crypto, isolation and timing checks do not perform purchases.
+
 ## Production-compatible release 8
 
 Android 1.0.7 (8) retains the complete workspace implementation from the published 1.0.2 source instead of shipping the incomplete unreleased native preview. The workspace source is pinned by SHA-256 in CI. The current native BillingClient, product-account policy and monthly-only Business offer are retained. Its Google billing entry also works after single-page navigation; the Android billing view exposes only the native Google Play shop and never web Stripe checkout. Existing non-Android browser billing is unchanged.

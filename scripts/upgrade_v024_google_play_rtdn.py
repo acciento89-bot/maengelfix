@@ -17,7 +17,7 @@ let googleOidcJwksCache = { keys: new Map(), expiresAt: 0 };
 '''
 
 if 'V024_GOOGLE_PLAY_RTDN' not in text:
-    anchor = 'const googlePlayBillingConfigured = googlePlayAuth.configured;\n' if 'createGooglePlayAuth' in text else 'const googlePlayBillingConfigured = Boolean(googlePlayServiceAccount);\n'
+    anchor = next((line+'\n' for line in text.splitlines() if line.startswith('const googlePlayBillingConfigured = ')), '')
     if anchor not in text:
         raise SystemExit('Google Play billing configured anchor not found')
     text = text.replace(anchor, anchor + constants, 1)

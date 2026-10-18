@@ -15,6 +15,6 @@
     "google-auth-library": "^10.3.0"
   },
   "scripts": {
-    "test": "node --test google-play-auth.test.js"
+    "test": "node --test google-play-auth.test.js google-play-receipts.test.js google-play-transaction.test.js"
   }
 }

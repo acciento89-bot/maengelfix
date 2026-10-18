@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { createGooglePlayAuth } from './google-play-auth.js';
+import { createReceiptCipher, loadReceiptKey, redactGoogleReceipt, runReceiptSync, nextReceiptSyncSeconds } from './google-play-receipts.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -63,7 +64,8 @@ const appleProductIds = new Set(appleProducts.keys());
 // V023_GOOGLE_PLAY_BILLING
 const googlePlayPackageName = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.kamilunavo.maengelfix';
 const googlePlayAuth = createGooglePlayAuth();
-const googlePlayBillingConfigured = googlePlayAuth.configured;
+const googleReceiptCipher = createReceiptCipher(loadReceiptKey(process.env.GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY_FILE));
+const googlePlayBillingConfigured = googlePlayAuth.configured && googleReceiptCipher.configured;
 const googlePlayProducts = new Map([
   ['maengelfix.private.monthly', {scope:'private',planCode:'private_pro'}],
   ['maengelfix.private.yearly', {scope:'private',planCode:'private_pro'}],
@@ -324,12 +326,12 @@ async function fetchGooglePlaySubscription(purchaseToken) {
   const accessToken = await googlePlayAccessToken();
   const url = `https://androidpublisher.googleapis.com/androidpublisher/v3/applications/${encodeURIComponent(googlePlayPackageName)}/purchases/subscriptionsv2/tokens/${encodeURIComponent(purchaseToken)}`;
   const response = await fetch(url, {
-    headers: {authorization: `Bearer ${accessToken}`, accept: 'application/json'}
+    headers: {authorization: `Bearer ${accessToken}`, accept: 'application/json'},
+    signal: AbortSignal.timeout(20000)
   });
   const payload = await response.json().catch(() => ({}));
   if (!response.ok) {
-    const detail = payload?.error?.message || `HTTP ${response.status}`;
-    throw new Error(`Google Play konnte den Kauf nicht bestätigen: ${detail}`);
+    throw new Error(`Google Play konnte den Kauf nicht bestätigen (HTTP ${response.status}).`);
   }
   return payload;
 }
@@ -353,7 +355,23 @@ function googlePlaySubscriptionActive(subscription, expiryMs) {
   return entitledStates.has(state) && expiryMs > Date.now();
 }
 
-async function applyGooglePlaySubscription(subscription, purchaseToken, expectedUserId) {
+async function applyGooglePlaySubscription(subscription, purchaseToken, expectedUserId, onlyCurrent=false) {
+  if (!googleReceiptCipher.configured) throw new Error('Google Play ist noch nicht vollständig konfiguriert.');
+  const db=await pool.connect();
+  try {
+    await db.query('BEGIN');
+    await db.query("SELECT pg_advisory_xact_lock(hashtextextended('maengelfix-google-user:' || lower($1),0))",[expectedUserId]);
+    const sealed=googleReceiptCipher.seal(purchaseToken,expectedUserId);
+    const user=await applyGooglePlaySubscriptionInternal(subscription,purchaseToken,expectedUserId,db,onlyCurrent);
+    if(user===null){await db.query('ROLLBACK');return null;}
+    const delay=nextReceiptSyncSeconds(subscription,googlePlayCurrentLineItem(subscription),true);
+    const stored=await db.query(`INSERT INTO google_play_subscription_receipts(token_hash,user_id,encrypted_token,next_sync_at) VALUES($1,$2,$3,now()+$4*interval '1 second') ON CONFLICT(token_hash) DO UPDATE SET encrypted_token=EXCLUDED.encrypted_token,next_sync_at=EXCLUDED.next_sync_at WHERE google_play_subscription_receipts.user_id=EXCLUDED.user_id RETURNING token_hash`,[sealed.tokenHash,expectedUserId,sealed.encrypted,delay]);
+    if(stored.rowCount!==1)throw new Error('Google-Play-Kauf gehört bereits zu einem anderen Konto.');
+    await db.query('COMMIT');return user;
+  }catch(error){await db.query('ROLLBACK');throw error;}finally{db.release();}
+}
+
+async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, expectedUserId, db, onlyCurrent=false) {
   const accountHash = String(subscription?.externalAccountIdentifiers?.obfuscatedExternalAccountId || '').toLowerCase();
   const expectedHash = googlePlayAccountHash(expectedUserId);
   if (!accountHash || accountHash !== expectedHash) {
@@ -369,11 +387,13 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
   const orderId = String(item.latestSuccessfulOrderId || subscription.latestOrderId || tokenHash);
   const eventId = `google_play:${orderId}:${subscription.subscriptionState || 'UNKNOWN'}:${item.expiryTime || ''}`;
 
-  const userResult = await pool.query('SELECT * FROM users WHERE lower(id)=lower($1)', [expectedUserId]);
+  const userResult = await db.query('SELECT * FROM users WHERE lower(id)=lower($1) FOR UPDATE', [expectedUserId]);
   const user = userResult.rows[0] || null;
   if (!user) throw new Error('Verknüpftes MängelFix-Konto wurde nicht gefunden.');
 
   if (product.scope === 'private') {
+    if(onlyCurrent&&(user.subscription_provider!=='google_play'||user.subscription_id!==tokenHash))return null;
+
     // Ein fremdes aktives Store-Abo darf durch Google weder übernommen noch herabgestuft werden.
     if (user.subscription_provider && user.subscription_provider !== 'google_play' && hasPrivatePro(user)) {
       return publicUser(user);
@@ -383,7 +403,7 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
       return publicUser(user);
     }
 
-    const result = await pool.query(
+    const result = await db.query(
       `UPDATE users SET
          plan_code=$2,
          subscription_status=$3,
@@ -396,25 +416,27 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
       [user.id, active ? 'private_pro' : 'private_free', active ? 'active' : 'inactive', accountHash, tokenHash, periodEnd]
     );
 
-    await pool.query(
+    await db.query(
       `INSERT INTO billing_events (id,provider,provider_event_id,user_id,event_type,payload)
        VALUES ($1,'google_play',$2,$3,$4,$5::jsonb)
        ON CONFLICT (provider_event_id) DO NOTHING`,
-      [id(), eventId, user.id, active ? 'subscription_active' : 'subscription_inactive', JSON.stringify(subscription)]
+      [id(), eventId, user.id, active ? 'subscription_active' : 'subscription_inactive', JSON.stringify(redactGoogleReceipt(subscription))]
     );
     return publicUser(result.rows[0]);
   }
 
-  const orgResult = await pool.query(
+  const orgResult = await db.query(
     `SELECT o.*,om.role
      FROM organization_memberships om
      JOIN organizations o ON o.id=om.organization_id
      WHERE om.user_id=$1 AND COALESCE(om.active,true)=true AND om.role IN ('owner','admin')
-     ORDER BY om.created_at LIMIT 1`,
-    [user.id]
+     ORDER BY CASE WHEN o.subscription_provider='google_play' AND o.subscription_customer_id=$2 THEN 0 ELSE 1 END, om.created_at LIMIT 1 FOR UPDATE OF o`,
+    [user.id, accountHash]
   );
   const organization = orgResult.rows[0] || null;
   if (!organization) throw new Error('Für dieses MängelFix-Konto wurde keine verwaltbare Hausverwaltung gefunden.');
+
+  if(onlyCurrent&&(organization.subscription_provider!=='google_play'||organization.subscription_id!==tokenHash))return null;
 
   if (organization.subscription_provider && organization.subscription_provider !== 'google_play' && billingState(organization).active) {
     return publicUser(user);
@@ -424,7 +446,7 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
   }
 
   const limits = applyPlanLimits(product.planCode);
-  await pool.query(
+  await db.query(
     `UPDATE organizations SET
        plan_code=CASE WHEN $2::boolean THEN $3 ELSE plan_code END,
        subscription_status=$4,
@@ -452,11 +474,11 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
     ]
   );
 
-  await pool.query(
+  await db.query(
     `INSERT INTO billing_events (id,provider,provider_event_id,organization_id,user_id,event_type,payload)
      VALUES ($1,'google_play',$2,$3,$4,$5,$6::jsonb)
      ON CONFLICT (provider_event_id) DO NOTHING`,
-    [id(), eventId, organization.id, user.id, active ? 'subscription_active' : 'subscription_inactive', JSON.stringify(subscription)]
+    [id(), eventId, organization.id, user.id, active ? 'subscription_active' : 'subscription_inactive', JSON.stringify(redactGoogleReceipt(subscription))]
   );
   return publicUser(user);
 }
@@ -495,7 +517,7 @@ function publicUser(row) {
   };
 }
 
-function hasPrivatePro(user){return user?.plan_code==='private_pro'&&['active','trialing'].includes(String(user?.subscription_status||''))}
+function hasPrivatePro(user){return user?.plan_code==='private_pro'&&['active','trialing'].includes(String(user?.subscription_status||''))&&(user.subscription_provider!=='google_play'||Date.parse(user.subscription_current_period_end||'')>Date.now())}
 async function privateEntitlements(userId,user){
  const org=await billingOrganizationForUser(userId);
  if(org){const st=billingState(org);return {scope:'organization',pro:Boolean(st.active),planCode:org.plan_code,status:org.subscription_status,trialEndsAt:org.trial_ends_at||null,role:org.role||null,provider:org.subscription_provider||null,usage:await billingUsage(org.id),limits:{members:org.max_members,properties:org.max_properties,units:org.max_units},features:{advancedEvidence:true,deadlines:true,tasks:true,calendar:true,analytics:true,archive:true,inspections:true}}}
@@ -529,7 +551,7 @@ async function auth(req, res, next) {
     const token = req.cookies[cookieName];
     if (!token) return res.status(401).json({ error: 'Bitte melde dich an.' });
     const result = await pool.query(
-      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone, u.email_verified_at, u.plan_code, u.subscription_status, u.subscription_current_period_end, u.onboarding_completed_at, u.onboarding_use_case
+      `SELECT u.id, u.name, u.email, u.street, u.postal_code, u.city, u.country, u.phone, u.email_verified_at, u.plan_code, u.subscription_status, u.subscription_provider, u.subscription_current_period_end, u.onboarding_completed_at, u.onboarding_use_case
        FROM sessions s
        JOIN users u ON u.id = s.user_id
        WHERE s.token_hash = $1 AND s.expires_at > now()`,
@@ -982,9 +1004,9 @@ app.get('/api/pricing',(_req,res)=>res.json({plans:publicPricingCatalog(),trialD
 app.get('/api/billing/plan', auth, async (req,res,next)=>{
   try {
     const org=await billingOrganizationForUser(req.user.id);
-    if(org){const usage=await billingUsage(org.id);return res.json({scope:'organization',plan:{...org,...billingState(org)},usage,catalog:billingCatalog('organization'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});}
+    if(org){const usage=await billingUsage(org.id);return res.json({googlePlayReady:googlePlayBillingConfigured,scope:'organization',plan:{...org,...billingState(org)},usage,catalog:billingCatalog('organization'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});}
     const r=await pool.query('SELECT plan_code,subscription_status,subscription_provider,subscription_customer_id,subscription_id,subscription_current_period_end FROM users WHERE id=$1',[req.user.id]);
-    res.json({scope:'private',plan:r.rows[0],catalog:billingCatalog('private'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});
+    res.json({googlePlayReady:googlePlayBillingConfigured,scope:'private',plan:r.rows[0],catalog:billingCatalog('private'),checkoutConfigured:Boolean(process.env.STRIPE_SECRET_KEY),cycles:{monthly:true,yearly:true}});
   } catch(error){next(error)}
 });
 
@@ -1095,6 +1117,7 @@ async function billingOrganizationForUser(userId) {
 }
 function billingState(org){
   if(!org) return {active:false,reason:'none'};
+  if(org.subscription_provider==='google_play'&&!(Date.parse(org.subscription_current_period_end||'')>Date.now()))return {active:false,reason:'google_verification_due'};
   if(org.subscription_status==='trialing'){
     if(org.trial_ends_at && new Date(org.trial_ends_at)<=new Date()) return {active:false,reason:'trial_expired'};
     return {active:true,reason:'trialing'};
@@ -2411,6 +2434,28 @@ setTimeout(processCalendarReminders,20000);setInterval(processCalendarReminders,
 async function processCaseDeadlineEscalations(){
  try{const due=await pool.query(`SELECT c.*,u.email,u.name FROM defect_cases c JOIN users u ON u.id=c.user_id WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.deadline_on=current_date+3 AND c.deadline_reminder_stage<1) OR (c.deadline_on=current_date AND c.deadline_reminder_stage<2) OR (c.deadline_on<current_date AND c.deadline_reminder_stage<3)) LIMIT 200`);for(const c of due.rows){const stage=new Date(c.deadline_on)<new Date(new Date().toISOString().slice(0,10))?3:(String(c.deadline_on).slice(0,10)===new Date().toISOString().slice(0,10)?2:1);const title=stage===3?'Frist überfällig':stage===2?'Frist heute fällig':'Frist in 3 Tagen';await createNotification({userId:c.user_id,organizationId:c.organization_id,caseId:c.id,type:'deadline',title,body:c.title,link:`/app?case=${c.id}`});if(mailer&&c.email)try{await sendAppMail({to:c.email,subject:`MängelFix: ${title}`,heading:title,text:`${c.title}\nFrist: ${new Date(c.deadline_on).toLocaleDateString('de-DE')}`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${c.id}`})}catch(e){console.error('Deadline mail failed',e)}await pool.query('UPDATE defect_cases SET deadline_reminder_stage=$2,last_deadline_notification_at=now() WHERE id=$1',[c.id,stage]);}}catch(e){console.error('Deadline escalation failed',e)}}
 setTimeout(processCaseDeadlineEscalations,25000);setInterval(processCaseDeadlineEscalations,60*60*1000);
+
+
+// Polling preserves the existing organization restriction on external Pub/Sub publishers.
+async function synchronizeGoogleSubscriptions() {
+  if(!googlePlayBillingConfigured)return;
+  const lock=await pool.connect();let acquired=false;
+  try {
+    acquired=(await lock.query("SELECT pg_try_advisory_lock(hashtextextended('maengelfix-google-sync',0)) acquired")).rows[0].acquired;
+    if(!acquired)return;
+    const due=await lock.query(`SELECT r.token_hash,r.user_id,r.encrypted_token FROM google_play_subscription_receipts r WHERE r.next_sync_at<=now() AND EXISTS (SELECT 1 FROM users u WHERE u.id=r.user_id AND ((u.subscription_provider='google_play' AND u.subscription_id=r.token_hash) OR EXISTS (SELECT 1 FROM organization_memberships m JOIN organizations o ON o.id=m.organization_id WHERE m.user_id=u.id AND m.role IN ('owner','admin') AND COALESCE(m.active,true) AND o.subscription_provider='google_play' AND o.subscription_id=r.token_hash))) ORDER BY r.next_sync_at LIMIT 40`);
+    await runReceiptSync({cipher:googleReceiptCipher,records:due.rows.map(r=>({tokenHash:r.token_hash,userId:r.user_id,encrypted:r.encrypted_token})),fetchSubscription:fetchGooglePlaySubscription,applySubscription:(s,t,u)=>applyGooglePlaySubscription(s,t,u,true),complete:async(r,ok,subscription)=>{
+      const current=subscription&&googlePlayCurrentLineItem(subscription);
+      const delay=nextReceiptSyncSeconds(subscription,current,ok);
+      await pool.query(`UPDATE google_play_subscription_receipts SET last_checked_at=now(),last_sync_ok=$2,next_sync_at=now()+$3*interval '1 second' WHERE token_hash=$1`,[r.tokenHash,ok,delay]);
+    },onFailure:()=>console.warn('Google subscription synchronization deferred; automatic retry scheduled.')});
+    await lock.query(`DELETE FROM google_play_subscription_receipts r WHERE r.created_at<now()-interval '30 days' AND NOT EXISTS(SELECT 1 FROM users WHERE subscription_provider='google_play' AND subscription_id=r.token_hash) AND NOT EXISTS(SELECT 1 FROM organizations WHERE subscription_provider='google_play' AND subscription_id=r.token_hash)`);
+  }catch{console.warn('Google subscription synchronization deferred.');}finally{
+    if(acquired)await lock.query("SELECT pg_advisory_unlock(hashtextextended('maengelfix-google-sync',0))");lock.release();
+  }
+}
+setTimeout(synchronizeGoogleSubscriptions,30000).unref();
+setInterval(synchronizeGoogleSubscriptions,30000).unref();
 
 app.listen(port, '0.0.0.0', () => {
   console.log(`MängelFix läuft auf Port ${port}`);
