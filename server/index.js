@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import { createGooglePlayAuth } from './google-play-auth.js';
+import { googlePlayProducts } from './google-play-products.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -64,16 +65,7 @@ const appleProductIds = new Set(appleProducts.keys());
 const googlePlayPackageName = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.kamilunavo.maengelfix';
 const googlePlayAuth = createGooglePlayAuth();
 const googlePlayBillingConfigured = googlePlayAuth.configured;
-const googlePlayProducts = new Map([
-  ['maengelfix.private.monthly', {scope:'private',planCode:'private_pro'}],
-  ['maengelfix.private.yearly', {scope:'private',planCode:'private_pro'}],
-  ['maengelfix.starter.monthly', {scope:'organization',planCode:'management_starter'}],
-  ['maengelfix.starter.yearly', {scope:'organization',planCode:'management_starter'}],
-  ['maengelfix.pro.monthly', {scope:'organization',planCode:'management_pro'}],
-  ['maengelfix.pro.yearly', {scope:'organization',planCode:'management_pro'}],
-  ['maengelfix.business.monthly', {scope:'organization',planCode:'management_business'}],
-  ['maengelfix.business.yearly', {scope:'organization',planCode:'management_business'}]
-]);
+
 const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 const mailer = smtpConfigured ? nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: String(process.env.SMTP_SECURE || 'false') === 'true', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }) : null;
 

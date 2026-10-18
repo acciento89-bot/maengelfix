@@ -11,3 +11,11 @@ Provision maengelfix-runtime/prod-x509 with the server CA public certificate. Re
 Before deployment preserve the existing database, upload volume, Apple and Stripe environment values and Compose service configuration. Back up the existing app image and database. Recreate only the app service. Verify actual read-only Google subscription catalog access and normal HTTP readiness. Never treat configuration inspection as an actual checkout test. Per the owner, do not repeat previously completed checkout tests.
 
 Release candidate 1.0.6 (7) exposes the correct Google organization subscription SKUs and offers Business monthly only; the existing expensive Business annual Google plan stays inactive.
+
+## Published Android compatibility
+
+The actual production bundle 3 (1.0.2), SHA-256 8bed1149424e18b4d062d67f9a9d25952711a1e971330c119b7a74ea60d74ba8, contains the original com.kamilunavo.maengelfix.* product IDs and the complete existing workspace. The catalog instead contained only the newer maengelfix.* IDs. The unreleased native candidate 7 offers fewer workspace functions and must not replace production solely to repair billing.
+
+Seven legacy product identifiers are therefore mapped to the same verified server plans and populated in Google Play by copying the existing matching product prices, billing periods and regional availability. The current products stay intact for future native clients. Legacy Business annual is deliberately not offered. All verification still comes from Google with the existing account binding and cross-provider double-subscription guard. This does not create two subscriptions for any customer; only an explicit subsequent checkout could subscribe, and already active accounts are blocked from starting another subscription.
+
+The manual catalog workflow defaults to audit. Apply only mirrors the seven allowlisted products and activates their corresponding base plans; it never modifies originals, redeems codes or creates a purchase. Runtime application credentials retain app-specific read/order access, while the existing authorized operations identity performs catalog maintenance.
