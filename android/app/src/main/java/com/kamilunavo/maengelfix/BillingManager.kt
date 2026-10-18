@@ -32,16 +32,7 @@ class BillingManager(
 ) : PurchasesUpdatedListener {
 
     companion object {
-        val productIds = listOf(
-            "maengelfix.private.monthly",
-            "maengelfix.private.yearly",
-            "maengelfix.starter.monthly",
-            "maengelfix.starter.yearly",
-            "maengelfix.pro.monthly",
-            "maengelfix.pro.yearly",
-            "maengelfix.business.monthly",
-            "maengelfix.business.yearly",
-        )
+        val productIds = PlayPurchasePolicy.restorableProductIds
         private val knownProducts = productIds.toSet()
     }
 
@@ -74,7 +65,7 @@ class BillingManager(
 
     fun catalogJson(): String {
         val products = JSONArray()
-        productIds.forEach { id ->
+        productIds.filter(PlayPurchasePolicy::isOfferedForSale).forEach { id ->
             products.put(JSONObject().put("id", id).put("price", price(id) ?: JSONObject.NULL))
         }
         return JSONObject().put("ready", ready).put("products", products).toString()
@@ -83,6 +74,10 @@ class BillingManager(
     fun purchase(productId: String) {
         if (productId !in knownProducts) {
             onMessage("Unbekanntes MängelFix Google-Play-Abo.")
+            return
+        }
+        if (!PlayPurchasePolicy.isOfferedForSale(productId)) {
+            onMessage("Dieses Abo wird bei Google Play derzeit nicht zum Kauf angeboten.")
             return
         }
         val detail = details[productId]
@@ -95,7 +90,7 @@ class BillingManager(
         scope.launch {
             try {
                 val accountScope = ensurePurchaseAllowed()
-                val managementProduct = productId.contains(".management")
+                val managementProduct = PlayPurchasePolicy.requiredAccountScope(productId) == "organization"
                 if (managementProduct && accountScope != "organization") {
                     throw IllegalStateException("Management-Abos können nur für ein MängelFix-Hausverwaltungskonto gekauft werden.")
                 }
@@ -186,7 +181,7 @@ class BillingManager(
 
     private fun queryProducts() {
         if (!billingClient.isReady) return
-        val products = productIds.map { id ->
+        val products = productIds.filter(PlayPurchasePolicy::isOfferedForSale).map { id ->
             QueryProductDetailsParams.Product.newBuilder()
                 .setProductId(id)
                 .setProductType(BillingClient.ProductType.SUBS)
