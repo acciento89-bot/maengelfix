@@ -502,3 +502,15 @@ SET plan_code = CASE WHEN plan_code='business_trial' THEN 'management_trial' ELS
     max_properties = CASE WHEN plan_code IN ('business_trial','management_trial') THEN 100 ELSE max_properties END,
     max_units = CASE WHEN plan_code IN ('business_trial','management_trial') THEN 100 ELSE max_units END
 WHERE subscription_status='trialing' AND subscription_provider IS NULL;
+
+-- Google subscription lifecycle: only authenticated encrypted receipt tokens are retained.
+CREATE TABLE IF NOT EXISTS google_play_subscription_receipts (
+ token_hash text PRIMARY KEY,
+ user_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ encrypted_token text NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ next_sync_at timestamptz NOT NULL DEFAULT now(),
+ last_checked_at timestamptz,
+ last_sync_ok boolean
+);
+CREATE INDEX IF NOT EXISTS google_play_subscription_receipts_due_idx ON google_play_subscription_receipts(next_sync_at);

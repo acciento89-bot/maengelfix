@@ -1,0 +1,37 @@
+name: Clean unused Maengelfix push setup created during billing repair
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  cleanup:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+      - uses: google-github-actions/setup-gcloud@v3
+      - name: Remove only the unused topic and event identity created by this repair
+        run: |
+          set -euo pipefail
+          project=emerald-caster-508318-f2
+          topic=maengelfix-play-rtdn
+          account=maengelfix-play-events@$project.iam.gserviceaccount.com
+          if gcloud pubsub topics describe "$topic" --project="$project" >/dev/null 2>&1; then
+            gcloud pubsub topics list-subscriptions "$topic" --project="$project" --format=json > subscriptions.json
+            python3 -c 'import json;assert json.load(open("subscriptions.json"))==[],"Topic is in use; abort cleanup"'
+            gcloud pubsub topics delete "$topic" --project="$project" --quiet
+          fi
+          if gcloud iam service-accounts describe "$account" --project="$project" >/dev/null 2>&1; then
+            gcloud iam service-accounts get-iam-policy "$account" --project="$project" --format=json > policy.json
+            python3 - <<'PY'
+          import json
+          bindings=json.load(open('policy.json')).get('bindings',[])
+          assert all(b['role'] in ['roles/iam.serviceAccountTokenCreator','roles/iam.serviceAccountUser'] and set(b['members']).issubset({'serviceAccount:navoops@emerald-caster-508318-f2.iam.gserviceaccount.com','serviceAccount:service-1058001477767@gcp-sa-pubsub.iam.gserviceaccount.com'}) for b in bindings), 'Identity has other uses; abort cleanup'
+          PY
+            gcloud iam service-accounts delete "$account" --project="$project" --quiet
+          fi
