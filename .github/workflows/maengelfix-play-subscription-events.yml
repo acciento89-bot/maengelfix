@@ -1,0 +1,62 @@
+name: Configure Maengelfix Google subscription lifecycle events
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  configure:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v5
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>= 538.0.0'
+      - name: Create authenticated, app-specific Google subscription delivery
+        shell: bash
+        run: |
+          set -euo pipefail
+          project=emerald-caster-508318-f2
+          account=maengelfix-play-events@$project.iam.gserviceaccount.com
+          endpoint=https://maengelfix.kamilunavo.com/api/billing/google-play/rtdn
+          topic=maengelfix-play-rtdn
+          subscription=maengelfix-play-rtdn-production
+          gcloud services enable pubsub.googleapis.com --project="$project" --quiet
+          gcloud beta services identity create --service=pubsub.googleapis.com --project="$project" --quiet
+          if ! gcloud iam service-accounts describe "$account" --project="$project" --format=json >/dev/null; then
+            gcloud iam service-accounts create maengelfix-play-events --project="$project" --display-name='MaengelFix Play event identity' --quiet
+          fi
+          gcloud iam service-accounts add-iam-policy-binding "$account" --project="$project" --member='serviceAccount:service-1058001477767@gcp-sa-pubsub.iam.gserviceaccount.com' --role=roles/iam.serviceAccountTokenCreator --condition=None --quiet
+          gcloud iam service-accounts add-iam-policy-binding "$account" --project="$project" --member='serviceAccount:navoops@emerald-caster-508318-f2.iam.gserviceaccount.com' --role=roles/iam.serviceAccountUser --condition=None --quiet
+          if ! gcloud pubsub topics describe "$topic" --project="$project" --format=json >/dev/null; then
+            gcloud pubsub topics create "$topic" --project="$project" --quiet
+          fi
+          gcloud pubsub topics add-iam-policy-binding "$topic" --project="$project" --member='serviceAccount:google-play-developer-notifications@system.gserviceaccount.com' --role=roles/pubsub.publisher --quiet
+          if ! gcloud pubsub subscriptions describe "$subscription" --project="$project" --format=json > subscription.json; then
+            gcloud pubsub subscriptions create "$subscription" --project="$project" --topic="$topic" --push-endpoint="$endpoint" --push-auth-service-account="$account" --push-auth-token-audience="$endpoint" --message-retention-duration=7d --min-retry-delay=10s --max-retry-delay=600s --expiration-period=never --quiet
+          fi
+          gcloud pubsub subscriptions describe "$subscription" --project="$project" --format=json > subscription.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          d=json.loads(Path('subscription.json').read_text())
+          assert d['topic']=='projects/emerald-caster-508318-f2/topics/maengelfix-play-rtdn'
+          p=d['pushConfig']; assert p['pushEndpoint']=='https://maengelfix.kamilunavo.com/api/billing/google-play/rtdn'
+          assert p['oidcToken']['audience']==p['pushEndpoint']
+          assert p['oidcToken']['serviceAccountEmail']=='maengelfix-play-events@emerald-caster-508318-f2.iam.gserviceaccount.com'
+          print('Dedicated Pub/Sub topic and authenticated push identity verified; no purchase generated.')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: maengelfix-play-subscription-delivery
+          path: subscription.json
+          retention-days: 30

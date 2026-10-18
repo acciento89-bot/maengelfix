@@ -37,6 +37,8 @@ services:
       GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/run/secrets/maengelfix/google-credentials.json}
       GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-emerald-caster-508318-f2}
       GOOGLE_PLAY_PACKAGE_NAME: ${GOOGLE_PLAY_PACKAGE_NAME:-com.kamilunavo.maengelfix}
+      GOOGLE_PLAY_RTDN_AUDIENCE: ${GOOGLE_PLAY_RTDN_AUDIENCE:-https://maengelfix.kamilunavo.com/api/billing/google-play/rtdn}
+      GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL: ${GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL:-maengelfix-play-events@emerald-caster-508318-f2.iam.gserviceaccount.com}
 
       ADMIN_EMAILS: ${ADMIN_EMAILS:-}
     depends_on:
