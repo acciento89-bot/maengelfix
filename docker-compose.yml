@@ -34,12 +34,17 @@ services:
       APPLE_IAP_PRIVATE_KEY: ${APPLE_IAP_PRIVATE_KEY:-}
       APPLE_IAP_PRIVATE_KEY_B64: ${APPLE_IAP_PRIVATE_KEY_B64:-}
 
+      GOOGLE_APPLICATION_CREDENTIALS: ${GOOGLE_APPLICATION_CREDENTIALS:-/run/secrets/maengelfix/google-credentials.json}
+      GOOGLE_CLOUD_PROJECT: ${GOOGLE_CLOUD_PROJECT:-emerald-caster-508318-f2}
+      GOOGLE_PLAY_PACKAGE_NAME: ${GOOGLE_PLAY_PACKAGE_NAME:-com.kamilunavo.maengelfix}
+
       ADMIN_EMAILS: ${ADMIN_EMAILS:-}
     depends_on:
       db:
         condition: service_healthy
     volumes:
       - maengelfix_uploads:/data/uploads
+      - ${GOOGLE_PLAY_RUNTIME_DIR:-/opt/kamilunavo/maengelfix-play-runtime/runtime}:/run/secrets/maengelfix:ro
     networks:
       maengelfix:
       frontend:
