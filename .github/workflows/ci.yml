@@ -9,6 +9,15 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_PASSWORD: isolated-ci-only
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
     steps:
       - name: Repository auschecken
         uses: actions/checkout@v4
@@ -22,6 +31,8 @@ jobs:
 
       - name: Server authentication code checks (no purchases)
         working-directory: server
+        env:
+          MAENGELFIX_ISOLATED_POSTGRES: postgresql://postgres:isolated-ci-only@localhost:5432/postgres
         run: npm ci --no-audit --no-fund && npm test
 
       - name: Client-Abhängigkeiten installieren

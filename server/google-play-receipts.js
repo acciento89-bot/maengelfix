@@ -47,7 +47,10 @@ export async function runReceiptSync({cipher,records,fetchSubscription,applySubs
 export function nextReceiptSyncSeconds(subscription, current, ok, now=Date.now()) {
   if(!ok)return 900;
   const state=subscription?.subscriptionState;
-  const renewable=['SUBSCRIPTION_STATE_ACTIVE','SUBSCRIPTION_STATE_IN_GRACE_PERIOD','SUBSCRIPTION_STATE_ON_HOLD'].includes(state);
-  if(renewable&&current&&current.expiryMs>now-3600000)return Math.max(15,Math.min(900,Math.floor((current.expiryMs-now-30000)/1000)));
+  const recoverable=['ACTIVE','CANCELED','IN_GRACE_PERIOD','ON_HOLD','PAUSED','PENDING'].some(value=>state==='SUBSCRIPTION_STATE_'+value);
+  if(recoverable){
+    if(current&&current.expiryMs>now-3600000)return Math.max(15,Math.min(900,Math.floor((current.expiryMs-now-30000)/1000)));
+    return 900;
+  }
   return 86400;
 }

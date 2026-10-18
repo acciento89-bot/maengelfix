@@ -362,11 +362,8 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
     await db.query('BEGIN');
     await db.query("SELECT pg_advisory_xact_lock(hashtextextended('maengelfix-google-user:' || lower($1),0))",[expectedUserId]);
     const sealed=googleReceiptCipher.seal(purchaseToken,expectedUserId);
-    if(onlyCurrent){
-      const current=await db.query(`SELECT 1 FROM users u WHERE u.id=$1 AND ((u.subscription_provider='google_play' AND u.subscription_id=$2) OR EXISTS (SELECT 1 FROM organization_memberships m JOIN organizations o ON o.id=m.organization_id WHERE m.user_id=u.id AND m.role IN ('owner','admin') AND COALESCE(m.active,true) AND o.subscription_provider='google_play' AND o.subscription_id=$2))`,[expectedUserId,sealed.tokenHash]);
-      if(!current.rowCount){await db.query('ROLLBACK');return null;}
-    }
-    const user=await applyGooglePlaySubscriptionInternal(subscription,purchaseToken,expectedUserId,db);
+    const user=await applyGooglePlaySubscriptionInternal(subscription,purchaseToken,expectedUserId,db,onlyCurrent);
+    if(user===null){await db.query('ROLLBACK');return null;}
     const delay=nextReceiptSyncSeconds(subscription,googlePlayCurrentLineItem(subscription),true);
     const stored=await db.query(`INSERT INTO google_play_subscription_receipts(token_hash,user_id,encrypted_token,next_sync_at) VALUES($1,$2,$3,now()+$4*interval '1 second') ON CONFLICT(token_hash) DO UPDATE SET encrypted_token=EXCLUDED.encrypted_token,next_sync_at=EXCLUDED.next_sync_at WHERE google_play_subscription_receipts.user_id=EXCLUDED.user_id RETURNING token_hash`,[sealed.tokenHash,expectedUserId,sealed.encrypted,delay]);
     if(stored.rowCount!==1)throw new Error('Google-Play-Kauf gehört bereits zu einem anderen Konto.');
@@ -374,7 +371,7 @@ async function applyGooglePlaySubscription(subscription, purchaseToken, expected
   }catch(error){await db.query('ROLLBACK');throw error;}finally{db.release();}
 }
 
-async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, expectedUserId, db) {
+async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, expectedUserId, db, onlyCurrent=false) {
   const accountHash = String(subscription?.externalAccountIdentifiers?.obfuscatedExternalAccountId || '').toLowerCase();
   const expectedHash = googlePlayAccountHash(expectedUserId);
   if (!accountHash || accountHash !== expectedHash) {
@@ -390,11 +387,13 @@ async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, 
   const orderId = String(item.latestSuccessfulOrderId || subscription.latestOrderId || tokenHash);
   const eventId = `google_play:${orderId}:${subscription.subscriptionState || 'UNKNOWN'}:${item.expiryTime || ''}`;
 
-  const userResult = await db.query('SELECT * FROM users WHERE lower(id)=lower($1)', [expectedUserId]);
+  const userResult = await db.query('SELECT * FROM users WHERE lower(id)=lower($1) FOR UPDATE', [expectedUserId]);
   const user = userResult.rows[0] || null;
   if (!user) throw new Error('Verknüpftes MängelFix-Konto wurde nicht gefunden.');
 
   if (product.scope === 'private') {
+    if(onlyCurrent&&(user.subscription_provider!=='google_play'||user.subscription_id!==tokenHash))return null;
+
     // Ein fremdes aktives Store-Abo darf durch Google weder übernommen noch herabgestuft werden.
     if (user.subscription_provider && user.subscription_provider !== 'google_play' && hasPrivatePro(user)) {
       return publicUser(user);
@@ -431,11 +430,13 @@ async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, 
      FROM organization_memberships om
      JOIN organizations o ON o.id=om.organization_id
      WHERE om.user_id=$1 AND COALESCE(om.active,true)=true AND om.role IN ('owner','admin')
-     ORDER BY om.created_at LIMIT 1`,
-    [user.id]
+     ORDER BY CASE WHEN o.subscription_provider='google_play' AND o.subscription_customer_id=$2 THEN 0 ELSE 1 END, om.created_at LIMIT 1 FOR UPDATE OF o`,
+    [user.id, accountHash]
   );
   const organization = orgResult.rows[0] || null;
   if (!organization) throw new Error('Für dieses MängelFix-Konto wurde keine verwaltbare Hausverwaltung gefunden.');
+
+  if(onlyCurrent&&(organization.subscription_provider!=='google_play'||organization.subscription_id!==tokenHash))return null;
 
   if (organization.subscription_provider && organization.subscription_provider !== 'google_play' && billingState(organization).active) {
     return publicUser(user);

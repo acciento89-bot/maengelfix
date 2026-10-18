@@ -37,3 +37,11 @@ test('renewal boundary is retried promptly rather than deferring a paid renewal 
  assert.equal(nextReceiptSyncSeconds({subscriptionState:'SUBSCRIPTION_STATE_EXPIRED'},{expiryMs:now-10000},true,now),86400);
  assert.equal(nextReceiptSyncSeconds(null,null,false,now),900);
 });
+
+test('canceled and recoverable subscriptions stay fresh even after their old expiry',()=>{
+ const now=Date.parse('2026-10-18T20:00:00Z');
+ for(const state of ['CANCELED','ON_HOLD','PAUSED','ACTIVE','IN_GRACE_PERIOD']) {
+  assert.equal(nextReceiptSyncSeconds({subscriptionState:'SUBSCRIPTION_STATE_'+state},{expiryMs:now-7200000},true,now),900);
+ }
+ assert.equal(nextReceiptSyncSeconds({subscriptionState:'SUBSCRIPTION_STATE_CANCELED'},{expiryMs:now+10000},true,now),15);
+});
