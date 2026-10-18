@@ -92,6 +92,12 @@ case "$SECOND_ACTION" in
     : "${SECOND_TEXT:?SECOND_TEXT is required for tap}"
     tap_by_text "$SECOND_TEXT"
     ;;
+  deeplink)
+    : "${SECOND_URL:?SECOND_URL is required for deeplink}"
+    [[ "$SECOND_URL" == 'https://maengelfix.kamilunavo.com/registrieren' ]] || { echo 'Unexpected review capture URL' >&2; exit 1; }
+    adb shell am force-stop "$PACKAGE_NAME"
+    adb shell am start -W -n "$PACKAGE_NAME/.MainActivity" -a android.intent.action.VIEW -d "$SECOND_URL"
+    ;;
   swipe)
     adb shell input swipe 540 1900 540 650 600
     ;;
