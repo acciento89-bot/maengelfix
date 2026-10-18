@@ -23,7 +23,7 @@ if found:
  assert found['x509']['trustStore']['trustAnchors'][0]['pemCertificate'].strip()==root.strip(), 'Unexpected existing CA'
 else:
  op=call(parent+'/providers?workloadIdentityPoolProviderId=prod-x509',{
-  'displayName':'MaengelFix production certificate',
+  'displayName':'MaengelFix production X509',
   'attributeMapping':{'google.subject':'assertion.subject.dn.cn'},
   'attributeCondition':condition,
   'x509':{'trustStore':{'trustAnchors':[{'pemCertificate':root}]}},
@@ -33,6 +33,9 @@ else:
   time.sleep(2);op=call(op['name'])
  if op.get('error'):raise RuntimeError(op['error'].get('message','Provider operation failed'))
  assert op.get('done'), 'Provider operation did not complete'
- found=call(name)
+ for _ in range(10):
+  found=call(name)
+  if found and found.get('state')=='ACTIVE':break
+  time.sleep(2)
  assert found and found.get('state')=='ACTIVE'
 print('Dedicated X509 provider verified with exact certificate CN and SPIFFE URI restriction.')
