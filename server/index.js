@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { createGooglePlayAuth } from './google-play-auth.js';
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -61,22 +62,8 @@ const appleProductIds = new Set(appleProducts.keys());
 
 // V023_GOOGLE_PLAY_BILLING
 const googlePlayPackageName = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.kamilunavo.maengelfix';
-const googlePlayServiceAccountJsonB64 = String(process.env.GOOGLE_PLAY_SERVICE_ACCOUNT_JSON_B64 || '').trim();
-let googlePlayServiceAccount = null;
-if (googlePlayServiceAccountJsonB64) {
-  try {
-    googlePlayServiceAccount = JSON.parse(Buffer.from(googlePlayServiceAccountJsonB64, 'base64').toString('utf8'));
-    if (!googlePlayServiceAccount?.client_email || !googlePlayServiceAccount?.private_key) {
-      throw new Error('client_email/private_key missing');
-    }
-    const parsedGoogleKey = crypto.createPrivateKey(googlePlayServiceAccount.private_key);
-    if (parsedGoogleKey.asymmetricKeyType !== 'rsa') throw new Error('private key is not RSA');
-  } catch (error) {
-    console.error('Google Play service account could not be parsed:', error.message);
-    googlePlayServiceAccount = null;
-  }
-}
-const googlePlayBillingConfigured = Boolean(googlePlayServiceAccount);
+const googlePlayAuth = createGooglePlayAuth();
+const googlePlayBillingConfigured = googlePlayAuth.configured;
 const googlePlayProducts = new Map([
   ['maengelfix.private.monthly', {scope:'private',planCode:'private_pro'}],
   ['maengelfix.private.yearly', {scope:'private',planCode:'private_pro'}],
@@ -87,7 +74,6 @@ const googlePlayProducts = new Map([
   ['maengelfix.business.monthly', {scope:'organization',planCode:'management_business'}],
   ['maengelfix.business.yearly', {scope:'organization',planCode:'management_business'}]
 ]);
-let googlePlayTokenCache = { accessToken: '', expiresAt: 0 };
 const smtpConfigured = Boolean(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS);
 const mailer = smtpConfigured ? nodemailer.createTransport({ host: process.env.SMTP_HOST, port: Number(process.env.SMTP_PORT || 587), secure: String(process.env.SMTP_SECURE || 'false') === 'true', auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS } }) : null;
 
@@ -329,47 +315,8 @@ function googlePlayTokenHash(token) {
   return crypto.createHash('sha256').update(String(token || '')).digest('hex');
 }
 
-function googlePlayJwtPart(value) {
-  return Buffer.from(JSON.stringify(value)).toString('base64url');
-}
-
 async function googlePlayAccessToken() {
-  if (!googlePlayBillingConfigured) throw new Error('Google Play Billing ist serverseitig noch nicht konfiguriert.');
-  if (googlePlayTokenCache.accessToken && googlePlayTokenCache.expiresAt > Date.now() + 60_000) {
-    return googlePlayTokenCache.accessToken;
-  }
-
-  const now = Math.floor(Date.now() / 1000);
-  const tokenUri = googlePlayServiceAccount.token_uri || 'https://oauth2.googleapis.com/token';
-  const header = googlePlayJwtPart({alg:'RS256',typ:'JWT'});
-  const claims = googlePlayJwtPart({
-    iss: googlePlayServiceAccount.client_email,
-    scope: 'https://www.googleapis.com/auth/androidpublisher',
-    aud: tokenUri,
-    iat: now,
-    exp: now + 3600
-  });
-  const signingInput = `${header}.${claims}`;
-  const signature = crypto.sign('RSA-SHA256', Buffer.from(signingInput), googlePlayServiceAccount.private_key).toString('base64url');
-  const assertion = `${signingInput}.${signature}`;
-
-  const response = await fetch(tokenUri, {
-    method: 'POST',
-    headers: {'content-type':'application/x-www-form-urlencoded'},
-    body: new URLSearchParams({
-      grant_type: 'urn:ietf:params:oauth:grant-type:jwt-bearer',
-      assertion
-    })
-  });
-  const payload = await response.json().catch(() => ({}));
-  if (!response.ok || !payload.access_token) {
-    throw new Error(`Google OAuth fehlgeschlagen (${response.status}).`);
-  }
-  googlePlayTokenCache = {
-    accessToken: payload.access_token,
-    expiresAt: Date.now() + Math.max(60, Number(payload.expires_in || 3600)) * 1000
-  };
-  return payload.access_token;
+  return googlePlayAuth.accessToken();
 }
 
 async function fetchGooglePlaySubscription(purchaseToken) {

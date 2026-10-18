@@ -32,8 +32,8 @@ RUN npm run build
 FROM node:22-alpine
 WORKDIR /app
 ENV NODE_ENV=production
-COPY --from=patched /src/server/package.json ./server/package.json
-RUN cd server && npm install --omit=dev
+COPY --from=patched /src/server/package*.json ./server/
+RUN cd server && npm ci --omit=dev
 COPY --from=patched /src/server/ ./server/
 RUN node --check server/index.js
 COPY --from=web /app/client/dist ./public

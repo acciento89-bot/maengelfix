@@ -16,6 +16,14 @@ jobs:
       - name: Server-Syntax prüfen
         run: node --check server/index.js
 
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Server authentication code checks (no purchases)
+        working-directory: server
+        run: npm ci --no-audit --no-fund && npm test
+
       - name: Client-Abhängigkeiten installieren
         working-directory: client
         run: npm install --no-audit --no-fund

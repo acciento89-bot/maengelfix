@@ -1,0 +1,70 @@
+name: Configure keyless MängelFix Play runtime identity
+on:
+  workflow_dispatch:
+    inputs:
+      root_certificate_b64:
+        description: Public PEM certificate of the dedicated server CA; private keys remain on the server
+        required: true
+        type: string
+permissions:
+  contents: read
+  id-token: write
+jobs:
+  provision:
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v5
+      - id: auth
+        uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions
+          service_account: navoops@emerald-caster-508318-f2.iam.gserviceaccount.com
+          token_format: access_token
+          access_token_scopes: https://www.googleapis.com/auth/cloud-platform
+      - uses: google-github-actions/setup-gcloud@v3
+        with:
+          version: '>= 538.0.0'
+      - name: Configure narrowly scoped X509 federation without service account keys
+        env:
+          ROOT_CERTIFICATE_B64: ${{ inputs.root_certificate_b64 }}
+          GOOGLE_TOKEN: ${{ steps.auth.outputs.access_token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          project=emerald-caster-508318-f2
+          pool=maengelfix-runtime
+          provider=prod-x509
+          account=maengelfix-play-billing@emerald-caster-508318-f2.iam.gserviceaccount.com
+          if ! gcloud iam service-accounts describe "$account" --project="$project" --format=json >/dev/null; then
+            gcloud iam service-accounts create maengelfix-play-billing --project="$project" --display-name="MaengelFix Play Billing" --description="Dedicated MaengelFix purchase verification runtime; no release access" --quiet
+          fi
+          python3 - <<'PY'
+          import os,json,base64
+          from pathlib import Path
+          cert=base64.b64decode(os.environ['ROOT_CERTIFICATE_B64']).decode()
+          assert cert.startswith('-----BEGIN CERTIFICATE-----') and 'PRIVATE KEY' not in cert
+          Path('trust-store.json').write_text(json.dumps({'trustStore':{'trustAnchors':[{'pemCertificate':cert}]}}))
+          PY
+          if ! gcloud iam workload-identity-pools describe "$pool" --project="$project" --location=global --format=json >/tmp/pool.json; then
+            gcloud iam workload-identity-pools create "$pool" --project="$project" --location=global --display-name='MängelFix runtime' --description='Dedicated production server certificate, MängelFix purchase verification only' --quiet
+          fi
+          python3 scripts/maengelfix-create-x509-provider.py
+          gcloud iam service-accounts add-iam-policy-binding "$account" --project="$project" --role=roles/iam.workloadIdentityUser --member="principal://iam.googleapis.com/projects/1058001477767/locations/global/workloadIdentityPools/$pool/subject/maengelfix-prod" --condition=None --quiet
+          mkdir -p runtime-config
+          gcloud iam workload-identity-pools create-cred-config "projects/1058001477767/locations/global/workloadIdentityPools/$pool/providers/$provider" --service-account="$account" --credential-cert-path=/run/secrets/maengelfix/leaf.cert --credential-cert-private-key-path=/run/secrets/maengelfix/leaf.key --credential-cert-configuration-output-file=runtime-config/certificate-config.json --output-file=runtime-config/google-credentials.json
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          p=Path('runtime-config/google-credentials.json');d=json.loads(p.read_text())
+          d['credential_source']['certificate']['certificate_config_location']='/run/secrets/maengelfix/certificate-config.json'
+          assert d['type']=='external_account' and d['subject_token_type']=='urn:ietf:params:oauth:token-type:mtls'
+          p.write_text(json.dumps(d,indent=2)+'\n')
+          PY
+      - uses: actions/upload-artifact@v4
+        with:
+          name: maengelfix-keyless-runtime-config
+          path: runtime-config/
+          retention-days: 7
+          if-no-files-found: error
