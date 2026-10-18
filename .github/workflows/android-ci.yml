@@ -69,8 +69,8 @@ jobs:
           set -euo pipefail
           test -f android/app/build/outputs/bundle/release/app-release.aab
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 6' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.5"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 7' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.0.6"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'android:icon="@drawable/maengelfix_app_icon"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
@@ -116,7 +116,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MaengelFix-1.0.5-6-unsigned-release-aab
+          name: MaengelFix-1.0.6-7-unsigned-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
