@@ -95,12 +95,14 @@ fun PlayBillingSheet(
                             ) {
                                 Text("Monatlich · ${billing.price(plan.monthlyId) ?: "wird geladen"}")
                             }
-                            OutlinedButton(
-                                onClick = { billing.purchase(plan.yearlyId) },
-                                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                                enabled = billing.isReady() && billing.price(plan.yearlyId) != null,
-                            ) {
-                                Text("Jährlich · ${billing.price(plan.yearlyId) ?: "wird geladen"}")
+                            if (PlayPurchasePolicy.isOfferedForSale(plan.yearlyId)) {
+                                OutlinedButton(
+                                    onClick = { billing.purchase(plan.yearlyId) },
+                                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                                    enabled = billing.isReady() && billing.price(plan.yearlyId) != null,
+                                ) {
+                                    Text("Jährlich · ${billing.price(plan.yearlyId) ?: "wird geladen"}")
+                                }
                             }
                         }
                     }

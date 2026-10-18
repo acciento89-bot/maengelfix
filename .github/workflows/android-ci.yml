@@ -100,7 +100,7 @@ jobs:
             maengelfix.pro.yearly \
             maengelfix.business.monthly \
             maengelfix.business.yearly; do
-            grep -Fq "$product" android/app/src/main/java/com/kamilunavo/maengelfix/BillingManager.kt
+            grep -Fq "$product" android/app/src/main/java/com/kamilunavo/maengelfix/PlayPurchasePolicy.kt
           done
           if grep -RFn --include='*.kt' --include='*.xml' \
             -e 'STRIPE_SECRET' \
