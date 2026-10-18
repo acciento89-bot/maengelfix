@@ -233,6 +233,9 @@ class BillingManager(
             val bytes = (if (status in 200..299) connection.inputStream else connection.errorStream)?.use { it.readBytes() } ?: ByteArray(0)
             if (status !in 200..299) throw IllegalStateException("Dein aktueller MängelFix-Tarif konnte nicht geprüft werden.")
             val root = JSONObject(bytes.toString(Charsets.UTF_8))
+            if (!root.optBoolean("googlePlayReady", false)) {
+                throw IllegalStateException("Die Google-Play-Kaufabwicklung ist gerade nicht bereit. Bitte versuche es später erneut.")
+            }
             val accountScope = root.optString("scope").trim()
             if (accountScope !in setOf("private", "organization")) {
                 throw IllegalStateException("MängelFix konnte den passenden Abo-Bereich für dein Konto nicht bestimmen.")
