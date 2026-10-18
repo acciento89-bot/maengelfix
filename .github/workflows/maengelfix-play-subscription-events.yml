@@ -21,6 +21,7 @@ jobs:
       - uses: google-github-actions/setup-gcloud@v3
         with:
           version: '>= 538.0.0'
+          install_components: beta
       - name: Create authenticated, app-specific Google subscription delivery
         shell: bash
         run: |
