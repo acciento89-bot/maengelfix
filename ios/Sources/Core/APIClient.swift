@@ -177,6 +177,85 @@ final class APIClient: @unchecked Sendable {
         try await rawData("/api/cases/\(id)/pdf")
     }
 
+    // Native inspection additions use the original URLSession/cookies and validation.
+    // Raw JSON deliberately bypasses convertFromSnakeCase: signed canonical payload
+    // field names must match the existing backend exactly.
+    @MainActor
+    private func inspectionJSON(_ path:String, method:String = "GET", body:InspectionJSON? = nil, current:()->Bool) async throws -> InspectionJSON {
+        try inspectionNeed(current(),.identity)
+        let request=try makeRequest(path:path,method:method,bodyData:body.map{Data($0.canonical.utf8)})
+        let (bytes,response)=try await data(for:request)
+        try inspectionNeed(current(),.identity)
+        try validate(response:response,data:bytes)
+        return try InspectionJSON.parse(bytes)
+    }
+
+    @MainActor func inspectionList(current:()->Bool) async throws -> InspectionJSON {
+        try await inspectionJSON("/api/inspections",current:current)
+    }
+    @MainActor func inspectionDetail(id:String,current:()->Bool) async throws -> InspectionJSON {
+        _=try inspectionID(id)
+        return try await inspectionJSON("/api/inspections/\(id)",current:current)
+    }
+    @MainActor func inspectionProperties(current:()->Bool) async throws -> InspectionJSON {
+        try await inspectionJSON("/api/properties",current:current)
+    }
+    @MainActor func inspectionProperty(id:String,current:()->Bool) async throws -> InspectionJSON {
+        _=try inspectionID(id)
+        return try await inspectionJSON("/api/properties/\(id)",current:current)
+    }
+    @MainActor func inspectionCreate(_ input:InspectionJSON,current:()->Bool) async throws -> InspectionJSON {
+        guard let fields=input.object else{throw InspectionError.invalid}
+        try inspectionNeed(Set(fields.keys).isSubset(of:Set(["title","protocolType","propertyId","unitId","inspectionAt","tenantName","tenantEmail","generalNotes"])))
+        return try await inspectionJSON("/api/inspections",method:"POST",body:input,current:current)
+    }
+    @MainActor func inspectionPDF(id:String,current:()->Bool) async throws -> Data {
+        _=try inspectionID(id);try inspectionNeed(current(),.identity)
+        let bytes=try await rawData("/api/inspections/\(id)/pdf")
+        try inspectionNeed(current(),.identity);return bytes
+    }
+    @MainActor func inspectionPublish(_ draft:InspectionDraft,photos:[String:Data],current:()->Bool) async throws -> InspectionReceipt {
+        try draft.validate();try inspectionNeed(draft.state == .queued && current(),.identity)
+        guard let payload=draft.batchPayload else{throw InspectionError.invalid}
+        try inspectionNeed(Set(photos.keys)==Set(draft.photos.map(\.id)),.corrupt)
+        let boundary="Inspection-"+UUID().uuidString
+        var body=Data()
+        func field(_ name:String,_ value:String){body.appendUTF8("--\(boundary)\r\nContent-Disposition: form-data; name=\"\(name)\"\r\n\r\n\(value)\r\n")}
+        field("payload",payload)
+        field("photoIDs",InspectionJSON.array(draft.photos.map{.string($0.id)}).canonical)
+        for photo in draft.photos {
+            guard let bytes=photos[photo.id] else{throw InspectionError.corrupt}
+            try inspectionNeed(bytes.count==photo.size && inspectionHash(bytes)==photo.sha256,.corrupt)
+            try inspectionNeed(!photo.name.contains("\r") && !photo.name.contains("\n") && !photo.name.contains("\"") && !photo.name.contains("\\"))
+            body.appendUTF8("--\(boundary)\r\nContent-Disposition: form-data; name=\"photos\"; filename=\"\(photo.name)\"\r\nContent-Type: \(photo.mime)\r\n\r\n")
+            body.append(bytes);body.appendUTF8("\r\n")
+        }
+        body.appendUTF8("--\(boundary)--\r\n")
+        try inspectionNeed(body.count<=22*1024*1024,.capacity);try inspectionNeed(current(),.identity)
+        var request=try makeRequest(path:"/api/inspections/\(draft.protocolID)/offline-batches",method:"POST",bodyData:nil)
+        request.setValue("multipart/form-data; boundary=\(boundary)",forHTTPHeaderField:"Content-Type")
+        request.setValue(String(body.count),forHTTPHeaderField:"Content-Length");request.httpBody=body
+        let (bytes,response)=try await data(for:request)
+        try inspectionNeed(current(),.identity);try validate(response:response,data:bytes)
+        let raw=try InspectionJSON.parse(bytes)
+        let receipt=try JSONDecoder().decode(InspectionReceipt.self,from:Data(raw["receipt"].canonical.utf8))
+        _=try draft.acknowledged(receipt);return receipt
+    }
+    @MainActor func inspectionOutcome(_ draft:InspectionDraft,cancel:Bool,current:()->Bool) async throws -> InspectionJSON {
+        try draft.validate();try inspectionNeed(draft.state == .queued && current(),.identity)
+        guard let payload=draft.batchPayload,let operation=draft.operationID else{throw InspectionError.invalid}
+        let hash=inspectionHash(Data(payload.utf8))
+        let root="/api/inspections/\(draft.protocolID)/offline-batches/\(operation)"
+        let raw=try await inspectionJSON(cancel ? root+"/cancel":root+"?payloadHash="+hash,method:cancel ? "POST":"GET",body:cancel ? .object(["payloadHash":.string(hash)]):nil,current:current)
+        if raw["exists"] == .bool(true) {
+            let receipt=try JSONDecoder().decode(InspectionReceipt.self,from:Data(raw["receipt"].canonical.utf8))
+            _=try draft.acknowledged(receipt);return raw
+        }
+        try inspectionNeed(raw["exists"] == .bool(false) && raw["ownerID"] == .string(draft.ownerID) && raw["protocolID"] == .string(draft.protocolID) && raw["operationID"] == .string(operation) && raw["payloadHash"] == .string(hash),.identity)
+        if cancel{try inspectionNeed(raw["cancelled"] == .bool(true),.identity)}
+        guard var fields=raw.object else{throw InspectionError.invalid};fields["payload"] = .string(payload);return .object(fields)
+    }
+
     private func rawData(_ path: String) async throws -> Data {
         let request = try makeRequest(path: path, method: "GET", bodyData: nil)
         let (data, response) = try await data(for: request)

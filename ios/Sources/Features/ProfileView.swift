@@ -488,7 +488,12 @@ private struct AccountDeletionView: View {
         isDeleting = true
         errorMessage = nil
         do {
+            let inspectionOwnerID = session.user?.id
             try await session.api.deleteAccount(password: password, confirmation: confirmation)
+            if let inspectionOwnerID {
+                do { try await InspectionArchive.local(ownerID: inspectionOwnerID).purgeOwner() }
+                catch { InspectionCleanupNotice.shared.message = "Dein Konto wurde serverseitig gelöscht. Lokale Begehungsdaten konnten nicht vollständig bereinigt werden: \(error.localizedDescription) / Your account was deleted on the server. Local inspection cleanup failed." }
+            }
             await session.logout()
             dismiss()
         } catch {
