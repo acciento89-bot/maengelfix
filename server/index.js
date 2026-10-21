@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { registerOfflineInspectionRoutes } from './inspection-outbox-routes.js';
 import { createGooglePlayAuth } from './google-play-auth.js';
 import { createReceiptCipher, loadReceiptKey, redactGoogleReceipt, runReceiptSync, nextReceiptSyncSeconds } from './google-play-receipts.js';
 import fs from 'node:fs';
@@ -1527,6 +1528,13 @@ async function inspectionAccess(userId, protocolId){
     WHERE ip.id=$1 AND ((ip.organization_id IS NOT NULL AND ip.organization_id=$2) OR (ip.organization_id IS NULL AND ip.created_by=$3))`,[protocolId,org?.id||null,userId]);
   return r.rows[0]||null;
 }
+
+const offlineInspectionUpload = multer({
+ storage,
+ limits: {fileSize:3*1024*1024,files:250,fields:2,fieldSize:1024*1024,parts:252},
+ fileFilter: (_req,file,callback)=>callback(null,/^image\/(jpeg|png|webp)$/.test(file.mimetype))
+});
+registerOfflineInspectionRoutes(app,{auth,privateProFeature,upload:offlineInspectionUpload,pool,inspectionAccess});
 
 app.get('/api/inspections',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);let r;

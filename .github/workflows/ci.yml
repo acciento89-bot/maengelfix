@@ -45,3 +45,39 @@ jobs:
 
       - name: Docker-Image bauen
         run: docker build -t maengelfix:ci .
+
+  inspection-outbox-contracts:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_PASSWORD: isolated-ci-only
+          POSTGRES_DB: maengelfix_outbox_test_ci
+        ports:
+          - 25432:5432
+        options: >-
+          --health-cmd pg_isready --health-interval 5s --health-timeout 5s --health-retries 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Local outbox model, atomic storage and web build
+        working-directory: client
+        run: |
+          npm ci --no-audit --no-fund
+          node --test tests/*.test.js
+          npm run build
+      - name: Existing billing and protected route contracts (no purchases)
+        working-directory: server
+        run: |
+          npm ci --no-audit --no-fund
+          node --check index.js
+          npm test
+          node --test inspection-outbox-routes.test.js inspection-upload-limit.test.js inspection-packaging.test.js
+      - name: Real isolated PostgreSQL batch, receipt, cancellation and rollback contracts
+        working-directory: server
+        env:
+          MAENGELFIX_OUTBOX_TEST_DATABASE_URL: postgresql://postgres:isolated-ci-only@127.0.0.1:25432/maengelfix_outbox_test_ci
+        run: node --test inspection-outbox.test.js

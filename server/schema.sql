@@ -514,3 +514,17 @@ CREATE TABLE IF NOT EXISTS google_play_subscription_receipts (
  last_sync_ok boolean
 );
 CREATE INDEX IF NOT EXISTS google_play_subscription_receipts_due_idx ON google_play_subscription_receipts(next_sync_at);
+
+
+-- Offline additive inspection batches: durable actor-bound idempotency receipts.
+CREATE TABLE IF NOT EXISTS inspection_offline_receipts (
+ actor_id text NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+ operation_id text NOT NULL,
+ protocol_id text NOT NULL REFERENCES inspection_protocols(id) ON DELETE CASCADE,
+ payload_hash text NOT NULL,
+ payload text NOT NULL,
+ result jsonb NOT NULL,
+ created_at timestamptz NOT NULL DEFAULT now(),
+ PRIMARY KEY(actor_id,operation_id)
+);
+CREATE INDEX IF NOT EXISTS inspection_offline_receipts_protocol_idx ON inspection_offline_receipts(protocol_id);
