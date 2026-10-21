@@ -35,6 +35,7 @@ ENV NODE_ENV=production
 COPY --from=patched /src/server/package*.json ./server/
 RUN cd server && npm ci --omit=dev
 COPY --from=patched /src/server/ ./server/
+COPY --from=patched /src/client/src/inspection-outbox/core.js ./client/src/inspection-outbox/core.js
 RUN node --check server/index.js
 COPY --from=web /app/client/dist ./public
 RUN mkdir -p /data/uploads

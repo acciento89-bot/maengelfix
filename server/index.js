@@ -1,4 +1,5 @@
 import crypto from 'node:crypto';
+import { registerOfflineInspectionRoutes } from './inspection-outbox-routes.js';
 import { createGooglePlayAuth } from './google-play-auth.js';
 import { createReceiptCipher, loadReceiptKey, redactGoogleReceipt, runReceiptSync, nextReceiptSyncSeconds } from './google-play-receipts.js';
 import fs from 'node:fs';
@@ -66,6 +67,13 @@ const googlePlayPackageName = process.env.GOOGLE_PLAY_PACKAGE_NAME || 'com.kamil
 const googlePlayAuth = createGooglePlayAuth();
 const googleReceiptCipher = createReceiptCipher(loadReceiptKey(process.env.GOOGLE_PLAY_TOKEN_ENCRYPTION_KEY_FILE));
 const googlePlayBillingConfigured = googlePlayAuth.configured && googleReceiptCipher.configured;
+
+
+// V024_GOOGLE_PLAY_RTDN
+const googlePlayRtdnAudience = String(process.env.GOOGLE_PLAY_RTDN_AUDIENCE || '').trim();
+const googlePlayRtdnServiceAccountEmail = String(process.env.GOOGLE_PLAY_RTDN_SERVICE_ACCOUNT_EMAIL || '').trim().toLowerCase();
+const googlePlayRtdnConfigured = Boolean(googlePlayRtdnAudience && googlePlayRtdnServiceAccountEmail);
+let googleOidcJwksCache = { keys: new Map(), expiresAt: 0 };
 const googlePlayProducts = new Map([
   ['maengelfix.private.monthly', {scope:'private',planCode:'private_pro'}],
   ['maengelfix.private.yearly', {scope:'private',planCode:'private_pro'}],
@@ -483,6 +491,100 @@ async function applyGooglePlaySubscriptionInternal(subscription, purchaseToken, 
   return publicUser(user);
 }
 
+
+
+function googlePlayDecodeJwtPart(part) {
+  try { return JSON.parse(Buffer.from(String(part || ''), 'base64url').toString('utf8')); }
+  catch { return null; }
+}
+
+async function googleOidcPublicKey(kid) {
+  if (!kid) throw new Error('Google OIDC Key-ID fehlt.');
+  if (googleOidcJwksCache.expiresAt <= Date.now() || !googleOidcJwksCache.keys.has(kid)) {
+    const response = await fetch('https://www.googleapis.com/oauth2/v3/certs', {headers:{accept:'application/json'}});
+    const payload = await response.json().catch(() => ({}));
+    if (!response.ok || !Array.isArray(payload.keys)) throw new Error('Google OIDC-Schlüssel konnten nicht geladen werden.');
+    const keys = new Map();
+    for (const jwk of payload.keys) {
+      if (jwk?.kid && jwk?.kty === 'RSA' && jwk?.alg === 'RS256') keys.set(jwk.kid, jwk);
+    }
+    const cacheHeader = response.headers.get('cache-control') || '';
+    const maxAge = Number(cacheHeader.match(/max-age=(\d+)/i)?.[1] || 3600);
+    googleOidcJwksCache = {keys, expiresAt: Date.now() + Math.max(300, maxAge) * 1000};
+  }
+  const jwk = googleOidcJwksCache.keys.get(kid);
+  if (!jwk) throw new Error('Google OIDC Key-ID ist unbekannt.');
+  return crypto.createPublicKey({key:jwk,format:'jwk'});
+}
+
+async function verifyGooglePlayRtdnOidc(req) {
+  if (!googlePlayRtdnConfigured) throw Object.assign(new Error('Google Play RTDN ist serverseitig nicht konfiguriert.'), {statusCode:503});
+  const authorization = String(req.headers.authorization || '');
+  const match = authorization.match(/^Bearer\s+(.+)$/i);
+  if (!match) throw Object.assign(new Error('Google Play RTDN Authorization fehlt.'), {statusCode:401});
+  const token = match[1];
+  const parts = token.split('.');
+  if (parts.length !== 3) throw Object.assign(new Error('Ungültiges Google OIDC-Token.'), {statusCode:401});
+  const header = googlePlayDecodeJwtPart(parts[0]);
+  const claims = googlePlayDecodeJwtPart(parts[1]);
+  if (!header || !claims || header.alg !== 'RS256') throw Object.assign(new Error('Ungültiger Google OIDC-Header.'), {statusCode:401});
+
+  const publicKey = await googleOidcPublicKey(header.kid);
+  const verified = crypto.verify(
+    'RSA-SHA256',
+    Buffer.from(`${parts[0]}.${parts[1]}`),
+    publicKey,
+    Buffer.from(parts[2], 'base64url')
+  );
+  if (!verified) throw Object.assign(new Error('Google OIDC-Signatur ist ungültig.'), {statusCode:401});
+
+  const now = Math.floor(Date.now() / 1000);
+  const issuer = String(claims.iss || '');
+  const audienceOk = Array.isArray(claims.aud)
+    ? claims.aud.includes(googlePlayRtdnAudience)
+    : String(claims.aud || '') === googlePlayRtdnAudience;
+  const email = String(claims.email || '').toLowerCase();
+  const emailVerified = claims.email_verified === true || claims.email_verified === 'true';
+  if (!['https://accounts.google.com','accounts.google.com'].includes(issuer)) throw Object.assign(new Error('Google OIDC-Issuer ist ungültig.'), {statusCode:401});
+  if (!audienceOk) throw Object.assign(new Error('Google OIDC-Audience ist ungültig.'), {statusCode:401});
+  if (!emailVerified || email !== googlePlayRtdnServiceAccountEmail) throw Object.assign(new Error('Google OIDC-Servicekonto ist nicht freigegeben.'), {statusCode:403});
+  if (!Number(claims.exp) || Number(claims.exp) <= now - 30) throw Object.assign(new Error('Google OIDC-Token ist abgelaufen.'), {statusCode:401});
+  if (Number(claims.iat || 0) > now + 120) throw Object.assign(new Error('Google OIDC-Token liegt unzulässig in der Zukunft.'), {statusCode:401});
+  return claims;
+}
+
+function decodeGooglePlayRtdnMessage(body) {
+  const encoded = body?.message?.data;
+  if (!encoded || typeof encoded !== 'string') throw Object.assign(new Error('Google Play RTDN message.data fehlt.'), {statusCode:400});
+  try { return JSON.parse(Buffer.from(encoded, 'base64').toString('utf8')); }
+  catch { throw Object.assign(new Error('Google Play RTDN message.data ist ungültig.'), {statusCode:400}); }
+}
+
+async function googlePlayMappedUserForSubscription(subscription, current) {
+  const accountHash = String(subscription?.externalAccountIdentifiers?.obfuscatedExternalAccountId || '').toLowerCase();
+  if (!accountHash || !current?.product) return null;
+  if (current.product.scope === 'private') {
+    const result = await pool.query(
+      `SELECT id FROM users WHERE subscription_provider='google_play' AND lower(subscription_customer_id)=lower($1) LIMIT 1`,
+      [accountHash]
+    );
+    return result.rows[0]?.id || null;
+  }
+  const result = await pool.query(
+    `SELECT om.user_id
+     FROM organizations o
+     JOIN organization_memberships om ON om.organization_id=o.id
+     WHERE o.subscription_provider='google_play'
+       AND lower(o.subscription_customer_id)=lower($1)
+       AND COALESCE(om.active,true)=true
+       AND om.role IN ('owner','admin')
+     ORDER BY CASE WHEN om.role='owner' THEN 0 ELSE 1 END, om.created_at
+     LIMIT 1`,
+    [accountHash]
+  );
+  return result.rows[0]?.user_id || null;
+}
+
 function id() {
   return crypto.randomUUID();
 }
@@ -569,6 +671,9 @@ async function auth(req, res, next) {
 }
 
 const allowedStatuses = new Set(['draft','sent','reply','received','reviewing','commissioned','scheduled','in_progress','resolved']);
+// V022_CASE_STATUS_LABELS
+const serverCaseStatusLabels = {draft:'Entwurf',sent:'Versendet',reply:'Rückmeldung',received:'Eingegangen',reviewing:'In Prüfung',commissioned:'Auftrag erstellt',scheduled:'Termin geplant',in_progress:'In Bearbeitung',resolved:'Erledigt'};
+function serverCaseStatusLabel(status){return serverCaseStatusLabels[status] || status;}
 
 
 async function organizationForUser(userId) {
@@ -682,6 +787,48 @@ app.post('/api/billing/google-play/verify', auth, async (req, res, next) => {
       testPurchase: Boolean(subscription.testPurchase)
     });
   } catch (error) { next(error); }
+});
+
+
+
+app.post('/api/billing/google-play/rtdn', async (req, res, next) => {
+  try {
+    await verifyGooglePlayRtdnOidc(req);
+    const notification = decodeGooglePlayRtdnMessage(req.body);
+    if (String(notification.packageName || '') !== googlePlayPackageName) {
+      return res.status(400).json({error:'Google Play RTDN Paketname stimmt nicht.'});
+    }
+
+    // Google sends test notifications without a real purchase token.
+    if (notification.testNotification) return res.status(204).end();
+    const subscriptionNotification = notification.subscriptionNotification;
+    if (!subscriptionNotification?.purchaseToken) {
+      // MängelFix currently has subscriptions only; unrelated Play RTDN types are acknowledged.
+      return res.status(204).end();
+    }
+
+    const purchaseToken = String(subscriptionNotification.purchaseToken);
+    const subscription = await fetchGooglePlaySubscription(purchaseToken);
+    const current = googlePlayCurrentLineItem(subscription);
+    if (!current) {
+      console.warn('Google Play RTDN ignored unknown MängelFix product.');
+      return res.status(204).end();
+    }
+
+    const userId = await googlePlayMappedUserForSubscription(subscription, current);
+    if (!userId) {
+      // A PURCHASED RTDN can race the app's initial verify call. The app verify stores the
+      // account-hash mapping, so acknowledging this race here is safe; later lifecycle RTDNs resolve normally.
+      console.info('Google Play RTDN arrived before account mapping; current state will be applied by app verification.');
+      return res.status(204).end();
+    }
+
+    await applyGooglePlaySubscription(subscription, purchaseToken, userId);
+    return res.status(204).end();
+  } catch (error) {
+    if (error?.statusCode) return res.status(error.statusCode).json({error:error.message});
+    next(error);
+  }
 });
 
 app.post('/api/auth/register', async (req, res, next) => {
@@ -1216,14 +1363,22 @@ function escapeHtml(value) {
 }
 
 async function sendAppMail({ to, subject, heading, text, buttonLabel, buttonUrl }) {
+  // V022_BRANDED_APP_MAIL
   if (!mailer || !to) return false;
-  const safeHeading=escapeHtml(heading || subject);
-  const safeText=escapeHtml(text).replace(/\n/g,'<br>');
-  const button=buttonUrl ? `<p style="margin:28px 0"><a href="${escapeHtml(buttonUrl)}" style="background:#2457d6;color:white;text-decoration:none;padding:12px 18px;border-radius:6px;display:inline-block">${escapeHtml(buttonLabel || 'MängelFix öffnen')}</a></p>` : '';
+  const safeHeading = escapeHtml(heading || subject);
+  const plainText = String(text || '');
+  const safeText = escapeHtml(plainText).replace(/\r?\n/g,'<br>');
+  const safeButtonUrl = buttonUrl ? escapeHtml(buttonUrl) : '';
+  const safeButtonLabel = escapeHtml(buttonLabel || 'MängelFix öffnen');
+  const preview = escapeHtml(`${heading || subject} – ${plainText.replace(/\s+/g,' ').trim().slice(0,120)}`);
+  const button = buttonUrl ? `<table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin:26px 0 4px"><tr><td bgcolor="#2457D6" style="border-radius:8px"><a href="${safeButtonUrl}" style="display:inline-block;padding:13px 20px;font-family:Arial,sans-serif;font-size:15px;font-weight:700;color:#ffffff;text-decoration:none;border-radius:8px">${safeButtonLabel}</a></td></tr></table>` : '';
+  const html = `<!doctype html><html><body style="margin:0;padding:0;background:#F3F6FA"><div style="display:none;max-height:0;overflow:hidden;opacity:0;color:transparent">${preview}</div><table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="width:100%;background:#F3F6FA"><tr><td align="center" style="padding:30px 14px"><table role="presentation" width="620" cellspacing="0" cellpadding="0" border="0" style="width:100%;max-width:620px;background:#ffffff;border:1px solid #E3E8EF;border-radius:14px;overflow:hidden"><tr><td style="background:#2457D6;padding:22px 28px"><table role="presentation" cellspacing="0" cellpadding="0" border="0"><tr><td style="width:42px;height:42px;background:#ffffff;border-radius:10px;text-align:center;font-family:Arial,sans-serif;font-size:24px;font-weight:800;color:#2457D6">✓</td><td style="padding-left:13px;font-family:Arial,sans-serif;color:#ffffff"><div style="font-size:20px;font-weight:800;line-height:1.1">MängelFix</div><div style="font-size:12px;opacity:.86;margin-top:3px">Kamilunavo</div></td></tr></table></td></tr><tr><td style="padding:34px 32px 30px;font-family:Arial,sans-serif;color:#18212B"><div style="font-size:12px;font-weight:700;letter-spacing:.08em;color:#2457D6;text-transform:uppercase;margin-bottom:10px">MängelFix Benachrichtigung</div><h1 style="margin:0 0 18px;font-size:25px;line-height:1.25;color:#18212B">${safeHeading}</h1><div style="font-size:15px;line-height:1.7;color:#3D4856">${safeText}</div>${button}</td></tr><tr><td style="border-top:1px solid #E8EDF2;padding:20px 32px 24px;font-family:Arial,sans-serif;color:#768292;font-size:12px;line-height:1.55"><b style="color:#4A5563">Kamilunavo · MängelFix</b><br>Diese Nachricht wurde automatisch von MängelFix gesendet. Antworten auf diese E-Mail werden nicht automatisch einem Vorgang zugeordnet.</td></tr></table></td></tr></table></body></html>`;
   await mailer.sendMail({
-    from: process.env.SMTP_FROM || 'MängelFix <noreply@kamilunavo.com>', to, subject,
-    text: `${heading || subject}\n\n${text}${buttonUrl ? `\n\n${buttonLabel || 'MängelFix öffnen'}: ${buttonUrl}` : ''}`,
-    html: `<div style="font-family:Arial,sans-serif;max-width:620px;margin:auto;color:#18212b"><div style="font-weight:700;font-size:20px;margin-bottom:24px">MängelFix</div><h2>${safeHeading}</h2><p style="line-height:1.6">${safeText}</p>${button}<p style="color:#6f7a86;font-size:12px;margin-top:32px">Diese Nachricht wurde automatisch von MängelFix gesendet.</p></div>`
+    from: process.env.SMTP_FROM || 'MängelFix <noreply@kamilunavo.com>',
+    to,
+    subject,
+    text: `${heading || subject}\n\n${plainText}${buttonUrl ? `\n\n${buttonLabel || 'MängelFix öffnen'}: ${buttonUrl}` : ''}\n\nKamilunavo · MängelFix`,
+    html
   });
   return true;
 }
@@ -1527,6 +1682,13 @@ async function inspectionAccess(userId, protocolId){
     WHERE ip.id=$1 AND ((ip.organization_id IS NOT NULL AND ip.organization_id=$2) OR (ip.organization_id IS NULL AND ip.created_by=$3))`,[protocolId,org?.id||null,userId]);
   return r.rows[0]||null;
 }
+
+const offlineInspectionUpload = multer({
+ storage,
+ limits: {fileSize:3*1024*1024,files:250,fields:2,fieldSize:1024*1024,parts:252},
+ fileFilter: (_req,file,callback)=>callback(null,/^image\/(jpeg|png|webp)$/.test(file.mimetype))
+});
+registerOfflineInspectionRoutes(app,{auth,privateProFeature,upload:offlineInspectionUpload,pool,inspectionAccess});
 
 app.get('/api/inspections',auth,privateProFeature, async(req,res,next)=>{try{
  const org=await organizationForUser(req.user.id);let r;
@@ -2067,7 +2229,7 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
        title=$3, category=$4, description=$5, property_label=$6, location_label=$7,
        discovered_on=$8, recipient_name=$9, recipient_email=$10, recipient_address=$11,
        deadline_on=$12, status=$13, purchase_on=$14, purchase_price=$15, warranty_until=$16, desired_resolution=$17, updated_at=now()
-       WHERE id=$1 RETURNING *`,
+       WHERE id=$1 AND $2::text IS NOT NULL RETURNING *`,
       [
         req.params.caseId,
         req.user.id,
@@ -2091,17 +2253,53 @@ app.patch('/api/cases/:caseId', auth, async (req, res, next) => {
     if (nextStatus !== old.status) {
       await pool.query(
         `INSERT INTO case_events (id, case_id, user_id, event_type, note, visibility) VALUES ($1,$2,$3,$4,$5,'shared')`,
-        [id(), req.params.caseId, req.user.id, 'status', `Status geändert: ${nextStatus}`]
+        [id(), req.params.caseId, req.user.id, 'status', `Status geändert: ${serverCaseStatusLabel(nextStatus)}`]
       );
       if (old.submitted_by_tenant) {
         const owner=await tenantOwnerForCase(req.params.caseId);
-        if(owner && owner.id!==req.user.id){ try { await sendAppMail({to:owner.email,subject:`Status aktualisiert: ${old.title}`,heading:'Deine Mängelmeldung wurde aktualisiert',text:`Der Status von „${old.title}“ wurde geändert. Neuer Status: ${nextStatus}.`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${req.params.caseId}`}); } catch(mailError){console.error('Status mail failed',mailError);} }
+        if(owner && owner.id!==req.user.id){ try { await sendAppMail({to:owner.email,subject:`Status aktualisiert: ${old.title}`,heading:'Deine Mängelmeldung wurde aktualisiert',text:`Der Status von „${old.title}“ wurde geändert. Neuer Status: ${serverCaseStatusLabel(nextStatus)}.`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${req.params.caseId}`}); } catch(mailError){console.error('Status mail failed',mailError);} }
       }
     }
     res.json({ case: result.rows[0] });
   } catch (error) {
     next(error);
   }
+});
+
+
+// V022_CASE_DELETE_ENDPOINT
+app.delete('/api/cases/:caseId', auth, async (req,res,next)=>{
+  const client=await pool.connect();
+  let transactionOpen=false;
+  try{
+    const accessible=await canAccessCase(req.user.id,req.params.caseId);
+    if(!accessible)return res.status(404).json({error:'Mangel nicht gefunden.'});
+    const viewerOrganization=await organizationForUser(req.user.id);
+    const organizationCase=Boolean(accessible.organization_id);
+    const isManagement=Boolean(viewerOrganization&&viewerOrganization.id===accessible.organization_id);
+    if(organizationCase&&!isManagement)return res.status(403).json({error:'Ein an eine Hausverwaltung übermittelter Vorgang kann vom Mieter nicht dauerhaft gelöscht werden.'});
+    if(organizationCase&&!['owner','admin'].includes(viewerOrganization?.role))return res.status(403).json({error:'Nur Inhaber und Admins können Verwaltungsvorgänge dauerhaft löschen.'});
+    if(!organizationCase&&accessible.user_id!==req.user.id)return res.status(403).json({error:'Keine Berechtigung zum Löschen dieses Vorgangs.'});
+
+    const [caseFiles,orderFiles]=await Promise.all([
+      client.query('SELECT stored_name FROM attachments WHERE case_id=$1',[accessible.id]),
+      client.query(`SELECT woa.stored_name FROM work_order_attachments woa JOIN work_orders wo ON wo.id=woa.work_order_id WHERE wo.case_id=$1`,[accessible.id])
+    ]);
+    const storedNames=[...caseFiles.rows,...orderFiles.rows].map(x=>x.stored_name).filter(Boolean);
+
+    await client.query('BEGIN');transactionOpen=true;
+    if(organizationCase)await writeAudit({organizationId:accessible.organization_id,userId:req.user.id,caseId:accessible.id,action:'case_deleted',entityType:'case',entityId:accessible.id,summary:`Vorgang „${accessible.title}“ dauerhaft gelöscht.`});
+    await client.query('DELETE FROM defect_cases WHERE id=$1',[accessible.id]);
+    await client.query('COMMIT');transactionOpen=false;
+
+    for(const storedName of storedNames){
+      try{fs.unlinkSync(path.join(uploadDir,path.basename(storedName)))}catch(error){if(error?.code!=='ENOENT')console.error('Case file cleanup failed',storedName,error)}
+    }
+    res.status(204).end();
+  }catch(error){
+    if(transactionOpen){try{await client.query('ROLLBACK')}catch{}}
+    next(error);
+  }finally{client.release()}
 });
 
 app.post('/api/cases/:caseId/events', auth, async (req, res, next) => {
@@ -2432,7 +2630,35 @@ setTimeout(processCalendarReminders,20000);setInterval(processCalendarReminders,
 
 
 async function processCaseDeadlineEscalations(){
- try{const due=await pool.query(`SELECT c.*,u.email,u.name FROM defect_cases c JOIN users u ON u.id=c.user_id WHERE c.archived_at IS NULL AND c.status<>'resolved' AND c.deadline_on IS NOT NULL AND ((c.deadline_on=current_date+3 AND c.deadline_reminder_stage<1) OR (c.deadline_on=current_date AND c.deadline_reminder_stage<2) OR (c.deadline_on<current_date AND c.deadline_reminder_stage<3)) LIMIT 200`);for(const c of due.rows){const stage=new Date(c.deadline_on)<new Date(new Date().toISOString().slice(0,10))?3:(String(c.deadline_on).slice(0,10)===new Date().toISOString().slice(0,10)?2:1);const title=stage===3?'Frist überfällig':stage===2?'Frist heute fällig':'Frist in 3 Tagen';await createNotification({userId:c.user_id,organizationId:c.organization_id,caseId:c.id,type:'deadline',title,body:c.title,link:`/app?case=${c.id}`});if(mailer&&c.email)try{await sendAppMail({to:c.email,subject:`MängelFix: ${title}`,heading:title,text:`${c.title}\nFrist: ${new Date(c.deadline_on).toLocaleDateString('de-DE')}`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${c.id}`})}catch(e){console.error('Deadline mail failed',e)}await pool.query('UPDATE defect_cases SET deadline_reminder_stage=$2,last_deadline_notification_at=now() WHERE id=$1',[c.id,stage]);}}catch(e){console.error('Deadline escalation failed',e)}}
+ // V022_DEADLINE_ATOMIC_CLAIM
+ try {
+  const due=await pool.query(`
+    SELECT c.*,u.email,u.name,
+      CASE WHEN c.deadline_on<current_date THEN 3 WHEN c.deadline_on=current_date THEN 2 ELSE 1 END AS due_stage
+    FROM defect_cases c
+    JOIN users u ON u.id=c.user_id
+    WHERE c.archived_at IS NULL
+      AND c.status<>'resolved'
+      AND c.deadline_on IS NOT NULL
+      AND ((c.deadline_on=current_date+3 AND c.deadline_reminder_stage<1)
+        OR (c.deadline_on=current_date AND c.deadline_reminder_stage<2)
+        OR (c.deadline_on<current_date AND c.deadline_reminder_stage<3))
+    ORDER BY c.deadline_on,c.created_at
+    LIMIT 200`);
+  for(const c of due.rows){
+   const stage=Number(c.due_stage||0);
+   if(!stage)continue;
+   const claimed=await pool.query(`UPDATE defect_cases SET deadline_reminder_stage=$2,last_deadline_notification_at=now() WHERE id=$1 AND deadline_reminder_stage<$2 RETURNING id`,[c.id,stage]);
+   if(!claimed.rowCount)continue;
+   const title=stage===3?'Frist überfällig':stage===2?'Frist heute fällig':'Frist in 3 Tagen';
+   const deadlineIso=c.deadline_on instanceof Date?c.deadline_on.toISOString().slice(0,10):String(c.deadline_on).slice(0,10);
+   const [year,month,day]=deadlineIso.split('-');
+   const deadlineLabel=year&&month&&day?`${day}.${month}.${year}`:deadlineIso;
+   try{await createNotification({userId:c.user_id,organizationId:c.organization_id,caseId:c.id,type:'deadline',title,body:c.title,link:`/app?case=${c.id}`})}catch(e){console.error('Deadline in-app notification failed',e)}
+   if(mailer&&c.email){try{await sendAppMail({to:c.email,subject:`MängelFix · ${title}`,heading:title,text:`${c.title}\nFrist: ${deadlineLabel}`,buttonLabel:'Vorgang öffnen',buttonUrl:`${appOrigin}/app?case=${c.id}`})}catch(e){console.error('Deadline mail failed',e)}}
+  }
+ } catch(e){console.error('Deadline escalation failed',e)}
+}
 setTimeout(processCaseDeadlineEscalations,25000);setInterval(processCaseDeadlineEscalations,60*60*1000);
 
 
