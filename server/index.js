@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { registerOfflineInspectionRoutes } from './inspection-outbox-routes.js';
+import { registerOfflineInspectionRoutes, OFFLINE_INSPECTION_UPLOAD_LIMITS } from './inspection-outbox-routes.js';
 import { createGooglePlayAuth } from './google-play-auth.js';
 import { createReceiptCipher, loadReceiptKey, redactGoogleReceipt, runReceiptSync, nextReceiptSyncSeconds } from './google-play-receipts.js';
 import fs from 'node:fs';
@@ -1685,7 +1685,7 @@ async function inspectionAccess(userId, protocolId){
 
 const offlineInspectionUpload = multer({
  storage,
- limits: {fileSize:3*1024*1024,files:250,fields:2,fieldSize:1024*1024,parts:252},
+ limits: OFFLINE_INSPECTION_UPLOAD_LIMITS,
  fileFilter: (_req,file,callback)=>callback(null,/^image\/(jpeg|png|webp)$/.test(file.mimetype))
 });
 registerOfflineInspectionRoutes(app,{auth,privateProFeature,upload:offlineInspectionUpload,pool,inspectionAccess});

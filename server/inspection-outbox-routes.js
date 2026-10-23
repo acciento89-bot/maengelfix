@@ -1,5 +1,8 @@
 import { rm } from 'node:fs/promises';
 import { commitOfflineBatch, readOfflineReceipt, cancelOfflineBatch } from './inspection-outbox.js';
+// Busboy truncates at equality; reserve one sentinel byte so the decoder
+// and native/web clients share an inclusive 1 MiB payload ceiling.
+export const OFFLINE_INSPECTION_UPLOAD_LIMITS = Object.freeze({fileSize:3*1024*1024,files:250,fields:2,fieldSize:1024*1024+1,parts:252});
 function failure(res,error) {
  const codes={identity:[403,'ACCESS_DENIED'],conflict:[409,'BASELINE_CONFLICT'],capacity:[413,'OUTBOX_LIMIT'],invalid:[400,'INVALID_BATCH'],future:[400,'INVALID_BATCH'],corrupt:[400,'INVALID_BATCH'],uncertain:[503,'OUTCOME_UNKNOWN']};
  const [status,code]=codes[error.code]??[500,'OUTBOX_ERROR'];

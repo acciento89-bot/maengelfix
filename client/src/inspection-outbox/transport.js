@@ -1,4 +1,4 @@
-import { validateDraft, acknowledgeBatch, OutboxError } from './core.js';
+import { validateDraft, acknowledgeBatch, OutboxError, MAX_BATCH_PAYLOAD_BYTES } from './core.js';
 const fail=code=>{throw new OutboxError(code);};
 const scope=draft=>({ownerID:draft.ownerID,organizationID:draft.organizationID,protocolID:draft.protocolID});
 export async function sha256(blob) {return [...new Uint8Array(await globalThis.crypto.subtle.digest('SHA-256',await blob.arrayBuffer()))].map(value=>value.toString(16).padStart(2,'0')).join('');}
@@ -14,7 +14,7 @@ export class OutboxTransport {
   if(!this.isCurrentScope(scope(draft)))fail('identity');return body;
  }
  async publish(draft,photos) {
-  this.check(draft);const form=new FormData();form.append('payload',draft.batchPayload);form.append('photoIDs',JSON.stringify(draft.photos.map(photo=>photo.id)));
+  this.check(draft);if(new TextEncoder().encode(draft.batchPayload).length>MAX_BATCH_PAYLOAD_BYTES)fail('capacity');const form=new FormData();form.append('payload',draft.batchPayload);form.append('photoIDs',JSON.stringify(draft.photos.map(photo=>photo.id)));
   if(!(photos instanceof Map)||photos.size!==draft.photos.length)fail('invalid');
   for(const photo of draft.photos) {
    const file=photos.get(photo.id);if(!(file instanceof Blob)||file.size!==photo.size||file.type!==photo.mime||await sha256(file)!==photo.sha256)fail('corrupt');
