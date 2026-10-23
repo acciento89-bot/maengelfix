@@ -2,6 +2,7 @@
 const PHOTO_LIMIT = 3 * 1024 * 1024;
 export const MAX_DRAFT_PHOTO_BYTES = 20 * 1024 * 1024;
 export const MAX_DRAFT_METADATA_BYTES = 1024 * 1024;
+export const MAX_BATCH_PAYLOAD_BYTES = 1024 * 1024;
 const uuid = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 export class OutboxError extends Error {
   constructor(code) { super(code); this.name = 'OutboxError'; this.code = code; }
@@ -105,7 +106,10 @@ export function addFinding(draft, finding) { return change(draft, 'findings', { 
 export function addPhoto(draft, photo) { return change(draft, 'photos', { ...photo, id: id(photo.id), findingID: id(photo.findingID) }); }
 export function sealBatch(draft, { operationID, at }) {
   validateDraft(draft); need(draft.state === 'draft' && draft.baseline.protocol.status === 'draft', 'conflict'); time(at); need(at >= draft.updatedAt); const operation = id(operationID);
-  return validateDraft({ ...clone(draft), revision: draft.revision + 1, updatedAt: at, state: 'queued', operationID: operation, batchPayload: payload(draft, operation) });
+  // Keep older queued archives readable for their existing hash-only receipt/cancel recovery.
+  // Apply the server wire ceiling before publishing a NEW immutable operation instead.
+  const batchPayload = payload(draft, operation); need(bytes(batchPayload) <= MAX_BATCH_PAYLOAD_BYTES, 'capacity');
+  return validateDraft({ ...clone(draft), revision: draft.revision + 1, updatedAt: at, state: 'queued', operationID: operation, batchPayload });
 }
 export function acknowledgeBatch(draft, receipt, scope) {
   validateDraft(draft); scopeMatches(draft, scope); need(draft.state !== 'draft', 'conflict'); validateReceipt(draft, receipt);
