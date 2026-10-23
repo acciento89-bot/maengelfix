@@ -36,6 +36,27 @@ import Foundation
   check(photo.sha256.count==64 && photo.size==bytes.count,"photo binds exact data")
   rejects("unsupported photo") { _ = try InspectionPhoto(id:operationID,findingID:findingID,name:"x.heic",mime:"image/heic",data:bytes) }
   rejects("oversized photo") { _ = try InspectionPhoto(id:operationID,findingID:findingID,name:"x.png",mime:"image/png",data:Data(repeating:0,count:3*1024*1024+1)) }
+  // The backend limits the complete canonical payload, not just its baseline.
+  func payloadSizedDraft(_ byteCount: Int) throws -> InspectionDraft {
+   var value = try fresh().addingRoom(InspectionRoom(id:roomID,name:"Raum",condition:"ok",notes:""))
+   var root = value.baseline.object!
+   var protocolValue = root["protocol"]!.object!
+   protocolValue["general_notes"] = .string("🔧")
+   root["protocol"] = .object(protocolValue); value.baseline = .object(root)
+   let padding = byteCount - (try value.payload(operationID)).utf8.count
+   protocolValue["general_notes"] = .string("🔧" + String(repeating:"x",count:padding))
+   root["protocol"] = .object(protocolValue); value.baseline = .object(root)
+   try value.validate(); return value
+  }
+  let boundary = try payloadSizedDraft(1024*1024)
+  check(try boundary.sealed(operationID:operationID,at:at).batchPayload!.utf8.count == 1024*1024,"exact backend UTF8 capacity accepted")
+  let oversized = try payloadSizedDraft(1024*1024+1)
+  let editableBefore = oversized
+  do {
+   _ = try oversized.sealed(operationID:operationID,at:at)
+   fatalError("FAIL accepted: oversized canonical payload sealed")
+  } catch InspectionError.capacity { checks += 1 }
+  check(oversized == editableBefore && oversized.state == .draft && oversized.operationID == nil,"capacity failure retains editable unchanged draft")
   let queued=try draft.sealed(operationID:operationID,at:at)
   check(queued.batchPayload?.contains("\"operationID\":\"\(operationID)\"")==true,"sealed canonical wire identity")
   check(queued.batchPayload?.contains("Wohnung Ä / 🔧")==true,"wire preserves UTF8")
