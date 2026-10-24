@@ -55,9 +55,17 @@ final class StoreKitManager {
             .sorted { Self.sortIndex(for: $0.id) < Self.sortIndex(for: $1.id) }
     }
 
+    // Explicit native QA isolation never changes the shipping payment path or grants access.
+    #if DEBUG
+    private let nativeQAProviderDisabled = ProcessInfo.processInfo.arguments.contains("--maengelfixProviderDisabledQA")
+    #else
+    private let nativeQAProviderDisabled = false
+    #endif
+
     private nonisolated(unsafe) var updatesTask: Task<Void, Never>?
 
     init() {
+        guard !nativeQAProviderDisabled else { return }
         updatesTask = Task { [weak self] in
             for await result in Transaction.updates {
                 guard let self else { return }
@@ -74,6 +82,7 @@ final class StoreKitManager {
     }
 
     func loadProducts() async {
+        guard !nativeQAProviderDisabled else { return }
         guard products.isEmpty else { return }
         isLoading = true
         errorMessage = nil
@@ -88,6 +97,7 @@ final class StoreKitManager {
     }
 
     func purchase(_ product: Product, userID: String, api: APIClient) async throws -> Bool {
+        guard !nativeQAProviderDisabled else { return false }
         guard let accountToken = UUID(uuidString: userID) else {
             throw StoreKitManagerError.invalidAccountIdentifier
         }
@@ -116,6 +126,7 @@ final class StoreKitManager {
     }
 
     func restore(userID: String, api: APIClient) async throws -> Bool {
+        guard !nativeQAProviderDisabled else { return false }
         guard let accountToken = UUID(uuidString: userID) else {
             throw StoreKitManagerError.invalidAccountIdentifier
         }
@@ -141,6 +152,7 @@ final class StoreKitManager {
     }
 
     private func verifyCurrentEntitlements(accountToken: UUID, api: APIClient) async throws -> Bool {
+        guard !nativeQAProviderDisabled else { return false }
         var restored = false
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,
@@ -160,6 +172,7 @@ final class StoreKitManager {
     }
 
     func refreshLocalEntitlements(accountToken: UUID? = nil) async {
+        guard !nativeQAProviderDisabled else { return }
         var active: Set<String> = []
         for await result in Transaction.currentEntitlements {
             guard case .verified(let transaction) = result,

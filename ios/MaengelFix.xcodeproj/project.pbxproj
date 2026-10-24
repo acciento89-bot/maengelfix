@@ -10,13 +10,17 @@
 		0346C104424D83BFA21741A9 /* StoreKitManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D786E693AA94B2D162465F6 /* StoreKitManager.swift */; };
 		05E3FACFBD30D2731A4076C2 /* ProfileView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3BD147D07796741A0E1DC658 /* ProfileView.swift */; };
 		17BD1E4CA7357C9CEB9AF6E4 /* MaengelFixApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */; };
+		25F06B7FD9FCBED30A32D718 /* InspectionOutboxView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3DD584935CF2E3642E950A31 /* InspectionOutboxView.swift */; };
 		3B96E955C642CD3FCD4865D7 /* AuthView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 29C4C17867E1B4ECA98F2C3C /* AuthView.swift */; };
 		51B7C81C37A119679BEE7E5F /* Models.swift in Sources */ = {isa = PBXBuildFile; fileRef = E52538A56CF3B868CEEB3CC2 /* Models.swift */; };
 		71E6C1D62B444119A4C80A38 /* APIClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F4A2A92F017312F29CAFC98 /* APIClient.swift */; };
 		74DCD5473FBBCA236F07401A /* CreateCaseView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */; };
 		755279C982DE108FAFAC150A /* MFTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */; };
+		8C71B56F96DB32874A7041A8 /* InspectionViews.swift in Sources */ = {isa = PBXBuildFile; fileRef = D1AF43A752CE3560D58739C8 /* InspectionViews.swift */; };
 		949EE9009FF0908AABD84295 /* ManagementDashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */; };
+		98F4468A0CC65BD613080094 /* InspectionArchive.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5FDAA4771AC784F9E6440C85 /* InspectionArchive.swift */; };
 		A66058E29AE8B5528D39EBA3 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = DE09DE515C6AC8AD8FA94FFA /* Assets.xcassets */; };
+		BCFAFB91C41762AAE4BA57EB /* InspectionOutbox.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4729D82E9E55E8D52D9D798D /* InspectionOutbox.swift */; };
 		C7F9503245819AB084813C93 /* AppSession.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5AA713155028C026EFBB2EA4 /* AppSession.swift */; };
 		E4017183F9B56ED6E3CE70C5 /* DashboardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */; };
 		E4E22C3A9B3B6907E512FE76 /* CasesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 57A3CE6C8B544300CC61AA53 /* CasesView.swift */; };
@@ -25,16 +29,20 @@
 /* Begin PBXFileReference section */
 		29C4C17867E1B4ECA98F2C3C /* AuthView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthView.swift; sourceTree = "<group>"; };
 		3BD147D07796741A0E1DC658 /* ProfileView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProfileView.swift; sourceTree = "<group>"; };
+		3DD584935CF2E3642E950A31 /* InspectionOutboxView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionOutboxView.swift; sourceTree = "<group>"; };
+		4729D82E9E55E8D52D9D798D /* InspectionOutbox.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionOutbox.swift; sourceTree = "<group>"; };
 		4F0E9D63375DB6AA9B16BE58 /* MFTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MFTheme.swift; sourceTree = "<group>"; };
 		4F4A2A92F017312F29CAFC98 /* APIClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = APIClient.swift; sourceTree = "<group>"; };
 		56521B0728848725E58C0D0B /* MaengelFix.app */ = {isa = PBXFileReference; includeInIndex = 0; lastKnownFileType = wrapper.application; path = MaengelFix.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		57A3CE6C8B544300CC61AA53 /* CasesView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CasesView.swift; sourceTree = "<group>"; };
 		5AA713155028C026EFBB2EA4 /* AppSession.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppSession.swift; sourceTree = "<group>"; };
 		5D786E693AA94B2D162465F6 /* StoreKitManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StoreKitManager.swift; sourceTree = "<group>"; };
+		5FDAA4771AC784F9E6440C85 /* InspectionArchive.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionArchive.swift; sourceTree = "<group>"; };
 		71FF76C081EFBA84FF3C48BB /* MaengelFixApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MaengelFixApp.swift; sourceTree = "<group>"; };
 		854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CreateCaseView.swift; sourceTree = "<group>"; };
 		C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardView.swift; sourceTree = "<group>"; };
 		C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagementDashboardView.swift; sourceTree = "<group>"; };
+		D1AF43A752CE3560D58739C8 /* InspectionViews.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InspectionViews.swift; sourceTree = "<group>"; };
 		D597C8F20A327144E300259C /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		DE09DE515C6AC8AD8FA94FFA /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E52538A56CF3B868CEEB3CC2 /* Models.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Models.swift; sourceTree = "<group>"; };
@@ -46,6 +54,8 @@
 			children = (
 				4F4A2A92F017312F29CAFC98 /* APIClient.swift */,
 				5AA713155028C026EFBB2EA4 /* AppSession.swift */,
+				5FDAA4771AC784F9E6440C85 /* InspectionArchive.swift */,
+				4729D82E9E55E8D52D9D798D /* InspectionOutbox.swift */,
 				E52538A56CF3B868CEEB3CC2 /* Models.swift */,
 				5D786E693AA94B2D162465F6 /* StoreKitManager.swift */,
 			);
@@ -96,6 +106,8 @@
 				57A3CE6C8B544300CC61AA53 /* CasesView.swift */,
 				854D35ABEC0B829B2D77CF04 /* CreateCaseView.swift */,
 				C2A6ABDEC6FC6E4D877DA48D /* DashboardView.swift */,
+				3DD584935CF2E3642E950A31 /* InspectionOutboxView.swift */,
+				D1AF43A752CE3560D58739C8 /* InspectionViews.swift */,
 				C56C9E6CEF40E2CC8898AA55 /* ManagementDashboardView.swift */,
 				3BD147D07796741A0E1DC658 /* ProfileView.swift */,
 			);
@@ -178,6 +190,10 @@
 				E4E22C3A9B3B6907E512FE76 /* CasesView.swift in Sources */,
 				74DCD5473FBBCA236F07401A /* CreateCaseView.swift in Sources */,
 				E4017183F9B56ED6E3CE70C5 /* DashboardView.swift in Sources */,
+				98F4468A0CC65BD613080094 /* InspectionArchive.swift in Sources */,
+				BCFAFB91C41762AAE4BA57EB /* InspectionOutbox.swift in Sources */,
+				25F06B7FD9FCBED30A32D718 /* InspectionOutboxView.swift in Sources */,
+				8C71B56F96DB32874A7041A8 /* InspectionViews.swift in Sources */,
 				755279C982DE108FAFAC150A /* MFTheme.swift in Sources */,
 				17BD1E4CA7357C9CEB9AF6E4 /* MaengelFixApp.swift in Sources */,
 				949EE9009FF0908AABD84295 /* ManagementDashboardView.swift in Sources */,
@@ -195,7 +211,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "iPhone Developer";
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = TKG684N5GL;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -205,7 +221,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
 				PRODUCT_NAME = MaengelFix;
 				SDKROOT = iphoneos;
@@ -249,7 +265,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
@@ -268,7 +284,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -287,7 +303,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CODE_SIGN_IDENTITY = "Apple Distribution: Piotr Kaminski (TKG684N5GL)";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEVELOPMENT_TEAM = TKG684N5GL;
 				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GENERATE_INFOPLIST_FILE = NO;
@@ -297,7 +313,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.kamilunavo.maengelfix;
 				PRODUCT_NAME = MaengelFix;
 				PROVISIONING_PROFILE_SPECIFIER = "MaengelFix App Store";
@@ -342,7 +358,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
-				CURRENT_PROJECT_VERSION = 8;
+				CURRENT_PROJECT_VERSION = 9;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -355,7 +371,7 @@
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
-				MARKETING_VERSION = 0.4.0;
+				MARKETING_VERSION = 0.5.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";

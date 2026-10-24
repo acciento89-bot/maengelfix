@@ -18,6 +18,7 @@ struct MaengelFixApp: App {
 private struct RootView: View {
     @Environment(AppSession.self) private var session
     @Environment(StoreKitManager.self) private var store
+    @State private var inspectionNotice = InspectionCleanupNotice.shared
 
     var body: some View {
         Group {
@@ -37,6 +38,9 @@ private struct RootView: View {
                 MainTabView()
             }
         }
+        .alert("Lokaler Begehungs-Ausgang / Local inspection outbox", isPresented: Binding(get: { inspectionNotice.message != nil }, set: { if !$0 { inspectionNotice.message = nil } })) {
+            Button("OK") { inspectionNotice.message = nil }
+        } message: { Text(inspectionNotice.message ?? "") }
         .task {
             await session.restoreIfNeeded()
             if session.phase == .signedIn && !session.isManagement {
@@ -51,6 +55,7 @@ private enum AppTab: Hashable {
     case cases
     case create
     case profile
+    case inspections
 }
 
 private struct MainTabView: View {
@@ -80,6 +85,13 @@ private struct MainTabView: View {
             }
             .tabItem { Label("Neu", systemImage: "plus.circle.fill") }
             .tag(AppTab.create)
+
+            if let ownerID = session.user?.id {
+                InspectionsView(ownerID: ownerID)
+                    .id(ownerID)
+                    .tabItem { Label("Begehungen", systemImage: "checklist") }
+                    .tag(AppTab.inspections)
+            }
 
             ProfileView()
                 .tabItem { Label("Profil", systemImage: "person.crop.circle") }
