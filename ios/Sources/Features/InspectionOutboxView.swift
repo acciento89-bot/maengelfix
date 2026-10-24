@@ -20,6 +20,9 @@ import ImageIO
  @State private var photoTarget:String?
  @State private var cameraTarget:String?
  @State private var showCamera=false
+ @State private var showLibrary=false
+ @State private var libraryTarget:String?
+ @State private var librarySelection:[PhotosPickerItem]=[]
  @State private var busy=false
  @State private var blocked=false
  @State private var alive=true
@@ -69,7 +72,23 @@ import ImageIO
    .task{alive=true;await reload()}
    .onDisappear{alive=false}
   }.interactiveDismissDisabled(dirty || busy || loadingImages)
+   // Keep the system picker on a stable host, outside recycled Form rows.
+   .photosPicker(isPresented:$showLibrary,selection:$librarySelection,maxSelectionCount:libraryRemaining,matching:.images)
+   .onChange(of:librarySelection){_,items in
+    guard !items.isEmpty,let target=libraryTarget,let draftID=draft?.id,current else{return}
+    loadingImages=true
+    Task{
+     defer{librarySelection=[];loadingImages=false}
+     do{
+      var images:[DraftImage]=[]
+      for item in items{guard let data=try await item.loadTransferable(type:Data.self)else{throw InspectionError.invalid};images.append(try inspectionJPEG(data:data))}
+      guard current,self.draft?.id==draftID else{return}
+      loadingImages=false;guardPhotos(target,images)
+     }catch{if current{self.error=error.localizedDescription}}
+    }
+   }
  }
+ private var libraryRemaining:Int{max(1,5-(draft?.photos.filter{$0.findingID==libraryTarget}.count ?? 0))}
  private var roomForm:some View {Section(roomEdit == nil ? l("Neuer Raum","New room"):l("Raum bearbeiten","Edit room")){
   TextField(l("Name","Name"),text:$room.name)
   Picker(l("Zustand","Condition"),selection:$room.condition){ForEach(["ok","notice","defect"],id:\.self){value in Text(inspectionCondition(value,language)).tag(value)}}
@@ -90,7 +109,7 @@ import ImageIO
   Text(value.description);Text(value.category+" · "+value.severity).font(.caption)
   if editable{Button(l("Feststellung bearbeiten","Edit finding")){if findingEdit != value.id{guardChange{clearForms();finding=value;findingBase=value;findingEdit=value.id}}};Button(l("Lokale Feststellung entfernen","Remove local finding"),role:.destructive){guardChange{Task{_ = await run{let next=try draft.changed{$0.findings.removeAll{$0.id==value.id};$0.photos.removeAll{$0.findingID==value.id}};try await archive().save(next,photos:[:],expectedRevision:draft.revision)}}}}}
   ForEach(draft.photos.filter{$0.findingID==value.id}){photo in VStack(alignment:.leading){if let bytes=gallery[photo.id],let image=inspectionThumbnail(bytes){Image(uiImage:image).resizable().scaledToFit().frame(maxHeight:180)};Text(photo.name).font(.caption);if editable{Button(l("Lokales Foto entfernen","Remove local photo"),role:.destructive){Task{_ = await run{let next=try draft.changed{$0.photos.removeAll{$0.id==photo.id}};try await archive().save(next,photos:[:],expectedRevision:draft.revision)}}}}}}
-  if editable{InspectionPhotoPicker(language:language,remaining:5-draft.photos.filter{$0.findingID==value.id}.count,onPhotos:{if current && self.draft?.id==draft.id{guardPhotos(value.id,$0)}},onError:{if current{error=$0}},onLoading:{loadingImages=$0});if UIImagePickerController.isSourceTypeAvailable(.camera){Button(l("Foto aufnehmen","Take photo")){cameraTarget=value.id;showCamera=true}.disabled(draft.photos.filter{$0.findingID==value.id}.count>=5)}}
+  if editable{Button{guard current,self.draft?.id==draft.id else{return};libraryTarget=value.id;showLibrary=true}label:{Label(l("Fotos auswählen","Select photos"),systemImage:"photo.on.rectangle")}.disabled(draft.photos.filter{$0.findingID==value.id}.count>=5);if UIImagePickerController.isSourceTypeAvailable(.camera){Button(l("Foto aufnehmen","Take photo")){cameraTarget=value.id;showCamera=true}.disabled(draft.photos.filter{$0.findingID==value.id}.count>=5)}}
   Text(l("Fotos werden sichtbar in JPEG umgewandelt und auf höchstens 1800 Pixel verkleinert; gespeichert und übertragen werden genau diese Bytes.","Photos are converted to JPEG and resized to at most 1800 pixels; exactly those bytes are stored and uploaded.")).font(.caption)
  }}
  private func queuedSection(_ draft:InspectionDraft)->some View {Section(l("Festgeschriebener Ausgang","Sealed outbox")){
@@ -109,7 +128,7 @@ import ImageIO
  private func clearRoom(){room=InspectionRoom(id:UUID().uuidString.lowercased(),name:"",condition:"ok",notes:"");roomBase=nil;roomEdit=nil}
  private func clearFinding(){finding=InspectionFinding(id:UUID().uuidString.lowercased(),roomID:nil,title:"",description:"",category:"Sonstiges",severity:"normal");findingBase=nil;findingEdit=nil}
  private func clearForms(){clearRoom();clearFinding();pendingImages=[];photoTarget=nil;review=nil;confirmed=false}
- private func reload()async{guard current else{return};do{let values=try await archive().load();guard current else{return};drafts=values.filter{$0.protocolID==protocolID && $0.organizationID==initialSnapshot["protocol"]["organization_id"].string};if !drafts.contains(where:{$0.id==selectedID}){selectedID=drafts.last?.id ?? ""};blocked=false;await loadGallery()}catch{if current{blocked=true;self.error=error.localizedDescription}}}
+ private func reload()async{guard current else{return};do{let values=try await archive().load();guard current else{return};drafts=values.filter{$0.protocolID==protocolID && $0.organizationID==initialSnapshot["protocol"]["organization_id"].string};if !drafts.contains(where:{$0.id==selectedID}){selectedID=drafts.last?.id ?? ""};blocked=false;self.error=nil;await loadGallery()}catch{if current{blocked=true;self.error=error.localizedDescription}}}
  private func loadGallery()async{gallery=[:];guard let draft,current else{return};do{let bytes=try await archive().photos(draftID:draft.id);if current && self.draft?.id==draft.id{gallery=bytes}}catch{if current{blocked=true;self.error=error.localizedDescription}}}
  private func run(_ action:()async throws->Void)async->Bool{guard current,!busy,!blocked else{return false};busy=true;error=nil;defer{busy=false};do{try await action();guard current else{return false};await reload();return !blocked}catch{if current{self.error=error.localizedDescription;if let e=error as? InspectionError,e == .corrupt || e == .future || e == .deleted{blocked=true}};return false}}
  private func newDraft()async{let success=await run{let source=try await session.api.inspectionDetail(id:protocolID,current:{current});try inspectionNeed(source["protocol"]["id"] == .string(protocolID) && source["protocol"]["organization_id"] == initialSnapshot["protocol"]["organization_id"],.identity);let value=try InspectionDraft.create(id:UUID().uuidString.lowercased(),ownerID:ownerID,organizationID:source["protocol"]["organization_id"].string,snapshot:source,at:inspectionStamp());try await archive().save(value,photos:[:],expectedRevision:nil);if current{selectedID=value.id}};if success{clearForms()}}
@@ -125,12 +144,6 @@ import ImageIO
 }
 func inspectionStamp()->String{let f=ISO8601DateFormatter();f.formatOptions=[.withInternetDateTime,.withFractionalSeconds];return f.string(from:Date())}
 
-private struct InspectionPhotoPicker:View {
- let language:String,remaining:Int,onPhotos:([DraftImage])->Void,onError:(String)->Void,onLoading:(Bool)->Void
- @State private var selection:[PhotosPickerItem]=[]
- @State private var loading=false
- var body:some View{PhotosPicker(selection:$selection,maxSelectionCount:max(1,remaining),matching:.images){Label(inspectionLabel(language,"Fotos auswählen","Select photos"),systemImage:"photo.on.rectangle")}.disabled(remaining<=0 || loading).onChange(of:selection){_,items in guard !items.isEmpty else{return};loading=true;onLoading(true);Task{do{var images:[DraftImage]=[];for item in items{guard let data=try await item.loadTransferable(type:Data.self)else{throw InspectionError.invalid};images.append(try inspectionJPEG(data:data))};onLoading(false);onPhotos(images)}catch{onLoading(false);onError(error.localizedDescription)};selection=[];loading=false}}}
-}
 func inspectionThumbnail(_ data:Data)->UIImage?{guard let source=CGImageSourceCreateWithData(data as CFData,nil),let cg=CGImageSourceCreateThumbnailAtIndex(source,0,[kCGImageSourceCreateThumbnailFromImageAlways:true,kCGImageSourceThumbnailMaxPixelSize:600,kCGImageSourceCreateThumbnailWithTransform:true] as CFDictionary)else{return nil};return UIImage(cgImage:cg)}
 func inspectionJPEG(data:Data)throws->DraftImage{guard let source=CGImageSourceCreateWithData(data as CFData,nil),let cg=CGImageSourceCreateThumbnailAtIndex(source,0,[kCGImageSourceCreateThumbnailFromImageAlways:true,kCGImageSourceThumbnailMaxPixelSize:1800,kCGImageSourceCreateThumbnailWithTransform:true] as CFDictionary)else{throw InspectionError.invalid};return try inspectionJPEG(image:UIImage(cgImage:cg))}
 func inspectionJPEG(image:UIImage)throws->DraftImage{let scale=min(1,1800/max(image.size.width,image.size.height));let size=CGSize(width:max(1,image.size.width*scale),height:max(1,image.size.height*scale));let format=UIGraphicsImageRendererFormat();format.scale=1;format.opaque=true;let result=UIGraphicsImageRenderer(size:size,format:format).image{context in UIColor.white.setFill();context.fill(CGRect(origin:.zero,size:size));image.draw(in:CGRect(origin:.zero,size:size))};guard let data=result.jpegData(compressionQuality:0.82),data.count<=3*1024*1024 else{throw InspectionError.capacity};return DraftImage(data:data,fileName:"inspection-\(UUID().uuidString.lowercased()).jpg",mimeType:"image/jpeg")}
