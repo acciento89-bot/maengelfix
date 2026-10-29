@@ -262,22 +262,30 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "observedCommit": "67f915955e5323011130fbcf8c4744c3ac24b059",
+      "observedCommit": "9be29092eecdc4c9dda044d3b67f9e770db53744",
       "package": "de.kamilunavo.keepmeter",
-      "pending": [],
+      "pending": [
+        "Root approval of exact accessibility-fix source fingerprint remains pending.",
+        "Fresh source/sign run not dispatched; global lane remains root-owned.",
+        "Fresh exact APK native content-description and touch regression checks remain pending."
+      ],
       "pinEvidence": {
-        "productContentEqualsReviewedBaseline": true,
-        "rootFreeze": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/root-android-only-freeze-heads.json",
+        "previousReviewedSource": "67f915955e5323011130fbcf8c4744c3ac24b059",
+        "actualLocalAndRemoteMain": "9be29092eecdc4c9dda044d3b67f9e770db53744",
         "rootLocalHeadMatches": true,
-        "sourceSignWorkflowsByteUnchanged": true
+        "sourceSignWorkflowsByteUnchanged": true,
+        "ordinaryFastForwardNoForce": true,
+        "sourceFixScope": "Localized parent accessibility semantics plus existing native assertion only; visuals, data, versions and identities preserved",
+        "rootApproval": "PENDING separate root review of this source delta",
+        "evidence": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/KeepMeterAccessibilityFix-20261029/ordinary-main-proof.json"
       },
       "previousProviderMax": 6,
       "productDigestPolicy": "git ls-tree -r -z; exclude .github/ and docs/ only; preserve every remaining record/mode/blob/path/order",
       "repository": "acciento89-bot/keepmeter",
-      "reviewedCommit": "67f915955e5323011130fbcf8c4744c3ac24b059",
-      "reviewedGitTree": "174f9ce74c50b1934e71877541e1c3cbbfd4b861",
-      "reviewedProductCommit": "67f915955e5323011130fbcf8c4744c3ac24b059",
-      "reviewedProductDigest": "05e60a9b1f6e693373ea4a91cabe9837ef72979068385e40939ba8f3e52e401d",
+      "reviewedCommit": "9be29092eecdc4c9dda044d3b67f9e770db53744",
+      "reviewedGitTree": "38a22abf83756b7d98b8f7101450384a9c2739bf",
+      "reviewedProductCommit": "9be29092eecdc4c9dda044d3b67f9e770db53744",
+      "reviewedProductDigest": "3e586d18d68423926bd112ee0e901d092dd903b6b2431bba360fe94928c28486",
       "root": "/Volumes/SSK SSD/Kamilunavo/Projects/KeepMeter",
       "route": "central_kms",
       "stages": {
