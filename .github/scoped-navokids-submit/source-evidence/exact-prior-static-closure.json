@@ -1,0 +1,101 @@
+{
+  "recordedUTC": "2026-10-29T18:32:45.748123+00:00",
+  "status": "EXACT_RECOVERED_AAB_QA_APK_READY_ROOT_NATIVE_AND_DISTRIBUTION_REVIEW_PENDING",
+  "package": "com.kamilunavo.navokids",
+  "versionName": "0.6.0",
+  "versionCode": 9,
+  "sourceAuthority": {
+    "easBuildID": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97",
+    "kind": "existing_finished_eas_recovery",
+    "originalSourceConclusion": "failure",
+    "originalSourceRun": 40912063730,
+    "recoveredFinishedBuild": true,
+    "recoveryExecutionRun": 40926938191,
+    "rootApprovalSha256": "420b7569493761e9227be092de947189e01f3419aa3397beeceb096ded233f29",
+    "sourceCommit": "5a99768a1edc422b2e266aa6920947439bcd75f8"
+  },
+  "originalSignedArchiveSha256": "138aa405318e0a6c6952395c214603133a3c871ff2ceea4dc6ac3fccfe033363",
+  "signedAabSha256": "24f9665f6cc495bf103bcb54a26782f9c7f983d3348fe73c6c05bc3d2173d561",
+  "apk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/FinalExactRecoveredAabQA-AfterSourceRasterAudit/NavoKids-0.6.0-code9-ExactRecoveredAAB-QA.apk",
+  "apkSha256": "35bd5d1fbf0812ecd05974a904065cd4f7a82e96a1396dd15f928098ddb48b3a",
+  "apks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/FinalExactRecoveredAabQA-AfterSourceRasterAudit/NavoKids-0.6.0-code9-ExactRecoveredAAB-QA.apks",
+  "apksSha256": "5bd9fb4c2d888856d2d0809b310af551dfd4995404cd51685340f055dada419b",
+  "qaPublicCertificate": "fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c",
+  "metrics": {
+    "aabMetrics": {
+      "archiveBytes": 350780306,
+      "centralHeaderBytes": 1042847,
+      "compressedPayloadBytes": 348858302,
+      "entryCount": 10232,
+      "fileCount": 10232,
+      "localHeaderBytes": 879135,
+      "maxEntryBytes": 11353552,
+      "maxFilenameBytes": 104,
+      "totalUncompressedBytes": 463451934
+    },
+    "apksMetrics": {
+      "archiveBytes": 377069154,
+      "centralHeaderBytes": 111,
+      "compressedPayloadBytes": 377068942,
+      "entryCount": 2,
+      "fileCount": 2,
+      "localHeaderBytes": 79,
+      "maxEntryBytes": 377068846,
+      "maxFilenameBytes": 13,
+      "totalUncompressedBytes": 377068942
+    },
+    "apkMetrics": {
+      "archiveBytes": 377068846,
+      "centralHeaderBytes": 986392,
+      "compressedPayloadBytes": 374735806,
+      "entryCount": 10196,
+      "fileCount": 10196,
+      "localHeaderBytes": 1341036,
+      "maxEntryBytes": 10808684,
+      "maxFilenameBytes": 90,
+      "totalUncompressedBytes": 398930756
+    }
+  },
+  "payloadCount": 9351,
+  "rawSourceVoiceClipCount": 8642,
+  "fontAndFullOFLVerified": true,
+  "sdkFontAndRetainedLegalTermsByteProof": true,
+  "actual64BitELFCount": 32,
+  "storedAligned16KJniCount": 64,
+  "existingQaKeyMatchesPriorNavoKidsApk": true,
+  "bundletoolDerivations": 1,
+  "repackOrReSignAfterCreation": false,
+  "staticProducerFirstFailuresRetained": [
+    "FinalExactRecoveredAabQA/failure.json",
+    "FinalExactRecoveredAabQA-AfterSourceRasterAudit/failure.json"
+  ],
+  "failuresResolved": "First source-image fullRGBA assertion measured hiddenRGB-only, root-approved visible-alpha proof with strict negative controls. Then current SDK explicit false manifest representation accepted; final CPU-only verification on identical existing outputs.",
+  "tests": {
+    "count": 11,
+    "log": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/all-native-artifact-checks-GREEN.log",
+    "redLogs": [
+      "pairing-RED.log",
+      "visible-raster-RED.log",
+      "manifest-parser-RED.log"
+    ]
+  },
+  "rootHandoff": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/root-native-handoff.json",
+  "rightsObservations": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/current-source-rights-observations.json",
+  "stagedPublisherOrCapsChanged": false,
+  "originalNormalSourceResultInvented": false,
+  "frozenRecoveryControllerAndOperationalAdapterUnchanged": true,
+  "deviceEngineStoreProviderActions": false,
+  "receiptNote": "Identity is freshly bound in this closure from actual original AAB manifest; original derived-binding JSON remains unchanged.",
+  "sourceVoiceExactAndroidResourceNameAndRawContentVerified": true,
+  "sourceVoiceNameContentProof": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessNativeCandidates/NavoKids/source-voice-name-content-proof.json",
+  "sourceVoiceNameContentProofSha256": "805a285ef77fa023425a49a618d77c9891e12d01f6a2b0f1eda18c80ac97dd0b",
+  "ownerOriginConfirmation": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/AssetRights/Business/NavoKidsOriginClosure/owner-confirmation-20261029.json",
+    "sha256": "856e879c82dbf72fd0cdcae0e08c6f2ca435b19206ac8399a9130e0fb31fd55a",
+    "scope": "Direct human confirmation of own/joint creation for exact3source assets and original island-map input/derivative chain",
+    "exactSourceAssetHashesMatchCurrentCandidate": true,
+    "historicalAuditsRemainUnchanged": true,
+    "artistProviderModelOrStockLicenseInvented": false,
+    "distributionNativeQaAndFullCandidateReviewStillRootOwned": true
+  }
+}

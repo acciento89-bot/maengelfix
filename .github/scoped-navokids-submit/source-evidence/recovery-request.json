@@ -1,0 +1,23 @@
+{
+  "approvalSha256": "420b7569493761e9227be092de947189e01f3419aa3397beeceb096ded233f29",
+  "dispatchOutcome": "acknowledged",
+  "easBuildID": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97",
+  "entrySha256": "7d0e159c4e0817494dc8edfedff1f23cbfe5f73622775c8c93d0cd198cf761b6",
+  "existingRunIds": [
+    40912063730,
+    39734200903,
+    39733847124,
+    39731506861
+  ],
+  "head": "5a99768a1edc422b2e266aa6920947439bcd75f8",
+  "inputs": {
+    "mode": "signed",
+    "recover_eas_build_id": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97"
+  },
+  "manifestSha256AtRequest": "c82262e3e5906c7e742304b095a80aa4542433b80cb89daf9bbc1e731d52b441",
+  "originalSourceRun": 40912063730,
+  "requestedUTC": "2026-10-29T18:01:55.391777+00:00",
+  "runId": 40926938191,
+  "status": "unique_run_identified",
+  "workflow": ".github/workflows/android-internal.yml"
+}

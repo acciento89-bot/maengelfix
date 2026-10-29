@@ -1,0 +1,439 @@
+{
+  "recordedUTC": "2026-10-29T17:38:05.345Z",
+  "repository": "acciento89-bot/navokids",
+  "sourceWorkflowRun": 40912063730,
+  "sourceJobID": 123582395815,
+  "rawLogLineCount": 767,
+  "evidenceScope": "Only exact source commit, original EAS UUID/status/version and terminal bounded-wait error lines; environment/auth/full raw log omitted",
+  "excerpts": [
+    {
+      "line": 131,
+      "text": "2026-10-29T16:29:40.4569628Z 5a99768a1edc422b2e266aa6920947439bcd75f8"
+    },
+    {
+      "line": 167,
+      "text": "2026-10-29T16:29:41.7594906Z 5a99768a1edc422b2e266aa6920947439bcd75f8"
+    },
+    {
+      "line": 671,
+      "text": "2026-10-29T16:30:53.6658908Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 672,
+      "text": "2026-10-29T16:31:24.8452929Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 673,
+      "text": "2026-10-29T16:31:56.0019577Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 674,
+      "text": "2026-10-29T16:32:27.1928291Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 675,
+      "text": "2026-10-29T16:32:58.4628552Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 676,
+      "text": "2026-10-29T16:33:29.7015998Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 677,
+      "text": "2026-10-29T16:34:00.8843500Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 678,
+      "text": "2026-10-29T16:34:32.0492409Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 679,
+      "text": "2026-10-29T16:35:03.2471567Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 680,
+      "text": "2026-10-29T16:35:34.4719305Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 681,
+      "text": "2026-10-29T16:36:05.6250766Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 682,
+      "text": "2026-10-29T16:36:37.7475080Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 683,
+      "text": "2026-10-29T16:37:08.9169648Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 684,
+      "text": "2026-10-29T16:37:41.3180970Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 685,
+      "text": "2026-10-29T16:38:12.7003056Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 686,
+      "text": "2026-10-29T16:38:44.0576792Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 687,
+      "text": "2026-10-29T16:39:15.4615591Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 688,
+      "text": "2026-10-29T16:39:46.6271666Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 689,
+      "text": "2026-10-29T16:40:17.9375939Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 690,
+      "text": "2026-10-29T16:40:49.1309764Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 691,
+      "text": "2026-10-29T16:41:20.3006903Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 692,
+      "text": "2026-10-29T16:41:51.4961250Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 693,
+      "text": "2026-10-29T16:42:22.7094008Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 694,
+      "text": "2026-10-29T16:42:53.8911089Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 695,
+      "text": "2026-10-29T16:43:25.0609518Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 696,
+      "text": "2026-10-29T16:43:56.2148884Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 697,
+      "text": "2026-10-29T16:44:27.7039553Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 698,
+      "text": "2026-10-29T16:44:58.8964242Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 699,
+      "text": "2026-10-29T16:45:30.0558561Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 700,
+      "text": "2026-10-29T16:46:01.3354859Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 701,
+      "text": "2026-10-29T16:46:32.5417958Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 702,
+      "text": "2026-10-29T16:47:03.7475857Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 703,
+      "text": "2026-10-29T16:47:34.9292271Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 704,
+      "text": "2026-10-29T16:48:06.1802747Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 705,
+      "text": "2026-10-29T16:48:37.5853760Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 706,
+      "text": "2026-10-29T16:49:08.7659763Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 707,
+      "text": "2026-10-29T16:49:40.5753923Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 708,
+      "text": "2026-10-29T16:50:11.7844795Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 709,
+      "text": "2026-10-29T16:50:43.6977799Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 710,
+      "text": "2026-10-29T16:51:14.8911941Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 711,
+      "text": "2026-10-29T16:51:46.0595362Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 712,
+      "text": "2026-10-29T16:52:17.2640983Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 713,
+      "text": "2026-10-29T16:52:48.5896485Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 714,
+      "text": "2026-10-29T16:53:19.8060375Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 715,
+      "text": "2026-10-29T16:53:51.1803942Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 716,
+      "text": "2026-10-29T16:54:22.4071061Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 717,
+      "text": "2026-10-29T16:54:53.6102449Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 718,
+      "text": "2026-10-29T16:55:24.8314442Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 719,
+      "text": "2026-10-29T16:55:56.0672838Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 720,
+      "text": "2026-10-29T16:56:27.2611989Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 721,
+      "text": "2026-10-29T16:56:58.4570005Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 722,
+      "text": "2026-10-29T16:57:29.6521235Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 723,
+      "text": "2026-10-29T16:58:00.9386650Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 724,
+      "text": "2026-10-29T16:58:32.1573647Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 725,
+      "text": "2026-10-29T16:59:03.4247597Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 726,
+      "text": "2026-10-29T16:59:34.6145161Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 727,
+      "text": "2026-10-29T17:00:05.9452531Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 728,
+      "text": "2026-10-29T17:00:37.2256977Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 729,
+      "text": "2026-10-29T17:01:08.4453856Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 730,
+      "text": "2026-10-29T17:01:39.7607348Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 731,
+      "text": "2026-10-29T17:02:10.9623543Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 732,
+      "text": "2026-10-29T17:02:42.2680358Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 733,
+      "text": "2026-10-29T17:03:13.4489565Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 734,
+      "text": "2026-10-29T17:03:44.6368238Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 735,
+      "text": "2026-10-29T17:04:15.8937377Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 736,
+      "text": "2026-10-29T17:04:47.1620874Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 737,
+      "text": "2026-10-29T17:05:18.3828805Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 738,
+      "text": "2026-10-29T17:05:49.5967554Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_QUEUE\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 739,
+      "text": "2026-10-29T17:06:20.8081677Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 740,
+      "text": "2026-10-29T17:06:52.0335045Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 741,
+      "text": "2026-10-29T17:07:23.3273585Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 742,
+      "text": "2026-10-29T17:07:54.5938320Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 743,
+      "text": "2026-10-29T17:08:25.8453990Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 744,
+      "text": "2026-10-29T17:08:57.0729519Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 745,
+      "text": "2026-10-29T17:09:28.3235529Z {\"id\": \"2a918d8f-2af0-4a2d-8fa8-d26b7be64b97\", \"status\": \"IN_PROGRESS\", \"version\": \"0.6.0(9)\"}"
+    },
+    {
+      "line": 748,
+      "text": "2026-10-29T17:09:58.3757034Z     else:raise RuntimeError('Managed build not finished within bounded wait')"
+    },
+    {
+      "line": 750,
+      "text": "2026-10-29T17:09:58.3758152Z RuntimeError: Managed build not finished within bounded wait"
+    },
+    {
+      "line": 751,
+      "text": "2026-10-29T17:09:58.3899231Z ##[error]Process completed with exit code 1."
+    }
+  ],
+  "jobs": [
+    {
+      "id": 123582395815,
+      "name": "signed",
+      "status": "completed",
+      "conclusion": "failure",
+      "run_id": 40912063730,
+      "logs_url": null,
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1
+        },
+        {
+          "name": "Run actions/checkout@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3
+        },
+        {
+          "name": "Run actions/setup-java@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 4
+        },
+        {
+          "name": "Run expo/expo-github-action@v8",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 5
+        },
+        {
+          "name": "Run npm ci",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 6
+        },
+        {
+          "name": "Build Android only, retaining the existing remote key and exact version9",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 7
+        },
+        {
+          "name": "Verify actual Google-observed certificate, version and native privacy boundary",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 8
+        },
+        {
+          "name": "Run actions/upload-artifact@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 9
+        },
+        {
+          "name": "Post Run actions/setup-java@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 16
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 17
+        },
+        {
+          "name": "Post Run actions/checkout@v5",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 18
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 19
+        }
+      ]
+    },
+    {
+      "id": 123582397977,
+      "name": "native",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 40912063730,
+      "logs_url": null,
+      "steps": null
+    },
+    {
+      "id": 123582398211,
+      "name": "validate",
+      "status": "completed",
+      "conclusion": "skipped",
+      "run_id": 40912063730,
+      "logs_url": null,
+      "steps": null
+    }
+  ],
+  "artifacts": []
+}

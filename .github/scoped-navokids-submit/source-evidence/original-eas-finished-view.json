@@ -1,0 +1,20 @@
+{
+  "build": {
+    "appBuildVersion": "9",
+    "appVersion": "0.6.0",
+    "buildProfile": "portfolioAndroid",
+    "completedAt": "2026-10-29T17:20:11.629Z",
+    "createdAt": "2026-10-29T16:30:52.008Z",
+    "distribution": "STORE",
+    "expirationDate": "2026-11-28T16:30:52.059Z",
+    "gitCommitHash": "5a99768a1edc422b2e266aa6920947439bcd75f8",
+    "id": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97",
+    "isForIosSimulator": false,
+    "platform": "ANDROID",
+    "priority": "NORMAL",
+    "sdkVersion": "57.0.0",
+    "status": "FINISHED",
+    "updatedAt": "2026-10-29T17:20:11.863Z"
+  },
+  "primaryOriginalReceiptSha256": "4f4001d1a00ab8177b812d9ce3d03c958102ba5d3d81ac2978379d34ff78fd72"
+}

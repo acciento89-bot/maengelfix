@@ -1,0 +1,38 @@
+{
+  "aabSHA256": "24f9665f6cc495bf103bcb54a26782f9c7f983d3348fe73c6c05bc3d2173d561",
+  "app": "NavoKids",
+  "approvedAtUtc": "2026-10-29T18:01:42.169093+00:00",
+  "bindings": {
+    "businessDeliverySHA256": "9f2200ec6e6088157dd0ea1b38ca9e8fa3dabd7346c3b9e3ae6774e649262b25",
+    "controllerSHA256": "0e23a72f342f09bedd4de4abfbbc393ef2abc3c1d35e08e370a492565c7dd58b",
+    "easReleaseHelperSHA256": "c85a988ab12266c04bc48e48132e77cabcff98d56f47a1b9cc7deef4946aa481",
+    "manifestSHA256": "c82262e3e5906c7e742304b095a80aa4542433b80cb89daf9bbc1e731d52b441",
+    "operationalEntrySHA256": "7d0e159c4e0817494dc8edfedff1f23cbfe5f73622775c8c93d0cd198cf761b6",
+    "originalLeaseSHA256": "2a521a0329378f634cbf66c54c9bc2d36670b39456b9647716f7e0266813ca77",
+    "originalRequestSHA256": "5279bf468908e39e5f936345d032404ce6cfb4e449cb057533b0103b7d5a0358",
+    "originalRunReceiptSHA256": "a62387f29acf30cb8aa43de9aa44590573d9b68f632184eaf057b2bb9c78ed4b",
+    "workflowSHA256": "795fe8bf5335d3c288105f119e9ddacf9a211184d0a2a1225600c37e4ee44f8f"
+  },
+  "certificate": {
+    "sha1": "1F600B0AD66C67418C8EF61FD7ABC59D738BCF45",
+    "sha256": "597A7E6178078913BDE7582000E41E26E21B648960E2B8E1F8601CA938E9EDD6"
+  },
+  "easBuildID": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97",
+  "inputs": {
+    "mode": "signed",
+    "recover_eas_build_id": "2a918d8f-2af0-4a2d-8fa8-d26b7be64b97"
+  },
+  "originalFailedRunId": 40912063730,
+  "outcome": "approved_exact_existing_eas_recovery",
+  "package": "com.kamilunavo.navokids",
+  "releaseExactOriginalLeaseAfterVerified": true,
+  "repository": "acciento89-bot/navokids",
+  "reviewer": "root",
+  "schema": 1,
+  "sourceCommit": "5a99768a1edc422b2e266aa6920947439bcd75f8",
+  "stateRoot": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/BusinessCandidates",
+  "versionCode": 9,
+  "versionName": "0.6.0",
+  "workflow": ".github/workflows/android-internal.yml",
+  "workflowID": 351114372
+}

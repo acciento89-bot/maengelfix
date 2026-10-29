@@ -1,0 +1,270 @@
+{
+  "name": "NavoKids bounded recovered production candidate",
+  "run-name": "NavoKids ${{ inputs.operation }} ${{ inputs.package }}",
+  "on": {
+    "workflow_dispatch": {
+      "inputs": {
+        "package": {
+          "description": "Only exact frozen NavoKids0.6.0(9); inspect is default; full candidate remains pending root review",
+          "required": true,
+          "type": "choice",
+          "options": [
+            "com.kamilunavo.navokids"
+          ],
+          "default": "com.kamilunavo.navokids"
+        },
+        "candidate_asset_id": {
+          "description": "Own private draft release ZIP asset ID in this repository",
+          "required": false,
+          "type": "string"
+        },
+        "archive_sha256": {
+          "description": "Reviewed candidate ZIP raw SHA256, lowercase",
+          "required": false,
+          "type": "string"
+        },
+        "operation": {
+          "description": "Inspect existing locale IDs by default; submit one reviewed candidate only explicitly",
+          "required": true,
+          "type": "choice",
+          "options": [
+            "inspect",
+            "submit"
+          ],
+          "default": "inspect"
+        }
+      }
+    }
+  },
+  "permissions": {
+    "contents": "read"
+  },
+  "concurrency": {
+    "group": "scoped-navokids-production-submit",
+    "cancel-in-progress": false
+  },
+  "env": {
+    "WIF_PROVIDER": "projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions",
+    "GOOGLE_SERVICE_ACCOUNT": "navoops@emerald-caster-508318-f2.iam.gserviceaccount.com",
+    "CATALOG_SHA256": "c5ec51378fd78f9272124c94d24cf7011f99e66fb7836ff59842ceaa4580dede",
+    "BUNDLETOOL_URL": "https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar",
+    "BUNDLETOOL_SHA256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
+    "PYTHONDONTWRITEBYTECODE": "1"
+  },
+  "jobs": {
+    "inspect": {
+      "if": "github.repository == 'acciento89-bot/maengelfix' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.run_attempt == 1 && inputs.operation == 'inspect'",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 12,
+      "permissions": {
+        "contents": "read",
+        "id-token": "write"
+      },
+      "env": {
+        "CANDIDATE_PACKAGE": "${{ inputs.package }}",
+        "SCOPED_NAVOKIDS_OPERATION": "inspect"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@v5",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Test exact candidate, transport and transaction boundaries without network",
+          "run": "env PYTHONPATH=.github/scoped-navokids-submit python3 -m unittest discover -s .github/scoped-navokids-submit/tests -v"
+        },
+        {
+          "id": "google-auth",
+          "uses": "google-github-actions/auth@v3",
+          "with": {
+            "workload_identity_provider": "${{ env.WIF_PROVIDER }}",
+            "service_account": "${{ env.GOOGLE_SERVICE_ACCOUNT }}",
+            "token_format": "access_token",
+            "access_token_scopes": "https://www.googleapis.com/auth/androidpublisher"
+          }
+        },
+        {
+          "id": "inspect",
+          "name": "Read existing listing language IDs only; delete each owned temporary edit before continuing",
+          "env": {
+            "TOKEN": "${{ steps.google-auth.outputs.access_token }}"
+          },
+          "shell": "bash",
+          "run": "set -euo pipefail\npython3 .github/scoped-navokids-submit/navokids_cli.py inspect --package \"$CANDIDATE_PACKAGE\" --catalog-sha256 \"$CATALOG_SHA256\" --report \"$RUNNER_TEMP/scoped-navokids-receipts/locale-inventory.json\"\n"
+        },
+        {
+          "uses": "actions/upload-artifact@v4",
+          "if": "always()",
+          "with": {
+            "name": "scoped-navokids-receipts-${{ github.job }}-${{ github.run_id }}",
+            "path": "${{ runner.temp }}/scoped-navokids-receipts/",
+            "if-no-files-found": "error",
+            "retention-days": 30
+          }
+        }
+      ]
+    },
+    "prepare": {
+      "if": "github.repository == 'acciento89-bot/maengelfix' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.run_attempt == 1 && inputs.operation == 'submit'",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 30,
+      "permissions": {
+        "contents": "write",
+        "actions": "read"
+      },
+      "outputs": {
+        "artifact_id": "${{ steps.transfer.outputs.artifact-id }}",
+        "archive_sha256": "${{ steps.verify.outputs.archive_sha256 }}",
+        "attestation_sha256": "${{ steps.verify.outputs.attestation_sha256 }}"
+      },
+      "env": {
+        "CANDIDATE_PACKAGE": "${{ inputs.package }}",
+        "CANDIDATE_ASSET_ID": "${{ inputs.candidate_asset_id }}",
+        "CANDIDATE_ARCHIVE_SHA256": "${{ inputs.archive_sha256 }}",
+        "SCOPED_NAVOKIDS_OPERATION": "submit"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@v5",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "name": "Test exact candidate, transport and transaction boundaries without network",
+          "run": "env PYTHONPATH=.github/scoped-navokids-submit python3 -m unittest discover -s .github/scoped-navokids-submit/tests -v"
+        },
+        {
+          "uses": "actions/setup-java@v5",
+          "with": {
+            "distribution": "temurin",
+            "java-version": "17"
+          }
+        },
+        {
+          "id": "tools",
+          "name": "Install pinned official bundletool for verification only",
+          "shell": "bash",
+          "run": "set -euo pipefail\ncurl --fail --silent --show-error --location \"$BUNDLETOOL_URL\" -o \"$RUNNER_TEMP/bundletool.jar\"\nprintf '%s  %s\\n' \"$BUNDLETOOL_SHA256\" \"$RUNNER_TEMP/bundletool.jar\" | sha256sum --check --strict\n"
+        },
+        {
+          "id": "verify",
+          "name": "Verify own draft, fixed central or managed-EAS original provenance, per-app certificate and root-reviewed native evidence",
+          "env": {
+            "GH_TOKEN": "${{ github.token }}"
+          },
+          "shell": "bash",
+          "run": "set -euo pipefail\npython3 .github/scoped-navokids-submit/navokids_cli.py prepare --package \"$CANDIDATE_PACKAGE\" --archive-sha256 \"$CANDIDATE_ARCHIVE_SHA256\" --catalog-sha256 \"$CATALOG_SHA256\" --bundletool \"$RUNNER_TEMP/bundletool.jar\" --bundletool-sha256 \"$BUNDLETOOL_SHA256\" --asset-id \"$CANDIDATE_ASSET_ID\" --output \"$RUNNER_TEMP/scoped-navokids-prepared\" --report \"$RUNNER_TEMP/scoped-navokids-receipts/prepare.json\"\n"
+        },
+        {
+          "id": "transfer",
+          "name": "Freeze verified candidate by immutable artifact ID",
+          "uses": "actions/upload-artifact@v4",
+          "with": {
+            "name": "verified-business-candidate-${{ github.run_id }}",
+            "path": "${{ runner.temp }}/scoped-navokids-prepared/",
+            "if-no-files-found": "error",
+            "compression-level": 0,
+            "retention-days": 1
+          }
+        },
+        {
+          "uses": "actions/upload-artifact@v4",
+          "if": "always()",
+          "with": {
+            "name": "scoped-navokids-receipts-${{ github.job }}-${{ github.run_id }}",
+            "path": "${{ runner.temp }}/scoped-navokids-receipts/",
+            "if-no-files-found": "error",
+            "retention-days": 30
+          }
+        }
+      ]
+    },
+    "submit": {
+      "if": "github.repository == 'acciento89-bot/maengelfix' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.run_attempt == 1 && inputs.operation == 'submit'",
+      "needs": "prepare",
+      "runs-on": "ubuntu-latest",
+      "timeout-minutes": 30,
+      "permissions": {
+        "contents": "read",
+        "id-token": "write"
+      },
+      "env": {
+        "CANDIDATE_PACKAGE": "${{ inputs.package }}",
+        "CANDIDATE_ARCHIVE_SHA256": "${{ needs.prepare.outputs.archive_sha256 }}",
+        "CANDIDATE_ATTESTATION_SHA256": "${{ needs.prepare.outputs.attestation_sha256 }}",
+        "SCOPED_NAVOKIDS_OPERATION": "submit"
+      },
+      "steps": [
+        {
+          "uses": "actions/checkout@v5",
+          "with": {
+            "ref": "${{ github.sha }}",
+            "persist-credentials": false
+          }
+        },
+        {
+          "id": "transfer",
+          "uses": "actions/download-artifact@v4",
+          "with": {
+            "artifact-ids": "${{ needs.prepare.outputs.artifact_id }}",
+            "merge-multiple": true,
+            "path": "${{ runner.temp }}/scoped-navokids-transfer"
+          }
+        },
+        {
+          "uses": "actions/setup-java@v5",
+          "with": {
+            "distribution": "temurin",
+            "java-version": "17"
+          }
+        },
+        {
+          "id": "tools",
+          "name": "Install pinned official bundletool for verification only",
+          "shell": "bash",
+          "run": "set -euo pipefail\ncurl --fail --silent --show-error --location \"$BUNDLETOOL_URL\" -o \"$RUNNER_TEMP/bundletool.jar\"\nprintf '%s  %s\\n' \"$BUNDLETOOL_SHA256\" \"$RUNNER_TEMP/bundletool.jar\" | sha256sum --check --strict\n"
+        },
+        {
+          "id": "verify",
+          "name": "Reverify transferred exact bytes before Google identity",
+          "shell": "bash",
+          "run": "set -euo pipefail\npython3 .github/scoped-navokids-submit/navokids_cli.py verify-transfer --package \"$CANDIDATE_PACKAGE\" --archive-sha256 \"$CANDIDATE_ARCHIVE_SHA256\" --catalog-sha256 \"$CATALOG_SHA256\" --bundletool \"$RUNNER_TEMP/bundletool.jar\" --bundletool-sha256 \"$BUNDLETOOL_SHA256\" --directory \"$RUNNER_TEMP/scoped-navokids-transfer\" --attestation-sha256 \"$CANDIDATE_ATTESTATION_SHA256\" --report \"$RUNNER_TEMP/scoped-navokids-receipts/verify-transfer.json\"\n"
+        },
+        {
+          "id": "google-auth",
+          "uses": "google-github-actions/auth@v3",
+          "with": {
+            "workload_identity_provider": "${{ env.WIF_PROVIDER }}",
+            "service_account": "${{ env.GOOGLE_SERVICE_ACCOUNT }}",
+            "token_format": "access_token",
+            "access_token_scopes": "https://www.googleapis.com/auth/androidpublisher"
+          }
+        },
+        {
+          "id": "submit",
+          "name": "One exact production edit; reject in-review state; no upload or commit retries",
+          "env": {
+            "TOKEN": "${{ steps.google-auth.outputs.access_token }}"
+          },
+          "shell": "bash",
+          "run": "set -euo pipefail\npython3 .github/scoped-navokids-submit/navokids_cli.py submit --package \"$CANDIDATE_PACKAGE\" --archive-sha256 \"$CANDIDATE_ARCHIVE_SHA256\" --catalog-sha256 \"$CATALOG_SHA256\" --bundletool \"$RUNNER_TEMP/bundletool.jar\" --bundletool-sha256 \"$BUNDLETOOL_SHA256\" --directory \"$RUNNER_TEMP/scoped-navokids-transfer\" --attestation-sha256 \"$CANDIDATE_ATTESTATION_SHA256\" --report \"$RUNNER_TEMP/scoped-navokids-receipts/submit.json\"\n"
+        },
+        {
+          "uses": "actions/upload-artifact@v4",
+          "if": "always()",
+          "with": {
+            "name": "scoped-navokids-receipts-${{ github.job }}-${{ github.run_id }}",
+            "path": "${{ runner.temp }}/scoped-navokids-receipts/",
+            "if-no-files-found": "error",
+            "retention-days": 30
+          }
+        }
+      ]
+    }
+  }
+}
