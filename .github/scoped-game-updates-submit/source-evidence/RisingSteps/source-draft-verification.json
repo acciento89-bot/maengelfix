@@ -1,0 +1,28 @@
+{
+  "app": "RisingSteps",
+  "repository": "acciento89-bot/risingsteps",
+  "sourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+  "release": {
+    "id": 428060875,
+    "tag_name": "android-1.2.0-9-candidate",
+    "draft": true,
+    "target_commitish": "8245a0d495163e647f0f97dba330906034847f76",
+    "html_url": "https://github.com/acciento89-bot/risingsteps/releases/tag/untagged-275c3472b5c56cbf0b14",
+    "created_at": "2026-10-29T15:39:27Z"
+  },
+  "asset": {
+    "id": 689026943,
+    "name": "RisingSteps-1.2.0-9-unsigned.aab",
+    "size": 62463809,
+    "state": "uploaded",
+    "digest": "sha256:699b0d86af9edb199b860aa008a571a8f9f0a83d40660672e5b6ffdae607feb9",
+    "created_at": "2026-10-29T15:40:02Z"
+  },
+  "sourceRawSha256": "f1332165952595099b5b7ea656f45b643cf7de5796d4ad5cb8d6e8b7ba666c67",
+  "unsignedSha256": "699b0d86af9edb199b860aa008a571a8f9f0a83d40660672e5b6ffdae607feb9",
+  "downloadedSha256": "699b0d86af9edb199b860aa008a571a8f9f0a83d40660672e5b6ffdae607feb9",
+  "downloadedMatchesExactly": true,
+  "allModulePayloadUnchanged": true,
+  "stillDraft": true,
+  "finishedUTC": "2026-10-29T15:40:25.263588+00:00"
+}

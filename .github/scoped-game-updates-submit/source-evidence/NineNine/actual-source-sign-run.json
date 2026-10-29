@@ -1,0 +1,12 @@
+{
+  "id": 40912634003,
+  "workflow_id": 357502718,
+  "path": ".github/workflows/android-central-bundle.yml",
+  "head_sha": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+  "head_branch": "main",
+  "event": "workflow_dispatch",
+  "run_attempt": 1,
+  "status": "completed",
+  "conclusion": "success",
+  "html_url": "https://github.com/acciento89-bot/99-9/actions/runs/40912634003"
+}

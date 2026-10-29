@@ -27,10 +27,12 @@ class BusinessPolicyTests(unittest.TestCase):
         for key,value in [('newVersionCode',10),('newVersionName','1.2.0'),('certificate',catalog['de.kamilunavo.navopass']['certificate']),('signWorkflow','.github/workflows/fake.yml'),('reviewedSourceCommit','a'*40)]:
             altered=copy.deepcopy(app);altered[key]=value
             with self.subTest(key=key),self.assertRaises(candidate.CandidateError):p.assert_identity(altered)
-    def test_all_initial_products_block_submission_without_final_genuine_evidence(self):
+    def test_explicitly_pending_products_block_submission_even_after_other_apps_are_reviewed(self):
         p=self.policy();raw=(HERE/'business-catalog.json').read_bytes();catalog=p.load_catalog(HERE/'business-catalog.json',candidate.digest(raw))
         for app in catalog.values():
-            with self.subTest(app=app['app']),self.assertRaises(candidate.CandidateError):p.require_ready(app)
+            pending=copy.deepcopy(app)
+            pending.update(readiness='pending_final_native_screens_locales_asset_rights_root_review',rootReviewSha256=None,rightsEvidenceSha256=None)
+            with self.subTest(app=app['app']),self.assertRaises(candidate.CandidateError):p.require_ready(pending)
     def test_pending_or_empty_or_scalar_license_and_review_fields_never_pass(self):
         p=self.policy();app=copy.deepcopy(p.fixed_apps()['de.kamilunavo.navopass'])
         for field,value in [('requiredBundleAssets',[]),('rootReviewSha256',None),('rightsEvidenceSha256',None),('listingLocales',None)]:

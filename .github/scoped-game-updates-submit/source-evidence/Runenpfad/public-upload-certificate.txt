@@ -1,0 +1,25 @@
+Signer #1:
+
+Certificate #1:
+Owner: CN=Runenpfad Upload, OU=Android, O=Kamilunavo, C=DE
+Issuer: CN=Runenpfad Upload, OU=Android, O=Kamilunavo, C=DE
+Serial number: 4c6b24b634a9b7d4
+Valid from: Mon Oct 19 13:53:05 CEST 2026 until: Fri Mar 06 12:53:05 CET 2054
+Certificate fingerprints:
+	 SHA1: FC:56:49:A9:EA:FC:F0:1B:B2:44:33:F1:84:85:E1:DF:60:E2:8E:F6
+	 SHA256: A7:6F:8F:0E:D6:9F:DD:6B:B1:18:13:22:A0:7B:96:1A:35:36:05:E8:B9:F6:54:A0:D4:E6:BC:2F:18:6B:EF:2B
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 3072-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: EC 6E 8C C0 92 16 BD B9   1C D5 09 0D 63 06 F7 33  .n..........c..3
+0010: 55 43 C4 D0                                        UC..
+]
+]
+
+

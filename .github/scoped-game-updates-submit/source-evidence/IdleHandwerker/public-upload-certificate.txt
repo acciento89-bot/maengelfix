@@ -1,0 +1,25 @@
+Signer #1:
+
+Certificate #1:
+Owner: CN=Kamilunavo Android Upload, O=Kamilunavo, C=DE
+Issuer: CN=Kamilunavo Android Upload, O=Kamilunavo, C=DE
+Serial number: f00e336d65198fd4
+Valid from: Sat Sep 12 21:01:28 CEST 2026 until: Wed Sep 06 21:01:28 CEST 2051
+Certificate fingerprints:
+	 SHA1: BC:F2:33:7D:41:E6:17:C0:3B:CA:E6:98:C0:9D:15:23:65:4B:D7:90
+	 SHA256: 79:85:BD:6B:33:71:1B:AC:A7:E6:BA:72:2C:2B:38:70:EB:BC:80:2F:7D:B4:A7:BC:12:06:BD:AE:51:C4:D5:D6
+Signature algorithm name: SHA256withRSA
+Subject Public Key Algorithm: 4096-bit RSA key
+Version: 3
+
+Extensions: 
+
+#1: ObjectId: 2.5.29.14 Criticality=false
+SubjectKeyIdentifier [
+KeyIdentifier [
+0000: A9 DC AA 6C B9 27 93 F3   F0 C2 60 24 C5 2C 09 B5  ...l.'....`$.,..
+0010: 35 19 D2 55                                        5..U
+]
+]
+
+

@@ -1,0 +1,20 @@
+{
+  "id": 12914972403,
+  "node_id": "MDg6QXJ0aWZhY3QxMjkxNDk3MjQwMw==",
+  "name": "idle-handwerker-central-signed-aab",
+  "size_in_bytes": 39084758,
+  "url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12914972403",
+  "archive_download_url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12914972403/zip",
+  "expired": false,
+  "digest": "sha256:5b096eb1d5bc6e2a2cabca3a486f0f217a14a5bd2da57f9047821c7c4d38a790",
+  "created_at": "2026-10-29T16:38:52Z",
+  "updated_at": "2026-10-29T16:38:52Z",
+  "expires_at": "2026-11-28T16:38:50Z",
+  "workflow_run": {
+    "id": 40912897838,
+    "repository_id": 1338759340,
+    "head_repository_id": 1338759340,
+    "head_branch": "main",
+    "head_sha": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c"
+  }
+}

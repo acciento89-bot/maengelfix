@@ -1,0 +1,934 @@
+{
+  "schema": 1,
+  "family": "game5",
+  "sourceEvidence": "Prior actual source/sign/payload/engine inspection; exact binary only, final device acceptance not implied",
+  "apps": [
+    {
+      "app": "PerfectDrop",
+      "package": "com.kamilunavo.perfectdrop",
+      "previousProductionCode": 14,
+      "previousMaxCode": 14,
+      "newVersionCode": 15,
+      "newVersionName": "1.2.0",
+      "reviewedSourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "signedAabSha256": "89d2ff4a445f6ea0da31692234d524b2cfb3461a2e3fc1257cb8d952ad75f7c2",
+      "signedAabBytes": 67700715,
+      "testedDerivedApkSha256": "685a105fdac2d6abdf05e28f37a892ad8d08212ebeaaa72a19e50eecf7df0da3",
+      "testedDerivedApkBytes": 68035121,
+      "certificate": {
+        "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+        "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
+      },
+      "engine": "Unity",
+      "repository": "acciento89-bot/perfectdrop",
+      "sourceTopology": {
+        "kind": "unity_local_export_same_repo_draft_public_signer",
+        "repository": "acciento89-bot/perfectdrop",
+        "sourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+        "unsignedDraftAssetId": 689023903,
+        "unsignedSha256": "351fbe1e06ffe7eb86b1f68fcc28bf2abe2150fb946b300e5ca946b5f9c8eb3e",
+        "signedArtifactArchiveSha256": "fd6cf46b8b86a18315a5772442e2dddc8979e5dd7e51211e5de6b0397e9a2833",
+        "cloudReads": [
+          {
+            "kind": "run",
+            "repository": "acciento89-bot/perfectdrop",
+            "id": 40903969517,
+            "workflow": ".github/workflows/sign-android-bundle.yml",
+            "head": "499018036a5b12375fa7fbfcec9556ed177fd435",
+            "attempt": 1
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/perfectdrop",
+            "id": 12910352998,
+            "name": "PerfectDrop-1.2.0-build15-central-signed",
+            "runId": 40903969517,
+            "head": "499018036a5b12375fa7fbfcec9556ed177fd435",
+            "archiveSha256": "fd6cf46b8b86a18315a5772442e2dddc8979e5dd7e51211e5de6b0397e9a2833"
+          }
+        ]
+      },
+      "sourceProofs": [
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/PerfectDrop/public-upload-certificate.txt",
+          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
+          "bytes": 788
+        },
+        {
+          "role": "qa-derivation",
+          "path": "source-evidence/PerfectDrop/qa-derivation.json",
+          "sha256": "8030f618a17c83572d214af6d6badab9aafcf8d04579e43bd83f56afc514fb2c",
+          "bytes": 26583
+        },
+        {
+          "role": "source-sign-closure",
+          "path": "source-evidence/PerfectDrop/source-sign-closure.json",
+          "sha256": "8fa01e9bd6e3336cecdf8c05f5579f93d738bfbb211e7e6381c7d8883bca4ac5",
+          "bytes": 37380
+        },
+        {
+          "role": "public-signer-attestation",
+          "path": "source-evidence/PerfectDrop/public-signer-attestation.json",
+          "sha256": "f197b02a75fc22a1b216317fe2faf6c482e5afea4f717301623158ceabddc547",
+          "bytes": 477
+        },
+        {
+          "role": "source-draft-verification",
+          "path": "source-evidence/PerfectDrop/source-draft-verification.json",
+          "sha256": "80818ccdc6fdd2c2c7e01689e1ef36f5ed8533987e7bd51eeb2b375733faf75c",
+          "bytes": 1138
+        },
+        {
+          "role": "actual-completed-signer",
+          "path": "source-evidence/PerfectDrop/actual-completed-signer.json",
+          "sha256": "003e136abbe4d6341fb29ff1244de6a935c072317d4f0172bd508e88fd99ed6f",
+          "bytes": 1550
+        },
+        {
+          "role": "source-signed-payload-verification",
+          "path": "source-evidence/PerfectDrop/source-signed-payload-verification.json",
+          "sha256": "9a583e1cc452a89b70dcaa618224418656ade57661143e4ba4e83775fc1dad57",
+          "bytes": 2257
+        },
+        {
+          "role": "guarded-normal-source-export",
+          "path": "source-evidence/PerfectDrop/guarded-normal-source-export.json",
+          "sha256": "3802961808800da532537e1904e29f7de1ce84c64f1678cf52eed257232be410",
+          "bytes": 5162
+        },
+        {
+          "role": "aab-apk-payload-pair",
+          "path": "source-evidence/PerfectDrop/aab-apk-payload-pair.json",
+          "sha256": "91e0cc3f0f3336c96d0958c5e10f2363d15fbbbea222df070f93aae6584fb22e",
+          "bytes": 13485
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/PerfectDrop/original-font-0.ttf",
+          "sha256": "98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986",
+          "bytes": 78488
+        },
+        {
+          "role": "original-font-1",
+          "path": "source-evidence/PerfectDrop/original-font-1.ttf",
+          "sha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0",
+          "bytes": 78384
+        },
+        {
+          "role": "original-ofl-0",
+          "path": "source-evidence/PerfectDrop/original-ofl-0.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+          "bytes": 4377
+        },
+        {
+          "role": "original-ofl-1",
+          "path": "source-evidence/PerfectDrop/original-ofl-1.txt",
+          "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56",
+          "bytes": 4396
+        }
+      ],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/bin/Data/f751e5c612b24047821637d1483750bb",
+          "sha256": "7c89092c0499b8b6deae2c94fd6d0ace036ba39cb0a9389da056129e95f39b63"
+        },
+        {
+          "entry": "base/assets/bin/Data/c3947578f0c14c10b965983f36cb368b",
+          "sha256": "af752546d00c1e464296ba0289dcf3584c5d18d1db75e126db076420474e6cb0"
+        },
+        {
+          "entry": "base/assets/Barlow-OFL.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+        },
+        {
+          "entry": "base/assets/ChakraPetch-OFL.txt",
+          "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56"
+        }
+      ],
+      "fontProofs": [
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/f751e5c612b24047821637d1483750bb",
+          "entrySha256": "7c89092c0499b8b6deae2c94fd6d0ace036ba39cb0a9389da056129e95f39b63",
+          "originalTtfSha256": "98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986",
+          "originalFontSourceRole": "original-font-0",
+          "committedSource": "Assets/Resources/Fonts/ChakraPetch-Regular.ttf"
+        },
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/c3947578f0c14c10b965983f36cb368b",
+          "entrySha256": "af752546d00c1e464296ba0289dcf3584c5d18d1db75e126db076420474e6cb0",
+          "originalTtfSha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0",
+          "originalFontSourceRole": "original-font-1",
+          "committedSource": "Assets/Resources/Fonts/ChakraPetch-Bold.ttf"
+        }
+      ],
+      "uiLanguagePolicy": "actual_per_frame_review",
+      "fullSignedPayloadSha256": "5982b46719225fa0f40c3355edc6b9fd7d325b4666c637bd7f47e46e47b34e2b",
+      "allowedGeneratedBaselineExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      }
+    },
+    {
+      "app": "RisingSteps",
+      "package": "com.kamilunavo.risingsteps",
+      "previousProductionCode": 8,
+      "previousMaxCode": 8,
+      "newVersionCode": 9,
+      "newVersionName": "1.2.0",
+      "reviewedSourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+      "signedAabSha256": "b5d101d5c0c123ad5d9b8608231bdd25641fa4996119eafffc12bbbc496cf866",
+      "signedAabBytes": 62540609,
+      "testedDerivedApkSha256": "d4031669f67551f37124e391405b05782149c7f1b540ec86bf39d712897c34ef",
+      "testedDerivedApkBytes": 62861877,
+      "certificate": {
+        "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+        "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
+      },
+      "engine": "Unity",
+      "repository": "acciento89-bot/risingsteps",
+      "sourceTopology": {
+        "kind": "unity_local_export_same_repo_draft_public_signer",
+        "repository": "acciento89-bot/risingsteps",
+        "sourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+        "unsignedDraftAssetId": 689026943,
+        "unsignedSha256": "699b0d86af9edb199b860aa008a571a8f9f0a83d40660672e5b6ffdae607feb9",
+        "signedArtifactArchiveSha256": "ff643a49fcfc96cade25de19f14e7f8e57eba3e5596630c6ce8c2a8364ac7761",
+        "cloudReads": [
+          {
+            "kind": "run",
+            "repository": "acciento89-bot/risingsteps",
+            "id": 40903980440,
+            "workflow": ".github/workflows/sign-android-bundle.yml",
+            "head": "8245a0d495163e647f0f97dba330906034847f76",
+            "attempt": 1
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/risingsteps",
+            "id": 12911160903,
+            "name": "RisingSteps-1.2.0-build9-central-signed",
+            "runId": 40903980440,
+            "head": "8245a0d495163e647f0f97dba330906034847f76",
+            "archiveSha256": "ff643a49fcfc96cade25de19f14e7f8e57eba3e5596630c6ce8c2a8364ac7761"
+          }
+        ]
+      },
+      "sourceProofs": [
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/RisingSteps/public-upload-certificate.txt",
+          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
+          "bytes": 788
+        },
+        {
+          "role": "qa-derivation",
+          "path": "source-evidence/RisingSteps/qa-derivation.json",
+          "sha256": "8030f618a17c83572d214af6d6badab9aafcf8d04579e43bd83f56afc514fb2c",
+          "bytes": 26583
+        },
+        {
+          "role": "source-sign-closure",
+          "path": "source-evidence/RisingSteps/source-sign-closure.json",
+          "sha256": "8fa01e9bd6e3336cecdf8c05f5579f93d738bfbb211e7e6381c7d8883bca4ac5",
+          "bytes": 37380
+        },
+        {
+          "role": "public-signer-attestation",
+          "path": "source-evidence/RisingSteps/public-signer-attestation.json",
+          "sha256": "8af1280b634ce0e738f4187cf536ef820c9ed600c4c379846c4952114634789f",
+          "bytes": 476
+        },
+        {
+          "role": "source-draft-verification",
+          "path": "source-evidence/RisingSteps/source-draft-verification.json",
+          "sha256": "1ceed3d93746a1b13c526963f55195ebf652203ff0803015d4012794fcb9f61e",
+          "bytes": 1136
+        },
+        {
+          "role": "actual-completed-signer",
+          "path": "source-evidence/RisingSteps/actual-completed-signer.json",
+          "sha256": "2f0a3ce2a5e29cabd462c837c0a5b79f4f4ff828233b1c2051fe058e7eab89df",
+          "bytes": 1549
+        },
+        {
+          "role": "source-signed-payload-verification",
+          "path": "source-evidence/RisingSteps/source-signed-payload-verification.json",
+          "sha256": "f8ea8554e9d20d1f6679fe592941213ceca3500988e06293b3b9ec65ea5b5cdc",
+          "bytes": 2254
+        },
+        {
+          "role": "guarded-normal-source-export",
+          "path": "source-evidence/RisingSteps/guarded-normal-source-export.json",
+          "sha256": "6cc50a6376efcc57a3afafaf0cb4f66bc41be47725615c43d1e62f6ef13adcd2",
+          "bytes": 5128
+        },
+        {
+          "role": "aab-apk-payload-pair",
+          "path": "source-evidence/RisingSteps/aab-apk-payload-pair.json",
+          "sha256": "e30395879a6503fbb0a7779c0ed7bb265ae80e76b6ebb5c7025ee4e16327c2af",
+          "bytes": 18875
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/RisingSteps/original-font-0.ttf",
+          "sha256": "dbb493e1adc50aaec52071535e6fccf4176793c79545f54d95a812cbfb85169b",
+          "bytes": 466324
+        },
+        {
+          "role": "original-font-1",
+          "path": "source-evidence/RisingSteps/original-font-1.ttf",
+          "sha256": "880fb67901ce94573ed0262d152b87115a08f928c72fc6c1101375a1223d390a",
+          "bytes": 471708
+        },
+        {
+          "role": "original-ofl-0",
+          "path": "source-evidence/RisingSteps/original-ofl-0.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+          "bytes": 4377
+        },
+        {
+          "role": "original-ofl-1",
+          "path": "source-evidence/RisingSteps/original-ofl-1.txt",
+          "sha256": "1e5bf8207a40678bc401e2e5456d0db1f2a183b550a30976b48dcdd6a4e4c46c",
+          "bytes": 4395
+        }
+      ],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/bin/Data/e5720e97b7e740adadd830d71e11c511",
+          "sha256": "6d197ecea9f11256ada57a49fd47417472f57c38730c4574ab0e2184ae298ecf"
+        },
+        {
+          "entry": "base/assets/bin/Data/48b1448c6e4a4b97a71a2b1d07fbb3b2",
+          "sha256": "ef47a1b900d1cf9f4107a8cd6c2f5d9d04ed48905960d0024aa146326e02c48c"
+        },
+        {
+          "entry": "base/assets/Barlow-OFL.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f"
+        },
+        {
+          "entry": "base/assets/Caudex-OFL.txt",
+          "sha256": "1e5bf8207a40678bc401e2e5456d0db1f2a183b550a30976b48dcdd6a4e4c46c"
+        }
+      ],
+      "fontProofs": [
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/e5720e97b7e740adadd830d71e11c511",
+          "entrySha256": "6d197ecea9f11256ada57a49fd47417472f57c38730c4574ab0e2184ae298ecf",
+          "originalTtfSha256": "dbb493e1adc50aaec52071535e6fccf4176793c79545f54d95a812cbfb85169b",
+          "originalFontSourceRole": "original-font-0",
+          "committedSource": "Assets/Resources/Fonts/Caudex-Regular.ttf"
+        },
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/48b1448c6e4a4b97a71a2b1d07fbb3b2",
+          "entrySha256": "ef47a1b900d1cf9f4107a8cd6c2f5d9d04ed48905960d0024aa146326e02c48c",
+          "originalTtfSha256": "880fb67901ce94573ed0262d152b87115a08f928c72fc6c1101375a1223d390a",
+          "originalFontSourceRole": "original-font-1",
+          "committedSource": "Assets/Resources/Fonts/Caudex-Bold.ttf"
+        }
+      ],
+      "uiLanguagePolicy": "actual_per_frame_review",
+      "fullSignedPayloadSha256": "1c0740afc5fb12f4e01c432109533ea9b07ed0df4bc34feea1fa804f3c874e46",
+      "allowedGeneratedBaselineExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      }
+    },
+    {
+      "app": "Runenpfad",
+      "package": "com.kamilunavo.runenpfad",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "0.4.0",
+      "reviewedSourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+      "signedAabSha256": "c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6",
+      "signedAabBytes": 39400038,
+      "testedDerivedApkSha256": "9fda19de3127ae6713962abacd5e455e387a37b9e36282644d406561527223f4",
+      "testedDerivedApkBytes": 39724125,
+      "certificate": {
+        "sha1": "FC5649A9EAFCF01BB24433F18485E1DF60E28EF6",
+        "sha256": "A76F8F0ED69FDD6BB1181322A07B961A353605E8B9F654A0D4E6BC2F186BEF2B"
+      },
+      "engine": "Unity",
+      "repository": null,
+      "sourceTopology": {
+        "kind": "local_guarded_unity_vault_signing",
+        "githubOrigin": null,
+        "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+        "cloudReads": []
+      },
+      "sourceProofs": [
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/Runenpfad/public-upload-certificate.txt",
+          "sha256": "4d54e761164c69e20e57cb9e05d061c68042bb85d2facb5e00020995d1a8273e",
+          "bytes": 793
+        },
+        {
+          "role": "qa-derivation",
+          "path": "source-evidence/Runenpfad/qa-derivation.json",
+          "sha256": "8030f618a17c83572d214af6d6badab9aafcf8d04579e43bd83f56afc514fb2c",
+          "bytes": 26583
+        },
+        {
+          "role": "source-sign-closure",
+          "path": "source-evidence/Runenpfad/source-sign-closure.json",
+          "sha256": "8fa01e9bd6e3336cecdf8c05f5579f93d738bfbb211e7e6381c7d8883bca4ac5",
+          "bytes": 37380
+        },
+        {
+          "role": "guarded-local-export",
+          "path": "source-evidence/Runenpfad/guarded-local-export.json",
+          "sha256": "ab7da4eb245e6c505e2d0200082e1e48304a2679e90eba8086c142fb85072a3b",
+          "bytes": 5170
+        },
+        {
+          "role": "local-vault-signing",
+          "path": "source-evidence/Runenpfad/local-vault-signing.json",
+          "sha256": "bdb7f305218ff6cd0bcecac74a4cd0a65de2f252b096cb271d713339a3b831c8",
+          "bytes": 919
+        },
+        {
+          "role": "aab-apk-payload-pair",
+          "path": "source-evidence/Runenpfad/aab-apk-payload-pair.json",
+          "sha256": "c3db49d58f29115f941d82ff95fa55d064e6f4aa01db8fb043d4ef299b946879",
+          "bytes": 19637
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/Runenpfad/original-font-0.ttf",
+          "sha256": "a4f49c9df1351b6151969737493446fa1add16ed1a22fa8b9a4aecbdffeb1b3b",
+          "bytes": 113916
+        },
+        {
+          "role": "original-font-1",
+          "path": "source-evidence/Runenpfad/original-font-1.ttf",
+          "sha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
+          "bytes": 109948
+        },
+        {
+          "role": "original-ofl-0",
+          "path": "source-evidence/Runenpfad/original-ofl-0.txt",
+          "sha256": "46239ba6485d28553fd944da4ad32a00d9c403aa1c3e111676b0b96fe458d1d4",
+          "bytes": 4402
+        },
+        {
+          "role": "original-ofl-1",
+          "path": "source-evidence/Runenpfad/original-ofl-1.txt",
+          "sha256": "37f8552e9a874ec10710dc0ede6a9adf168e6609fbd02a507f35629373b85a48",
+          "bytes": 4469
+        }
+      ],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7",
+          "sha256": "f97edac8a1e9290c7d92a79fec7e30b1d7333187695b2b5a7fb58ca2821bb505"
+        },
+        {
+          "entry": "base/assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec",
+          "sha256": "a2978425e21fe95da97879c1470ff0ffc444fc45826c51fad6f69f0dd9e3a549"
+        },
+        {
+          "entry": "base/assets/AveriaSerifLibre-OFL.txt",
+          "sha256": "46239ba6485d28553fd944da4ad32a00d9c403aa1c3e111676b0b96fe458d1d4"
+        },
+        {
+          "entry": "base/assets/Licenses/Fonts/LiberationSans/OFL.txt",
+          "sha256": "37f8552e9a874ec10710dc0ede6a9adf168e6609fbd02a507f35629373b85a48"
+        }
+      ],
+      "fontProofs": [
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7",
+          "entrySha256": "f97edac8a1e9290c7d92a79fec7e30b1d7333187695b2b5a7fb58ca2821bb505",
+          "originalTtfSha256": "a4f49c9df1351b6151969737493446fa1add16ed1a22fa8b9a4aecbdffeb1b3b",
+          "originalFontSourceRole": "original-font-0",
+          "committedSource": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Bold.ttf"
+        },
+        {
+          "encoding": "unity_serialized_contains_complete_original_ttf",
+          "entry": "base/assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec",
+          "entrySha256": "a2978425e21fe95da97879c1470ff0ffc444fc45826c51fad6f69f0dd9e3a549",
+          "originalTtfSha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
+          "originalFontSourceRole": "original-font-1",
+          "committedSource": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Regular.ttf"
+        }
+      ],
+      "uiLanguagePolicy": "actual_per_frame_review",
+      "fullSignedPayloadSha256": "1f4daa0ab736bd401970907da074179ee2b378cd05553261e865ab8652b58d9a",
+      "allowedGeneratedBaselineExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      }
+    },
+    {
+      "app": "NineNine",
+      "package": "de.kamilunavo.ninenine",
+      "previousProductionCode": 6,
+      "previousMaxCode": 6,
+      "newVersionCode": 7,
+      "newVersionName": "1.2.0",
+      "reviewedSourceCommit": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+      "signedAabSha256": "e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274",
+      "signedAabBytes": 39410888,
+      "testedDerivedApkSha256": "58e300ce25d3db8c92883e539b225ed3652049a77903598d7028cc8914c59d46",
+      "testedDerivedApkBytes": 89753843,
+      "certificate": {
+        "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+        "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
+      },
+      "engine": "Godot",
+      "repository": "acciento89-bot/99-9",
+      "sourceTopology": {
+        "kind": "godot_integrated_main_same_run_source_sign_all_install_time_modules",
+        "repository": "acciento89-bot/99-9",
+        "sourceCommit": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+        "installTimeAssetFiles": 421,
+        "allModulePayloadEntries": 1046,
+        "cloudReads": [
+          {
+            "kind": "run",
+            "repository": "acciento89-bot/99-9",
+            "id": 40912634003,
+            "workflow": ".github/workflows/android-central-bundle.yml",
+            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+            "attempt": 1
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/99-9",
+            "id": 12915161788,
+            "name": "central-input-99-9-40912634003",
+            "runId": 40912634003,
+            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+            "archiveSha256": "9e1408ec4793c45f56d55f2b997e04edc96af599766465dbc2fc4683e60ccefc"
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/99-9",
+            "id": 12914782483,
+            "name": "99-9-v7-central-signed-aab",
+            "runId": 40912634003,
+            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+            "archiveSha256": "0bec52b71400975af8907a2f4817c6e50f73cfeaa55b6568fdf2af921f20dcd7"
+          }
+        ]
+      },
+      "sourceProofs": [
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/NineNine/public-upload-certificate.txt",
+          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
+          "bytes": 788
+        },
+        {
+          "role": "qa-derivation",
+          "path": "source-evidence/NineNine/qa-derivation.json",
+          "sha256": "4bbb5f88f28411e2284af15d9ef27621bac338eeb436f0675d141cdb1777701a",
+          "bytes": 14729
+        },
+        {
+          "role": "source-sign-closure",
+          "path": "source-evidence/NineNine/source-sign-closure.json",
+          "sha256": "15c6a0c1e882476c0cc77808267e42ceba351b729cadd60592861d54c31ec891",
+          "bytes": 30397
+        },
+        {
+          "role": "actual-source-sign-verification",
+          "path": "source-evidence/NineNine/actual-source-sign-verification.json",
+          "sha256": "f6c5f574e6f8761a808b2670a6fd5f1d07803f5ed61bb80ec73243cd41d249bf",
+          "bytes": 4195
+        },
+        {
+          "role": "actual-source-sign-run",
+          "path": "source-evidence/NineNine/actual-source-sign-run.json",
+          "sha256": "20577cf6b735c281926f14e8e8e1d7cb34198dcd3f6ce7375d04b1b27b255f82",
+          "bytes": 378
+        },
+        {
+          "role": "unsigned-source-official-artifact",
+          "path": "source-evidence/NineNine/unsigned-source-official-artifact.json",
+          "sha256": "fbd7badc0e3b74004ab5451c375dbe71f4e9e5f912ce50a68ae36a82ec638607",
+          "bytes": 781
+        },
+        {
+          "role": "signed-official-artifact",
+          "path": "source-evidence/NineNine/signed-official-artifact.json",
+          "sha256": "9d301960cec3535e85a93bdb99f5092ced5fc85c3c3ebddda1c3ec2cd7c0cb99",
+          "bytes": 777
+        },
+        {
+          "role": "signed-provenance",
+          "path": "source-evidence/NineNine/signed-provenance.json",
+          "sha256": "83a1a779d51e7b070f49c3e5379cfcc652418ba1827e61fb27cb7ff396908297",
+          "bytes": 2081
+        },
+        {
+          "role": "install-time-actual-manifest",
+          "path": "source-evidence/NineNine/install-time-actual-manifest.xml",
+          "sha256": "d401ce5274599a084410aa6d2c64360801141ff7e77dcfd824f5f8f0fbda89bd",
+          "bytes": 551
+        },
+        {
+          "role": "all-module-aab-apk-pair",
+          "path": "source-evidence/NineNine/all-module-aab-apk-pair.json",
+          "sha256": "48177588dc5076a849fb6c3319c604dd4b84512c8568b07c61b8c2478d1295cd",
+          "bytes": 124551
+        },
+        {
+          "role": "prior-engine-original-font-inspection",
+          "path": "source-evidence/NineNine/prior-engine-original-font-inspection.json",
+          "sha256": "bb9c2293b57ca5b1d2857abfaa808193c184f33837a3b46d8de185f53f2d6f5d",
+          "bytes": 1546
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/NineNine/original-font-0.ttf",
+          "sha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+          "bytes": 102884
+        },
+        {
+          "role": "engine-inspected-font-resource-0",
+          "path": "source-evidence/NineNine/engine-inspected-font-resource-0.fontdata",
+          "sha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
+          "bytes": 59028
+        },
+        {
+          "role": "original-notice-0",
+          "path": "source-evidence/NineNine/original-notice-0.txt",
+          "sha256": "b43e2530c7af69fe1800f180d210b6d2745915ed4e0e404495038c861bb6dbf7",
+          "bytes": 4401
+        },
+        {
+          "role": "original-notice-1",
+          "path": "source-evidence/NineNine/original-notice-1.txt",
+          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
+          "bytes": 1078
+        },
+        {
+          "role": "original-notice-2",
+          "path": "source-evidence/NineNine/original-notice-2.txt",
+          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+          "bytes": 1066
+        },
+        {
+          "role": "original-notice-3",
+          "path": "source-evidence/NineNine/original-notice-3.json",
+          "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87",
+          "bytes": 1055
+        }
+      ],
+      "requiredBundleAssets": [
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/HammersmithOne-Regular.ttf-7cbe4bb881d29db288f35406ea4f8474.fontdata",
+          "sha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/fonts/hammersmithone/OFL.txt",
+          "sha256": "b43e2530c7af69fe1800f180d210b6d2745915ed4e0e404495038c861bb6dbf7"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/addons/admob/LICENSE",
+          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/LICENSE.txt",
+          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/PROVENANCE.json",
+          "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87"
+        }
+      ],
+      "fontProofs": [
+        {
+          "encoding": "godot_converted_resource_equal_prior_actual_engine_FontFile_data_inspection",
+          "entry": "assetPackInstallTime/assets/.godot/imported/HammersmithOne-Regular.ttf-7cbe4bb881d29db288f35406ea4f8474.fontdata",
+          "entrySha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
+          "originalTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+          "originalFontSourceRole": "original-font-0",
+          "engineInspectedResourceRole": "engine-inspected-font-resource-0",
+          "engineInspectionResource": "res://NineNine-AAB-HammersmithOne-Regular.ttf.fontdata",
+          "committedSource": "assets/fonts/hammersmithone/HammersmithOne-Regular.ttf"
+        }
+      ],
+      "uiLanguagePolicy": "english_only_practice",
+      "fullSignedPayloadSha256": "e84622a870ba5356957002b469d1f0ae4af4ed511f2a2d3cb977761e8d5b3419",
+      "allowedGeneratedBaselineExtras": {
+        "assets/dexopt/baseline.prof": "62d76a3c8ec857e8db03ec559da32ef15d6d39eb8a83e90b3f6aaa130a898b5a",
+        "assets/dexopt/baseline.profm": "4604d949575a456880b96b87251959bd90bd9bf97b558843de27ec89200209c0"
+      }
+    },
+    {
+      "app": "IdleHandwerker",
+      "package": "de.kamilunavo.idlehandwerker",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.5.0",
+      "reviewedSourceCommit": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+      "signedAabSha256": "4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6",
+      "signedAabBytes": 39477800,
+      "testedDerivedApkSha256": "2db158c55f1d84484dac2969190735d1af0ef1116baa1d8e1860b0cec34ac3eb",
+      "testedDerivedApkBytes": 89806848,
+      "certificate": {
+        "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+        "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
+      },
+      "engine": "Godot",
+      "repository": "acciento89-bot/appideenchatgpt",
+      "sourceTopology": {
+        "kind": "godot_integrated_main_same_run_source_sign_all_install_time_modules",
+        "repository": "acciento89-bot/appideenchatgpt",
+        "sourceCommit": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+        "installTimeAssetFiles": 445,
+        "allModulePayloadEntries": 1082,
+        "cloudReads": [
+          {
+            "kind": "run",
+            "repository": "acciento89-bot/appideenchatgpt",
+            "id": 40912897838,
+            "workflow": ".github/workflows/idle-handwerker-android.yml",
+            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+            "attempt": 1
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/appideenchatgpt",
+            "id": 12915017180,
+            "name": "idle-handwerker-unsigned-aab",
+            "runId": 40912897838,
+            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+            "archiveSha256": "b3071080fc13fc1d75aa36f30c8c9d39551648ac0b4a8f565a43eb141be9cf0f"
+          },
+          {
+            "kind": "artifact",
+            "repository": "acciento89-bot/appideenchatgpt",
+            "id": 12914972403,
+            "name": "idle-handwerker-central-signed-aab",
+            "runId": 40912897838,
+            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+            "archiveSha256": "5b096eb1d5bc6e2a2cabca3a486f0f217a14a5bd2da57f9047821c7c4d38a790"
+          }
+        ]
+      },
+      "sourceProofs": [
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/IdleHandwerker/public-upload-certificate.txt",
+          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
+          "bytes": 788
+        },
+        {
+          "role": "qa-derivation",
+          "path": "source-evidence/IdleHandwerker/qa-derivation.json",
+          "sha256": "4bbb5f88f28411e2284af15d9ef27621bac338eeb436f0675d141cdb1777701a",
+          "bytes": 14729
+        },
+        {
+          "role": "source-sign-closure",
+          "path": "source-evidence/IdleHandwerker/source-sign-closure.json",
+          "sha256": "15c6a0c1e882476c0cc77808267e42ceba351b729cadd60592861d54c31ec891",
+          "bytes": 30397
+        },
+        {
+          "role": "actual-source-sign-verification",
+          "path": "source-evidence/IdleHandwerker/actual-source-sign-verification.json",
+          "sha256": "83841224ed3c9ca95596a1cc8515dd80cbb75a6f29346ec2ca07ba5f8980de32",
+          "bytes": 6344
+        },
+        {
+          "role": "actual-source-sign-run",
+          "path": "source-evidence/IdleHandwerker/actual-source-sign-run.json",
+          "sha256": "c7f5f523e1648eb73c61fcbeae6fcd8a42f040fc6a9c92e1a349373b51f0f49b",
+          "bytes": 390
+        },
+        {
+          "role": "unsigned-source-official-artifact",
+          "path": "source-evidence/IdleHandwerker/unsigned-source-official-artifact.json",
+          "sha256": "73b888f4bacb7cec183edd931ea0ed3453be814d3a4e22ab4c42b67566a9d990",
+          "bytes": 801
+        },
+        {
+          "role": "signed-official-artifact",
+          "path": "source-evidence/IdleHandwerker/signed-official-artifact.json",
+          "sha256": "9b9b4e671e100f9b4df64342d5a6314eff104bed1983cc262377140ceca86378",
+          "bytes": 807
+        },
+        {
+          "role": "signed-provenance",
+          "path": "source-evidence/IdleHandwerker/signed-provenance.json",
+          "sha256": "53e1f12fbac16828b5f51b89affd9ea9ca15600f2ce3f48aa63dfc702d5ceac7",
+          "bytes": 2139
+        },
+        {
+          "role": "install-time-actual-manifest",
+          "path": "source-evidence/IdleHandwerker/install-time-actual-manifest.xml",
+          "sha256": "46eb85a2a7f113a83e036e64da50bd4705b7e0918363f3bc6ad75633bc630313",
+          "bytes": 557
+        },
+        {
+          "role": "all-module-aab-apk-pair",
+          "path": "source-evidence/IdleHandwerker/all-module-aab-apk-pair.json",
+          "sha256": "84991ad9d5a2c20f831bbf6d9b48dcd62663df642fb58f3b7f390aabd3445d29",
+          "bytes": 131433
+        },
+        {
+          "role": "prior-engine-original-font-inspection",
+          "path": "source-evidence/IdleHandwerker/prior-engine-original-font-inspection.json",
+          "sha256": "bb9c2293b57ca5b1d2857abfaa808193c184f33837a3b46d8de185f53f2d6f5d",
+          "bytes": 1546
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/IdleHandwerker/original-font-0.ttf",
+          "sha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+          "bytes": 224432
+        },
+        {
+          "role": "engine-inspected-font-resource-0",
+          "path": "source-evidence/IdleHandwerker/engine-inspected-font-resource-0.fontdata",
+          "sha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
+          "bytes": 112980
+        },
+        {
+          "role": "original-font-1",
+          "path": "source-evidence/IdleHandwerker/original-font-1.ttf",
+          "sha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+          "bytes": 222416
+        },
+        {
+          "role": "engine-inspected-font-resource-1",
+          "path": "source-evidence/IdleHandwerker/engine-inspected-font-resource-1.fontdata",
+          "sha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
+          "bytes": 115627
+        },
+        {
+          "role": "original-notice-0",
+          "path": "source-evidence/IdleHandwerker/original-notice-0.txt",
+          "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d",
+          "bytes": 4382
+        },
+        {
+          "role": "original-notice-1",
+          "path": "source-evidence/IdleHandwerker/original-notice-1.txt",
+          "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df",
+          "bytes": 2367
+        },
+        {
+          "role": "original-notice-2",
+          "path": "source-evidence/IdleHandwerker/original-notice-2.txt",
+          "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93",
+          "bytes": 8816
+        },
+        {
+          "role": "original-notice-3",
+          "path": "source-evidence/IdleHandwerker/original-notice-3.md",
+          "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d",
+          "bytes": 5104
+        },
+        {
+          "role": "original-notice-4",
+          "path": "source-evidence/IdleHandwerker/original-notice-4.txt",
+          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
+          "bytes": 1078
+        },
+        {
+          "role": "original-notice-5",
+          "path": "source-evidence/IdleHandwerker/original-notice-5.json",
+          "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad",
+          "bytes": 2716
+        },
+        {
+          "role": "original-notice-6",
+          "path": "source-evidence/IdleHandwerker/original-notice-6.json",
+          "sha256": "ad872490dbbc6bb3ded65b25d3ed2a587dd7e0b40c2f83d18181dc439e4fd76b",
+          "bytes": 677
+        },
+        {
+          "role": "original-notice-7",
+          "path": "source-evidence/IdleHandwerker/original-notice-7.txt",
+          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+          "bytes": 1066
+        }
+      ],
+      "requiredBundleAssets": [
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
+          "sha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
+          "sha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
+          "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/fonts/LICENSE.txt",
+          "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
+          "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
+          "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
+          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
+          "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
+          "sha256": "ad872490dbbc6bb3ded65b25d3ed2a587dd7e0b40c2f83d18181dc439e4fd76b"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
+          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1"
+        }
+      ],
+      "fontProofs": [
+        {
+          "encoding": "godot_converted_resource_equal_prior_actual_engine_FontFile_data_inspection",
+          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
+          "entrySha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
+          "originalTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+          "originalFontSourceRole": "original-font-0",
+          "engineInspectedResourceRole": "engine-inspected-font-resource-0",
+          "engineInspectionResource": "res://IdleHandwerker-AAB-Mitr-Bold.ttf.fontdata",
+          "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Bold.ttf"
+        },
+        {
+          "encoding": "godot_converted_resource_equal_prior_actual_engine_FontFile_data_inspection",
+          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
+          "entrySha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
+          "originalTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+          "originalFontSourceRole": "original-font-1",
+          "engineInspectedResourceRole": "engine-inspected-font-resource-1",
+          "engineInspectionResource": "res://IdleHandwerker-AAB-Mitr-Regular.ttf.fontdata",
+          "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Regular.ttf"
+        }
+      ],
+      "uiLanguagePolicy": "german_only",
+      "fullSignedPayloadSha256": "7e100268849d112363a6c325cbabdcb002b2e61206f27ce7e509a9e265900a27",
+      "allowedGeneratedBaselineExtras": {
+        "assets/dexopt/baseline.prof": "a4952eaab81f4a81c16278573d86ffab34674b2bd6b39a5db0cd4e719f43e766",
+        "assets/dexopt/baseline.profm": "044943789d947c8ad0c8682a515effa44ca6c7556b970bca226ec7bb1b3ccdd0"
+      }
+    }
+  ]
+}

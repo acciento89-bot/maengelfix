@@ -1,0 +1,12 @@
+{
+  "component": "godot-admob-plugin",
+  "version": "v5.0.0",
+  "repository": "https://github.com/poingstudios/godot-admob-plugin",
+  "pinnedTagCommit": "a2d7a243a9362a4ee2c9f7bdeb6d680707334a86",
+  "officialArchiveURL": "https://github.com/poingstudios/godot-admob-plugin/releases/download/v5.0.0/poing-godot-admob-v5.0.0.zip",
+  "archiveSha256": "93e9aaa8422b00f783c6b8c06a9e2ae3a81db071515517bb061bbb2d202d5fdf",
+  "originalArchiveEntry": "poing-godot-admob/addons/admob/LICENSE",
+  "originalLicenseSha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
+  "originalCopyright": "Copyright (c) 2023-present Poing Studios",
+  "sourceSDKUnchanged": true
+}

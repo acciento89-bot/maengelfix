@@ -1,0 +1,939 @@
+{
+  "completedUTC": "2026-10-29T15:56:04.476304+00:00",
+  "scope": "Authorized exact approved PerfectDrop/RisingSteps ordinary FF promotion, original aab-payload normalization, own unpublished candidate draft assets and exactly once existing Android signing; final exact-signed-AAB-derived QA APK packaging for P/R/root-signed Rune",
+  "mainAndHumanSourceVerification": [
+    {
+      "app": "PerfectDrop",
+      "localHead": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "officialRemoteMain": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "ordinaryFastForwardPush": true,
+      "indexEmpty": true,
+      "productTreeMatchesCommittedHead": true,
+      "humanDirtExact": " D docs/concepts/PRIMARY-CONCEPT.png\n"
+    },
+    {
+      "app": "RisingSteps",
+      "localHead": "8245a0d495163e647f0f97dba330906034847f76",
+      "officialRemoteMain": "8245a0d495163e647f0f97dba330906034847f76",
+      "ordinaryFastForwardPush": true,
+      "indexEmpty": true,
+      "productTreeMatchesCommittedHead": true,
+      "humanDirtExact": " D docs/concepts/PRIMARY-CONCEPT.png\n"
+    }
+  ],
+  "signedCandidates": [
+    {
+      "app": "PerfectDrop",
+      "repository": "acciento89-bot/perfectdrop",
+      "sourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "remoteMainVerifiedBeforeDispatch": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "runId": 40903969517,
+      "runUrl": "https://github.com/acciento89-bot/perfectdrop/actions/runs/40903969517",
+      "workflowPath": ".github/workflows/sign-android-bundle.yml",
+      "event": "workflow_dispatch",
+      "runAttempt": 1,
+      "conclusion": "success",
+      "artifactId": 12910352998,
+      "artifactName": "PerfectDrop-1.2.0-build15-central-signed",
+      "artifactZipSha256": "fd6cf46b8b86a18315a5772442e2dddc8979e5dd7e51211e5de6b0397e9a2833",
+      "artifactOfficialDigestMatches": true,
+      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/PerfectDrop/signed-artifact/PerfectDrop-1.2.0-build15.aab",
+      "signedSha256": "89d2ff4a445f6ea0da31692234d524b2cfb3461a2e3fc1257cb8d952ad75f7c2",
+      "signedBytes": 67700715,
+      "unsignedSha256": "351fbe1e06ffe7eb86b1f68fcc28bf2abe2150fb946b300e5ca946b5f9c8eb3e",
+      "sourceRawSha256": "4fd1a3f89ae9153e5d39eb6e70e0ddbde4dc72a49ae6fba7620b0b6632bf1d44",
+      "package": "com.kamilunavo.perfectdrop",
+      "versionName": "1.2.0",
+      "versionCode": 15,
+      "uploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+      "uploadCertificateSha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+      "jarsignerVerified": true,
+      "allPayloadEntriesCoveredBySignatureManifest": 613,
+      "allPayloadEntriesEqualRawAndUnsigned": true,
+      "modulePayloadFingerprints": {
+        "BUNDLE-METADATA": "59023da77bed665d535464b2c8adae6538e69f809301ee3bef46a3ac2cbfaa69",
+        "BundleConfig.pb": "b191283dd70149e26a1c6d528a0e2f81fd3257b4ff3bea39f2ad4d89df7ebef9",
+        "base": "7fa6d1d714db5b905d9e6c5e34ce5e1106b8f98b4bb25a824e3863620ad2ef78"
+      },
+      "fullOriginalFontAndOflProofInheritedByExactPayloadEquality": true,
+      "sourceProvenanceMatchesAllInputs": true,
+      "bundletoolValidatePassed": true,
+      "normalManifestNotDebuggable": true,
+      "temporaryRemoteSigningMaterialCleanupStepSucceeded": true,
+      "localPrivateKeyMaterialObtained": false,
+      "playSubmission": false,
+      "iosAction": false,
+      "finishedUTC": "2026-10-29T15:44:38.957865+00:00"
+    },
+    {
+      "app": "RisingSteps",
+      "repository": "acciento89-bot/risingsteps",
+      "sourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+      "remoteMainVerifiedBeforeDispatch": "8245a0d495163e647f0f97dba330906034847f76",
+      "runId": 40903980440,
+      "runUrl": "https://github.com/acciento89-bot/risingsteps/actions/runs/40903980440",
+      "workflowPath": ".github/workflows/sign-android-bundle.yml",
+      "event": "workflow_dispatch",
+      "runAttempt": 1,
+      "conclusion": "success",
+      "artifactId": 12911160903,
+      "artifactName": "RisingSteps-1.2.0-build9-central-signed",
+      "artifactZipSha256": "ff643a49fcfc96cade25de19f14e7f8e57eba3e5596630c6ce8c2a8364ac7761",
+      "artifactOfficialDigestMatches": true,
+      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/RisingSteps/signed-artifact/RisingSteps-1.2.0-build9.aab",
+      "signedSha256": "b5d101d5c0c123ad5d9b8608231bdd25641fa4996119eafffc12bbbc496cf866",
+      "signedBytes": 62540609,
+      "unsignedSha256": "699b0d86af9edb199b860aa008a571a8f9f0a83d40660672e5b6ffdae607feb9",
+      "sourceRawSha256": "f1332165952595099b5b7ea656f45b643cf7de5796d4ad5cb8d6e8b7ba666c67",
+      "package": "com.kamilunavo.risingsteps",
+      "versionName": "1.2.0",
+      "versionCode": 9,
+      "uploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+      "uploadCertificateSha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+      "jarsignerVerified": true,
+      "allPayloadEntriesCoveredBySignatureManifest": 656,
+      "allPayloadEntriesEqualRawAndUnsigned": true,
+      "modulePayloadFingerprints": {
+        "BUNDLE-METADATA": "8a8af6d178c5a250ba7b14ebf3a765b9eeba76c7e9b4841def46ea961e31b993",
+        "BundleConfig.pb": "b191283dd70149e26a1c6d528a0e2f81fd3257b4ff3bea39f2ad4d89df7ebef9",
+        "base": "872c30e812a4f73ccd0a1219f272fe7897ab6d8d5c20570b94379ff6c1cdc694"
+      },
+      "fullOriginalFontAndOflProofInheritedByExactPayloadEquality": true,
+      "sourceProvenanceMatchesAllInputs": true,
+      "bundletoolValidatePassed": true,
+      "normalManifestNotDebuggable": true,
+      "temporaryRemoteSigningMaterialCleanupStepSucceeded": true,
+      "localPrivateKeyMaterialObtained": false,
+      "playSubmission": false,
+      "iosAction": false,
+      "finishedUTC": "2026-10-29T15:44:54.941821+00:00"
+    }
+  ],
+  "qaCandidates": [
+    {
+      "app": "PerfectDrop",
+      "sourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+      "package": "com.kamilunavo.perfectdrop",
+      "versionName": "1.2.0",
+      "versionCode": 15,
+      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/PerfectDrop/signed-artifact/PerfectDrop-1.2.0-build15.aab",
+      "signedAabSha256": "89d2ff4a445f6ea0da31692234d524b2cfb3461a2e3fc1257cb8d952ad75f7c2",
+      "signedAabUnchanged": true,
+      "storeUploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+      "actualApks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/PerfectDrop/NativeQA/PerfectDrop-89d2ff4a445f6ea0da31692234d524b2cfb3461a2e3fc1257cb8d952ad75f7c2-ExactAAB-QA.apks",
+      "actualApksSha256": "1f5abb3e2704b3b455c373036cacfd9ffe122082f06726958ef9b7f27384731f",
+      "qaApk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/PerfectDrop/NativeQA/PerfectDrop-1.2.0-code15-ExactAAB-QA.apk",
+      "qaApkSha256": "685a105fdac2d6abdf05e28f37a892ad8d08212ebeaaa72a19e50eecf7df0da3",
+      "qaPublicSignerSha256": "d58cc21f1ddc8962e914f41b4df6f2478c0dd4b2adf671beeccfee83878b8c3f",
+      "sameAsAllThreePriorQaApks": true,
+      "normalReleaseNonDebuggable": true,
+      "allOriginalDexJniBaseAssetEntriesEqual": 105,
+      "generatedBaselineProfileExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      },
+      "native64BitLibraries": [
+        {
+          "entry": "lib/arm64-v8a/libc++_shared.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 634032,
+              "virtualAddress": 650416,
+              "align": 16384
+            },
+            {
+              "offset": 1250032,
+              "virtualAddress": 1282800,
+              "align": 16384
+            },
+            {
+              "offset": 1289792,
+              "virtualAddress": 1338944,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 43934135,
+          "zipOffsetModulo16K": 8631,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libgame.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 145008,
+              "virtualAddress": 161392,
+              "align": 16384
+            },
+            {
+              "offset": 149432,
+              "virtualAddress": 182200,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 44340752,
+          "zipOffsetModulo16K": 5648,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libil2cpp.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 15166064,
+              "virtualAddress": 15182448,
+              "align": 16384
+            },
+            {
+              "offset": 41620608,
+              "virtualAddress": 41653376,
+              "align": 16384
+            },
+            {
+              "offset": 43243192,
+              "virtualAddress": 43292344,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 44397693,
+          "zipOffsetModulo16K": 13437,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libmain.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 2592,
+              "virtualAddress": 18976,
+              "align": 16384
+            },
+            {
+              "offset": 3872,
+              "virtualAddress": 36640,
+              "align": 16384
+            },
+            {
+              "offset": 4432,
+              "virtualAddress": 53584,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 56774899,
+          "zipOffsetModulo16K": 4339,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libswappywrapper.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 208352,
+              "virtualAddress": 224736,
+              "align": 16384
+            },
+            {
+              "offset": 215152,
+              "virtualAddress": 247920,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 56777541,
+          "zipOffsetModulo16K": 6981,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libunity.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 4799680,
+              "virtualAddress": 4816064,
+              "align": 16384
+            },
+            {
+              "offset": 19191856,
+              "virtualAddress": 19224624,
+              "align": 16384
+            },
+            {
+              "offset": 19498752,
+              "virtualAddress": 19547904,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 56857467,
+          "zipOffsetModulo16K": 4987,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        }
+      ],
+      "allNativeElf16KAndApplicableStoredZipAlignmentChecksPassed": true,
+      "nativeStorageCounts": {
+        "stored": 0,
+        "compressedExtracted": 6
+      },
+      "actualApkExtractNativeLibs": true,
+      "zipalignCheckPassed": true,
+      "apkUnmodifiedExactOriginalBundletoolUniversalEntry": true,
+      "activeFullOriginalFontByteProof": [
+        {
+          "source": "Assets/Resources/Fonts/ChakraPetch-Regular.ttf",
+          "sourceSha256": "98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986",
+          "signedAabEntry": "base/assets/bin/Data/f751e5c612b24047821637d1483750bb",
+          "apkEntry": "assets/bin/Data/f751e5c612b24047821637d1483750bb",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "7c89092c0499b8b6deae2c94fd6d0ace036ba39cb0a9389da056129e95f39b63"
+        },
+        {
+          "source": "Assets/Resources/Fonts/ChakraPetch-Bold.ttf",
+          "sourceSha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0",
+          "signedAabEntry": "base/assets/bin/Data/c3947578f0c14c10b965983f36cb368b",
+          "apkEntry": "assets/bin/Data/c3947578f0c14c10b965983f36cb368b",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "af752546d00c1e464296ba0289dcf3584c5d18d1db75e126db076420474e6cb0"
+        }
+      ],
+      "originalOflByteProof": [
+        {
+          "source": "Assets/StreamingAssets/Barlow-OFL.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+          "signedAabEntry": "base/assets/Barlow-OFL.txt",
+          "apkEntry": "assets/Barlow-OFL.txt",
+          "fullOriginalBytesExact": true
+        },
+        {
+          "source": "Assets/StreamingAssets/ChakraPetch-OFL.txt",
+          "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56",
+          "signedAabEntry": "base/assets/ChakraPetch-OFL.txt",
+          "apkEntry": "assets/ChakraPetch-OFL.txt",
+          "fullOriginalBytesExact": true
+        }
+      ],
+      "allBaseAssetsEqualSignedSource": true,
+      "nativeDeviceQa": "PENDING root-owned actual manual QA",
+      "notStoreArtifact": true,
+      "noEditorDeviceStoreOrSourceMutation": true,
+      "finishedUTC": "2026-10-29T15:53:20.991259+00:00"
+    },
+    {
+      "app": "RisingSteps",
+      "sourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+      "package": "com.kamilunavo.risingsteps",
+      "versionName": "1.2.0",
+      "versionCode": 9,
+      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/RisingSteps/signed-artifact/RisingSteps-1.2.0-build9.aab",
+      "signedAabSha256": "b5d101d5c0c123ad5d9b8608231bdd25641fa4996119eafffc12bbbc496cf866",
+      "signedAabUnchanged": true,
+      "storeUploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+      "actualApks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/RisingSteps/NativeQA/RisingSteps-b5d101d5c0c123ad5d9b8608231bdd25641fa4996119eafffc12bbbc496cf866-ExactAAB-QA.apks",
+      "actualApksSha256": "a79fd1d3fc056c2a18ac25be6053d395d22565f91c58f1555cf7c224ab6195af",
+      "qaApk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/RisingSteps/NativeQA/RisingSteps-1.2.0-code9-ExactAAB-QA.apk",
+      "qaApkSha256": "d4031669f67551f37124e391405b05782149c7f1b540ec86bf39d712897c34ef",
+      "qaPublicSignerSha256": "d58cc21f1ddc8962e914f41b4df6f2478c0dd4b2adf671beeccfee83878b8c3f",
+      "sameAsAllThreePriorQaApks": true,
+      "normalReleaseNonDebuggable": true,
+      "allOriginalDexJniBaseAssetEntriesEqual": 148,
+      "generatedBaselineProfileExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      },
+      "native64BitLibraries": [
+        {
+          "entry": "lib/arm64-v8a/libc++_shared.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 634032,
+              "virtualAddress": 650416,
+              "align": 16384
+            },
+            {
+              "offset": 1250032,
+              "virtualAddress": 1282800,
+              "align": 16384
+            },
+            {
+              "offset": 1289792,
+              "virtualAddress": 1338944,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 36912522,
+          "zipOffsetModulo16K": 15754,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libgame.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 145008,
+              "virtualAddress": 161392,
+              "align": 16384
+            },
+            {
+              "offset": 149432,
+              "virtualAddress": 182200,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 37319139,
+          "zipOffsetModulo16K": 12771,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libil2cpp.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 15172720,
+              "virtualAddress": 15189104,
+              "align": 16384
+            },
+            {
+              "offset": 41672576,
+              "virtualAddress": 41705344,
+              "align": 16384
+            },
+            {
+              "offset": 43297192,
+              "virtualAddress": 43346344,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 37376082,
+          "zipOffsetModulo16K": 4178,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libmain.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 2592,
+              "virtualAddress": 18976,
+              "align": 16384
+            },
+            {
+              "offset": 3872,
+              "virtualAddress": 36640,
+              "align": 16384
+            },
+            {
+              "offset": 4432,
+              "virtualAddress": 53584,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 49773476,
+          "zipOffsetModulo16K": 15268,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libswappywrapper.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 208352,
+              "virtualAddress": 224736,
+              "align": 16384
+            },
+            {
+              "offset": 215152,
+              "virtualAddress": 247920,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 49776118,
+          "zipOffsetModulo16K": 1526,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libunity.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 4947344,
+              "virtualAddress": 4963728,
+              "align": 16384
+            },
+            {
+              "offset": 20591440,
+              "virtualAddress": 20624208,
+              "align": 16384
+            },
+            {
+              "offset": 20912640,
+              "virtualAddress": 20961792,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 49856041,
+          "zipOffsetModulo16K": 15913,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        }
+      ],
+      "allNativeElf16KAndApplicableStoredZipAlignmentChecksPassed": true,
+      "nativeStorageCounts": {
+        "stored": 0,
+        "compressedExtracted": 6
+      },
+      "actualApkExtractNativeLibs": true,
+      "zipalignCheckPassed": true,
+      "apkUnmodifiedExactOriginalBundletoolUniversalEntry": true,
+      "activeFullOriginalFontByteProof": [
+        {
+          "source": "Assets/Resources/Fonts/Caudex-Regular.ttf",
+          "sourceSha256": "dbb493e1adc50aaec52071535e6fccf4176793c79545f54d95a812cbfb85169b",
+          "signedAabEntry": "base/assets/bin/Data/e5720e97b7e740adadd830d71e11c511",
+          "apkEntry": "assets/bin/Data/e5720e97b7e740adadd830d71e11c511",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "6d197ecea9f11256ada57a49fd47417472f57c38730c4574ab0e2184ae298ecf"
+        },
+        {
+          "source": "Assets/Resources/Fonts/Caudex-Bold.ttf",
+          "sourceSha256": "880fb67901ce94573ed0262d152b87115a08f928c72fc6c1101375a1223d390a",
+          "signedAabEntry": "base/assets/bin/Data/48b1448c6e4a4b97a71a2b1d07fbb3b2",
+          "apkEntry": "assets/bin/Data/48b1448c6e4a4b97a71a2b1d07fbb3b2",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "ef47a1b900d1cf9f4107a8cd6c2f5d9d04ed48905960d0024aa146326e02c48c"
+        }
+      ],
+      "originalOflByteProof": [
+        {
+          "source": "Assets/StreamingAssets/Barlow-OFL.txt",
+          "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+          "signedAabEntry": "base/assets/Barlow-OFL.txt",
+          "apkEntry": "assets/Barlow-OFL.txt",
+          "fullOriginalBytesExact": true
+        },
+        {
+          "source": "Assets/StreamingAssets/Caudex-OFL.txt",
+          "sha256": "1e5bf8207a40678bc401e2e5456d0db1f2a183b550a30976b48dcdd6a4e4c46c",
+          "signedAabEntry": "base/assets/Caudex-OFL.txt",
+          "apkEntry": "assets/Caudex-OFL.txt",
+          "fullOriginalBytesExact": true
+        }
+      ],
+      "allBaseAssetsEqualSignedSource": true,
+      "nativeDeviceQa": "PENDING root-owned actual manual QA",
+      "notStoreArtifact": true,
+      "noEditorDeviceStoreOrSourceMutation": true,
+      "finishedUTC": "2026-10-29T15:53:40.572625+00:00"
+    },
+    {
+      "app": "Runenpfad",
+      "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+      "package": "com.kamilunavo.runenpfad",
+      "versionName": "0.4.0",
+      "versionCode": 5,
+      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/Runenpfad-0.4.0-5-regular-34e8fd445426/Runenpfad-0.4.0-5-upload.aab",
+      "signedAabSha256": "c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6",
+      "signedAabUnchanged": true,
+      "storeUploadCertificateSha256": "A76F8F0ED69FDD6BB1181322A07B961A353605E8B9F654A0D4E6BC2F186BEF2B",
+      "actualApks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/Runenpfad/NativeQA/Runenpfad-c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6-ExactAAB-QA.apks",
+      "actualApksSha256": "ea9fa18ff3c9c4c532332d008709aa949765d80ff961415fecf53abaea8225d9",
+      "qaApk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/Runenpfad/NativeQA/Runenpfad-0.4.0-code5-ExactAAB-QA.apk",
+      "qaApkSha256": "9fda19de3127ae6713962abacd5e455e387a37b9e36282644d406561527223f4",
+      "qaPublicSignerSha256": "d58cc21f1ddc8962e914f41b4df6f2478c0dd4b2adf671beeccfee83878b8c3f",
+      "sameAsAllThreePriorQaApks": true,
+      "normalReleaseNonDebuggable": true,
+      "allOriginalDexJniBaseAssetEntriesEqual": 155,
+      "generatedBaselineProfileExtras": {
+        "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
+        "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
+      },
+      "native64BitLibraries": [
+        {
+          "entry": "lib/arm64-v8a/libc++_shared.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 634032,
+              "virtualAddress": 650416,
+              "align": 16384
+            },
+            {
+              "offset": 1250032,
+              "virtualAddress": 1282800,
+              "align": 16384
+            },
+            {
+              "offset": 1289792,
+              "virtualAddress": 1338944,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 16887539,
+          "zipOffsetModulo16K": 12019,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libgame.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 145008,
+              "virtualAddress": 161392,
+              "align": 16384
+            },
+            {
+              "offset": 149432,
+              "virtualAddress": 182200,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 17294156,
+          "zipOffsetModulo16K": 9036,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libil2cpp.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 15505680,
+              "virtualAddress": 15522064,
+              "align": 16384
+            },
+            {
+              "offset": 42706144,
+              "virtualAddress": 42738912,
+              "align": 16384
+            },
+            {
+              "offset": 44364824,
+              "virtualAddress": 44413976,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 17351099,
+          "zipOffsetModulo16K": 443,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libmain.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 2592,
+              "virtualAddress": 18976,
+              "align": 16384
+            },
+            {
+              "offset": 3872,
+              "virtualAddress": 36640,
+              "align": 16384
+            },
+            {
+              "offset": 4432,
+              "virtualAddress": 53584,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 29996694,
+          "zipOffsetModulo16K": 13974,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libswappywrapper.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 208352,
+              "virtualAddress": 224736,
+              "align": 16384
+            },
+            {
+              "offset": 215152,
+              "virtualAddress": 247920,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 29999336,
+          "zipOffsetModulo16K": 232,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        },
+        {
+          "entry": "lib/arm64-v8a/libunity.so",
+          "elfClass": 64,
+          "machine": 183,
+          "loads": [
+            {
+              "offset": 0,
+              "virtualAddress": 0,
+              "align": 16384
+            },
+            {
+              "offset": 4778144,
+              "virtualAddress": 4794528,
+              "align": 16384
+            },
+            {
+              "offset": 19122752,
+              "virtualAddress": 19155520,
+              "align": 16384
+            },
+            {
+              "offset": 19428224,
+              "virtualAddress": 19477376,
+              "align": 16384
+            }
+          ],
+          "pass16K": true,
+          "zipCompression": 8,
+          "dataOffset": 30079258,
+          "zipOffsetModulo16K": 14618,
+          "zipAlignmentApplicability": "N/A_COMPRESSED_AND_MANIFEST_EXTRACTS",
+          "actualApkExtractNativeLibs": true
+        }
+      ],
+      "allNativeElf16KAndApplicableStoredZipAlignmentChecksPassed": true,
+      "nativeStorageCounts": {
+        "stored": 0,
+        "compressedExtracted": 6
+      },
+      "actualApkExtractNativeLibs": true,
+      "zipalignCheckPassed": true,
+      "apkUnmodifiedExactOriginalBundletoolUniversalEntry": true,
+      "activeFullOriginalFontByteProof": [
+        {
+          "source": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Bold.ttf",
+          "sourceSha256": "a4f49c9df1351b6151969737493446fa1add16ed1a22fa8b9a4aecbdffeb1b3b",
+          "signedAabEntry": "base/assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7",
+          "apkEntry": "assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "f97edac8a1e9290c7d92a79fec7e30b1d7333187695b2b5a7fb58ca2821bb505"
+        },
+        {
+          "source": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Regular.ttf",
+          "sourceSha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
+          "signedAabEntry": "base/assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec",
+          "apkEntry": "assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec",
+          "fullOriginalFontBytesPresent": true,
+          "entrySha256": "a2978425e21fe95da97879c1470ff0ffc444fc45826c51fad6f69f0dd9e3a549"
+        }
+      ],
+      "originalOflByteProof": [
+        {
+          "source": "Assets/StreamingAssets/AveriaSerifLibre-OFL.txt",
+          "sha256": "46239ba6485d28553fd944da4ad32a00d9c403aa1c3e111676b0b96fe458d1d4",
+          "signedAabEntry": "base/assets/AveriaSerifLibre-OFL.txt",
+          "apkEntry": "assets/AveriaSerifLibre-OFL.txt",
+          "fullOriginalBytesExact": true
+        },
+        {
+          "source": "Assets/StreamingAssets/Licenses/Fonts/LiberationSans/OFL.txt",
+          "sha256": "37f8552e9a874ec10710dc0ede6a9adf168e6609fbd02a507f35629373b85a48",
+          "signedAabEntry": "base/assets/Licenses/Fonts/LiberationSans/OFL.txt",
+          "apkEntry": "assets/Licenses/Fonts/LiberationSans/OFL.txt",
+          "fullOriginalBytesExact": true
+        }
+      ],
+      "allBaseAssetsEqualSignedSource": true,
+      "nativeDeviceQa": "PENDING root-owned actual manual QA",
+      "notStoreArtifact": true,
+      "noEditorDeviceStoreOrSourceMutation": true,
+      "finishedUTC": "2026-10-29T15:53:58.632195+00:00"
+    }
+  ],
+  "guardProofs": {
+    "pairing": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/qa-pairing-validator-controls.json",
+    "applicableNativeStorage": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/qa-applicable-native-storage-controls.json",
+    "pairingControls": 5,
+    "conditionalStorageControls": 4,
+    "originalPerfectOverbroadStoredOnlyCheckRedPreserved": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/PerfectDrop/NativeQA/red-original-bundletool-native-storage-alignment.json",
+    "everyOriginalDexJniBaseAssetByteMatches": true,
+    "storedNativeZipOffsetChecks": "Applicable to actual STORED entries; none on these three exact APKs. Actual compressed JNI6/app, explicit final APK extractNativeLibs=true; original strict ELF16K/congruence and SDK zipalign -c-P16 checks pass.",
+    "primaryAndroidEvidence": [
+      "https://developer.android.com/guide/practices/page-sizes",
+      "https://developer.android.com/tools/zipalign"
+    ]
+  },
+  "knownExecutionLimits": [
+    "Initial system Python lacked optional PIL required only by reused validator module import; stopped before any packaging. Reused existing bundled runtime instead; no dependency installation.",
+    "Unpublished draft get-by-tag initially returned404/list briefly eventual; unique authenticated release-list+numericID reconciliation performed, zero duplicate write attempts.",
+    "The inherited Business JNI check assumed all libraries are stored. Root approved corrected applicability only after final APK explicit extractNativeLibs=true; no assertion on ELF or payload was relaxed. Original P APKS/output preserved and exact SHA-bound resumption performed without another packaging invocation."
+  ],
+  "nativeLaneUsed": false,
+  "immutableOriginalNormalAndSignedAabsUnchanged": true,
+  "remainingRootReadiness": [
+    "Actual root-owned Android installation/coldstart/UI/feature/profile acceptance on the sole retained device",
+    "Fresh official Google maximum versions and current accepted upload certificate equality before any store mutation",
+    "Authorized Google own-listing delivery only after genuine readiness"
+  ],
+  "status": "MAIN_SIGNING_AND_EXACT_QA_PACKAGING_PASS; DEVICE_ACCEPTANCE_AND_PLAY_DELIVERY_PENDING",
+  "executionGraph": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/execution-command-graph.json",
+  "manualPathsAndSourceCoverage": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityAndroidSigning-20261029/native-manual-paths.json",
+  "actionsNotPerformed": [
+    "newSourceEdits",
+    "newSigningWrapper",
+    "productionKeysReadOrExportedLocally",
+    "newQaKeyOrKeyExport",
+    "nativeCompilerOrEditor",
+    "deviceOrProfileMutation",
+    "iosOrAppleAction",
+    "playSubmission",
+    "calculator9OrMaengelDeliveryMainChanged",
+    "runeResigned"
+  ],
+  "sourceEditsPerformed": false,
+  "nativeCompilerOrEditorUsed": false,
+  "deviceUsed": false,
+  "playSubmissionPerformed": false,
+  "iosActionPerformed": false
+}

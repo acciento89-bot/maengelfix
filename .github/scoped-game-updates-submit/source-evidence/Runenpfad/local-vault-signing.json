@@ -1,0 +1,15 @@
+{
+  "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+  "package": "com.kamilunavo.runenpfad",
+  "versionName": "0.4.0",
+  "versionCode": 5,
+  "sourceSHA256": "f9c893a8ce2a0275815d23d0aa47937f74c5125e5ad2a6a4250d8fd20e1c8555",
+  "canonicalUnsignedSHA256": "77177eb011ee41086919824c12782da3c86f77152882564338dcfa47edef5c93",
+  "signedSHA256": "c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6",
+  "certificateSHA256": "A76F8F0ED69FDD6BB1181322A07B961A353605E8B9F654A0D4E6BC2F186BEF2B",
+  "payloadUnchanged": true,
+  "jarSignatureVerified": true,
+  "bundletoolSHA256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
+  "output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/Runenpfad-0.4.0-5-regular-34e8fd445426/Runenpfad-0.4.0-5-upload.aab",
+  "providerSubmission": false
+}

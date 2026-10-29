@@ -1,0 +1,47 @@
+{
+  "checkedUTC": "2026-10-29T15:42:53.258606+00:00",
+  "run": {
+    "id": 40903969517,
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "499018036a5b12375fa7fbfcec9556ed177fd435",
+    "event": "workflow_dispatch",
+    "path": ".github/workflows/sign-android-bundle.yml",
+    "run_attempt": 1,
+    "html_url": "https://github.com/acciento89-bot/perfectdrop/actions/runs/40903969517"
+  },
+  "artifacts": [
+    {
+      "id": 12910352998,
+      "name": "PerfectDrop-1.2.0-build15-central-signed",
+      "size_in_bytes": 66993866,
+      "digest": "sha256:fd6cf46b8b86a18315a5772442e2dddc8979e5dd7e51211e5de6b0397e9a2833",
+      "expired": false,
+      "created_at": "2026-10-29T15:41:48Z",
+      "expires_at": "2026-11-28T15:41:46Z",
+      "workflow_run": {
+        "id": 40903969517,
+        "repository_id": 1396443275,
+        "head_repository_id": 1396443275,
+        "head_branch": "main",
+        "head_sha": "499018036a5b12375fa7fbfcec9556ed177fd435"
+      }
+    },
+    {
+      "id": 12909749802,
+      "name": "verified-unsigned-40903969517",
+      "size_in_bytes": 66929478,
+      "digest": "sha256:349773d71b471c1dca3632c74d7748067fff6dfbfdc799a4d57b93abd6c837af",
+      "expired": false,
+      "created_at": "2026-10-29T15:40:53Z",
+      "expires_at": "2026-10-30T15:40:51Z",
+      "workflow_run": {
+        "id": 40903969517,
+        "repository_id": 1396443275,
+        "head_repository_id": 1396443275,
+        "head_branch": "main",
+        "head_sha": "499018036a5b12375fa7fbfcec9556ed177fd435"
+      }
+    }
+  ]
+}

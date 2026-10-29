@@ -1,0 +1,46 @@
+{
+  "allModulePayloadUnchanged": true,
+  "context": {
+    "GITHUB_EVENT_NAME": "workflow_dispatch",
+    "GITHUB_REF": "refs/heads/main",
+    "GITHUB_REPOSITORY": "acciento89-bot/appideenchatgpt",
+    "GITHUB_REPOSITORY_ID": "1338759340",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "40912897838",
+    "GITHUB_SHA": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+    "GITHUB_WORKFLOW_REF": "acciento89-bot/appideenchatgpt/.github/workflows/idle-handwerker-android.yml@refs/heads/main",
+    "PACKAGE_NAME": "de.kamilunavo.idlehandwerker",
+    "RELEASE_WORKFLOW": ".github/workflows/idle-handwerker-android.yml",
+    "VERSION_CODE": "5",
+    "VERSION_NAME": "1.5.0"
+  },
+  "publicCertificateSha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+  "publicCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "signedAabSha256": "4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6",
+  "source": {
+    "context": {
+      "GITHUB_EVENT_NAME": "workflow_dispatch",
+      "GITHUB_REF": "refs/heads/main",
+      "GITHUB_REPOSITORY": "acciento89-bot/appideenchatgpt",
+      "GITHUB_REPOSITORY_ID": "1338759340",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "40912897838",
+      "GITHUB_SHA": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+      "GITHUB_WORKFLOW_REF": "acciento89-bot/appideenchatgpt/.github/workflows/idle-handwerker-android.yml@refs/heads/main",
+      "PACKAGE_NAME": "de.kamilunavo.idlehandwerker",
+      "RELEASE_WORKFLOW": ".github/workflows/idle-handwerker-android.yml",
+      "VERSION_CODE": "5",
+      "VERSION_NAME": "1.5.0"
+    },
+    "fullModulePayloadSha256": "7e100268849d112363a6c325cbabdcb002b2e61206f27ce7e509a9e265900a27",
+    "rawBuildSha256": "f8dead1e100ca19657f34394d85c47f858bcdafa55191a0e722b305b0cedf418",
+    "schema": 1,
+    "unsignedSha256": "188dc5bdf9bb281e9010d87519f29689d3f153a59fa4f4bc14b376545bade999"
+  },
+  "transfer": {
+    "artifactArchiveSha256": "b3071080fc13fc1d75aa36f30c8c9d39551648ac0b4a8f565a43eb141be9cf0f",
+    "artifactId": 12915017180,
+    "artifactName": "idle-handwerker-unsigned-aab",
+    "sourceRunId": 40912897838
+  }
+}

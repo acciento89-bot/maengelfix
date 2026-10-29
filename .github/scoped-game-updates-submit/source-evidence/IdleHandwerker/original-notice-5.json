@@ -1,0 +1,37 @@
+{
+  "component": "godot-iap",
+  "version": "1.2.9",
+  "repository": "https://github.com/hyochan/godot-iap",
+  "pinnedCommit": "4c3a15ddabeeb4d9d43f3879c6d5bbf7cd85624b",
+  "originalReadmeURL": "https://raw.githubusercontent.com/hyochan/godot-iap/4c3a15ddabeeb4d9d43f3879c6d5bbf7cd85624b/README.md",
+  "readmeSha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d",
+  "upstreamDeclaration": "MIT License - see [LICENSE](LICENSE) file for details.",
+  "sdkBehaviorOrVersionChanged": false,
+  "historicalLicenseFileStatus": "No full licence/copyright file in the complete pinned source tree/archive; linked LICENSE returned404. Retained as historical byte-provenance limitation, not an infringement finding.",
+  "pinnedReadmeRemainsOriginalEvidenceNotFullNotice": true,
+  "pinnedPluginIdentity": {
+    "name": "GodotIap",
+    "author": "hyochan",
+    "version": "1.2.9",
+    "source": "addons/godot-iap/plugin.cfg in exact pinned source archive"
+  },
+  "sameProjectContinuity": {
+    "evidence": "The exact pinned README links to the maintained OpenIAP libraries/godot-iap project; its plugin metadata names hyochan. The maintained godot-iap LICENSE history identifies hyochan as the public author of the license-file commit.",
+    "pinnedReadmeLinksTo": "https://github.com/hyodotdev/openiap/tree/main/libraries/godot-iap",
+    "maintainedLicenseHistory": "https://github.com/hyodotdev/openiap/commits/main/libraries/godot-iap/LICENSE"
+  },
+  "fullNotice": {
+    "packagedPath": "licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
+    "repository": "https://github.com/hyodotdev/openiap",
+    "path": "libraries/godot-iap/LICENSE",
+    "sourceCommit": "6a2abd7b6512e26c47a3517f6564769f03505cef",
+    "sourceURL": "https://raw.githubusercontent.com/hyodotdev/openiap/6a2abd7b6512e26c47a3517f6564769f03505cef/libraries/godot-iap/LICENSE",
+    "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+    "gitBlobSHA1": "2987b94c09c42d21ed3966c834ecfa08601e87af",
+    "copyrightAsPublished": "Copyright (c) 2025 hyo.dev",
+    "originalBytesUnchanged": true,
+    "claimedHistoricalPinnedFile": false,
+    "scope": "Complete MIT notice published by the same maintained godot-iap project; supplied alongside the pinned source MIT declaration, with current-upstream provenance rather than a claim of historical byte identity."
+  },
+  "noticePackagingAssessment": "Pinned source explicitly declares MIT. The complete same-project maintained MIT notice is preserved unchanged with its actual published attribution and packaged in Android Play. Historical file absence remains disclosed; no SDK upgrade, invented copyright holder, blanket rights guarantee or approval claim."
+}

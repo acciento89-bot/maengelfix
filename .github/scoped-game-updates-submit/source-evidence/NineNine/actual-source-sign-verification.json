@@ -1,0 +1,94 @@
+{
+  "app": "NineNine",
+  "repository": "acciento89-bot/99-9",
+  "sourceAuthorityActualCloudHead": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+  "runId": 40912634003,
+  "runUrl": "https://github.com/acciento89-bot/99-9/actions/runs/40912634003",
+  "workflowPath": ".github/workflows/android-central-bundle.yml",
+  "event": "workflow_dispatch",
+  "attempt": 1,
+  "status": "ACTUAL_SOURCE_SIGN_ARCHIVES_CERT_ALL_MODULES_FONT_NOTICES_ELF_PASS_DEVICE_QA_PENDING",
+  "unsignedArtifactId": 12915161788,
+  "unsignedArchiveSha256": "9e1408ec4793c45f56d55f2b997e04edc96af599766465dbc2fc4683e60ccefc",
+  "unsignedAabSha256": "5455294929ce2004ccd5633dc42d8c0ab4e0bd6a6054fb0b7ce6b7e048448eed",
+  "signedArtifactId": 12914782483,
+  "signedArchiveSha256": "0bec52b71400975af8907a2f4817c6e50f73cfeaa55b6568fdf2af921f20dcd7",
+  "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/NineNine/ArtifactVerification/signed-files/99-9-v7-central.aab",
+  "signedAabSha256": "e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274",
+  "package": "de.kamilunavo.ninenine",
+  "versionName": "1.2.0",
+  "versionCode": 7,
+  "acceptedUploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "sourceProvenanceExact": true,
+  "allModuleFilesUnchanged": 1046,
+  "installTimeAssetFilesRetained": 421,
+  "actualInstallTimeAndFusing": true,
+  "rawOriginalNotices": [
+    {
+      "entry": "assetPackInstallTime/assets/assets/fonts/hammersmithone/OFL.txt",
+      "sha256": "b43e2530c7af69fe1800f180d210b6d2745915ed4e0e404495038c861bb6dbf7",
+      "committedSource": "assets/fonts/hammersmithone/OFL.txt",
+      "byteExactOriginalNotice": true
+    },
+    {
+      "entry": "assetPackInstallTime/assets/addons/admob/LICENSE",
+      "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
+      "committedSource": "addons/admob/LICENSE",
+      "byteExactOriginalNotice": true
+    },
+    {
+      "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/LICENSE.txt",
+      "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+      "committedSource": "licenses/godot-iap-3.0.2/LICENSE.txt",
+      "byteExactOriginalNotice": true
+    },
+    {
+      "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/PROVENANCE.json",
+      "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87",
+      "committedSource": "licenses/godot-iap-3.0.2/PROVENANCE.json",
+      "byteExactOriginalNotice": true
+    }
+  ],
+  "originalFonts": [
+    {
+      "entry": "assetPackInstallTime/assets/.godot/imported/HammersmithOne-Regular.ttf-7cbe4bb881d29db288f35406ea4f8474.fontdata",
+      "convertedResourceSha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
+      "originalTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+      "committedSource": "assets/fonts/hammersmithone/HammersmithOne-Regular.ttf",
+      "originalBytes": 102884,
+      "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/NineNine-AAB-HammersmithOne-Regular.ttf.fontdata",
+      "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true
+    }
+  ],
+  "native64BitElf": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "sha256": "c4c2fe5cbcb1fba0003a31fc7ab29a9bb12df6cc187ec45a806462540e83d93b",
+      "allPtLoadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "pass16K": true,
+      "machine": "AArch64",
+      "e_machine": 183
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgodot_android.so",
+      "sha256": "6b1cbfa830c7f6addec89bb5a4a444be53b3527472668fede03ca8637e040198",
+      "allPtLoadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "pass16K": true,
+      "machine": "AArch64",
+      "e_machine": 183
+    }
+  ],
+  "cleanupStepSucceeded": true,
+  "screenshotsDisabledAndSkipped": false,
+  "noLocalProductionKeyAccess": true,
+  "noPlayAppleDeviceOrLocalCompilerAction": true,
+  "finishedUTC": "2026-10-29T16:41:29.490342+00:00"
+}

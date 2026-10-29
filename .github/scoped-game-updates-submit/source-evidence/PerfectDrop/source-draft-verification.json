@@ -1,0 +1,28 @@
+{
+  "app": "PerfectDrop",
+  "repository": "acciento89-bot/perfectdrop",
+  "sourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+  "release": {
+    "id": 428059000,
+    "tag_name": "android-1.2.0-15-candidate",
+    "draft": true,
+    "target_commitish": "499018036a5b12375fa7fbfcec9556ed177fd435",
+    "html_url": "https://github.com/acciento89-bot/perfectdrop/releases/tag/untagged-aab6721b051ef79cff0e",
+    "created_at": "2026-10-29T15:37:53Z"
+  },
+  "asset": {
+    "id": 689023903,
+    "name": "PerfectDrop-1.2.0-15-unsigned.aab",
+    "size": 67629821,
+    "state": "uploaded",
+    "digest": "sha256:351fbe1e06ffe7eb86b1f68fcc28bf2abe2150fb946b300e5ca946b5f9c8eb3e",
+    "created_at": "2026-10-29T15:38:58Z"
+  },
+  "sourceRawSha256": "4fd1a3f89ae9153e5d39eb6e70e0ddbde4dc72a49ae6fba7620b0b6632bf1d44",
+  "unsignedSha256": "351fbe1e06ffe7eb86b1f68fcc28bf2abe2150fb946b300e5ca946b5f9c8eb3e",
+  "downloadedSha256": "351fbe1e06ffe7eb86b1f68fcc28bf2abe2150fb946b300e5ca946b5f9c8eb3e",
+  "downloadedMatchesExactly": true,
+  "allModulePayloadUnchanged": true,
+  "stillDraft": true,
+  "finishedUTC": "2026-10-29T15:39:24.414703+00:00"
+}

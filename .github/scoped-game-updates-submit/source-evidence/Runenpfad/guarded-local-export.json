@@ -1,0 +1,144 @@
+{
+  "app": "Runenpfad",
+  "status": "NORMAL_RELEASE_AAB_BUILT_AND_VALIDATED_NOT_UPLOAD_READY",
+  "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+  "metadataParent": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+  "sourceUiGameplayProviderSettingsIosAndHumanDirtPreserved": true,
+  "protectedExpectedSourceFilesExact": 3539,
+  "actualIdentity": {
+    "package": "com.kamilunavo.runenpfad",
+    "versionName": "0.4.0",
+    "versionCode": 5,
+    "targetSdk": "36",
+    "debuggable": null
+  },
+  "rawAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/Runenpfad-0.4.0-5-regular-34e8fd445426/Runenpfad-0.4.0-5-native.aab",
+  "rawAabSha256": "f9c893a8ce2a0275815d23d0aa47937f74c5125e5ad2a6a4250d8fd20e1c8555",
+  "rawAabBytes": 39389704,
+  "bundletoolVersion": "1.18.2",
+  "bundletoolSha256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
+  "bundletoolValidatePassed": true,
+  "sourceExactStreamingNotices": [
+    {
+      "source": "Assets/StreamingAssets/AveriaSerifLibre-OFL.txt",
+      "bundleEntry": "base/assets/AveriaSerifLibre-OFL.txt",
+      "sha256": "46239ba6485d28553fd944da4ad32a00d9c403aa1c3e111676b0b96fe458d1d4",
+      "sourceExact": true
+    },
+    {
+      "source": "Assets/StreamingAssets/Licenses/Fonts/LiberationSans/OFL.txt",
+      "bundleEntry": "base/assets/Licenses/Fonts/LiberationSans/OFL.txt",
+      "sha256": "37f8552e9a874ec10710dc0ede6a9adf168e6609fbd02a507f35629373b85a48",
+      "sourceExact": true
+    }
+  ],
+  "activeFontFamily": "AveriaSerifLibre",
+  "activeOriginalFontByteSearch": {
+    "Assets/_Project/Art/Fonts/AveriaSerifLibre-Bold.ttf": {
+      "sha256": "a4f49c9df1351b6151969737493446fa1add16ed1a22fa8b9a4aecbdffeb1b3b",
+      "matches": [
+        "base/assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7"
+      ]
+    },
+    "Assets/_Project/Art/Fonts/AveriaSerifLibre-Regular.ttf": {
+      "sha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
+      "matches": [
+        "base/assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec"
+      ]
+    }
+  },
+  "allActiveOriginalTtfBytesFoundInActualAab": true,
+  "nativeLibraries": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgame.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libil2cpp.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libmain.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libunity.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    }
+  ],
+  "rawSignatureEntries": [
+    "META-INF/ANDROIDD.SF",
+    "META-INF/ANDROIDD.RSA"
+  ],
+  "rawSignatureNotUploadIdentityProof": true,
+  "restorationProof": {
+    "Failure": "",
+    "Output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/Runenpfad-0.4.0-5-regular-34e8fd445426/Runenpfad-0.4.0-5-native.aab",
+    "Package": "com.kamilunavo.runenpfad",
+    "AndroidVersionName": "0.4.0",
+    "Sha256": "f9c893a8ce2a0275815d23d0aa47937f74c5125e5ad2a6a4250d8fd20e1c8555",
+    "AndroidVersionCode": 5,
+    "BuildSucceeded": true,
+    "ProjectSettingsRestored": true,
+    "ProviderIdentityAssetsRestored": true,
+    "IOSVersionRestored": true,
+    "ToolchainRestored": true,
+    "UploadSigned": false
+  },
+  "buildRequest": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/RisingRune-RegularExports/Runenpfad/regular-release/request.json",
+  "buildResult": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/RisingRune-RegularExports/Runenpfad/regular-release/result.json",
+  "fullLog": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/RisingRune-RegularExports/Runenpfad/regular-release/unity.log",
+  "nativeLane": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/native-lane.json",
+  "sourceIndexEmpty": true,
+  "noCloudDeviceSigningVaultIosAction": true,
+  "requiresRootSigningAndActualNativeQa": true,
+  "finishedUTC": "2026-10-29T14:16:37.697580+00:00"
+}

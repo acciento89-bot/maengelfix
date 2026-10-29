@@ -1,0 +1,17 @@
+{
+  "component": "godot-iap",
+  "version": "3.0.2",
+  "repository": "https://github.com/hyodotdev/openiap",
+  "tag": "godot-iap-3.0.2",
+  "pinnedCommit": "7d1024380252f14b4062434a35f7023794559246",
+  "originalLicenseURL": "https://raw.githubusercontent.com/hyodotdev/openiap/7d1024380252f14b4062434a35f7023794559246/LICENSE",
+  "originalLicenseSha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+  "originalCopyright": "Copyright (c) 2025 hyo.dev",
+  "sourceReadmeURL": "https://github.com/hyodotdev/openiap/blob/7d1024380252f14b4062434a35f7023794559246/libraries/godot-iap/README.md",
+  "sourceReadmeExplicitLicenseLink": "../../LICENSE",
+  "sourceReadmeSha256": "7f34dcd5356b451b66958f06428966f1cc243d451bb071abe6fd7f3bd4f350e9",
+  "releaseArchiveSha256": "55406c3ab65d489164db8dfe178b764e89d2235532d1c917e5b8a79c35991cb7",
+  "licenseTextPreservedByteExact": true,
+  "sdkRuntimeAndBinariesChanged": false,
+  "scope": "Pinned component MIT notice. No assertion that this single notice licenses unrelated bundled dependencies."
+}

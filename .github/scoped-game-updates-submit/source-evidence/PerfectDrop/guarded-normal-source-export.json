@@ -1,0 +1,144 @@
+{
+  "app": "PerfectDrop",
+  "status": "NORMAL_RELEASE_AAB_BUILT_AND_VALIDATED_NOT_UPLOAD_READY",
+  "sourceCommit": "499018036a5b12375fa7fbfcec9556ed177fd435",
+  "metadataParent": "db8b9e969dacf623e6d4491878430daa4bb35565",
+  "sourceUiGameplayProviderSettingsIosAndHumanDirtPreserved": true,
+  "protectedExpectedSourceFilesExact": 439,
+  "actualIdentity": {
+    "package": "com.kamilunavo.perfectdrop",
+    "versionName": "1.2.0",
+    "versionCode": 15,
+    "targetSdk": "36",
+    "debuggable": null
+  },
+  "rawAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/PerfectDrop-1.2.0-15-merged-499018036a5b/PerfectDrop-1.2.0-15-native.aab",
+  "rawAabSha256": "4fd1a3f89ae9153e5d39eb6e70e0ddbde4dc72a49ae6fba7620b0b6632bf1d44",
+  "rawAabBytes": 67691239,
+  "bundletoolVersion": "1.18.2",
+  "bundletoolSha256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
+  "bundletoolValidatePassed": true,
+  "sourceExactStreamingNotices": [
+    {
+      "source": "Assets/StreamingAssets/Barlow-OFL.txt",
+      "bundleEntry": "base/assets/Barlow-OFL.txt",
+      "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+      "sourceExact": true
+    },
+    {
+      "source": "Assets/StreamingAssets/ChakraPetch-OFL.txt",
+      "bundleEntry": "base/assets/ChakraPetch-OFL.txt",
+      "sha256": "13831d02389d917d22fcfa6c79f98f8acbf61d230add0e73a4d4dc5f3bfb9e56",
+      "sourceExact": true
+    }
+  ],
+  "activeFontFamily": "ChakraPetch",
+  "activeOriginalFontByteSearch": {
+    "Assets/Resources/Fonts/ChakraPetch-Regular.ttf": {
+      "sha256": "98fcd638baa5c81ff0316b7538ce330ee3b23b1302726de3526d5933a8ecf986",
+      "matches": [
+        "base/assets/bin/Data/f751e5c612b24047821637d1483750bb"
+      ]
+    },
+    "Assets/Resources/Fonts/ChakraPetch-Bold.ttf": {
+      "sha256": "65fbf76d95651697275e19db4d717c0e95a789ddd3476478b05292104db278a0",
+      "matches": [
+        "base/assets/bin/Data/c3947578f0c14c10b965983f36cb368b"
+      ]
+    }
+  },
+  "allActiveOriginalTtfBytesFoundInActualAab": true,
+  "nativeLibraries": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgame.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libil2cpp.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libmain.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libunity.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    }
+  ],
+  "rawSignatureEntries": [
+    "META-INF/ANDROIDD.SF",
+    "META-INF/ANDROIDD.RSA"
+  ],
+  "rawSignatureNotUploadIdentityProof": true,
+  "restorationProof": {
+    "Failure": "",
+    "Output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/PerfectDrop-1.2.0-15-merged-499018036a5b/PerfectDrop-1.2.0-15-native.aab",
+    "Package": "com.kamilunavo.perfectdrop",
+    "AndroidVersionName": "1.2.0",
+    "Sha256": "4fd1a3f89ae9153e5d39eb6e70e0ddbde4dc72a49ae6fba7620b0b6632bf1d44",
+    "AndroidVersionCode": 15,
+    "BuildSucceeded": true,
+    "ProjectSettingsRestored": true,
+    "ProviderIdentityAssetsRestored": true,
+    "IOSVersionRestored": true,
+    "ToolchainRestored": true,
+    "UploadSigned": false
+  },
+  "buildRequest": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/PerfectDrop-1.2.0-15-merged-499018036a5b/actual-build-request.json",
+  "buildResult": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/PerfectDrop-1.2.0-15-merged-499018036a5b/actual-build-result.json",
+  "fullLog": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/PerfectDrop-1.2.0-15-merged-499018036a5b/unity-release.log",
+  "nativeLane": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/native-lane.json",
+  "sourceIndexEmpty": true,
+  "noCloudDeviceSigningVaultIosAction": true,
+  "requiresRootSigningAndActualNativeQa": true,
+  "finishedUTC": "2026-10-29T15:07:39.541796+00:00"
+}

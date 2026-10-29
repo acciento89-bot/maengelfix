@@ -1,0 +1,47 @@
+{
+  "checkedUTC": "2026-10-29T15:42:54.073340+00:00",
+  "run": {
+    "id": 40903980440,
+    "status": "completed",
+    "conclusion": "success",
+    "head_sha": "8245a0d495163e647f0f97dba330906034847f76",
+    "event": "workflow_dispatch",
+    "path": ".github/workflows/sign-android-bundle.yml",
+    "run_attempt": 1,
+    "html_url": "https://github.com/acciento89-bot/risingsteps/actions/runs/40903980440"
+  },
+  "artifacts": [
+    {
+      "id": 12911160903,
+      "name": "RisingSteps-1.2.0-build9-central-signed",
+      "size_in_bytes": 61802897,
+      "digest": "sha256:ff643a49fcfc96cade25de19f14e7f8e57eba3e5596630c6ce8c2a8364ac7761",
+      "expired": false,
+      "created_at": "2026-10-29T15:41:50Z",
+      "expires_at": "2026-11-28T15:41:47Z",
+      "workflow_run": {
+        "id": 40903980440,
+        "repository_id": 1396444083,
+        "head_repository_id": 1396444083,
+        "head_branch": "main",
+        "head_sha": "8245a0d495163e647f0f97dba330906034847f76"
+      }
+    },
+    {
+      "id": 12909899602,
+      "name": "verified-unsigned-40903980440",
+      "size_in_bytes": 61734261,
+      "digest": "sha256:7004a073909f2c138955901819d2dc4d6ee08e5f18e4f706cfb8fd107816af44",
+      "expired": false,
+      "created_at": "2026-10-29T15:41:01Z",
+      "expires_at": "2026-10-30T15:40:58Z",
+      "workflow_run": {
+        "id": 40903980440,
+        "repository_id": 1396444083,
+        "head_repository_id": 1396444083,
+        "head_branch": "main",
+        "head_sha": "8245a0d495163e647f0f97dba330906034847f76"
+      }
+    }
+  ]
+}

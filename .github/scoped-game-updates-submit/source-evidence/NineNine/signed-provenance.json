@@ -1,0 +1,46 @@
+{
+  "allModulePayloadUnchanged": true,
+  "context": {
+    "GITHUB_EVENT_NAME": "workflow_dispatch",
+    "GITHUB_REF": "refs/heads/main",
+    "GITHUB_REPOSITORY": "acciento89-bot/99-9",
+    "GITHUB_REPOSITORY_ID": "1342836201",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "40912634003",
+    "GITHUB_SHA": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+    "GITHUB_WORKFLOW_REF": "acciento89-bot/99-9/.github/workflows/android-central-bundle.yml@refs/heads/main",
+    "PACKAGE_NAME": "de.kamilunavo.ninenine",
+    "RELEASE_WORKFLOW": ".github/workflows/android-central-bundle.yml",
+    "VERSION_CODE": "7",
+    "VERSION_NAME": "1.2.0"
+  },
+  "publicCertificateSha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
+  "publicCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
+  "signedAabSha256": "e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274",
+  "source": {
+    "context": {
+      "GITHUB_EVENT_NAME": "workflow_dispatch",
+      "GITHUB_REF": "refs/heads/main",
+      "GITHUB_REPOSITORY": "acciento89-bot/99-9",
+      "GITHUB_REPOSITORY_ID": "1342836201",
+      "GITHUB_RUN_ATTEMPT": "1",
+      "GITHUB_RUN_ID": "40912634003",
+      "GITHUB_SHA": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+      "GITHUB_WORKFLOW_REF": "acciento89-bot/99-9/.github/workflows/android-central-bundle.yml@refs/heads/main",
+      "PACKAGE_NAME": "de.kamilunavo.ninenine",
+      "RELEASE_WORKFLOW": ".github/workflows/android-central-bundle.yml",
+      "VERSION_CODE": "7",
+      "VERSION_NAME": "1.2.0"
+    },
+    "fullModulePayloadSha256": "e84622a870ba5356957002b469d1f0ae4af4ed511f2a2d3cb977761e8d5b3419",
+    "rawBuildSha256": "4980883599800fbd3ec3e5eb7ed7a28bc4a87e49c11eebfdcc8db6eee080aea9",
+    "schema": 1,
+    "unsignedSha256": "5455294929ce2004ccd5633dc42d8c0ab4e0bd6a6054fb0b7ce6b7e048448eed"
+  },
+  "transfer": {
+    "artifactArchiveSha256": "9e1408ec4793c45f56d55f2b997e04edc96af599766465dbc2fc4683e60ccefc",
+    "artifactId": 12915161788,
+    "artifactName": "central-input-99-9-40912634003",
+    "sourceRunId": 40912634003
+  }
+}

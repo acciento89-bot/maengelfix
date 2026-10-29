@@ -1,0 +1,144 @@
+{
+  "app": "RisingSteps",
+  "status": "NORMAL_RELEASE_AAB_BUILT_AND_VALIDATED_NOT_UPLOAD_READY",
+  "sourceCommit": "8245a0d495163e647f0f97dba330906034847f76",
+  "metadataParent": "5db7ec76284062f4f5481239388fa48363d7bfb5",
+  "sourceUiGameplayProviderSettingsIosAndHumanDirtPreserved": true,
+  "protectedExpectedSourceFilesExact": 479,
+  "actualIdentity": {
+    "package": "com.kamilunavo.risingsteps",
+    "versionName": "1.2.0",
+    "versionCode": 9,
+    "targetSdk": "36",
+    "debuggable": null
+  },
+  "rawAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/RisingSteps-1.2.0-9-merged-8245a0d49516/RisingSteps-1.2.0-9-native.aab",
+  "rawAabSha256": "f1332165952595099b5b7ea656f45b643cf7de5796d4ad5cb8d6e8b7ba666c67",
+  "rawAabBytes": 62530029,
+  "bundletoolVersion": "1.18.2",
+  "bundletoolSha256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
+  "bundletoolValidatePassed": true,
+  "sourceExactStreamingNotices": [
+    {
+      "source": "Assets/StreamingAssets/Barlow-OFL.txt",
+      "bundleEntry": "base/assets/Barlow-OFL.txt",
+      "sha256": "186d750eb496a4c17a76385f82be6aea2ac1cf2de074a811d63786cf374ea73f",
+      "sourceExact": true
+    },
+    {
+      "source": "Assets/StreamingAssets/Caudex-OFL.txt",
+      "bundleEntry": "base/assets/Caudex-OFL.txt",
+      "sha256": "1e5bf8207a40678bc401e2e5456d0db1f2a183b550a30976b48dcdd6a4e4c46c",
+      "sourceExact": true
+    }
+  ],
+  "activeFontFamily": "Caudex",
+  "activeOriginalFontByteSearch": {
+    "Assets/Resources/Fonts/Caudex-Regular.ttf": {
+      "sha256": "dbb493e1adc50aaec52071535e6fccf4176793c79545f54d95a812cbfb85169b",
+      "matches": [
+        "base/assets/bin/Data/e5720e97b7e740adadd830d71e11c511"
+      ]
+    },
+    "Assets/Resources/Fonts/Caudex-Bold.ttf": {
+      "sha256": "880fb67901ce94573ed0262d152b87115a08f928c72fc6c1101375a1223d390a",
+      "matches": [
+        "base/assets/bin/Data/48b1448c6e4a4b97a71a2b1d07fbb3b2"
+      ]
+    }
+  },
+  "allActiveOriginalTtfBytesFoundInActualAab": true,
+  "nativeLibraries": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgame.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libil2cpp.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libmain.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libunity.so",
+      "machine": "AArch64",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "atLeast16KiB": true
+    }
+  ],
+  "rawSignatureEntries": [
+    "META-INF/ANDROIDD.SF",
+    "META-INF/ANDROIDD.RSA"
+  ],
+  "rawSignatureNotUploadIdentityProof": true,
+  "restorationProof": {
+    "Failure": "",
+    "Output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/RisingSteps-1.2.0-9-merged-8245a0d49516/RisingSteps-1.2.0-9-native.aab",
+    "Package": "com.kamilunavo.risingsteps",
+    "AndroidVersionName": "1.2.0",
+    "Sha256": "f1332165952595099b5b7ea656f45b643cf7de5796d4ad5cb8d6e8b7ba666c67",
+    "AndroidVersionCode": 9,
+    "BuildSucceeded": true,
+    "ProjectSettingsRestored": true,
+    "ProviderIdentityAssetsRestored": true,
+    "IOSVersionRestored": true,
+    "ToolchainRestored": true,
+    "UploadSigned": false
+  },
+  "buildRequest": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/RisingSteps-1.2.0-9-merged-8245a0d49516/actual-build-request.json",
+  "buildResult": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/RisingSteps-1.2.0-9-merged-8245a0d49516/actual-build-result.json",
+  "fullLog": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/RisingSteps-1.2.0-9-merged-8245a0d49516/unity-release.log",
+  "nativeLane": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/native-lane.json",
+  "sourceIndexEmpty": true,
+  "noCloudDeviceSigningVaultIosAction": true,
+  "requiresRootSigningAndActualNativeQa": true,
+  "finishedUTC": "2026-10-29T15:12:29.401907+00:00"
+}

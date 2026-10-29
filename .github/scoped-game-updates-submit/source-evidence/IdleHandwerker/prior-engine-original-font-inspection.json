@@ -1,0 +1,44 @@
+[
+  {
+    "app": "IdleHandwerker-APK",
+    "embeddedOriginalTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+    "originalBytes": 224432,
+    "pass": true,
+    "resource": "res://IdleHandwerker-APK-Mitr-Bold.ttf.fontdata"
+  },
+  {
+    "app": "IdleHandwerker-APK",
+    "embeddedOriginalTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+    "originalBytes": 222416,
+    "pass": true,
+    "resource": "res://IdleHandwerker-APK-Mitr-Regular.ttf.fontdata"
+  },
+  {
+    "app": "IdleHandwerker-AAB",
+    "embeddedOriginalTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+    "originalBytes": 224432,
+    "pass": true,
+    "resource": "res://IdleHandwerker-AAB-Mitr-Bold.ttf.fontdata"
+  },
+  {
+    "app": "IdleHandwerker-AAB",
+    "embeddedOriginalTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+    "originalBytes": 222416,
+    "pass": true,
+    "resource": "res://IdleHandwerker-AAB-Mitr-Regular.ttf.fontdata"
+  },
+  {
+    "app": "NineNine-APK",
+    "embeddedOriginalTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+    "originalBytes": 102884,
+    "pass": true,
+    "resource": "res://NineNine-APK-HammersmithOne-Regular.ttf.fontdata"
+  },
+  {
+    "app": "NineNine-AAB",
+    "embeddedOriginalTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+    "originalBytes": 102884,
+    "pass": true,
+    "resource": "res://NineNine-AAB-HammersmithOne-Regular.ttf.fontdata"
+  }
+]

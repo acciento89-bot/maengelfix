@@ -1,0 +1,15 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" xmlns:dist="http://schemas.android.com/apk/distribution" android:compileSdkVersion="36" android:compileSdkVersionCodename="16" package="de.kamilunavo.idlehandwerker" platformBuildVersionCode="36" platformBuildVersionName="16" split="assetPackInstallTime">
+    
+  <dist:module dist:type="asset-pack">
+        
+    <dist:fusing dist:include="true"/>
+        
+    <dist:delivery>
+            
+      <dist:install-time/>
+          
+    </dist:delivery>
+      
+  </dist:module>
+  
+</manifest>

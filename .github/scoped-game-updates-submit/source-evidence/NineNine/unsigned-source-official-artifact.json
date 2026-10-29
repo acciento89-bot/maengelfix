@@ -1,0 +1,20 @@
+{
+  "id": 12915161788,
+  "node_id": "MDg6QXJ0aWZhY3QxMjkxNTE2MTc4OA==",
+  "name": "central-input-99-9-40912634003",
+  "size_in_bytes": 38940751,
+  "url": "https://api.github.com/repos/acciento89-bot/99-9/actions/artifacts/12915161788",
+  "archive_download_url": "https://api.github.com/repos/acciento89-bot/99-9/actions/artifacts/12915161788/zip",
+  "expired": false,
+  "digest": "sha256:9e1408ec4793c45f56d55f2b997e04edc96af599766465dbc2fc4683e60ccefc",
+  "created_at": "2026-10-29T16:36:24Z",
+  "updated_at": "2026-10-29T16:36:24Z",
+  "expires_at": "2026-11-28T16:36:22Z",
+  "workflow_run": {
+    "id": 40912634003,
+    "repository_id": 1342836201,
+    "head_repository_id": 1342836201,
+    "head_branch": "main",
+    "head_sha": "d2790fd808d1f218e6bdf72e2ef8102916826893"
+  }
+}

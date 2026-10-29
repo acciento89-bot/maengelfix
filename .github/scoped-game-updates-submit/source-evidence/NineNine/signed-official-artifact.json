@@ -1,0 +1,20 @@
+{
+  "id": 12914782483,
+  "node_id": "MDg6QXJ0aWZhY3QxMjkxNDc4MjQ4Mw==",
+  "name": "99-9-v7-central-signed-aab",
+  "size_in_bytes": 39046866,
+  "url": "https://api.github.com/repos/acciento89-bot/99-9/actions/artifacts/12914782483",
+  "archive_download_url": "https://api.github.com/repos/acciento89-bot/99-9/actions/artifacts/12914782483/zip",
+  "expired": false,
+  "digest": "sha256:0bec52b71400975af8907a2f4817c6e50f73cfeaa55b6568fdf2af921f20dcd7",
+  "created_at": "2026-10-29T16:37:15Z",
+  "updated_at": "2026-10-29T16:37:15Z",
+  "expires_at": "2026-11-28T16:37:12Z",
+  "workflow_run": {
+    "id": 40912634003,
+    "repository_id": 1342836201,
+    "head_repository_id": 1342836201,
+    "head_branch": "main",
+    "head_sha": "d2790fd808d1f218e6bdf72e2ef8102916826893"
+  }
+}
