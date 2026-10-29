@@ -1043,24 +1043,216 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "182c70e9a7ba456ee039d387c7fa053cf2425cde53a88f0906947f35509576f9",
       "newVersionCode": 11,
       "newVersionName": "0.7.0",
       "optionalOriginalIcon": null,
       "package": "com.kamilunavo.wunderkapseln",
       "previousMaxCode": 10,
       "previousProductionCode": 10,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Eigenes Rettungskapitel mit kurzen Zugrätseln, gespeichertem Puzzlefortschritt und Bestzügen. Die bestehende Kampagne und das Profil bleiben getrennt erhalten. Overlock-Schrift und eigene Welten- und Edelsteinillustrationen.",
+        "en-US": "A separate rescue chapter with short move puzzles, saved puzzle progress and best-move records. Your existing campaign and profile remain separate. Overlock typography and original world and gem illustrations."
+      },
       "repository": "acciento89-bot/Wunderkapseln",
-      "requiredBundleAssets": [],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/res/raw/assets_fonts_overlock_overlockregular.ttf",
+          "sha256": "e27ec26dcb055e6d3843c5106fcacbc54e0c50accc0409935c7aaa16327bc92a"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_overlock_overlockbold.ttf",
+          "sha256": "03ac4ce07ebd6e890aaf9071f8c75bf8b7060f39d44335250dd26bcfc8a16329"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_overlock_ofl.txt",
+          "sha256": "62fab0ba1d5593782cbf048da193f4b1edc16b817577a99d707827513ad80e9a"
+        },
+        {
+          "entry": "base/res/font/roboto_medium_numbers.ttf",
+          "sha256": "acbf6c59d8c5765ffa9af2a839249e2800e0b107aad4045cf5c070765fa29322"
+        },
+        {
+          "entry": "base/root/META-INF/androidx/annotation/annotation/LICENSE.txt",
+          "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+        },
+        {
+          "entry": "base/res/drawable-mdpi-v4/splashscreen_logo.png",
+          "sha256": "c079a09f81956bdf845b033cec923303257369554580d6816e1604df91683a56"
+        },
+        {
+          "entry": "base/res/drawable-hdpi-v4/splashscreen_logo.png",
+          "sha256": "db994bf2f0d9c3c89f43667fd9e0af2aaa7ac1e3644dc42f4b9a4fe9fb80b45f"
+        },
+        {
+          "entry": "base/res/drawable-xhdpi-v4/splashscreen_logo.png",
+          "sha256": "1c940f0ce12f345cd25aadfa1a875b39c393bbe55412e72fa934acba51b720bc"
+        },
+        {
+          "entry": "base/res/drawable-xxhdpi-v4/splashscreen_logo.png",
+          "sha256": "0d4de0fed59fa6f021ce8e40010ba8432d847bb8283e0988194ce27c4377ac4a"
+        },
+        {
+          "entry": "base/res/drawable-xxxhdpi-v4/splashscreen_logo.png",
+          "sha256": "cc2769582d7a388b3b0eb45be54c96347b54a7cc2b37d2e852d620e8affa60fd"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher.webp",
+          "sha256": "2f17616a2b85a3abde76eda052f907e94f0f50a25d20af989f40e32c3ed036b6"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "dd881b9e9df0a4a6d2524f3b7d396ca20fbadfb297537dd427a9c2cf70f40f3f"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher.webp",
+          "sha256": "8a8a394c98d168801e212765ea1844befbcae236cc95185e10c47a7b639e3225"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "b34913c56485d60cb256afc00737827f783bcdd520b89437bcee67139c18366c"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher.webp",
+          "sha256": "32e31738f41b3c7ff72bf52084d363c949c50d652f0203bc4fe9212d8848eb5c"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "046139d219d727e605dbc5f225530aa4a25b31afc6972266ac6a618c9e81a894"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher.webp",
+          "sha256": "0b12e41723c0d465ecf5b1e38c6212783d2163c55aa024d1bac8e8a50467396a"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "f6bf61dea27692619de39355ec93bc99436cc9205aa2ce17e1526f9a807b7a2b"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher.webp",
+          "sha256": "4a75bc70080cbd327010fa7fa6a1c6ad1cd46f4f7ae5bf22547a61e57024575e"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "e9c601f681176dd628652daf232ea7b9514c7f99ca46d6fc0f92ebd3c3153975"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_match.wav",
+          "sha256": "5f997e0dface760cd56b609eaba59745df8dc2ef8244cf6a0d50d78157ec535a"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_combo.wav",
+          "sha256": "afdd656d34aaf7338ac3a6a59cbae25ceae464a70fac782a083fc30502e911b1"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_wonder.wav",
+          "sha256": "41facfd7975eb92c01f928208625428f4b9fc2f2b8bb09f107a7bc9307fbea55"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_win.wav",
+          "sha256": "c90073e14a9cbc5030d4c0dfbc0cb76e92f9d3806b40b11e54ae2657b2c8fd55"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_lost.wav",
+          "sha256": "a76ba7baf3d216edd2e9324de71f7bb7928552647de4305e736f6bd5ff20140b"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_rocket.wav",
+          "sha256": "15164511351eb76ad7d490082883efcddf99d9cbd587d1445358303bdd8c75ee"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_bomb.wav",
+          "sha256": "72b5bf799b405aea3b4b26341f4115f23c99cc72489381de817320f3d17fdb02"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_prism.wav",
+          "sha256": "cac5f98ead842aa5fbc4f000f2f28610e42894f9a6cbc59842f9bd838500e0e5"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_mega.wav",
+          "sha256": "d0fb5317d8ca7fc65ba170983a7971fe64d593943fc9063125628c4452e7bc37"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_wind.wav",
+          "sha256": "e028c86e45c4e613d1bd9958167414a5420dcd7b2169653b4babce9587a6ded3"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_tide.wav",
+          "sha256": "add17b79d5cdeea683331899084723f804b7f8b0147bd30315b5360eaaaba1e3"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_bloom.wav",
+          "sha256": "44bcfb20682d8ad80ac70a4fac6963669816c645a2b3b7f3a70801c3a7853703"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_charge.wav",
+          "sha256": "e0a1224eab4018b0d4a43d72c82a29bd683a38e46348fe9874883bb3cbb2c72d"
+        },
+        {
+          "entry": "base/res/raw/assets_audio_restoration.wav",
+          "sha256": "a240466fabe6893235f8bbccd31ac6eaac1e0cd644ac1fcd52b7dcc584a1c03c"
+        },
+        {
+          "entry": "base/res/raw/assets_music_wondergarden.wav",
+          "sha256": "b93c750583dadc46809cb1ed345379c11917656563f8e337ba1159e46960e4d9"
+        }
+      ],
       "reviewedGitTree": "fa6072a51688ad9c96eb31f722d5618d9d5c136d",
       "reviewedProductDigest": "5882a6c4dcc721f7d743fdd65fdca536f169a76e6db3181d4340a8534083418e",
       "reviewedSourceCommit": "f5cb3b71a295db4753ab3de7dddb4e065ac5dbb9",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "3dbcd8c5dd970b2121306cc821096f32daa88c479259a3e224a3f1b6d1ca6eba",
+      "rootReviewSha256": "604c8db87a65e295b75f6c32371f2b9d2403a33438e38f427f3dfe797b592407",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-rescue-sign.yml",
       "signWorkflowSha256": "dba8cb745adaba5c94bd5d5ce951c1898d0fd9d17fd5b06dcdb2f77b86be1e8c",
