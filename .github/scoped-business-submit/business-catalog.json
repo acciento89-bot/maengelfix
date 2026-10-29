@@ -699,17 +699,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German card/sequence names and handover note remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German card/sequence names and handover note remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German card/sequence names and handover note remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German card/sequence names and handover note remain verbatim."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "182c70e9a7ba456ee039d387c7fa053cf2425cde53a88f0906947f35509576f9",
       "newVersionCode": 7,
       "newVersionName": "1.2.0",
       "optionalOriginalIcon": null,
       "package": "com.kamilunavo.schonerledigt",
       "previousMaxCode": 6,
       "previousProductionCode": 6,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Karten in geordneten Runden erledigen, Verantwortung nach Plan weitergeben und den Verlauf abgeschlossener Runden wieder öffnen. Varela-Round-Typografie und eine eigene Haushaltsoberfläche.",
+        "en-US": "Complete cards in ordered rounds, hand over responsibility and revisit completed-round history. Varela Round typography and a distinct household layout. Your saved card names and notes stay in their original language."
+      },
       "repository": "acciento89-bot/schonerledigt",
       "requiredBundleAssets": [
         {
@@ -748,8 +799,8 @@
       "reviewedGitTree": "0a8f59521ca2a4930e5bf17e7eea3d4168c6c601",
       "reviewedProductDigest": "a426552f66872a2065480af18a17a417b27d4c886b30b83d302a86c6b400906c",
       "reviewedSourceCommit": "48032a986636833bfaabd99e49894785808bb102",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "4cac556dbeb52f16fc2eb3c7556317a48ee54e7ddf0d854a117bb5d584e03bd2",
+      "rootReviewSha256": "00c7dca6e83423dcafa069cdcb70da0807a5084b3fe67240975b2cc915c5de43",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-update-sign.yml",
       "signWorkflowSha256": "1a8c47b3ba9246ab22b25235d29dfb73ecea59852e89d5d435081c8a7d00eba7",

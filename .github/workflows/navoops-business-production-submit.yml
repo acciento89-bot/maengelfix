@@ -58,7 +58,7 @@
   "env": {
     "WIF_PROVIDER": "projects/1058001477767/locations/global/workloadIdentityPools/github/providers/github-actions",
     "GOOGLE_SERVICE_ACCOUNT": "navoops@emerald-caster-508318-f2.iam.gserviceaccount.com",
-    "CATALOG_SHA256": "26c34bfa43e5430d883f74d0a3cb2b805bdddbcd1c509656e83a198dc0d6009a",
+    "CATALOG_SHA256": "b2a5419887c543aac8ebbb428b9d758b1d91374de73205faf32f93a5455e2cb3",
     "BUNDLETOOL_URL": "https://github.com/google/bundletool/releases/download/1.18.2/bundletool-all-1.18.2.jar",
     "BUNDLETOOL_SHA256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
     "PYTHONDONTWRITEBYTECODE": "1"
