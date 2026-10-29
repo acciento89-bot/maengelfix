@@ -69,15 +69,15 @@ jobs:
           set -euo pipefail
           test -f android/app/build/outputs/bundle/release/app-release.aab
           grep -Fq 'applicationId = "com.kamilunavo.maengelfix"' android/app/build.gradle.kts
-          grep -Fq 'versionCode = 8' android/app/build.gradle.kts
-          grep -Fq 'versionName = "1.0.7"' android/app/build.gradle.kts
+          grep -Fq 'versionCode = 9' android/app/build.gradle.kts
+          grep -Fq 'versionName = "1.1.0"' android/app/build.gradle.kts
           grep -Fq 'targetSdk = 36' android/app/build.gradle.kts
           grep -Fq 'android:icon="@drawable/maengelfix_app_icon"' android/app/src/main/AndroidManifest.xml
           ! grep -Fq 'android:roundIcon=' android/app/src/main/AndroidManifest.xml
           grep -Fq 'class MainActivity : ComponentActivity()' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           # Retain the complete workspace from the actual published 1.0.2 client.
           # The unreleased native preview omitted paid tools; billing repair must not remove them.
-          printf '%s  %s\n' b052c9e19fcb2e03df75f274a569f1472ca2020eefd83984fee6cf48c76b5b44 android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt | sha256sum --check --strict
+          printf '%s  %s\n' 411b6754f35f51aec3e27d66d2376e6cba544ec318fb9ef4e68c38a20ce01203 android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt | sha256sum --check --strict
           grep -Fq 'injectGooglePlayBillingGuard' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'uri.path == "/api/billing/checkout"' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'uri.scheme == "maengelfix" && uri.host == "play-billing"' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
@@ -113,7 +113,7 @@ jobs:
       - name: Upload unsigned release bundle
         uses: actions/upload-artifact@v4
         with:
-          name: MaengelFix-1.0.7-8-unsigned-release-aab
+          name: MaengelFix-1.1.0-9-unsigned-release-aab
           path: android/app/build/outputs/bundle/release/app-release.aab
           if-no-files-found: error
           retention-days: 7
