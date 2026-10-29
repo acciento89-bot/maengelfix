@@ -333,17 +333,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "mixed-de-en",
+            "languageLimitation": "English work-line dialogs, totals and history with German legacy app bar/navigation/context and fictional German record labels.",
+            "mixedUi": true
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "languageLimitation": "English work-line dialogs, totals and history with German legacy app bar/navigation/context and fictional German record labels.",
+            "mixedUi": true
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "languageLimitation": "English work-line dialogs, totals and history with German legacy app bar/navigation/context and fictional German record labels.",
+            "mixedUi": true
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "languageLimitation": "English work-line dialogs, totals and history with German legacy app bar/navigation/context and fictional German record labels.",
+            "mixedUi": true
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "182c70e9a7ba456ee039d387c7fa053cf2425cde53a88f0906947f35509576f9",
       "newVersionCode": 5,
       "newVersionName": "1.3.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.rapportai",
       "previousMaxCode": 4,
       "previousProductionCode": 4,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Arbeitszeiten und Materialmengen als getrennte Positionen erfassen, Minuten zusammenz\u00e4hlen und gespeicherte Berichtsversionen wieder \u00f6ffnen. Eigene Mukta-Typografie und Folio-Oberfl\u00e4che.",
+        "en-US": "Record labour time and material quantities as separate work lines, total minutes and reopen saved report versions. Distinct Mukta typography and folio layout. English work-line UI appears alongside German legacy navigation/context."
+      },
       "repository": "acciento89-bot/appideenchatgpt",
       "requiredBundleAssets": [
         {
@@ -386,8 +437,8 @@
       "reviewedGitTree": "da8cfafdd0e5d25c195d808d876873f2b8447c89",
       "reviewedProductDigest": "b6e0523f8eee637889df944af7a28a044b47aec20f701f3d966c96b108f6f7c6",
       "reviewedSourceCommit": "37f1277511cec7701ffc96f067509bc04fde0217",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "35500a7d7c87c0c814f420d0313782d63004121ac3fa0695027e8f63f52e4fcd",
+      "rootReviewSha256": "e3541fc41b35005e2eef36a7ac7c6093543517b433f6c0b9171f4bc67b9596fd",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/rapport-update-sign.yml",
       "signWorkflowSha256": "ca339da551c67ca660a1ff20e49a1032bb938e30d165e65cb7c42789f39cec7e",
