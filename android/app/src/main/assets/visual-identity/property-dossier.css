@@ -1,0 +1,21 @@
+/* Android-only property dossier. Selectors stay inside the authenticated workspace. */
+@font-face { font-family: "Cantarell Android"; src: url("/__android_identity__/Cantarell-Regular.ttf") format("truetype"); font-style: normal; font-weight: 400; font-display: swap; }
+@font-face { font-family: "Cantarell Android"; src: url("/__android_identity__/Cantarell-Bold.ttf") format("truetype"); font-style: normal; font-weight: 700; font-display: swap; }
+.workspaceShell { --mf-blue:#82501e; --mf-blue-dark:#573719; --mf-canvas:#f5f2e9; --mf-border:#d8d3c4; --primary:#82501e; --primary-strong:#573719; --bg:#f5f2e9; --surface:#fffdf6; --text:#24352e; --line:#d8d3c4; font-family:"Cantarell Android",sans-serif!important; font-synthesis:none; background:#f5f2e9!important; color:#24352e; }
+.workspaceShell :is(h1,h2,h3,h4,p,span,b,strong,small,button,input,select,textarea,label,a) { font-family:"Cantarell Android",sans-serif!important; font-synthesis:none; }
+.workspaceShell .workspaceHeading { border-bottom:2px solid #82501e; padding-bottom:18px; }
+.workspaceShell .workspaceHeading h1 { font-size:2rem; line-height:1.2; letter-spacing:0; }
+.workspaceShell :is(.workspacePanel,.contentCard,.workspaceEmpty) { background:#fffdf6!important; border:1px solid #d8d3c4!important; border-left:4px solid #b87328!important; border-radius:4px 14px 4px 4px!important; box-shadow:none!important; }
+.workspaceShell :is(.metricGrid,.managementMetrics,.analyticsMetrics) { display:flex!important; flex-direction:column; gap:0!important; border-block:1px solid #d8d3c4; }
+.workspaceShell :is(.metricGrid,.managementMetrics,.analyticsMetrics)>* { min-width:0; width:100%; border-radius:0!important; box-shadow:none!important; border-bottom:1px solid #d8d3c4!important; }
+.workspaceShell .factsGrid { gap:0!important; }
+.workspaceShell .factsGrid>div { padding:12px!important; border-bottom:1px solid #d8d3c4; }
+.workspaceShell .photoGrid>a { border:1px solid #d8d3c4; border-radius:3px!important; padding:5px; background:#fffdf6; }
+.workspaceShell .photoGrid>a span { display:block; padding:8px 3px; overflow-wrap:anywhere; }
+.workspaceShell :is(button,.primaryButton,.secondaryButton,.workspacePrimary,input,select) { min-height:48px; }
+.workspaceShell :is(.primaryButton,.workspacePrimary,.topbarCreate) { background:#82501e!important; color:#fff!important; border-radius:4px!important; box-shadow:none!important; }
+.workspaceShell .workspaceSidebar { background:#24352e!important; }
+.workspaceShell .workspaceSidebar nav button { min-height:48px!important; border-radius:3px!important; border-bottom:3px solid transparent; }
+.workspaceShell .workspaceSidebar nav button.active { border-bottom-color:#efc47b; background:#40554a!important; color:#fff!important; }
+.workspaceShell :is(.secondaryButton,.backButton) { border-radius:4px!important; }
+@media (max-width:600px) { .workspaceShell .factsGrid { grid-template-columns:1fr!important; } .workspaceShell .workspaceHeading h1 { font-size:1.8rem; } }

@@ -105,6 +105,7 @@ private fun MaengelFixApp(activity: MainActivity) {
     }
 
     MaterialTheme(
+        typography = brandedTypography(),
         colorScheme = lightColorScheme(
             primary = Color(0xFF1769E0),
             background = Color(0xFFF5F7FA),
@@ -276,6 +277,7 @@ private fun WebView.configureMaengelFixWebView(
         override fun onPageFinished(view: WebView?, url: String?) {
             onLoading(false)
             injectGooglePlayBillingGuard(view)
+            injectAndroidProductIdentity(view, url)
         }
 
         override fun onReceivedError(view: WebView?, request: WebResourceRequest?, error: WebResourceError?) {
@@ -287,6 +289,16 @@ private fun WebView.configureMaengelFixWebView(
 
         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
             val uri = request?.url ?: return null
+            // Same-origin packaged styles/fonts; no network policy or billing bypass.
+            if (isProductIdentityOrigin(uri) && request.method == "GET") {
+                val asset = when (uri.path) {
+                    "/__android_identity__/property-dossier.css" -> "visual-identity/property-dossier.css" to "text/css"
+                    "/__android_identity__/Cantarell-Regular.ttf" -> "fonts/cantarell/Cantarell-Regular.ttf" to "font/ttf"
+                    "/__android_identity__/Cantarell-Bold.ttf" -> "fonts/cantarell/Cantarell-Bold.ttf" to "font/ttf"
+                    else -> null
+                }
+                if (asset != null) return WebResourceResponse(asset.second, if (asset.second == "text/css") "utf-8" else null, context.assets.open(asset.first))
+            }
             val blockedBillingRequest =
                 uri.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true) &&
                     request.method.equals("POST", ignoreCase = true) &&
@@ -415,5 +427,29 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
         })();
         """.trimIndent(),
         null,
+    )
+}
+
+// Only the app's exact HTTPS workspace origin receives this local visual identity.
+private fun isProductIdentityOrigin(uri: Uri): Boolean =
+    uri.scheme == "https" && uri.host == BuildConfig.ALLOWED_HOST &&
+        (uri.port == -1 || uri.port == 443) && uri.userInfo == null
+
+private fun injectAndroidProductIdentity(view: WebView?, url: String?) {
+    if (view == null || url == null) return
+    val uri = Uri.parse(url)
+    if (!isProductIdentityOrigin(uri) || !(uri.path == "/app" || uri.path.orEmpty().startsWith("/app/"))) return
+    view.evaluateJavascript(
+        """
+        (() => {
+          if (location.origin !== 'https://${BuildConfig.ALLOWED_HOST}' || !(location.pathname === '/app' || location.pathname.startsWith('/app/'))) return;
+          if (document.getElementById('mf-android-product-identity')) return;
+          const link = document.createElement('link');
+          link.id = 'mf-android-product-identity';
+          link.rel = 'stylesheet';
+          link.href = '/__android_identity__/property-dossier.css';
+          document.head.appendChild(link);
+        })();
+        """.trimIndent(), null,
     )
 }
