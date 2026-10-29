@@ -19,3 +19,28 @@
 .workspaceShell .workspaceSidebar nav button.active { border-bottom-color:#efc47b; background:#40554a!important; color:#fff!important; }
 .workspaceShell :is(.secondaryButton,.backButton) { border-radius:4px!important; }
 @media (max-width:600px) { .workspaceShell .factsGrid { grid-template-columns:1fr!important; } .workspaceShell .workspaceHeading h1 { font-size:1.8rem; } }
+
+/* Exact own-form routes mark only the actual auth container. Public headers, footers and legal pages retain their own styling. */
+.authStandalone[data-mf-android-auth="true"] { background:#f5f2e9!important; }
+.authStandalone[data-mf-android-auth="true"] .authStage { --text:#24352e; --muted:#526157; --surface:#fffdf6; --line:#b9b7a8; --primary:#82501e; --primary-strong:#573719; color-scheme:light; font-family:"Cantarell Android",sans-serif!important; font-synthesis:none; color:#24352e; width:calc(100% - 32px); max-width:980px; display:grid; grid-template-columns:minmax(0,1fr) minmax(0,1fr); gap:28px; align-items:start; padding-block:28px 48px; }
+.authStandalone[data-mf-android-auth="true"] .authStage :is(h1,h2,h3,p,span,b,strong,small,button,input,select,label,a) { font-family:"Cantarell Android",sans-serif!important; font-synthesis:none; }
+.authStandalone[data-mf-android-auth="true"] .authPitch { border-top:3px solid #82501e; padding-top:18px; }
+.authStandalone[data-mf-android-auth="true"] .authPitch h1 { color:#24352e; font-size:1.9rem; line-height:1.22; letter-spacing:0; }
+.authStandalone[data-mf-android-auth="true"] .authPitch :is(p,.authBenefits) { color:#526157; font-size:1rem; line-height:1.5; }
+.authStandalone[data-mf-android-auth="true"] .authBox { background:#fffdf6; color:#24352e; border:1px solid #b9b7a8; border-left:4px solid #b87328; border-radius:4px 14px 4px 4px; padding:24px; box-shadow:none; min-width:0; }
+.authStandalone[data-mf-android-auth="true"] .authBox::before { background:#82501e; border-radius:0; width:48px; }
+.authStandalone[data-mf-android-auth="true"] .authBoxHead h2 { color:#24352e; font-size:1.6rem; line-height:1.3; }
+.authStandalone[data-mf-android-auth="true"] .authBoxHead>span { color:#82501e; letter-spacing:.08em; }
+.authStandalone[data-mf-android-auth="true"] .authBox label { color:#24352e; }
+.authStandalone[data-mf-android-auth="true"] .authBox :is(input,select) { width:100%; min-height:52px; background:#fffdf6; color:#24352e; border:1px solid #929b8e; border-radius:3px; font-size:1rem; padding:12px; caret-color:#82501e; }
+.authStandalone[data-mf-android-auth="true"] .authBox input::placeholder { color:#606e63; opacity:1; }
+.authStandalone[data-mf-android-auth="true"] .authBox input:focus-visible { outline:2px solid #82501e; outline-offset:2px; }
+.authStandalone[data-mf-android-auth="true"] .authBox button { min-height:48px; white-space:normal; overflow-wrap:anywhere; }
+.authStandalone[data-mf-android-auth="true"] .authSubmit { background:#82501e!important; color:#fff!important; border-radius:4px; box-shadow:none; padding:14px; }
+.authStandalone[data-mf-android-auth="true"] :is(.authForgot,.authSwitch,.legalHint) button { color:#82501e; border-radius:3px; }
+.authStandalone[data-mf-android-auth="true"] :is(.authSecurityNote,.managementTrialHint) { border-radius:3px; border:1px solid #d8d3c4; background:#f5f2e9; color:#24352e; box-shadow:none; }
+.authStandalone[data-mf-android-auth="true"] .accountTypeCard { min-width:0; background:#f5f2e9; color:#24352e; border:1px solid #b9b7a8; border-radius:3px; box-shadow:none; }
+.authStandalone[data-mf-android-auth="true"] .accountTypeCard.selected { background:#eee4cc; border:2px solid #82501e; color:#24352e; }
+.authStandalone[data-mf-android-auth="true"] .authBox .errorBox { background:#fff1eb; color:#a12c2c; border:1px solid #b56650; border-radius:3px; }
+@media (max-width:760px) { .authStandalone[data-mf-android-auth="true"] .authStage { grid-template-columns:minmax(0,1fr); gap:20px; } }
+@media (max-width:480px) { .authStandalone[data-mf-android-auth="true"] .accountTypePicker { grid-template-columns:minmax(0,1fr); } .authStandalone[data-mf-android-auth="true"] .authBox { padding:20px 16px; } }

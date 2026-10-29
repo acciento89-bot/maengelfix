@@ -430,7 +430,7 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
     )
 }
 
-// Only the app's exact HTTPS workspace origin receives this local visual identity.
+// Only the app's exact HTTPS origin receives this local visual identity.
 private fun isProductIdentityOrigin(uri: Uri): Boolean =
     uri.scheme == "https" && uri.host == BuildConfig.ALLOWED_HOST &&
         (uri.port == -1 || uri.port == 443) && uri.userInfo == null
@@ -438,17 +438,30 @@ private fun isProductIdentityOrigin(uri: Uri): Boolean =
 private fun injectAndroidProductIdentity(view: WebView?, url: String?) {
     if (view == null || url == null) return
     val uri = Uri.parse(url)
-    if (!isProductIdentityOrigin(uri) || !(uri.path == "/app" || uri.path.orEmpty().startsWith("/app/"))) return
+    if (!isProductIdentityOrigin(uri) || !ProductIdentityPages.isAllowed(uri.path)) return
     view.evaluateJavascript(
         """
         (() => {
-          if (location.origin !== 'https://${BuildConfig.ALLOWED_HOST}' || !(location.pathname === '/app' || location.pathname.startsWith('/app/'))) return;
+          const ownAuthPaths = ${ProductIdentityPages.authPathsJson()};
+          const isOwnPage = () => location.origin === 'https://${BuildConfig.ALLOWED_HOST}' &&
+            (location.pathname === '/app' || location.pathname.startsWith('/app/') || ownAuthPaths.includes(location.pathname));
+          if (!isOwnPage()) return;
           if (document.getElementById('mf-android-product-identity')) return;
           const link = document.createElement('link');
           link.id = 'mf-android-product-identity';
           link.rel = 'stylesheet';
           link.href = '/__android_identity__/property-dossier.css';
           document.head.appendChild(link);
+          // Mark only real own auth containers after React mounts them. No form values are read.
+          const syncOwnAuthForms = () => {
+            for (const form of document.querySelectorAll('.authStandalone')) {
+              if (isOwnPage()) form.setAttribute('data-mf-android-auth', 'true');
+              else form.removeAttribute('data-mf-android-auth');
+            }
+          };
+          syncOwnAuthForms();
+          const appRoot = document.getElementById('root');
+          if (appRoot) new MutationObserver(syncOwnAuthForms).observe(appRoot, { childList: true, subtree: true });
         })();
         """.trimIndent(), null,
     )
