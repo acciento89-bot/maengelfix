@@ -1,0 +1,117 @@
+{
+  "schema": 1,
+  "outcome": "PENDING",
+  "platform": "Android",
+  "normalApplication": null,
+  "package": "REPLACE_WITH_ONE_CATALOG_PACKAGE",
+  "versionCode": null,
+  "versionName": "1.2.0",
+  "sourceCommit": "REPLACE_WITH_EXACT_CATALOG_SOURCE_COMMIT",
+  "signedAabSha256": "REPLACE_WITH_ACTUAL_SIGNED_AAB_SHA256",
+  "testedApkSha256": "REPLACE_WITH_ACTUAL_DERIVED_AND_INSTALLED_APK_SHA256",
+  "testedAtUtc": "REPLACE_WITH_ACTUAL_UTC_ISO8601",
+  "captureLanguages": [
+    "EXISTING_DE_LOCALE",
+    "EXISTING_EN_LOCALE"
+  ],
+  "screenshots": {
+    "EXISTING_DE_LOCALE": [
+      {
+        "path": "screens/EXISTING_DE_LOCALE/01.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/01.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/02.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/02.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/03.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/03.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/04.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/04.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      }
+    ],
+    "EXISTING_EN_LOCALE": [
+      {
+        "path": "screens/EXISTING_EN_LOCALE/01.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/01.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/02.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/02.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/03.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/03.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/04.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/04.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      }
+    ]
+  },
+  "realTransactions": {
+    "purchases": null,
+    "restores": null,
+    "redemptions": null,
+    "adImpressions": null
+  },
+  "checks": {
+    "launch": null,
+    "main": null,
+    "navigation": null,
+    "fontAndAssets": null
+  },
+  "apkProof": {
+    "path": "qa/derived-apk-proof.json",
+    "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+  },
+  "proof": [
+    {
+      "path": "qa/actual-derivation-install-and-qa-receipt.json",
+      "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+    }
+  ]
+}

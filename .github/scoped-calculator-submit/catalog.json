@@ -1,0 +1,448 @@
+{
+  "schema": 1,
+  "scope": "Exactly nine already-live calculator Android products. No free track, code, version or URL inputs. Source commits frozen for independent review.",
+  "apps": [
+    {
+      "app": "BrennerCalc",
+      "package": "de.kamilunavo.brennercalc",
+      "appId": "4972910786875040173",
+      "previousProductionCode": 6,
+      "previousMaxCode": 6,
+      "newVersionCode": 7,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/BrennerCalc",
+      "reviewedSourceCommit": "290f4b1b3c453c4b891a6dfa33df1084d7ecd708",
+      "sourceWorkflow": ".github/workflows/android-ci.yml",
+      "sourceArtifactName": "BrennerCalc-1.2.0-7-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-projects-signed-bundle.yml",
+      "signedArtifactName": "brennercalc-1.2.0-7-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/SairaSemiCondensed-Bold.ttf",
+          "sha256": "2ab7a35f798e149db1908ddae844024bcb975bdccbfc81dbac3429d0f6270b14"
+        },
+        {
+          "entry": "base/assets/fonts/SairaSemiCondensed-Regular.ttf",
+          "sha256": "9dad0fea2405ebc740092a0ca34e350ac235c0a040095068e0054b337520f93a"
+        },
+        {
+          "entry": "base/assets/licenses/project-artwork/NOTICE.txt",
+          "sha256": "f2f40505b7b5beabda8d88a11d332c00cf543c3f05eaa0716b255b2c209c5fb9"
+        },
+        {
+          "entry": "base/assets/licenses/sairasemicondensed/METADATA.pb",
+          "sha256": "1bd2cb31a559a2acc30d0b1440d685268fb877464aa85d05f35217a4b072e46a"
+        },
+        {
+          "entry": "base/assets/licenses/sairasemicondensed/OFL.txt",
+          "sha256": "0e2ccc5da1dd979f08ba82bca2fb61592506a1e58d3cbfc26d904f0db71bd812"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "store/google-play/icon-512.png",
+        "sha256": "de7df6b5f2ab3a5beea2f232b040574ac1ad2309f125a632a0ff80133041cded",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Servicebank mit klar gegliederten Messwerten und eigener Schrift. Bestehende Berechnungen und gespeicherte Besuche bleiben verfügbar.",
+        "en-US": "Updated service workspace with clearer readings and its own typeface. Existing calculations and saved visits remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "HydroCalc",
+      "package": "de.kamilunavo.hydrocalc",
+      "appId": "4974000193850560698",
+      "previousProductionCode": 5,
+      "previousMaxCode": 5,
+      "newVersionCode": 6,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/HydroCalc",
+      "reviewedSourceCommit": "02ae45fe95f6c7c6b358de7814db03ac110f23a0",
+      "sourceWorkflow": ".github/workflows/android-ci.yml",
+      "sourceArtifactName": "HydroCalc-1.2.0-6-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-projects-signed-bundle.yml",
+      "signedArtifactName": "hydrocalc-1.2.0-6-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/PT_Sans-Web-Bold.ttf",
+          "sha256": "3128bd5ecf01816e59a23d54c57a7a6b14615b07db53ff277c77376010265b05"
+        },
+        {
+          "entry": "base/assets/fonts/PT_Sans-Web-Regular.ttf",
+          "sha256": "9cc831490532009bae2b3ce0d39c62adfc889060beb421593bfd9d2396d0f10a"
+        },
+        {
+          "entry": "base/assets/licenses/project-artwork/NOTICE.txt",
+          "sha256": "f410295f621de8bcf9cc444188dc749322336fcd8496a07fcb9a8f67d065e506"
+        },
+        {
+          "entry": "base/assets/licenses/ptsans/METADATA.pb",
+          "sha256": "9a3eccc9a5d01c95b9262adb208fc40bfac4d9e465a80ad3bfaf634528434ab8"
+        },
+        {
+          "entry": "base/assets/licenses/ptsans/OFL.txt",
+          "sha256": "2758cf7a872827f39661cf8cc24188113c030447aefb5ca7145993650076ca8c"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "store/google-play/icon-512.png",
+        "sha256": "5cf8cb676826765c55f19c63966fa205dc58ec38d0c6c706179c82d1d5ddb95d",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Projektübersicht mit klar gegliederten Arbeitsschritten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated project workspace with clearer steps and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "MAGCalc",
+      "package": "de.kamilunavo.magcalc",
+      "appId": "4973345418335817990",
+      "previousProductionCode": 6,
+      "previousMaxCode": 6,
+      "newVersionCode": 7,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/MAGCalc",
+      "reviewedSourceCommit": "0066a56fb33bad001c0cce17bf8470d502db3ebc",
+      "sourceWorkflow": ".github/workflows/android-ci.yml",
+      "sourceArtifactName": "MAGCalc-1.2.0-7-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-projects-signed-bundle.yml",
+      "signedArtifactName": "magcalc-1.2.0-7-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/IstokWeb-Bold.ttf",
+          "sha256": "e8cae1e9a6e9f452059342547ae8ebf58f04f85c04f59d4383109490fef45d69"
+        },
+        {
+          "entry": "base/assets/fonts/IstokWeb-Regular.ttf",
+          "sha256": "a13c4e6cba8f6d24abf96542d9028cea47411ac65c01e6f85349d7405dee53c6"
+        },
+        {
+          "entry": "base/assets/licenses/istokweb/METADATA.pb",
+          "sha256": "55fc9d4ca922ebdf10ece480ebb9b4d07179e20a60107dedff9668c5fc688428"
+        },
+        {
+          "entry": "base/assets/licenses/istokweb/OFL.txt",
+          "sha256": "1e511bb01d29562932157365418c02d954d8faeef794bcd54729177fb2b03db0"
+        },
+        {
+          "entry": "base/assets/licenses/project-artwork/NOTICE.txt",
+          "sha256": "97d71dc987f05a28fa52f9da89b70a8e7d9babd168ba9aef0951a6211198bfa4"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "store/google-play/icon-512.png",
+        "sha256": "a857bf94d2c892b8a68b8aaa1989bd983f3298505c10e60ee242b5f5924c0909",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Gefäß- und Projektübersicht mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated vessel and project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "KaelteCalc",
+      "package": "de.kamilunav.kaltecalc",
+      "appId": "4976278646146162006",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/SHK",
+      "reviewedSourceCommit": "8c0d9129a0ddda277469e09b99e7d7f5d1fcd28d",
+      "sourceWorkflow": ".github/workflows/android-published-update-ci.yml",
+      "sourceArtifactName": "shk-kaltecalc-1.2.0-5-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-published-update-sign.yml",
+      "signedArtifactName": "shk-kaltecalc-1.2.0-5-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/Rambla-Bold.ttf",
+          "sha256": "0e5af09d5cf4c7f04a95ae034fed45b8d37dc5a7f3f5492961bb4ecb3a2aa359"
+        },
+        {
+          "entry": "base/assets/fonts/Rambla-Regular.ttf",
+          "sha256": "50b69b938921d41a868e8cfbcc71a411e04caf14edad6a153222fc03d316ed97"
+        },
+        {
+          "entry": "base/assets/licenses/rambla/METADATA.pb",
+          "sha256": "60e436b378c8ccca1c76f6d745651bf0ac1bb1fd673f833ab2160a5334fc5eff"
+        },
+        {
+          "entry": "base/assets/licenses/rambla/OFL.txt",
+          "sha256": "9a9f089005f389717106bb3ba427cda9bd51b8a477078644566543f2a60ca85d"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/kaltecalc.png",
+        "sha256": "219b282dc69bdfc1a0a0855d3fbca113bc2290b2628fb0822372f28aeaca189c",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Servicebank für Kälteanlagen mit klarer Gliederung und eigener Schrift. Vorher-/Nachher-Messungen und gespeicherte Besuche bleiben verfügbar.",
+        "en-US": "Updated refrigeration service workspace with clearer organization and its own typeface. Before/after readings and saved visits remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "LueftungsCalc",
+      "package": "de.kamilunavo.luftungscalc",
+      "appId": "4973912976306987936",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/SHK",
+      "reviewedSourceCommit": "8c0d9129a0ddda277469e09b99e7d7f5d1fcd28d",
+      "sourceWorkflow": ".github/workflows/android-published-update-ci.yml",
+      "sourceArtifactName": "shk-lueftungscalc-1.2.0-5-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-published-update-sign.yml",
+      "signedArtifactName": "shk-lueftungscalc-1.2.0-5-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/Hind-Bold.ttf",
+          "sha256": "330c54396bc27628c32e69b88654e41065722182c6f33b936a2a46d72c9d6774"
+        },
+        {
+          "entry": "base/assets/fonts/Hind-Regular.ttf",
+          "sha256": "01de158022f53077b52303e46de3b0ab5fb245222a7ffe25a2a57fdd9e969162"
+        },
+        {
+          "entry": "base/assets/licenses/hind/METADATA.pb",
+          "sha256": "21a3a180ce96c7cded596dc76e2bdb5cdb236d40d8319e92815c0cf4ead7390b"
+        },
+        {
+          "entry": "base/assets/licenses/hind/OFL.txt",
+          "sha256": "f62ef357d3a1c3d27edd35a6e1ba350e8a8d13499797964eeadefbf0b3b15d1f"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/lueftungscalc.png",
+        "sha256": "fc2e44f697d59c2b04655472f3e35a81de3e5df2941b63d0f84285fabe758e3e",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Inbetriebnahmeübersicht mit klar gegliederten Projekten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated commissioning workspace with clearer projects and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "HeizkoerperCalc",
+      "package": "de.kamilunavo.heizkorpercalc",
+      "appId": "4974315985387813561",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/SHK",
+      "reviewedSourceCommit": "8c0d9129a0ddda277469e09b99e7d7f5d1fcd28d",
+      "sourceWorkflow": ".github/workflows/android-published-update-ci.yml",
+      "sourceArtifactName": "shk-heizkoerpercalc-1.2.0-5-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-published-update-sign.yml",
+      "signedArtifactName": "shk-heizkoerpercalc-1.2.0-5-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/Questrial-Regular.ttf",
+          "sha256": "0ee7f2debabb13773fd38468b31820e11fca202a8f98c4d80b6ffcb796899b6f"
+        },
+        {
+          "entry": "base/assets/licenses/questrial/METADATA.pb",
+          "sha256": "ab3c77ffc3abc1a7eb98769a94600e1f7560b6a68405b5ce1e7ed722eb7657e8"
+        },
+        {
+          "entry": "base/assets/licenses/questrial/OFL.txt",
+          "sha256": "c9bcf9bea97a216657d25325f418f0fe7fd0bc847b3dbb3f1b5a05b207370608"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/heizkoerpercalc.png",
+        "sha256": "5b78c617e94b818c8c4e54fd662b0fe104fd075884bbff2d01421ca5985392d4",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Projektübersicht für Heizkörper mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated radiator project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "RohrCalc",
+      "package": "de.kamilunavo.rohrcalc",
+      "appId": "4976457980416180102",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/SHK",
+      "reviewedSourceCommit": "8c0d9129a0ddda277469e09b99e7d7f5d1fcd28d",
+      "sourceWorkflow": ".github/workflows/android-published-update-ci.yml",
+      "sourceArtifactName": "shk-rohrcalc-1.2.0-5-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-published-update-sign.yml",
+      "signedArtifactName": "shk-rohrcalc-1.2.0-5-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/AsapCondensed-Bold.ttf",
+          "sha256": "0ed4b4f29a0abed3a5049270f28d8e11c797edc7c0270cc51495c0578622f82a"
+        },
+        {
+          "entry": "base/assets/fonts/AsapCondensed-Regular.ttf",
+          "sha256": "297336aba664e16c2c6aadb64a66fb31d63f048eae3d22409492cd2f1b4cdda0"
+        },
+        {
+          "entry": "base/assets/licenses/asapcondensed/METADATA.pb",
+          "sha256": "2f5383ea2503c9fe2a48a2cc3bc1399cc12f7607d3a73a7174d84d20adcc672f"
+        },
+        {
+          "entry": "base/assets/licenses/asapcondensed/OFL.txt",
+          "sha256": "a6f4d778db0d2a87c2c6e560f71eb018b4253505b2f23c108724dea5d4d74ed0"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/rohrcalc.png",
+        "sha256": "fb2f668dc08ba8d5eb94bfde40e0b54cef93594711f06bc62bdd256c0f787685",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Projektübersicht für Rohrkreise mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated pipe-circuit project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "AnlagenCheckAndroid",
+      "package": "de.kamilunavo.servicecheck",
+      "appId": "4973563938353126131",
+      "previousProductionCode": 4,
+      "previousMaxCode": 4,
+      "newVersionCode": 5,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/SHK",
+      "reviewedSourceCommit": "8c0d9129a0ddda277469e09b99e7d7f5d1fcd28d",
+      "sourceWorkflow": ".github/workflows/android-published-update-ci.yml",
+      "sourceArtifactName": "shk-anlagencheck-1.2.0-5-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-published-update-sign.yml",
+      "signedArtifactName": "shk-anlagencheck-1.2.0-5-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/Gudea-Bold.ttf",
+          "sha256": "2b1b56763dd590f782b65b07978fbe6f9a83ba5ecfdaf698c0e942ca06181059"
+        },
+        {
+          "entry": "base/assets/fonts/Gudea-Regular.ttf",
+          "sha256": "a4b5410090a821ea17021627312babdf3d8db0271217fd8c4d9f629ef0a2d90b"
+        },
+        {
+          "entry": "base/assets/licenses/gudea/METADATA.pb",
+          "sha256": "8140258d95ea09735ee596125c8d9718bec76bf1036021cd67a236ab48f7d001"
+        },
+        {
+          "entry": "base/assets/licenses/gudea/OFL.txt",
+          "sha256": "315a576cbc7ab61c9e347b5725893bc8498fdcb8fc10831793c6864bc2cefba8"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/anlagencheck.png",
+        "sha256": "ada42b22fc81698ff43a74157ae4cda2a13b59130f7e8b91667b220d64206f06",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Anlagen- und Besuchsübersicht mit klarer Gliederung und eigener Schrift. Bestehende Checklisten und gespeicherte Besuche bleiben verfügbar.",
+        "en-US": "Updated installation and visit workspace with clearer organization and its own typeface. Existing checklists and saved visits remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    },
+    {
+      "app": "VolumeCalc",
+      "package": "de.kamilunavo.volumecalc",
+      "appId": "4974671101179945496",
+      "previousProductionCode": 5,
+      "previousMaxCode": 5,
+      "newVersionCode": 6,
+      "newVersionName": "1.2.0",
+      "repository": "acciento89-bot/AnlagenVolumen",
+      "reviewedSourceCommit": "6eb0c10cb80e5a2000f3287c04b1ba34375c9ddc",
+      "sourceWorkflow": ".github/workflows/android-release-source.yml",
+      "sourceArtifactName": "VolumeCalc-1.2.0-6-unsigned-aab",
+      "signWorkflow": ".github/workflows/android-alternatives-signed-bundle.yml",
+      "signedArtifactName": "volumecalc-1.2.0-6-central-signed-aab",
+      "requiredBundleAssets": [
+        {
+          "entry": "base/assets/fonts/PT_Serif-Web-Bold.ttf",
+          "sha256": "038ba7336bd7ea14f12ad155bed51a4345cac5153275d521dec3ba04021c526e"
+        },
+        {
+          "entry": "base/assets/fonts/PT_Serif-Web-Regular.ttf",
+          "sha256": "a4951fade06ff8f09b7673aa81ffb65a8cd409e24d3289a6dc670bc4dda2557a"
+        },
+        {
+          "entry": "base/assets/licenses/project-artwork/NOTICE.txt",
+          "sha256": "8112757fbe64ea4477b9d95c3edcd6ceb86b85a337e7d48fadd884098950c023"
+        },
+        {
+          "entry": "base/assets/licenses/ptserif/METADATA.pb",
+          "sha256": "b173b56702527b128dd173db3e70e8ff2420f92e7048ee7cb6ede34f20cd2aac"
+        },
+        {
+          "entry": "base/assets/licenses/ptserif/OFL.txt",
+          "sha256": "ddf311c28ddf5a5ad9747649837346b67bed9d356789c3072bb27dbce49e514d"
+        }
+      ],
+      "optionalOriginalIcon": {
+        "source": "android/store/google-play/icon-512.png",
+        "sha256": "f741b507bd09092ae18faa91a3472d085a01e61bed5c7c2f318a3a18a3d8bba0",
+        "dimensions": [
+          512,
+          512
+        ]
+      },
+      "releaseNotes": {
+        "de-DE": "Überarbeitete Projektübersicht für Anlagenvolumen mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "en-US": "Updated system-volume project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
+      },
+      "listingLocales": null,
+      "localeSnapshotSha256": null
+    }
+  ],
+  "localePolicy": {
+    "families": [
+      "de",
+      "en"
+    ],
+    "maximumSelected": 2
+  }
+}

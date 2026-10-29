@@ -1,0 +1,10 @@
+{
+  "package": "REPLACE_WITH_ONE_CATALOG_PACKAGE",
+  "versionCode": null,
+  "versionName": "1.2.0",
+  "sourceCommit": "REPLACE_WITH_EXACT_CATALOG_SOURCE_COMMIT",
+  "sourceAabSha256": "REPLACE_WITH_ACTUAL_SIGNED_AAB_SHA256",
+  "apkSha256": "REPLACE_WITH_ACTUAL_DERIVED_AND_INSTALLED_APK_SHA256",
+  "normalApplication": null,
+  "proofNote": "Replace with retained actual derivation/install evidence; add hash-listed raw outputs to native-qa proof. This placeholder is not QA."
+}

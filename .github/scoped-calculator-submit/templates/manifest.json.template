@@ -1,0 +1,113 @@
+{
+  "schema": 1,
+  "package": "REPLACE_WITH_ONE_CATALOG_PACKAGE",
+  "versionCode": null,
+  "versionName": "1.2.0",
+  "source": {
+    "repository": "acciento89-bot/REPLACE_WITH_CATALOG_REPOSITORY",
+    "commit": "REPLACE_WITH_EXACT_CATALOG_SOURCE_COMMIT",
+    "workflow": "REPLACE_WITH_CATALOG_SOURCE_WORKFLOW",
+    "runId": null,
+    "artifactId": null,
+    "artifactArchiveSha256": "REPLACE_WITH_OFFICIAL_ARTIFACT_ARCHIVE_SHA256"
+  },
+  "signing": {
+    "repository": "acciento89-bot/REPLACE_WITH_CATALOG_REPOSITORY",
+    "commit": "REPLACE_WITH_EXACT_CATALOG_SOURCE_COMMIT",
+    "workflow": "REPLACE_WITH_CATALOG_SIGN_WORKFLOW",
+    "runId": null,
+    "artifactId": null,
+    "artifactArchiveSha256": "REPLACE_WITH_OFFICIAL_ARTIFACT_ARCHIVE_SHA256",
+    "archive": "provenance/signed-ci-artifact.zip"
+  },
+  "bundle": {
+    "path": "bundle/app.aab",
+    "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+  },
+  "localeInventory": {
+    "path": "qa/locale-inventory.json",
+    "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+  },
+  "nativeQa": {
+    "path": "qa/native-qa.json",
+    "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+  },
+  "screenshots": {
+    "EXISTING_DE_LOCALE": [
+      {
+        "path": "screens/EXISTING_DE_LOCALE/01.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/01.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/02.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/02.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/03.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/03.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_DE_LOCALE/04.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_DE_LOCALE/04.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      }
+    ],
+    "EXISTING_EN_LOCALE": [
+      {
+        "path": "screens/EXISTING_EN_LOCALE/01.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/01.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/02.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/02.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/03.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/03.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      },
+      {
+        "path": "screens/EXISTING_EN_LOCALE/04.png",
+        "sha256": "REPLACE_WITH_ACTUAL_SHA256",
+        "rawNative": {
+          "path": "raw/EXISTING_EN_LOCALE/04.png",
+          "sha256": "REPLACE_WITH_ACTUAL_SHA256"
+        },
+        "pixelSha256": "REPLACE_WITH_DECODED_OPAQUE_RGB_PIXEL_SHA256"
+      }
+    ]
+  }
+}
