@@ -1,5 +1,6 @@
 """Read-only GitHub ownership/provenance checks. No Google identity or free URLs."""
 import json
+import re
 from urllib.error import HTTPError, URLError
 from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
@@ -7,6 +8,26 @@ from candidate import EXPECTED, MAX_ARCHIVE, CandidateError, digest, is_digest, 
 
 OWN_REPOSITORY = 'acciento89-bot/maengelfix'
 class AssetError(ValueError): pass
+
+CALCULATOR_REPOSITORIES = frozenset({'acciento89-bot/BrennerCalc','acciento89-bot/HydroCalc',
+    'acciento89-bot/MAGCalc','acciento89-bot/SHK','acciento89-bot/AnlagenVolumen'})
+
+def metadata_route(path):
+    # Diagnostics can echo only these bounded credential-free GET routes.
+    own = '/repos/'+OWN_REPOSITORY
+    require(isinstance(path,str),'GitHub metadata route outside fixed scope')
+    if path == own: return path
+    asset = re.fullmatch(re.escape(own)+r'/releases/assets/([1-9][0-9]{0,18})',path)
+    if asset: numeric_id(asset[1]); return path
+    if re.fullmatch(re.escape(own)+r'/releases\?per_page=100&page=(?:[1-9]|10)',path): return path
+    action = re.fullmatch(r'/repos/(acciento89-bot/[A-Za-z0-9_-]+)/actions/(?:runs|artifacts)/([1-9][0-9]{0,18})',path)
+    if action and action[1] in CALCULATOR_REPOSITORIES: numeric_id(action[2]); return path
+    raise CandidateError('GitHub metadata route outside fixed scope')
+
+def metadata_failure(path, status=None):
+    code = str(status) if type(status)is int and 100 <= status <= 599 else 'unknown'
+    return AssetError('GitHub metadata request failed: HTTP'+code+'; GET '+path)
+
 
 def fetch_candidate_asset(github, asset_id, archive_sha256, package, catalog):
     require(package in EXPECTED and package in catalog and is_digest(archive_sha256), 'Candidate scope/digest invalid')
@@ -58,14 +79,17 @@ class GitHubClient:
         require(isinstance(token,str) and bool(token), 'Missing GitHub read token')
         self._token = token; self._opener = build_opener(NoRedirect())
     def json(self, path):
-        require(path.startswith('/repos/acciento89-bot/') and '\\' not in path and '..' not in path and '\n' not in path, 'GitHub API path outside owner scope')
+        path = metadata_route(path)
         try:
-            request = Request('https://api.github.com'+path, headers={'Authorization':'Bearer '+self._token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'ScopedCalculatorCandidate'})
+            request = Request('https://api.github.com'+path, method='GET', headers={'Authorization':'Bearer '+self._token,'Accept':'application/vnd.github+json','X-GitHub-Api-Version':'2022-11-28','User-Agent':'ScopedCalculatorCandidate'})
             with self._opener.open(request, timeout=20) as response:
-                require(response.status == 200, 'GitHub metadata HTTP status rejected')
-                raw = response.read(8*1024*1024+1); require(len(raw) <= 8*1024*1024, 'GitHub metadata too large')
-                return strict_json(raw)
-        except (HTTPError, URLError, OSError, TimeoutError): raise AssetError('GitHub metadata request failed') from None
+                if response.status != 200: raise metadata_failure(path,response.status)
+                raw = response.read(8*1024*1024+1)
+                if len(raw) > 8*1024*1024: raise metadata_failure(path,response.status)
+                try: return strict_json(raw)
+                except CandidateError: raise metadata_failure(path,response.status) from None
+        except HTTPError as error: raise metadata_failure(path,error.code) from None
+        except (URLError, OSError, TimeoutError): raise metadata_failure(path) from None
     def download_asset(self, asset_id):
         asset_id = numeric_id(asset_id)
         url = 'https://api.github.com/repos/'+OWN_REPOSITORY+'/releases/assets/'+str(asset_id)

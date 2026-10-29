@@ -19,7 +19,7 @@ class WorkflowTests(unittest.TestCase):
             self.assertEqual(job['if'],"github.repository == 'acciento89-bot/maengelfix' && github.ref == 'refs/heads/main' && github.event_name == 'workflow_dispatch' && github.run_attempt == 1"+" && inputs.operation == '"+('inspect' if name == 'inspect' else 'submit')+"'")
             checkout=job['steps'][0];self.assertEqual(checkout['uses'],'actions/checkout@v5');self.assertEqual(checkout['with'],{'ref':'${{ github.sha }}','persist-credentials':False})
             self.assertNotIn('strategy',job)
-        self.assertEqual(jobs['prepare']['permissions'],{'contents':'read','actions':'read'})
+        self.assertEqual(jobs['prepare']['permissions'],{'contents':'write','actions':'read'})
         self.assertFalse(any(s.get('uses','').startswith('google-github-actions/')for s in jobs['prepare']['steps']))
         self.assertEqual(jobs['submit']['permissions'],{'contents':'read','id-token':'write'})
     def test_same_bytes_verified_before_existing_wif_and_transfer_uses_immutable_artifact_id(self):
@@ -47,3 +47,9 @@ class WorkflowTests(unittest.TestCase):
         self.assertFalse(any('curl 'in s.get('run','')for s in steps))
         self.assertEqual([s['id']for s in steps if 'TOKEN'in s.get('env',{})],['inspect'])
         for name in ['prepare','submit']:self.assertEqual(self.workflow['jobs'][name]['env']['SCOPED_CALCULATOR_OPERATION'],'submit')
+
+    def test_draft_visibility_write_permission_exists_only_in_google_free_prepare_job(self):
+        jobs=self.workflow['jobs'];self.assertEqual([name for name,job in jobs.items()if job['permissions'].get('contents')=='write'],['prepare'])
+        self.assertEqual(self.workflow['permissions'],{'contents':'read'});self.assertEqual(jobs['inspect']['permissions'],{'contents':'read','id-token':'write'});self.assertEqual(jobs['submit']['permissions'],{'contents':'read','id-token':'write'})
+        self.assertNotIn('id-token',jobs['prepare']['permissions']);self.assertFalse(any(s.get('uses','').startswith('google-github-actions/')for s in jobs['prepare']['steps']))
+        self.assertEqual([s['id']for s in jobs['prepare']['steps']if 'GH_TOKEN'in s.get('env',{})],['verify'])

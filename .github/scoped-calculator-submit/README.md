@@ -1,6 +1,6 @@
 # Nine existing calculators: manual Google update
 
-The workflow is installed in the own repository. The owner completed the bounded inspection described below; no production submission has been dispatched through this workflow. Local tests use synthetic fixtures and fake transports. They do not prove real signed artifacts, native QA or provider acceptance.
+The workflow is installed in the own repository. The owner completed the bounded inspection described below; one production-mode attempt stopped in GitHub preparation before Google identity or any Google edit; no Google submission has been performed through this workflow. Local tests use synthetic fixtures and fake transports. They do not prove real signed artifacts, native QA or provider acceptance.
 
 ## Completed inspection and pinned existing locales
 
@@ -37,6 +37,8 @@ Only explicitly hash-listed files are allowed. No traversal, aliases, duplicate 
 ## Explicit single-package submission
 
 Only after genuine native/rights/release review, dispatch once on main with `operation=submit`, ONE allowed package, the own draft asset ID and reviewed raw archive SHA. `all-nine` is rejected in this mode. No free URL, version, track, review-behavior or locale input exists.
+
+The first production-mode run [40889613246](https://github.com/acciento89-bot/maengelfix/actions/runs/40889613246) failed during GitHub metadata preparation; submit was skipped. The original diagnostic lacked its HTTP status/route, so it does not independently establish the exact failed endpoint. The owner separately confirmed that the draft asset exists and had no downloads. [GitHub's release documentation](https://docs.github.com/en/rest/releases/releases#list-releases) says draft releases are visible only to callers with push access. Therefore ONLY prepare receives repository `contents: write` to read the own unpublished draft and its asset membership; it retains `actions: read` for immutable provenance. This is a draft-visibility capability, not an instruction to edit the repository or release. Checkout still disables persisted credentials, the token is passed only to the read verifier, and the production GitHub client sends GETs only to fixed own-draft/approved calculator metadata routes. Diagnostics retain only HTTP status (or unknown) and the exact bounded API route; no headers, tokens, provider bodies, signed redirect URLs or raw exception text are exposed. No credential or IAM route is added. Global, inspect and submit content permissions remain read-only. This source change has not been retried or dispatched; live draft visibility remains to be verified by a later owner-authorized run.
 
 Prepare has no Google identity. It verifies the draft, exact original signed artifact/provenance, candidate and official source/sign runs, then transfers exactly candidate.zip and a hash-bound attestation by immutable Actions artifact ID. Submit re-verifies the same candidate/run/catalog bytes before existing WIF authentication, then again before its single owned edit.
 
