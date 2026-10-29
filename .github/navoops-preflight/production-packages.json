@@ -1,0 +1,167 @@
+{
+  "schema": 1,
+  "source": {
+    "method": "actual current authenticated Google Play Console app-list UI, all four pages read-only",
+    "observedUtc": "2026-10-29T10:37:08.729766+00:00",
+    "inventorySha256": "eb4d9bdadfee15d1bdec0240618ca5fa94cb0ff92d11a5b10eb122b81f963b30",
+    "scope": "Exact26existing production apps from owner-approved current UI; excluded removed/protected/pending products"
+  },
+  "apps": [
+    {
+      "name": "Idle Handwerker: Werkstatt",
+      "package": "de.kamilunavo.idlehandwerker",
+      "appId": "4975522377690050503",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Rising Steps: Sky Platformer",
+      "package": "com.kamilunavo.risingsteps",
+      "appId": "4975121130067488005",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Perfect Drop: Tower Stacking",
+      "package": "com.kamilunavo.perfectdrop",
+      "appId": "4973335069031765612",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "NavoPass: Product & Warranty",
+      "package": "de.kamilunavo.navopass",
+      "appId": "4973499767022511783",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Mängelfix: Mängel & Fristen",
+      "package": "com.kamilunavo.maengelfix",
+      "appId": "4974666039863842830",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "ZweiCheck: Gemeinsam prüfen",
+      "package": "de.kamilunavo.zweicheck",
+      "appId": "4975977374520913421",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Wunderkapseln: Match-3 Worlds",
+      "package": "com.kamilunavo.wunderkapseln",
+      "appId": "4976310420171925890",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Reklaio: Reklamation & Fristen",
+      "package": "de.kamilunavo.reklaio",
+      "appId": "4972633172712985073",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "99.9%: Precision Timing",
+      "package": "de.kamilunavo.ninenine",
+      "appId": "4974328164143625978",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "NavoTap: Timing & Highscore",
+      "package": "com.kamilunavo.onemoretap",
+      "appId": "4975659079068694931",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "WärmeTakt: Heat Pump Tests",
+      "package": "de.kamilunavo.waermetakt",
+      "appId": "4972128532542830752",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "NavoKids: Lernspiele ab 3",
+      "package": "com.kamilunavo.navokids",
+      "appId": "4973427770717493700",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Kintaroq: Geräte-Fehlerhilfe",
+      "package": "com.kamilunavo.kintaroq",
+      "appId": "4975367480674472056",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Rapport AI: Arbeitsberichte",
+      "package": "de.kamilunavo.rapportai",
+      "appId": "4974080898449522968",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Schon erledigt? Daily Routines",
+      "package": "com.kamilunavo.schonerledigt",
+      "appId": "4973032774754369480",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "AnlagenCheck: Heizungsservice",
+      "package": "de.kamilunavo.servicecheck",
+      "appId": "4973563938353126131",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "RohrCalc: Rohre & Druckverlust",
+      "package": "de.kamilunavo.rohrcalc",
+      "appId": "4976457980416180102",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "HeizkörperCalc: Heizleistung",
+      "package": "de.kamilunavo.heizkorpercalc",
+      "appId": "4974315985387813561",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "LüftungsCalc: Luft & Kanäle",
+      "package": "de.kamilunavo.luftungscalc",
+      "appId": "4973912976306987936",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "KälteCalc: Kälte & Klima",
+      "package": "de.kamilunav.kaltecalc",
+      "appId": "4976278646146162006",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "BrennerCalc: Brenner & SHK",
+      "package": "de.kamilunavo.brennercalc",
+      "appId": "4972910786875040173",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "HydroCalc: Heizung & Hydraulik",
+      "package": "de.kamilunavo.hydrocalc",
+      "appId": "4974000193850560698",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "MAGCalc: Ausdehnungsgefäße",
+      "package": "de.kamilunavo.magcalc",
+      "appId": "4973345418335817990",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "VolumeCalc: Heating Volume",
+      "package": "de.kamilunavo.volumecalc",
+      "appId": "4974671101179945496",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "KeepMeter: Käufe & Rückgabe",
+      "package": "de.kamilunavo.keepmeter",
+      "appId": "4976457773432493246",
+      "visibleStatus": "Produktion"
+    },
+    {
+      "name": "Runenpfad: Roguelike Cards",
+      "package": "com.kamilunavo.runenpfad",
+      "appId": "4973195427671929486",
+      "visibleStatus": "Produktion"
+    }
+  ]
+}
