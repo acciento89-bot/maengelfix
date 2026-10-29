@@ -851,24 +851,148 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "German UI selected through existing app Settings. Original fictional experiment values and UTC dates remain literal."
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "German UI selected through existing app Settings. Original fictional experiment values and UTC dates remain literal."
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "German UI selected through existing app Settings. Original fictional experiment values and UTC dates remain literal."
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "German UI selected through existing app Settings. Original fictional experiment values and UTC dates remain literal."
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English default UI after actual cold restart; manually entered fictional German exclusion reason remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English default UI after actual cold restart; manually entered fictional German exclusion reason remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English default UI after actual cold restart; manually entered fictional German exclusion reason remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English default UI after actual cold restart; manually entered fictional German exclusion reason remains verbatim."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "182c70e9a7ba456ee039d387c7fa053cf2425cde53a88f0906947f35509576f9",
       "newVersionCode": 6,
       "newVersionName": "1.2.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.waermetakt",
       "previousMaxCode": 5,
       "previousProductionCode": 5,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Messzeiträume pro Experiment prüfen, einzelne Tage mit Begründung ausschließen und ursprüngliche sowie geprüfte Ergebnisse getrennt ansehen. Vergleichswerte bleiben bei unzureichenden Daten gesperrt. Cambay-Typografie und eigene Messblatt-Oberfläche.",
+        "en-US": "Review measurement windows per experiment, exclude days with a reason and keep original and reviewed results separate. Comparisons stay unavailable when data is insufficient. Cambay typography and a distinct worksheet layout; entered notes keep their original language."
+      },
       "repository": "acciento89-bot/w-rmetakt",
-      "requiredBundleAssets": [],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/res/raw/assets_fonts_cambay_cambayregular.ttf",
+          "sha256": "473faf71630aa1b411fa9887951d1b7b2674efa137e6697cd71afc2bf17d4d55"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_cambay_cambaybold.ttf",
+          "sha256": "75b8835327db778da23a029ad0782bde9f82567f902f9cf0cd1e18efa0fa96bc"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_cambay_ofl.txt",
+          "sha256": "846e8cc6dc69bf685d2db14cfa758ff3d9d771d54c9e0d3b511f0ecb97ac0e8a"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher.webp",
+          "sha256": "799559d8fe37aa977cf403475f497f4baecdae4903dfc54a10aa85b7a9e0b53e"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher.webp",
+          "sha256": "945f453ba7974b3f9eea0f85811d3c85dc941372a1b66aaf61424985dc279c4a"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher.webp",
+          "sha256": "fec929b3a8a4794eda0faf03949a6e1e175856896ba85839b1be7b3f5559dd8b"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher.webp",
+          "sha256": "2a77be8088e579bd1b4553b792569202f3f15833bf4b997806dba1c816d4bdd3"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher.webp",
+          "sha256": "7a73e7aa2611f9c9171046dc204e44d3659939330ec3d97eeb1d990f71fe2c57"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "08747fdf1030e1795da7b7aebc36381681f6b8a1bbf4f13479056451735d8108"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "138278113f84e194935572cbe89b51d07c08ffdd267fe4b75e49ecde2717acd8"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "f454aba7aff10e372881713e671d55c48ecfd629656a2cdea62c477ddbc82d1f"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "b596acd3443fab83682ad5df07a6b8db18dcfb71654ed498081e64e6a995aa09"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "a3045433ab55226b8b43f955bf95f1f2473113474bb73515456fdd9be94a181f"
+        },
+        {
+          "entry": "base/root/META-INF/androidx/annotation/annotation/LICENSE.txt",
+          "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+        },
+        {
+          "entry": "base/root/META-INF/androidx/collection/collection-ktx/LICENSE.txt",
+          "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+        },
+        {
+          "entry": "base/root/META-INF/androidx/collection/collection/LICENSE.txt",
+          "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+        },
+        {
+          "entry": "base/root/META-INF/androidx/lifecycle/lifecycle-common/LICENSE.txt",
+          "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
+        },
+        {
+          "entry": "base/root/okhttp3/internal/publicsuffix/NOTICE",
+          "sha256": "8a9c58fbded5ea3474315e4a9824ca8b1486098a1a03e897e0b19419d5e1876a"
+        }
+      ],
       "reviewedGitTree": "a1e8300ad854a67949b43d21e38ab500114e523a",
       "reviewedProductDigest": "58e50cc73035f4d1cf9b4a644779bd8bb7b2643b5ca152ec45c8a56f162af689",
       "reviewedSourceCommit": "bbb8c8ffb876155ea27aadcccf6e9cae1ef75915",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "3789b74c9ce0434e1733712a1c5d8e2a6e9457fd28c846863b90f0b8a7ac968f",
+      "rootReviewSha256": "3f4040f53dbe01656ad325ff26394bc34a4819483048b8a5295f3b0135c64413",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-quality-update-sign.yml",
       "signWorkflowSha256": "6a34e9aaeba6ed59596aa4af4986562b6183b10f9b12d8a4129fe8d39709d7fc",
