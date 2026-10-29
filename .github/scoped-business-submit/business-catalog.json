@@ -455,17 +455,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own fictional German purchase name stays verbatim. Existing amount formatting follows current app locale (USD symbol for en-US), with unchanged numeric amounts and no currency conversion."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own fictional German purchase name stays verbatim. Existing amount formatting follows current app locale (USD symbol for en-US), with unchanged numeric amounts and no currency conversion."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own fictional German purchase name stays verbatim. Existing amount formatting follows current app locale (USD symbol for en-US), with unchanged numeric amounts and no currency conversion."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own fictional German purchase name stays verbatim. Existing amount formatting follows current app locale (USD symbol for en-US), with unchanged numeric amounts and no currency conversion."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "182c70e9a7ba456ee039d387c7fa053cf2425cde53a88f0906947f35509576f9",
       "newVersionCode": 7,
       "newVersionName": "1.2.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.keepmeter",
       "previousMaxCode": 6,
       "previousProductionCode": 6,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Käufe über die beschriftete Schaltfläche hinzufügen, Nutzungen erfassen und archivierte Käufe mit Kosten pro Nutzung ansehen. Eigene Quattrocento-Sans-Typografie und Kaufkarten. Bestehende Einträge bleiben erhalten.",
+        "en-US": "Add purchases with the labelled button, record uses, and review archived purchases with cost per use. Distinct Quattrocento Sans typography and purchase cards. Existing records are retained."
+      },
       "repository": "acciento89-bot/keepmeter",
       "requiredBundleAssets": [
         {
@@ -512,8 +563,8 @@
       "reviewedGitTree": "38a22abf83756b7d98b8f7101450384a9c2739bf",
       "reviewedProductDigest": "3e586d18d68423926bd112ee0e901d092dd903b6b2431bba360fe94928c28486",
       "reviewedSourceCommit": "9be29092eecdc4c9dda044d3b67f9e770db53744",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "bc0b45a58124e4b1c04dccabd9b2b1103f9492c7afb7f76368c0a1dec17f1dad",
+      "rootReviewSha256": "30f3256ef6ec036fdab3a7a58421642e92750f64c2ea85efef9d3a4a8df1bd68",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-central-signed-bundle.yml",
       "signWorkflowSha256": "8afab8c01b9c626cc65584918b7a26af5f1ee3aeb8a496a8ea389ea2e7ea20f1",
