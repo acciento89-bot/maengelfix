@@ -1,0 +1,2166 @@
+{
+  "ok": true,
+  "requestedPackages": [
+    "de.kamilunavo.idlehandwerker",
+    "com.kamilunavo.risingsteps",
+    "com.kamilunavo.perfectdrop",
+    "de.kamilunavo.navopass",
+    "com.kamilunavo.maengelfix",
+    "de.kamilunavo.zweicheck",
+    "com.kamilunavo.wunderkapseln",
+    "de.kamilunavo.reklaio",
+    "de.kamilunavo.ninenine",
+    "com.kamilunavo.onemoretap",
+    "de.kamilunavo.waermetakt",
+    "com.kamilunavo.navokids",
+    "com.kamilunavo.kintaroq",
+    "de.kamilunavo.rapportai",
+    "com.kamilunavo.schonerledigt",
+    "de.kamilunavo.servicecheck",
+    "de.kamilunavo.rohrcalc",
+    "de.kamilunavo.heizkorpercalc",
+    "de.kamilunavo.luftungscalc",
+    "de.kamilunav.kaltecalc",
+    "de.kamilunavo.brennercalc",
+    "de.kamilunavo.hydrocalc",
+    "de.kamilunavo.magcalc",
+    "de.kamilunavo.volumecalc",
+    "de.kamilunavo.keepmeter",
+    "com.kamilunavo.runenpfad"
+  ],
+  "apps": [
+    {
+      "package": "de.kamilunavo.idlehandwerker",
+      "appId": "4975522377690050503",
+      "status": "ok",
+      "editId": "12660317247752926658",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "0e1b1c6f5d6d7fdf9eab3b18db34c2b5944537b5a991b38e9e775f59f4124d25"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "505ea22231c1122e67dfead1c5315b1f3de2bd5ce5a6f6e949f2c8333cf058a7"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "90f0792d966755130a0efd42531c0798f613f801eb2b0f4c45c65520af35805d"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "9958f4f339ac6da60d01092578a3b9280d556857d4ef0c92669eaa74a9e0f9cc"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.risingsteps",
+      "appId": "4975121130067488005",
+      "status": "ok",
+      "editId": "18128126545092008778",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 7,
+          "sha256": "7970762934c90b8f976e79945030bdedee53c10f4c166bf51ebd67785a60f3b7"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "2056d8f30e55976caaf630ea9696db23079aa41b14ee0badc472694460d0a2d3"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "draft",
+              "versionCodes": [
+                7
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              8
+            ]
+          }
+        ]
+      },
+      "maxCode": 8,
+      "maxCodeIncludingTracks": 8,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.perfectdrop",
+      "appId": "4973335069031765612",
+      "status": "ok",
+      "editId": "03381972488484896094",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 13,
+          "sha256": "fb6269122b1cad79f1525228c6d3fcfd8aed42b591e4cc7dd0d7682c345a3e52"
+        },
+        {
+          "versionCode": 14,
+          "sha256": "7ce74da1ca0631b220dc8b3cce2914eb3aefc022717e0d782a0480343ddaf13b"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                14
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "draft",
+              "versionCodes": [
+                13
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              14
+            ]
+          }
+        ]
+      },
+      "maxCode": 14,
+      "maxCodeIncludingTracks": 14,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.navopass",
+      "appId": "4973499767022511783",
+      "status": "ok",
+      "editId": "04517707360724097453",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 7,
+          "sha256": "3f17993862d039900fdea7343d26a6a213737a3852553c6dd291d1f8acb27a33"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "3041268face8e5014d22554e1ab6c08d5fd5ae15b76a391c0b7730d9565318da"
+        },
+        {
+          "versionCode": 9,
+          "sha256": "98fbad7e5277f1f37168b22a9974d4a1d517572ee68f1ca2e4fe97e21d3ea4fe"
+        },
+        {
+          "versionCode": 10,
+          "sha256": "e1f03e6e2349a1213bbd159a71927a05caafa5faa1d28fa976ae1b1380411377"
+        },
+        {
+          "versionCode": 11,
+          "sha256": "3c8a9c7d75a46548a21626b1e8d221c8c3abd35683afaf0c46d1898beb5a2b01"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                10
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              11
+            ]
+          }
+        ]
+      },
+      "maxCode": 11,
+      "maxCodeIncludingTracks": 11,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.maengelfix",
+      "appId": "4974666039863842830",
+      "status": "ok",
+      "editId": "14999592073795601066",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "f20b97079f83597307fb9f497ea586d6b6316f9bc81478584c1d7e4b3e60d559"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "25cfdba160698a729c783756d40440a1e6ca762b439623ed78d696b0d6d50d8e"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "8bed1149424e18b4d062d67f9a9d25952711a1e971330c119b7a74ea60d74ba8"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "0308d1062f1ad5af53800814c6c44a900867cef2ea6b314d0e7a145ce5eaeb6e"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "bbac1a2e2861584dc6a2bb9aa46a932820a5cdb461863ec394de12a0b2520c7b"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "b0f7970998111ba04d9655148f89b064af2f13a55d0adc427e9c4bc06d0a1132"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              8
+            ]
+          }
+        ]
+      },
+      "maxCode": 8,
+      "maxCodeIncludingTracks": 8,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.zweicheck",
+      "appId": "4975977374520913421",
+      "status": "ok",
+      "editId": "09125588447468721928",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "c515d5ef54a37547c47db2fd9c15b0d7aeea4988187c7914332a1cb921cfbb6b"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "b07255660033926d5b6c78b0f9856fb66218fb9cde2380c16572d0a031167f4c"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "e5969cd0a454e1ca1ee526997e587e8d944e50fd7c840be61ad6102f450aa181"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "dcb0eb982ca0109419963a635c1c0825e44a98df41b91345cc3b2752d8c415a7"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "f5c43c201379f96d6acdb974a4a689029a84aa0dfdf18f54409988e5cec4ef8c"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              5
+            ]
+          }
+        ]
+      },
+      "maxCode": 5,
+      "maxCodeIncludingTracks": 5,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.wunderkapseln",
+      "appId": "4976310420171925890",
+      "status": "ok",
+      "editId": "10690808061172059726",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 9,
+          "sha256": "11ae70f226c072a7257dee18c2a83086953b910f9e050783a50c8d191912d1c1"
+        },
+        {
+          "versionCode": 10,
+          "sha256": "35f1182b7b2c7f91058624201ee11a621aa376b06f8ce485bf8602c8cf5fa586"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                10
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                9
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              10
+            ]
+          }
+        ]
+      },
+      "maxCode": 10,
+      "maxCodeIncludingTracks": 10,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.reklaio",
+      "appId": "4972633172712985073",
+      "status": "ok",
+      "editId": "17902162613081315314",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 3,
+          "sha256": "0c559e64ccb3ec0186eb5aa1e7bcc4558507ff0d6eea965b09ee1b3cfccae857"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "d8267bf381bf8f5c887251d4ce6b5aab1b4701b479e51375e2a0d43ab43f7a7c"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "7c7b9196d39ba4486b9c85aa8ac1bbfc41071827d9c13e6ec875af383df92a67"
+        },
+        {
+          "versionCode": 10,
+          "sha256": "007b570dfe0a00c2579a9778540652034d9f2448e8255091daf690ecaa4730fb"
+        },
+        {
+          "versionCode": 11,
+          "sha256": "b684f909ff752e4340cf53b35565ccb87d295104d151aee6d106aa340fdb1182"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                11
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                10
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              11
+            ]
+          }
+        ]
+      },
+      "maxCode": 11,
+      "maxCodeIncludingTracks": 11,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.ninenine",
+      "appId": "4974328164143625978",
+      "status": "ok",
+      "editId": "02028704659769749396",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "e72a192cfc07096d19ff9896181538f1abb099fd014fb89e4d03c69696530657"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "f88c4c5bda7a4f24a740e19997979f2781a772278f257c452667a734df86517b"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "f1cd12e9c7d0d86512a9aabdc341c771ffe1f6c96cfb8a9745cb7f0a95faaf97"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "5e899baf8aa65b0c42c1738978a568833925f76c2e020e0bb35bce4cff0a26a6"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "4462be2592152f8dcecbc2c32ce3f6655faf01fccb8b05e7ddb3a31769fa22af"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              6
+            ]
+          }
+        ]
+      },
+      "maxCode": 6,
+      "maxCodeIncludingTracks": 6,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.onemoretap",
+      "appId": "4975659079068694931",
+      "status": "ok",
+      "editId": "03687848973315311213",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 3,
+          "sha256": "5daea7cb72a14ebfbed1f7fa52862a157ac73f354f7b390a506bb01907801a73"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "6f44f47665eb27cee80f02bd97f393ce092349785068677e2c0c5229d579327c"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "7c5da2cbce40f522d5c956c9625e5fa7515d51f9ea69f43c83f6e2e416b04745"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "69d0931a5b68b06080c83c7cb3e92b39055222562a745dc08f09ae3b03191162"
+        },
+        {
+          "versionCode": 7,
+          "sha256": "d2378acd06fed6bcd4edaba7813e763a4e19319841a851f25fea413561478528"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "41f43be6715ed1f2303429e1307dc662f365b5eda6844c51b7b960bf76121fa6"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                7
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              8
+            ]
+          }
+        ]
+      },
+      "maxCode": 8,
+      "maxCodeIncludingTracks": 8,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.waermetakt",
+      "appId": "4972128532542830752",
+      "status": "ok",
+      "editId": "03791739484797703989",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 3,
+          "sha256": "937b2de436d25af98fc64379c2f2194309e12bda9fa4f6792689a5c1091e6f80"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "3fdbc4d7959de8bf3a3903ab9b720ccdd21bfe11518e8d128dc315038f739c6e"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "0d7a1562c4e1d3b050a9fc3737c869cd174fa1b6754d369286ca037f7d556d4d"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": [
+            {
+              "status": "draft",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              5
+            ]
+          }
+        ]
+      },
+      "maxCode": 5,
+      "maxCodeIncludingTracks": 5,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.navokids",
+      "appId": "4973427770717493700",
+      "status": "ok",
+      "editId": "12432589708928254311",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 4,
+          "sha256": "006662deaa9eeee4522c7e255d2c585b57d10dee1da50bc107c31554b6a9e397"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "0c330a112bcbbd8d68b9331a8e27c582f32d1abab3e71f31ffc2ba5efb02b8d9"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "129d136742f9c3aded7a6aababd833cc56fd86393eacc4c12e010686bdeac57b"
+        },
+        {
+          "versionCode": 7,
+          "sha256": "f7357cc275576fa435d351f019d3538bd392b9a29e061b2a500dd4bd4a80e86b"
+        },
+        {
+          "versionCode": 8,
+          "sha256": "3b83d2c7fdb73c9134b8604b0d29b60d44902161992203bc2433d3efdbe251a6"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                8
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              8
+            ]
+          }
+        ]
+      },
+      "maxCode": 8,
+      "maxCodeIncludingTracks": 8,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.kintaroq",
+      "appId": "4975367480674472056",
+      "status": "ok",
+      "editId": "02179555477190705203",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "a52309e5973b353db91220ebf7b87c3647f7c3fe2c04417960bda40cdf2dea4f"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "358885ee63c6256b20a27232c91e570a2d53dcae2649516d6ea247963e9c1a89"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "f19543bb27bb0aefefa773592d80c3023e012caa3aa0071d4e0f8c2397082e2c"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "633c40bd486ef8df0765747ac767cd0171399867b556ae686092c4d806dbd83e"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "76d46cd5e71eac294d9e903988752aa66a96794b42e9d8d079170c0a62d08689"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "f5d794edb4d8622402e286736c8c7af4cf94df2287f744ae8af2849765136ddb"
+        },
+        {
+          "versionCode": 7,
+          "sha256": "9a519654de47d32dbd00657eb3b8e715312684514ec4931f0b94275d988a6707"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                7
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              7
+            ]
+          }
+        ]
+      },
+      "maxCode": 7,
+      "maxCodeIncludingTracks": 7,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.rapportai",
+      "appId": "4974080898449522968",
+      "status": "ok",
+      "editId": "00733694557166594414",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "e924060e8d7c09f4b029d67908011e8727838c12b2237801b60d1576cad8a58f"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "2d43578cb2da996eeeba4580f37e4318ab5bb695af99c5a56ae322f530854dd3"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "fa7939abfc331c80a91ca4c9262f337b7b32f7093fb62f4c4e71f3af011a8e4d"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "0c666742766cb6851cce5d858f4b99df8a5172768da3e3711df0f66339c87a54"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.schonerledigt",
+      "appId": "4973032774754369480",
+      "status": "ok",
+      "editId": "08045067133623679453",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 4,
+          "sha256": "79f28f44a42b48dd3d143d328f11b110e5dcc55553f06d83c91a9d1fb8974d95"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "e971a30d494f6a9ff94382ea6b80118fd744f8f1e5ebdf645130f16ed976b998"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "41a7f18427f1623cfdedcd06edef618c1db6abe035fd13e5ae751502a5099b3c"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              6
+            ]
+          }
+        ]
+      },
+      "maxCode": 6,
+      "maxCodeIncludingTracks": 6,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.servicecheck",
+      "appId": "4973563938353126131",
+      "status": "ok",
+      "editId": "14731696145141736242",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "9d7e7b7a377cb346fcac8e3b388d1a46f04425e86b06fd0667b671fb021db145"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "d1a526c435c734c2dd521f633d054e4ebbbeebfa3005c9f6873ffed3b7de6dd9"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "ecd113f20e1648eeb7043bf3ab92ff56ac38877ff36c18dfb7abc5cc4eb8edf1"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "bc026ddfd5eea740ac10f5509c7653089956221962a638c4444667914867cd40"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.rohrcalc",
+      "appId": "4976457980416180102",
+      "status": "ok",
+      "editId": "17848503687409378224",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "1bff8a683b3b753928919b0468c0240cd2c4fd1ed4af124243d34d813306168e"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "3da19fe6de7de9be0e0e77934fa5824fc4b17d551d4a95600bd661e1ed36b2f3"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "c6fc6e168a3483c171c472a48593a1b94a5f769afd81a3f02b8170848fc97155"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.heizkorpercalc",
+      "appId": "4974315985387813561",
+      "status": "ok",
+      "editId": "15118011663046295954",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "53da190e681d2b0ba97dd9484cf9eb885885da9fa2fb51f38a077d5f030c8d80"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "8d8fb385ccfcdbcc4fdc011e39b6175b87547dae00745101dcf965a82687a4e0"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "120239524f31cd360cedef0026e9923f8c01b9c6fcee1bd961d76ba2a8679639"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "399d7dc36a63c842ead3ac3315b4337ce93a9ecc86dcd8a397b9a46dcfa60389"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.luftungscalc",
+      "appId": "4973912976306987936",
+      "status": "ok",
+      "editId": "08908292625158069981",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "8500d2c2d1c07db9cfb8b30082eaaf6225fd6a05af4fd2c414cc0e13dab115bf"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "a04d7281a7f19f27de127d2d2d845badd0d47036ff8f35267d3f207377c015db"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "9459d6079889a90fa4593575721ab488665a2dfcd7211fec901171e030feb9ce"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "5933250c394959af58ef8675bbca288d9b8a6c8d4d3823c8fd82e2589cf1c96f"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunav.kaltecalc",
+      "appId": "4976278646146162006",
+      "status": "ok",
+      "editId": "04678553815043001250",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "e7cc175027f8772be25ba42a1a475df665081d5edd621b0b6e01b738f3753233"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "a4240f81fd9eaa8b2b132d978d33dcf889e3d236b4f5988577f004e406744911"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "b376c5def9a8a8418b63cb052b84e55ddcabc6b77501227a26f2e8d19560aebd"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "bc4279bd971ef2e08964c774967362a036168b99aa31547f33e99a192cb0dc69"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.brennercalc",
+      "appId": "4972910786875040173",
+      "status": "ok",
+      "editId": "02797276039508117181",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "35e031e3b62868fee2750cfa9b7a86a67c70c5fb0cb707d60813e9df52b21c6b"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "e7ee349a42258ccef43f7f0b10f1d2f763d3ad42c7529ea2b691662ef7ae2ed6"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "b81f2551962cc603751a083d69237074028eef52baa7981b7b0fecb69c9d568f"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "6fc4cb823c4c8b170805598a0b03d823c7572473ea16d42a582395f7b447d00d"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "e6d33dd19fef7295eed8434f3b46c637e0dd852545dea6b1bea8ae33d4819e7f"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              6
+            ]
+          }
+        ]
+      },
+      "maxCode": 6,
+      "maxCodeIncludingTracks": 6,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.hydrocalc",
+      "appId": "4974000193850560698",
+      "status": "ok",
+      "editId": "02027119862665115901",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "12bfaf018568b0c93a8995417fef99da801888081299ce7f44e09599fffb85c4"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "3b8bd7e488e2873823198d5d6ada2678d04a28e6c0659f3540709ca86c1b99e7"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "2f155f3cb92f0a59bafca381b4137299e1b999bca4b62de0fc7f64eb989daa8a"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "933e3bc2bfc9e0b4d8aab6d71dac1555e900c435802d109297be98090f55f505"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "635522f82c380c470a059c18b707be457205cb9e0545fd85da96e51e1c058261"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              5
+            ]
+          }
+        ]
+      },
+      "maxCode": 5,
+      "maxCodeIncludingTracks": 5,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.magcalc",
+      "appId": "4973345418335817990",
+      "status": "ok",
+      "editId": "07282806754333812074",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "46892c2b984c3647d6f02a2bd7412da5b63e6691d1022bc16937fd606746fd90"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "3a8bcc4118b66f365e0b30ef893c16475b8afa799ad1c9291c36062d6e828fdb"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "87e6aa44bd5be4d47d4cc2aa8f5732bc45c00ec8ed6b90d2274b607a3f0e23cc"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "dd0f1d37be9490307c09cef42f5bb33d2f08d639b9fd152836a38bbc066bcf15"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              6
+            ]
+          }
+        ]
+      },
+      "maxCode": 6,
+      "maxCodeIncludingTracks": 6,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.volumecalc",
+      "appId": "4974671101179945496",
+      "status": "ok",
+      "editId": "10232330121917196453",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 2,
+          "sha256": "c9c9200aed1be7a2a10700d81e6edf698c261c17f9f2896c6ebbc2e6840fe7ef"
+        },
+        {
+          "versionCode": 3,
+          "sha256": "53b54367907cecfaac6f81cc88fa48648eab602a892d3e1fb130d80b26e3b687"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "02c217504ced8280e6b86f1fd7cf678bedd16a2664853e129e8a5cd6994df953"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "c80e1e5018216f89e9e6dae4c3d6699cab2a68677fdf3f3e28862ebae6625e3c"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              5
+            ]
+          }
+        ]
+      },
+      "maxCode": 5,
+      "maxCodeIncludingTracks": 5,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "de.kamilunavo.keepmeter",
+      "appId": "4976457773432493246",
+      "status": "ok",
+      "editId": "17153071436743441696",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 1,
+          "sha256": "cd085153a5adb53fe7a3dd7ea18683b11c59b668822f5dec6d4a4094b752c3bc"
+        },
+        {
+          "versionCode": 2,
+          "sha256": "7b226672808d36fec92d0ecc547edf59cf729abb426d9f4d846d7fd62f47fe1c"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "44970634f927c2bdee681e23d4b811f8b74a11ff14cad65726d698c50ae6b0e5"
+        },
+        {
+          "versionCode": 5,
+          "sha256": "53554089b63ed7519833f65a3b1ab608ee44317dbead5f0458f872bd78a2e0bc"
+        },
+        {
+          "versionCode": 6,
+          "sha256": "894bee775c81b60f895004dcb0c924bdbb5ec6b1e0f1d881a8bf70a2616a3204"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                6
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": [
+            {
+              "status": "draft",
+              "versionCodes": []
+            }
+          ]
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                5
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              6
+            ]
+          }
+        ]
+      },
+      "maxCode": 6,
+      "maxCodeIncludingTracks": 6,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    },
+    {
+      "package": "com.kamilunavo.runenpfad",
+      "appId": "4973195427671929486",
+      "status": "ok",
+      "editId": "11455679313513804552",
+      "resourceStatus": {
+        "bundles": "ok",
+        "apks": "ok",
+        "tracks": "ok"
+      },
+      "bundles": [
+        {
+          "versionCode": 3,
+          "sha256": "ecbdc3ff7a11f4d555393351581c738a52df260ad6ea4fa575646cfb15623dc9"
+        },
+        {
+          "versionCode": 4,
+          "sha256": "f8ccc65670abb67d2e88e02c5c72a0c2bda659c4bd3e8bd81b1b09ca6ec9a5fe"
+        }
+      ],
+      "apks": [],
+      "allTracks": [
+        {
+          "track": "production",
+          "releases": [
+            {
+              "status": "completed",
+              "versionCodes": [
+                4
+              ]
+            }
+          ]
+        },
+        {
+          "track": "beta",
+          "releases": []
+        },
+        {
+          "track": "alpha",
+          "releases": []
+        },
+        {
+          "track": "internal",
+          "releases": [
+            {
+              "status": "draft",
+              "versionCodes": [
+                3
+              ]
+            }
+          ]
+        }
+      ],
+      "productionTrack": {
+        "track": "production",
+        "releases": [
+          {
+            "status": "completed",
+            "versionCodes": [
+              4
+            ]
+          }
+        ]
+      },
+      "maxCode": 4,
+      "maxCodeIncludingTracks": 4,
+      "cleanup": {
+        "attempted": true,
+        "confirmed": true,
+        "httpStatus": 204
+      }
+    }
+  ],
+  "stoppedBecause": null,
+  "startedAtUTC": "2026-10-29T11:13:33.628340+00:00",
+  "finishedAtUTC": "2026-10-29T11:14:15.663301+00:00",
+  "catalogSha256": "be62abdb36c2e71de25cefe7948c5af339eb0eccbb9b755c1e606abbb94dc043",
+  "sourceInventory": {
+    "method": "actual current authenticated Google Play Console app-list UI, all four pages read-only",
+    "observedUtc": "2026-10-29T10:37:08.729766+00:00",
+    "inventorySha256": "eb4d9bdadfee15d1bdec0240618ca5fa94cb0ff92d11a5b10eb122b81f963b30",
+    "scope": "Exact26existing production apps from owner-approved current UI; excluded removed/protected/pending products"
+  },
+  "providerWrites": "Temporary owned-edit create/delete only; no upload, track mutation or commit"
+}
