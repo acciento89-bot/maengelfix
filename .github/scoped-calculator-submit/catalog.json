@@ -47,11 +47,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Servicebank mit klar gegliederten Messwerten und eigener Schrift. Bestehende Berechnungen und gespeicherte Besuche bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Servicebank mit klar gegliederten Messwerten und eigener Schrift. Bestehende Berechnungen und gespeicherte Besuche bleiben verf\u00fcgbar.",
         "en-US": "Updated service workspace with clearer readings and its own typeface. Existing calculations and saved visits remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "HydroCalc",
@@ -98,11 +101,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Projektübersicht mit klar gegliederten Arbeitsschritten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Projekt\u00fcbersicht mit klar gegliederten Arbeitsschritten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated project workspace with clearer steps and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "MAGCalc",
@@ -149,11 +155,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Gefäß- und Projektübersicht mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Gef\u00e4\u00df- und Projekt\u00fcbersicht mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated vessel and project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "KaelteCalc",
@@ -196,11 +205,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Servicebank für Kälteanlagen mit klarer Gliederung und eigener Schrift. Vorher-/Nachher-Messungen und gespeicherte Besuche bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Servicebank f\u00fcr K\u00e4lteanlagen mit klarer Gliederung und eigener Schrift. Vorher-/Nachher-Messungen und gespeicherte Besuche bleiben verf\u00fcgbar.",
         "en-US": "Updated refrigeration service workspace with clearer organization and its own typeface. Before/after readings and saved visits remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "LueftungsCalc",
@@ -243,11 +255,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Inbetriebnahmeübersicht mit klar gegliederten Projekten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Inbetriebnahme\u00fcbersicht mit klar gegliederten Projekten und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated commissioning workspace with clearer projects and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "HeizkoerperCalc",
@@ -286,11 +301,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Projektübersicht für Heizkörper mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Projekt\u00fcbersicht f\u00fcr Heizk\u00f6rper mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated radiator project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "RohrCalc",
@@ -333,11 +351,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Projektübersicht für Rohrkreise mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Projekt\u00fcbersicht f\u00fcr Rohrkreise mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated pipe-circuit project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "AnlagenCheckAndroid",
@@ -380,11 +401,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Anlagen- und Besuchsübersicht mit klarer Gliederung und eigener Schrift. Bestehende Checklisten und gespeicherte Besuche bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Anlagen- und Besuchs\u00fcbersicht mit klarer Gliederung und eigener Schrift. Bestehende Checklisten und gespeicherte Besuche bleiben verf\u00fcgbar.",
         "en-US": "Updated installation and visit workspace with clearer organization and its own typeface. Existing checklists and saved visits remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     },
     {
       "app": "VolumeCalc",
@@ -431,11 +455,14 @@
         ]
       },
       "releaseNotes": {
-        "de-DE": "Überarbeitete Projektübersicht für Anlagenvolumen mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verfügbar.",
+        "de-DE": "\u00dcberarbeitete Projekt\u00fcbersicht f\u00fcr Anlagenvolumen mit klarer Gliederung und eigener Schrift. Bestehende Berechnungen und gespeicherte Projekte bleiben verf\u00fcgbar.",
         "en-US": "Updated system-volume project workspace with clearer organization and its own typeface. Existing calculations and saved projects remain available."
       },
-      "listingLocales": null,
-      "localeSnapshotSha256": null
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa"
     }
   ],
   "localePolicy": {

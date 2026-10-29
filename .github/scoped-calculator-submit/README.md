@@ -1,14 +1,14 @@
-# Nine existing calculators: staged manual Google update
+# Nine existing calculators: manual Google update
 
-This is source for owner review. It has not been installed in the repository, dispatched, authenticated or submitted. Local tests use synthetic fixtures and fake transports. They do not prove real signed artifacts, native QA or provider acceptance.
+The workflow is installed in the own repository. The owner completed the bounded inspection described below; no production submission has been dispatched through this workflow. Local tests use synthetic fixtures and fake transports. They do not prove real signed artifacts, native QA or provider acceptance.
 
-## First execution: inspect existing locales only
+## Completed inspection and pinned existing locales
 
-After independent review, integrate these NEW files into the existing own `acciento89-bot/maengelfix` main. Preserve `.github/navoops-preflight/**` and `navoops-google-track-audit.yml` unchanged. Dispatch `navoops-calculator-production-submit.yml` on main with `operation=inspect`, `package=all-nine`, and the two candidate fields empty. A single allowed package is also supported. No schedule, branch event, rerun or other package is supported.
+The owner dispatched `operation=inspect`, `package=all-nine` on main in [run 40886103485](https://github.com/acciento89-bot/maengelfix/actions/runs/40886103485), source commit `b09730d9cf897e0283f678ab2aaa981b2d915bee`. Its original artifact ID is `12901384975`. The retained full original `locale-inventory.json` has SHA256 `35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa`; every exact catalog package returned existing `de-DE` and `en-US`, with all nine owned edit deletions confirmed HTTP 204. These actual 18 locale IDs and the immutable original receipt SHA are now pinned in every app catalog entry; the existing DE/EN release-note keys already match. Preserve `.github/navoops-preflight/**` and `navoops-google-track-audit.yml` unchanged. No schedule, branch event, rerun or other package is supported.
 
 The inspect job uses the existing WIF route. For each exact catalog package it creates one owned temporary edit, GETs listings, retains only sorted existing language IDs and confirms DELETE before continuing. It never reads candidate assets or mutates uploads, images, tracks or review state. Unknown creation or deletion stops the batch as reconciliation required. Do not run other edits/Console mutations for these apps concurrently. Do not repeat a failed operation blindly; review its owned edit identity and outcome first.
 
-Download the redacted `locale-inventory.json` receipt from the inspect job. Review its exact run/main source identity and all cleanup acknowledgements. For each app choose only actually present German/English locale IDs, at most one per language family. Pin those exact IDs in `listingLocales`, pin the SHA256 of the ORIGINAL full inventory receipt in `localeSnapshotSha256`, and use exactly those keys in `releaseNotes`. Update the workflow's `CATALOG_SHA256` after this reviewed catalog change. Pending null locale fields currently block every candidate preparation/submission. The inventory's old catalog hash is evidence of its pre-freeze input; it is not rewritten to manufacture a circular new hash.
+Every candidate must include the exact unmodified original inspection receipt at `qa/locale-inventory.json`; its raw SHA must equal the frozen catalog snapshot SHA. The verifier still rejects missing/null locale pins, a different snapshot, an absent selected existing locale or unconfirmed cleanup. Do not fabricate or rewrite an inspection receipt. The inventory's earlier catalog hash records its pre-freeze input; it is not rewritten to manufacture a circular new hash. Any future inventory/pin change requires separate review, not an automatic loop.
 
 ## Prepare genuine candidate evidence
 

@@ -82,6 +82,10 @@ class CandidateTests(unittest.TestCase):
         with self.assertRaises(candidate.CandidateError):self.validate(f)
     def test_exact_nine_catalog_hash_and_scope_required(self):
         path=HERE/'catalog.json';catalog=candidate.load_catalog(path,digest(path.read_bytes()));self.assertEqual(len(catalog),9)
+        for app in catalog.values():
+            self.assertEqual(app['listingLocales'],['de-DE','en-US'])
+            self.assertEqual(app['localeSnapshotSha256'],'35b9bd17b4106820a156e8ca192ba3e66cf9cda0f2e3952b7ed1fb509aee57aa')
+            self.assertEqual(set(app['releaseNotes']),{'de-DE','en-US'})
         with self.assertRaises(candidate.CandidateError):candidate.load_catalog(path,'0'*64)
         with tempfile.TemporaryDirectory()as d:
             p=Path(d)/'catalog.json';data=json.loads(path.read_text());data['apps'][0]['package']='de.kamilunavo.maengelfix';p.write_bytes(encode(data))
