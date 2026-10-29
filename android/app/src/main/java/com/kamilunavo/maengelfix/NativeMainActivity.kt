@@ -10,6 +10,8 @@ import android.os.Environment
 import android.webkit.CookieManager
 import android.webkit.DownloadListener
 import android.webkit.MimeTypeMap
+import android.webkit.ServiceWorkerClient
+import android.webkit.ServiceWorkerController
 import android.webkit.URLUtil
 import android.webkit.ValueCallback
 import android.webkit.WebChromeClient
@@ -256,6 +258,15 @@ private fun WebView.configureMaengelFixWebView(
         setAcceptThirdPartyCookies(this@configureMaengelFixWebView, false)
     }
 
+    // The installed PWA worker fetches subresources outside WebViewClient. Serve
+    // the same three local assets there too; all other worker requests pass through.
+    // Keep only the application context in this process-wide client.
+    val assetContext = context.applicationContext
+    ServiceWorkerController.getInstance().setServiceWorkerClient(object : ServiceWorkerClient() {
+        override fun shouldInterceptRequest(request: WebResourceRequest?): WebResourceResponse? =
+            packagedProductIdentityResponse(assetContext, request)
+    })
+
     webChromeClient = object : WebChromeClient() {
         override fun onShowFileChooser(
             webView: WebView?,
@@ -289,16 +300,7 @@ private fun WebView.configureMaengelFixWebView(
 
         override fun shouldInterceptRequest(view: WebView?, request: WebResourceRequest?): WebResourceResponse? {
             val uri = request?.url ?: return null
-            // Same-origin packaged styles/fonts; no network policy or billing bypass.
-            if (isProductIdentityOrigin(uri) && request.method == "GET") {
-                val asset = when (uri.path) {
-                    "/__android_identity__/property-dossier.css" -> "visual-identity/property-dossier.css" to "text/css"
-                    "/__android_identity__/Cantarell-Regular.ttf" -> "fonts/cantarell/Cantarell-Regular.ttf" to "font/ttf"
-                    "/__android_identity__/Cantarell-Bold.ttf" -> "fonts/cantarell/Cantarell-Bold.ttf" to "font/ttf"
-                    else -> null
-                }
-                if (asset != null) return WebResourceResponse(asset.second, if (asset.second == "text/css") "utf-8" else null, context.assets.open(asset.first))
-            }
+            packagedProductIdentityResponse(assetContext, request)?.let { return it }
             val blockedBillingRequest =
                 uri.host.equals(BuildConfig.ALLOWED_HOST, ignoreCase = true) &&
                     request.method.equals("POST", ignoreCase = true) &&
@@ -431,6 +433,16 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
 }
 
 // Only the app's exact HTTPS origin receives this local visual identity.
+private fun packagedProductIdentityResponse(context: Context, request: WebResourceRequest?): WebResourceResponse? {
+    val uri = request?.url ?: return null
+    val asset = ProductIdentityAssets.resolve(uri.scheme, uri.host, uri.port, uri.userInfo, uri.path, request.method)
+        ?: return null
+    return WebResourceResponse(
+        asset.mimeType, if (asset.mimeType == "text/css") "utf-8" else null,
+        200, "OK", mapOf("Cache-Control" to "no-store"), context.assets.open(asset.assetPath),
+    )
+}
+
 private fun isProductIdentityOrigin(uri: Uri): Boolean =
     uri.scheme == "https" && uri.host == BuildConfig.ALLOWED_HOST &&
         (uri.port == -1 || uri.port == 443) && uri.userInfo == null
@@ -450,7 +462,10 @@ private fun injectAndroidProductIdentity(view: WebView?, url: String?) {
           const link = document.createElement('link');
           link.id = 'mf-android-product-identity';
           link.rel = 'stylesheet';
-          link.href = '/__android_identity__/property-dossier.css';
+          // A prior worker may have cached the server's HTML fallback at the old
+          // virtual URL. A versioned URL avoids that stale response without
+          // deleting the user's PWA cache, session or service-worker registration.
+          link.href = '/__android_identity__/property-dossier.css?v=${BuildConfig.VERSION_CODE}-sw1';
           document.head.appendChild(link);
           // Mark only real own auth containers after React mounts them. No form values are read.
           const syncOwnAuthForms = () => {
