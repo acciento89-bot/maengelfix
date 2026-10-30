@@ -5,16 +5,19 @@ import publisher, release_asset
 
 class Stream:
     status=200
-    def __init__(self,raw):self.raw=raw
-    def read(self,size):return self.raw[:size]
+    def __init__(self,raw):self.raw=raw;self.position=0;self.requests=[]
+    def read(self,size):
+        assert type(size)is int and size>0
+        self.requests.append(size);value=self.raw[self.position:self.position+size]
+        self.position+=len(value);return value
     def __enter__(self):return self
     def __exit__(self,*args):pass
 class Opener:
-    def __init__(self,location=None,raw=b'{}'):self.location=location;self.raw=raw;self.calls=[]
+    def __init__(self,location=None,raw=b'{}'):self.location=location;self.raw=raw;self.calls=[];self.responses=[]
     def open(self,request,timeout):
         self.calls.append((request,timeout))
         if self.location and len(self.calls)==1:raise HTTPError(request.full_url,302,'redirect',{'Location':self.location},io.BytesIO())
-        return Stream(self.raw)
+        stream=Stream(self.raw);self.responses.append(stream);return stream
 
 class TransportTests(unittest.TestCase):
     def test_google_token_only_reaches_fixed_origin_raw_media_query_and_bounded_timeout(self):
@@ -37,6 +40,9 @@ class TransportTests(unittest.TestCase):
     def test_github_token_is_not_forwarded_to_official_release_cdn(self):
         client=release_asset.GitHubClient('unit-github-token');opener=Opener('https://release-assets.githubusercontent.com/file?signature=unit-private',b'archive');client._opener=opener
         self.assertEqual(client.download_asset(91),b'archive')
+        body=opener.responses[-1];self.assertEqual(body.position,7)
+        self.assertGreaterEqual(len(body.requests),2) # Complete body followed by actual EOF.
+        self.assertTrue(all(0<n<=1024*1024 for n in body.requests))
         self.assertEqual(opener.calls[0][0].get_header('Authorization'),'Bearer unit-github-token')
         self.assertIsNone(opener.calls[1][0].get_header('Authorization'))
     def test_github_untrusted_redirects_never_receive_a_followup_request(self):

@@ -10,7 +10,7 @@ import stat
 import tempfile
 from candidate import BundleVerifier, CandidateError, EXPECTED, digest, load_catalog, numeric_id, require, strict_json, validate_archive, listing_locales
 from release_asset import AssetError, GitHubClient, OWN_REPOSITORY, fetch_candidate_asset, verify_provenance
-from business_policy import scope, require_ready
+from business_policy import scope, require_ready, candidate_archive_limit
 from publisher import HttpTransport, Interrupted, submit_candidate
 from locale_inventory import inspect_existing_locales
 
@@ -40,6 +40,24 @@ def prepare_candidate(github, asset_id, archive_sha256, package, catalog, catalo
     (output/'attestation.json').write_text(json.dumps(attestation,sort_keys=True,indent=2)+'\n')
     return attestation
 
+def read_transfer_candidate(path,package,app,family='calculator9'):
+    """Enforce the same closed outer policy before transfer allocation."""
+    p=Path(path);limit=candidate_archive_limit(package,app,family)
+    require(p.is_absolute()and '..'not in p.parts,'Absolute canonical transfer file required')
+    before=p.lstat();stamp=lambda s:(s.st_dev,s.st_ino,s.st_size,s.st_mtime_ns,s.st_ctime_ns,s.st_mode,s.st_nlink)
+    require(stat.S_ISREG(before.st_mode)and before.st_nlink==1 and 0<before.st_size<=limit,'Transfer candidate size/type outside bound')
+    fd=os.open(p,os.O_RDONLY|os.O_NOFOLLOW|os.O_NONBLOCK)
+    with os.fdopen(fd,'rb')as source:
+        require(stamp(os.fstat(source.fileno()))==stamp(before),'Transfer changed before read')
+        chunks=[];total=0
+        while True:
+            chunk=source.read(min(1024*1024,before.st_size-total+1))
+            if not chunk:break
+            total+=len(chunk);require(total<=before.st_size and total<=limit,'Transfer grew during read');chunks.append(chunk)
+        require(total==before.st_size and stamp(os.fstat(source.fileno()))==stamp(before),'Transfer changed during read')
+    require(stamp(p.lstat())==stamp(before),'Transfer changed after read')
+    return b''.join(chunks)
+
 def verify_transfer(directory, archive_sha256, attestation_sha256, package, catalog, catalog_sha256, verifier, context, now=None, family='calculator9'):
     directory = Path(directory)
     require(directory.is_absolute() and directory.is_dir() and not directory.is_symlink() and
@@ -52,7 +70,8 @@ def verify_transfer(directory, archive_sha256, attestation_sha256, package, cata
     require(attestation.get('schema') == 1 and attestation.get('package') == package and attestation.get('archiveSha256') == archive_sha256 and
         attestation.get('catalogSha256') == catalog_sha256 and attestation.get('submitterRepository') == context['repository'] and
         attestation.get('submitterCommit') == context['commit'] and attestation.get('submitterRunId') == context['runId'], 'Transfer identity/run/catalog mismatch')
-    raw = (directory/'candidate.zip').read_bytes()
+    require(package in catalog,'Transfer package outside catalog')
+    raw = read_transfer_candidate(directory/'candidate.zip',package,catalog[package],family)
     candidate = validate_archive(raw,archive_sha256,package,catalog,verifier,now,family=family)
     require(attestation.get('bundleSha256') == candidate.bundle_sha256 and attestation.get('nativeQaSha256') == candidate.native_qa_sha256 and
         attestation.get('sourceCommit') == candidate.app['reviewedSourceCommit'], 'Transferred verified candidate bytes differ')

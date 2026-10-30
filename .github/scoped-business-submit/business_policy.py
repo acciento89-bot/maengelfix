@@ -25,6 +25,20 @@ def scope(family='calculator9'):
     require(family=='business12','Unknown closed submission family')
     return {k:(v['previousMaxCode'],v['newVersionCode'])for k,v in fixed_apps().items()}
 
+def candidate_archive_limit(package,app,family='calculator9'):
+    """Only this immutable reviewed Reklaio12 outer envelope gets260MiB.
+
+    All inner ZIP calls and every other closed identity remain256MiB.
+    This is not a caller-supplied size waiver or a readiness assertion.
+    """
+    require(type(family)is str and family in('calculator9','business12')and type(package)is str and type(app)is dict,'Invalid closed outer archive context')
+    require(package in scope(family)and app.get('package')==package and type(app.get('newVersionCode'))is int,'Unknown/mismatched outer archive identity')
+    if family=='business12':assert_identity(app)
+    else:require(app['newVersionCode']==EXPECTED[package][1]and app.get('newVersionName')=='1.2.0','Calculator outer identity mismatch')
+    if family=='business12'and package=='de.kamilunavo.reklaio'and app.get('reviewedSourceCommit')=='30bef3fecf13988bf6565f34ec9ea7f972c4f49a'and app.get('newVersionCode')==12 and app.get('newVersionName')=='0.6.0'and app.get('rightsEvidenceSha256')=='e676cc79373628f776f3c42a809a4e25716f18d8e1a357d0c80be89e6ad3411b':
+        require_ready(app);return 260*1024*1024
+    return 256*1024*1024
+
 def version(package,family='calculator9'):
     require(package in scope(family),'Package outside fixed family')
     return '1.2.0'if family=='calculator9'else fixed_apps()[package]['newVersionName']
@@ -105,6 +119,12 @@ def verify_business_provenance(app,manifest,proof,bundle_sha,files):
     return [original]
 
 
+def verify_outer_archive_review(review,app):
+    # This additional exact envelope contract leaves all other reviews unchanged.
+    if candidate_archive_limit(app['package'],app,'business12')==260*1024*1024:
+        expected={'pngCompression':'stored','otherCompression':'deflate6','pngMembers':16,'finalMembers':32,'allOriginalMemberBytesPreserved':True}
+        require(type(review.get('compressedOuterArchiveLimitBytes'))is int and review['compressedOuterArchiveLimitBytes']==272629760 and type(review.get('outerPackagingPolicy'))is dict and set(review['outerPackagingPolicy'])==set(expected)and all(review['outerPackagingPolicy'][k]==v and type(review['outerPackagingPolicy'][k])is type(v)for k,v in expected.items()),'Exact260MiB current Root input and unchanged32-member stored16PNG policy required')
+
 def verify_final_reviews(files,manifest,app,bundle,qa,native,now):
     from candidate import checked_entry,recent_timestamp
     review=checked_entry(files,manifest['rootReview']);rights=checked_entry(files,manifest['rightsEvidence'])
@@ -112,6 +132,7 @@ def verify_final_reviews(files,manifest,app,bundle,qa,native,now):
     r=strict_json(review.data);a=strict_json(rights.data)
     expected={'schema':1,'reviewer':'root','outcome':'approved_candidate_inputs','package':app['package'],'sourceCommit':app['reviewedSourceCommit'],'versionCode':app['newVersionCode'],'versionName':app['newVersionName'],'signedAabSha256':bundle.sha256,'testedApkSha256':qa['testedApkSha256'],'nativeQaSha256':native.sha256,'screenshots':manifest['screenshots'],'rootVisuallyReviewedAllEight':True,'rightsEvidenceSha256':rights.sha256}
     require(isinstance(r,dict)and all(r.get(k)==v and type(r.get(k))is type(v)for k,v in expected.items()),'Final root candidate/native/eight-frame review remains pending or mismatched');recent_timestamp(r.get('testedAtUtc'),now,'root review')
+    verify_outer_archive_review(r,app)
     expected_rights={'schema':1,'reviewer':'root','outcome':'cleared_for_distribution','package':app['package'],'sourceCommit':app['reviewedSourceCommit'],'requiredBundleAssets':app['requiredBundleAssets']}
     require(isinstance(a,dict)and all(a.get(k)==v and type(a.get(k))is type(v)for k,v in expected_rights.items())and isinstance(a.get('proof'),list)and 1<=len(a['proof'])<=16,'Asset rights not actually cleared for this exact packaged inventory')
     proof=[checked_entry(files,entry)for entry in a['proof']]

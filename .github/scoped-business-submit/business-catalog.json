@@ -65,7 +65,7 @@
       "previousProductionCode": 11,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Überarbeiteter Servicepass mit Metrophobic-Typografie, lokal gespeicherten Wartungsnotizen und ausdrücklich privater Veröffentlichung.",
+        "de-DE": "\u00dcberarbeiteter Servicepass mit Metrophobic-Typografie, lokal gespeicherten Wartungsnotizen und ausdr\u00fccklich privater Ver\u00f6ffentlichung.",
         "en-US": "Updated service-pass layout with Metrophobic typography, saved local service notes and explicit private publishing. Your entered sample names and notes keep their original language."
       },
       "repository": "acciento89-bot/navopass",
@@ -183,7 +183,7 @@
       "previousProductionCode": 8,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Skill Lab: Timing in getrennten Übungen trainieren, Treffer und Winkelabweichung auswerten und abgeschlossene Ergebnisse lokal wiederfinden. Eigenständige Alata-Typografie und Orbitalgestaltung.",
+        "de-DE": "Skill Lab: Timing in getrennten \u00dcbungen trainieren, Treffer und Winkelabweichung auswerten und abgeschlossene Ergebnisse lokal wiederfinden. Eigenst\u00e4ndige Alata-Typografie und Orbitalgestaltung.",
         "en-US": "Skill Lab: practise timing in separate drills, review hits and angular error, and revisit completed results saved locally. Distinct Alata typography and orbital visuals."
       },
       "repository": "acciento89-bot/onemoretap",
@@ -301,7 +301,7 @@
       "previousProductionCode": 5,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Lokales Prüfnotizbuch mit eigenen Fragen, Quellen und Entscheidungsverlauf. Geänderte Fragen übernehmen keine frühere Entscheidung automatisch. Nobile-Typografie; Notizen werden nicht als Nachricht gesendet.",
+        "de-DE": "Lokales Pr\u00fcfnotizbuch mit eigenen Fragen, Quellen und Entscheidungsverlauf. Ge\u00e4nderte Fragen \u00fcbernehmen keine fr\u00fchere Entscheidung automatisch. Nobile-Typografie; Notizen werden nicht als Nachricht gesendet.",
         "en-US": "Local notebook with personal questions, sources and decision history. Question changes never inherit a prior decision. Only the new notebook is available in English; the existing base app remains German. Entered notes keep their original language."
       },
       "repository": "acciento89-bot/zweicheck",
@@ -494,7 +494,7 @@
       "previousProductionCode": 4,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Arbeitszeiten und Materialmengen als getrennte Positionen erfassen, Minuten zusammenzählen und gespeicherte Berichtsversionen wieder öffnen. Eigene Mukta-Typografie und Folio-Oberfläche.",
+        "de-DE": "Arbeitszeiten und Materialmengen als getrennte Positionen erfassen, Minuten zusammenz\u00e4hlen und gespeicherte Berichtsversionen wieder \u00f6ffnen. Eigene Mukta-Typografie und Folio-Oberfl\u00e4che.",
         "en-US": "Record labour time and material quantities as separate work lines, total minutes and reopen saved report versions. Distinct Mukta typography and folio layout. English work-line UI appears alongside German legacy navigation/context."
       },
       "repository": "acciento89-bot/appideenchatgpt",
@@ -616,7 +616,7 @@
       "previousProductionCode": 6,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Käufe über die beschriftete Schaltfläche hinzufügen, Nutzungen erfassen und archivierte Käufe mit Kosten pro Nutzung ansehen. Eigene Quattrocento-Sans-Typografie und Kaufkarten. Bestehende Einträge bleiben erhalten.",
+        "de-DE": "K\u00e4ufe \u00fcber die beschriftete Schaltfl\u00e4che hinzuf\u00fcgen, Nutzungen erfassen und archivierte K\u00e4ufe mit Kosten pro Nutzung ansehen. Eigene Quattrocento-Sans-Typografie und Kaufkarten. Bestehende Eintr\u00e4ge bleiben erhalten.",
         "en-US": "Add purchases with the labelled button, record uses, and review archived purchases with cost per use. Distinct Quattrocento Sans typography and purchase cards. Existing records are retained."
       },
       "repository": "acciento89-bot/keepmeter",
@@ -742,7 +742,7 @@
       "previousProductionCode": 7,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Geräte in einem lokalen Notizbuch führen, bestehende Fälle ausdrücklich verknüpfen und eigene Servicebeobachtungen im Verlauf wiederfinden. Molengo-Typografie und neue Dossier-Oberfläche.",
+        "de-DE": "Ger\u00e4te in einem lokalen Notizbuch f\u00fchren, bestehende F\u00e4lle ausdr\u00fccklich verkn\u00fcpfen und eigene Servicebeobachtungen im Verlauf wiederfinden. Molengo-Typografie und neue Dossier-Oberfl\u00e4che.",
         "en-US": "Keep a local device notebook, explicitly link existing cases and revisit your saved service observations. Molengo typography and a new dossier layout. Existing German diagnosis text and saved record data stay in their original language."
       },
       "repository": "acciento89-bot/kamilunavo",
@@ -860,7 +860,7 @@
       "previousProductionCode": 6,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Karten in geordneten Runden erledigen, Verantwortung nach Plan weitergeben und den Verlauf abgeschlossener Runden wieder öffnen. Varela-Round-Typografie und eine eigene Haushaltsoberfläche.",
+        "de-DE": "Karten in geordneten Runden erledigen, Verantwortung nach Plan weitergeben und den Verlauf abgeschlossener Runden wieder \u00f6ffnen. Varela-Round-Typografie und eine eigene Haushaltsoberfl\u00e4che.",
         "en-US": "Complete cards in ordered rounds, hand over responsibility and revisit completed-round history. Varela Round typography and a distinct household layout. Your saved card names and notes stay in their original language."
       },
       "repository": "acciento89-bot/schonerledigt",
@@ -919,24 +919,148 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "The local remedy feature and generated report use English. Existing German case names, entered German notes and status data are retained verbatim; base case list and account UI remain German."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "The local remedy feature and generated report use English. Existing German case names, entered German notes and status data are retained verbatim; base case list and account UI remain German."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "The local remedy feature and generated report use English. Existing German case names, entered German notes and status data are retained verbatim; base case list and account UI remain German."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "The local remedy feature and generated report use English. Existing German case names, entered German notes and status data are retained verbatim; base case list and account UI remain German."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "e95744759190c59a974428252a3db177f6968e6688917ac5b5e265f103afb4b0",
       "newVersionCode": 12,
       "newVersionName": "0.6.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.reklaio",
       "previousMaxCode": 11,
       "previousProductionCode": 11,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Lokale Abhilfe dokumentiert Angebote, Erf\u00fcllung und Aufgaben. Abschl\u00fcsse bleiben als unver\u00e4nderliche Momentaufnahme erhalten; nach Wiederer\u00f6ffnung wird der aktuelle Stand getrennt gezeigt. Eintr\u00e4ge und Bericht bleiben nach Neustart erhalten.",
+        "en-US": "The local remedy feature and report support English. Track offers, fulfillment and tasks; preserve an immutable closure snapshot after reopening. Entered German text and the largely German base app remain unchanged. Saved local records and reports persist after restart."
+      },
       "repository": "acciento89-bot/reklaio",
-      "requiredBundleAssets": [],
+      "requiredBundleAssets": [
+        {
+          "entry": "base/res/raw/assets_fonts_enriqueta_enriquetabold.ttf",
+          "sha256": "bb453797b5e353990c4569994754c2496640f427331c9f33b51414ed56777412"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_enriqueta_enriquetaregular.ttf",
+          "sha256": "5e3aca4c6daf22188a92717b7ed53221519daa96b7f85117601ebf1890686716"
+        },
+        {
+          "entry": "base/res/raw/assets_fonts_enriqueta_ofl.txt",
+          "sha256": "0e74984817cdd51dbfbd8309022aa75f733e80dff0cb1d26ad2157e90446ba97"
+        },
+        {
+          "entry": "base/res/drawable-mdpi-v4/assets_icon.png",
+          "sha256": "f280e20413c77031327b3b3b704829de0304212815a883e4e2070ec7059970d5"
+        },
+        {
+          "entry": "base/res/raw/assets_licenses_ioniconsmit.txt",
+          "sha256": "c89dabc60b2e4e1a04b33bd7010b5a56bb4725ffe8c00d793a5ae009fbbfebd8"
+        },
+        {
+          "entry": "base/res/raw/assets_licenses_materialsymbolsapache20.txt",
+          "sha256": "58d1e17ffe5109a7ae296caafcadfdbe6a7d176f0bc4ab01e12a689b0499d8bd"
+        },
+        {
+          "entry": "base/res/raw/node_modules_expo_vectoricons_build_vendor_reactnativevectoricons_fonts_ionicons.ttf",
+          "sha256": "fa2ab7d2557819b2bfe5009e46844efa7170cf177be7735d43aa2ac1295f1d54"
+        },
+        {
+          "entry": "base/res/raw/node_modules_expogooglefonts_materialsymbols_400regular_materialsymbols_400regular.ttf",
+          "sha256": "17bca0e6dc9e7a9787c9a10e8f34396a9106279a05cdaec21b1155c04716a88f"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher.webp",
+          "sha256": "ab84fdc935cdb095305729cc0e05c555717d347ef83e4900e1599c0b26c6db58"
+        },
+        {
+          "entry": "base/res/mipmap-mdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "3c40d26be1cab4d9f03c521f489a086075a4b91e74f728e174c0e6f750b9de4b"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher.webp",
+          "sha256": "afb23e5ce82c887a853675792767bca3e0dd3fd83d5e8870cea5d700b4cbafc8"
+        },
+        {
+          "entry": "base/res/mipmap-hdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "baecd9f0d842cbe89e17db3b36acbc7acc7d31df80be1efaaa10516f222b66ff"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher.webp",
+          "sha256": "851525189547363ac9976bb83c942b2bc8b4f720198b01693079e6a37f91c150"
+        },
+        {
+          "entry": "base/res/mipmap-xhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "df2e5b2b18afa193dc52fef51f5acea9c64e541bc86603075aaf0bdd3f778ead"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher.webp",
+          "sha256": "8d02d5c0169bd479adf42f0125ee54b6fc47e92d777ef32d02d1f6c8c608e599"
+        },
+        {
+          "entry": "base/res/mipmap-xxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "b835138abb5de2bd63e82adebece8b590d00dd1a578faef6d08fcd984ea5fa94"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher.webp",
+          "sha256": "2fee534063b8c61b7e66cf75a1c27466e7f65c35eaf98af530fdb3e892b029e4"
+        },
+        {
+          "entry": "base/res/mipmap-xxxhdpi-v4/ic_launcher_foreground.webp",
+          "sha256": "33a3a5bef6253d78fca613a9a114a9483ce9672095d0b67ac12b8462477a707f"
+        }
+      ],
       "reviewedGitTree": "71165bfaa891436b67d5a538247ce3fe4884e9f0",
       "reviewedProductDigest": "f9edb7a6d8ea8e9c84a8de4c664b58f823c240e2d543e7f4736858b644a0a265",
       "reviewedSourceCommit": "30bef3fecf13988bf6565f34ec9ea7f972c4f49a",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "e676cc79373628f776f3c42a809a4e25716f18d8e1a357d0c80be89e6ad3411b",
+      "rootReviewSha256": "ba4738daf46ebbbaab9b841b4684ccf120f09469dec6a58df264f64d48e2fe62",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-remedy-sign.yml",
       "signWorkflowSha256": "5c932f23b35b0f7557f42c849a13183528ec669e2b75f48fe2468b066132fd4b",
@@ -1012,7 +1136,7 @@
       "previousProductionCode": 5,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Messzeiträume pro Experiment prüfen, einzelne Tage mit Begründung ausschließen und ursprüngliche sowie geprüfte Ergebnisse getrennt ansehen. Vergleichswerte bleiben bei unzureichenden Daten gesperrt. Cambay-Typografie und eigene Messblatt-Oberfläche.",
+        "de-DE": "Messzeitr\u00e4ume pro Experiment pr\u00fcfen, einzelne Tage mit Begr\u00fcndung ausschlie\u00dfen und urspr\u00fcngliche sowie gepr\u00fcfte Ergebnisse getrennt ansehen. Vergleichswerte bleiben bei unzureichenden Daten gesperrt. Cambay-Typografie und eigene Messblatt-Oberfl\u00e4che.",
         "en-US": "Review measurement windows per experiment, exclude days with a reason and keep original and reviewed results separate. Comparisons stay unavailable when data is insufficient. Cambay typography and a distinct worksheet layout; entered notes keep their original language."
       },
       "repository": "acciento89-bot/w-rmetakt",
@@ -1204,7 +1328,7 @@
       "previousProductionCode": 10,
       "readiness": "root_reviewed_candidate_inputs",
       "releaseNotes": {
-        "de-DE": "Eigenes Rettungskapitel mit kurzen Zugrätseln, gespeichertem Puzzlefortschritt und Bestzügen. Die bestehende Kampagne und das Profil bleiben getrennt erhalten. Overlock-Schrift und eigene Welten- und Edelsteinillustrationen.",
+        "de-DE": "Eigenes Rettungskapitel mit kurzen Zugr\u00e4tseln, gespeichertem Puzzlefortschritt und Bestz\u00fcgen. Die bestehende Kampagne und das Profil bleiben getrennt erhalten. Overlock-Schrift und eigene Welten- und Edelsteinillustrationen.",
         "en-US": "A separate rescue chapter with short move puzzles, saved puzzle progress and best-move records. Your existing campaign and profile remain separate. Overlock typography and original world and gem illustrations."
       },
       "repository": "acciento89-bot/Wunderkapseln",

@@ -6,7 +6,7 @@ from urllib.parse import urlsplit
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 from candidate import EXPECTED, MAX_ARCHIVE, CandidateError, digest, is_digest, numeric_id, require, strict_json
 
-from business_policy import scope, version, fixed_apps, require_ready
+from business_policy import scope, version, fixed_apps, require_ready, candidate_archive_limit
 
 OWN_REPOSITORY = 'acciento89-bot/maengelfix'
 class AssetError(ValueError): pass
@@ -36,13 +36,13 @@ def metadata_failure(path, status=None):
 def fetch_candidate_asset(github, asset_id, archive_sha256, package, catalog, family='calculator9'):
     expected = scope(family)
     require(package in expected and package in catalog and is_digest(archive_sha256), 'Candidate scope/digest invalid')
-    asset_id = numeric_id(asset_id); app = catalog[package]
+    asset_id = numeric_id(asset_id); app = catalog[package]; limit = candidate_archive_limit(package,app,family)
     require(github.json('/repos/'+OWN_REPOSITORY).get('full_name') == OWN_REPOSITORY, 'Candidate repository mismatch')
     asset = github.json('/repos/'+OWN_REPOSITORY+'/releases/assets/'+str(asset_id))
     if family == 'business12': require_ready(app)
     expected_name = ('calculator-candidate-' if family == 'calculator9' else 'business-candidate-')+package+'-'+version(package,family)+'-'+str(app['newVersionCode'])+'.zip'
     require(asset.get('id') == asset_id and type(asset.get('id')) is int and asset.get('name') == expected_name and
-        asset.get('state') == 'uploaded' and type(asset.get('size')) is int and 0 < asset['size'] <= MAX_ARCHIVE and
+        asset.get('state') == 'uploaded' and type(asset.get('size')) is int and 0 < asset['size'] <= limit and
         asset.get('digest') == 'sha256:'+archive_sha256, 'Candidate asset metadata mismatch')
     members = []
     for page in range(1,11):
@@ -57,7 +57,7 @@ def fetch_candidate_asset(github, asset_id, archive_sha256, package, catalog, fa
     release, member = members[0]
     require(release.get('draft') is True and member.get('name') == expected_name and member.get('size') == asset['size'], 'Asset is published or draft membership differs')
     release_id = numeric_id(release.get('id'))
-    raw = github.download_asset(asset_id)
+    raw = github.download_asset(asset_id,package=package,app=app,expected_size=asset['size'])
     require(len(raw) == asset['size'] and digest(raw) == archive_sha256, 'Downloaded draft asset differs')
     return raw, {'repository':OWN_REPOSITORY,'releaseId':release_id,'assetId':asset_id,'archiveSha256':archive_sha256}
 
@@ -100,8 +100,12 @@ class GitHubClient:
                 except CandidateError: raise metadata_failure(path,response.status) from None
         except HTTPError as error: raise metadata_failure(path,error.code) from None
         except (URLError, OSError, TimeoutError): raise metadata_failure(path) from None
-    def download_asset(self, asset_id):
-        asset_id = numeric_id(asset_id)
+    def download_asset(self, asset_id, *, package=None, app=None, expected_size=None):
+        asset_id = numeric_id(asset_id); limit=MAX_ARCHIVE
+        exact=any(v is not None for v in(package,app,expected_size))
+        if exact:
+            limit=candidate_archive_limit(package,app,self._family)
+            require(type(expected_size)is int and 0<expected_size<=limit,'Official expected asset size outside bound')
         url = 'https://api.github.com/repos/'+OWN_REPOSITORY+'/releases/assets/'+str(asset_id)
         request = Request(url, headers={'Authorization':'Bearer '+self._token,'Accept':'application/octet-stream','X-GitHub-Api-Version':'2022-11-28','User-Agent':'ScopedCalculatorCandidate'})
         try:
@@ -116,5 +120,16 @@ class GitHubClient:
                 response = self._opener.open(Request(location,headers={'User-Agent':'ScopedCalculatorCandidate'}),timeout=120)
             with response:
                 require(response.status == 200, 'Candidate download HTTP status rejected')
-                raw = response.read(MAX_ARCHIVE+1); require(len(raw) <= MAX_ARCHIVE, 'Candidate download too large'); return raw
+                declared=getattr(response,'headers',{}).get('Content-Length')
+                if exact:require(type(declared)is str and re.fullmatch(r'[1-9][0-9]{0,18}',declared)is not None and int(declared)==expected_size,'Candidate declared length differs from official asset size')
+                elif declared is not None:require(type(declared)is str and re.fullmatch(r'[1-9][0-9]{0,18}',declared)is not None and int(declared)<=limit,'Candidate declared length outside bound')
+                bound=expected_size if exact else limit;chunks=[];total=0
+                while True:
+                    chunk=response.read(min(1024*1024,bound-total+1))
+                    require(type(chunk)is bytes,'Candidate download returned nonbytes')
+                    if not chunk:break
+                    total+=len(chunk);require(total<=bound,'Candidate download too large');chunks.append(chunk)
+                if exact:require(total==expected_size,'Candidate actual length differs from official asset size')
+                elif declared is not None:require(total==int(declared),'Candidate body differs from declared length')
+                return b''.join(chunks)
         except (HTTPError, URLError, OSError, TimeoutError): raise AssetError('GitHub candidate download failed') from None

@@ -59,8 +59,12 @@ def safe_name(name):
             'Unsafe archive path')
     return name
 
-def zip_files(raw):
-    require(isinstance(raw, bytes) and 0 < len(raw) <= MAX_ARCHIVE, 'Archive size outside bounds')
+def zip_files(raw, *, package=None, app=None, family=None):
+    limit=MAX_ARCHIVE
+    if any(v is not None for v in(package,app,family)):
+        from business_policy import candidate_archive_limit
+        limit=candidate_archive_limit(package,app,family)
+    require(isinstance(raw, bytes) and 0 < len(raw) <= limit, 'Archive size outside bounds')
     try:
         with zipfile.ZipFile(io.BytesIO(raw)) as z:
             infos = z.infolist(); require(0 < len(infos) <= 5000, 'Archive entry count outside bounds')
@@ -214,7 +218,7 @@ def validate_archive(raw, archive_sha256, package, catalog, verifier, now=None, 
     require(package in expected_scope and package in catalog, 'Package outside fixed scope')
     require(is_digest(archive_sha256) and digest(raw) == archive_sha256, 'Candidate archive SHA mismatch')
     app = catalog[package]; locales = require_ready(app) if family == 'business12' else listing_locales(app);
-    version_name = version(package, family); certificate = app['certificate'] if family == 'business12' else {'sha1':CENTRAL_SHA1,'sha256':CENTRAL_SHA256}; files = zip_files(raw); now = now or datetime.now(timezone.utc)
+    version_name = version(package, family); certificate = app['certificate'] if family == 'business12' else {'sha1':CENTRAL_SHA1,'sha256':CENTRAL_SHA256}; files = zip_files(raw,package=package,app=app,family=family); now = now or datetime.now(timezone.utc)
     require('manifest.json' in files and len(files['manifest.json']) <= 128 * 1024, 'Missing/oversized manifest')
     manifest = strict_json(files['manifest.json'])
     require(isinstance(manifest,dict), 'Manifest must be a JSON object')

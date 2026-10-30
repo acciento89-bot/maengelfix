@@ -5,7 +5,7 @@ import candidate, release_asset
 OWN = 'acciento89-bot/maengelfix'
 class GitHub:
     def __init__(self, fixture):
-        self.raw=fixture.raw();self.calls=[];self.downloads=[];self.data={}
+        self.raw=fixture.raw();self.calls=[];self.downloads=[];self.download_contexts=[];self.data={};self.expected_package=fixture.app['package'];self.expected_app=copy.deepcopy(fixture.app)
         a=fixture.app
         self.asset={'id':91,'name':'calculator-candidate-'+PACKAGE+'-1.2.0-'+str(a['newVersionCode'])+'.zip','size':len(self.raw),'state':'uploaded','digest':'sha256:'+digest(self.raw)}
         self.data['/repos/'+OWN]={'full_name':OWN}
@@ -18,12 +18,17 @@ class GitHub:
             self.data[f'/repos/{repo}/actions/artifacts/{artifact}']={'id':artifact,'name':a[kind],'expired':False,'digest':'sha256:'+p['artifactArchiveSha256'],
                 'workflow_run':{'id':run,'head_sha':p['commit'],'head_branch':'main'}}
     def json(self,path):self.calls.append(path);return copy.deepcopy(self.data[path])
-    def download_asset(self,asset_id):self.downloads.append(asset_id);return self.raw
+    def download_asset(self,asset_id,*,package,app,expected_size):
+        # Verify transport receives official metadata context, not body-derived size.
+        assert package==self.expected_package and app==self.expected_app
+        assert type(expected_size)is int and expected_size==self.asset['size']
+        self.download_contexts.append({'package':package,'app':copy.deepcopy(app),'expected_size':expected_size})
+        self.downloads.append(asset_id);return self.raw
 
 class AssetTests(unittest.TestCase):
     def test_own_draft_asset_id_and_actual_archive_digest_are_bound(self):
         f=Fixture();g=GitHub(f);raw,receipt=release_asset.fetch_candidate_asset(g,91,digest(g.raw),PACKAGE,f.catalog)
-        self.assertEqual(raw,g.raw);self.assertEqual(receipt['releaseId'],81);self.assertEqual(receipt['assetId'],91);self.assertEqual(g.downloads,[91])
+        self.assertEqual(raw,g.raw);self.assertEqual(receipt['releaseId'],81);self.assertEqual(receipt['assetId'],91);self.assertEqual(g.downloads,[91]);self.assertEqual(g.download_contexts,[{'package':PACKAGE,'app':f.app,'expected_size':g.asset['size']}])
     def test_unknown_package_and_malformed_asset_identity_do_not_touch_github(self):
         for package,asset in [('com.kamilunavo.onemorefloor',91),(PACKAGE,'91/../../x'),(PACKAGE,True)]:
             f=Fixture();g=GitHub(f)

@@ -10,15 +10,20 @@ import candidate,cli,publisher,release_asset,business_policy
 
 class BusinessGitHub:
     def __init__(self,f):
-        self.raw=f.raw();a=f.app;self.calls=[];self.downloads=[];self.data={};own=release_asset.OWN_REPOSITORY
+        self.raw=f.raw();a=f.app;self.calls=[];self.downloads=[];self.download_contexts=[];self.data={};own=release_asset.OWN_REPOSITORY;self.expected_package=f.package;self.expected_app=copy.deepcopy(a)
         asset={'id':91,'name':'business-candidate-'+f.package+'-'+a['newVersionName']+'-'+str(a['newVersionCode'])+'.zip','size':len(self.raw),'state':'uploaded','digest':'sha256:'+digest(self.raw)}
+        self.asset=asset
         self.data['/repos/'+own]={'full_name':own};self.data['/repos/'+own+'/releases/assets/91']=asset;self.data['/repos/'+own+'/releases?per_page=100&page=1']=[{'id':81,'draft':True,'assets':[asset]}]
         for section,kind in ([('source','sourceArtifactName'),('signing','signedArtifactName')]if 'signing'in f.manifest else [('source','signedArtifactName')]):
             p=f.manifest[section];base='/repos/'+a['repository']+'/actions/'
             self.data[base+'runs/'+str(p['runId'])]={'id':p['runId'],'head_sha':p['commit'],'head_branch':'main','event':'workflow_dispatch','path':p['workflow'],'status':'completed','conclusion':'success','repository':{'full_name':a['repository']},'head_repository':{'full_name':a['repository']}}
             self.data[base+'artifacts/'+str(p['artifactId'])]={'id':p['artifactId'],'name':a[kind],'expired':False,'digest':'sha256:'+p['artifactArchiveSha256'],'workflow_run':{'id':p['runId'],'head_sha':p['commit'],'head_branch':'main'}}
     def json(self,path):self.calls.append(path);return copy.deepcopy(self.data[path])
-    def download_asset(self,asset):self.downloads.append(asset);return self.raw
+    def download_asset(self,asset,*,package,app,expected_size):
+        assert package==self.expected_package and app==self.expected_app
+        assert type(expected_size)is int and expected_size==self.asset['size']
+        self.download_contexts.append({'package':package,'app':copy.deepcopy(app),'expected_size':expected_size})
+        self.downloads.append(asset);return self.raw
 
 class BusinessEntrypointTests(unittest.TestCase):
     def enabled(self):self.assertIn('family',inspect.signature(cli.prepare_candidate).parameters,'Business entrypoint wiring missing')
@@ -26,7 +31,7 @@ class BusinessEntrypointTests(unittest.TestCase):
         self.enabled();f=BusinessFixture('com.kamilunavo.navokids');g=BusinessGitHub(f)
         with tempfile.TemporaryDirectory()as temp:
             dest=Path(temp)/'new';a=cli.prepare_candidate(g,91,digest(g.raw),f.package,f.catalog,'f'*64,BusinessVerifier(),dest,CTX,NOW,family='business12')
-            self.assertEqual(len([p for p in g.calls if '/actions/'in p]),2);self.assertEqual(a['ci']['sourceRunId'],42);self.assertNotIn('signingRunId',a['ci'])
+            self.assertEqual(len([p for p in g.calls if '/actions/'in p]),2);self.assertEqual(a['ci']['sourceRunId'],42);self.assertNotIn('signingRunId',a['ci']);self.assertEqual(g.download_contexts,[{'package':f.package,'app':f.app,'expected_size':g.asset['size']}])
             c=cli.verify_transfer(dest,digest(g.raw),digest((dest/'attestation.json').read_bytes()),f.package,f.catalog,'f'*64,BusinessVerifier(),CTX,NOW,family='business12');self.assertEqual(c.package,f.package)
             with self.assertRaises(candidate.CandidateError):cli.verify_transfer(dest,digest(g.raw),digest((dest/'attestation.json').read_bytes()),f.package,f.catalog,'f'*64,BusinessVerifier(),{**CTX,'runId':124},NOW,family='business12')
     def test_official_run_path_event_or_artifact_mismatch_rejected_central_and_eas(self):
