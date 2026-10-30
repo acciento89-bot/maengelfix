@@ -131,7 +131,7 @@ private fun MaengelFixApp(activity: MainActivity) {
                                 pendingFileCallback?.onReceiveValue(null)
                                 pendingFileCallback = callback
                                 val acceptTypes = params.acceptTypes.filter { it.isNotBlank() }.toTypedArray()
-                                val chooser = Intent(Intent.ACTION_GET_CONTENT).apply {
+                                val chooser = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
                                     addCategory(Intent.CATEGORY_OPENABLE)
                                     type = if (acceptTypes.size == 1) acceptTypes[0] else "*/*"
                                     if (acceptTypes.size > 1) putExtra(Intent.EXTRA_MIME_TYPES, acceptTypes)

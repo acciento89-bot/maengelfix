@@ -97,7 +97,7 @@ await pool.query('DELETE FROM sessions WHERE expires_at <= now()');
 
 const app = express();
 app.set('trust proxy', 1);
-app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-origin' } }));
+app.use(helmet({ crossOriginResourcePolicy: { policy: 'same-origin' }, contentSecurityPolicy: { directives: { imgSrc: ["'self'", "data:", "blob:"] } } }));
 app.post('/api/billing/stripe/webhook', express.raw({type:'application/json'}), handleStripeWebhook);
 app.use(express.json({ limit: '1mb' }));
 app.use(cookieParser());
