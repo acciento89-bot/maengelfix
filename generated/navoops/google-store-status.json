@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-10-29T20:29:01Z",
+  "generatedAt": "2026-10-30T00:12:04Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -15,28 +15,34 @@
       "appName": "NavoKids",
       "externalID": "com.kamilunavo.navokids",
       "bundleOrPackageID": "com.kamilunavo.navokids",
-      "version": "NavoKids 0.5.0 – Eigene Übungsrunden",
-      "build": "8",
+      "version": "0.6.0 (9)",
+      "build": "9",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
       "publicBuild": "8",
-      "updateState": "live",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
-      "detail": "production · Published",
+      "updateState": "review",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+      "updatedAt": "2026-10-30T00:12:04Z",
+      "detail": "Production published · build 8 · pending/current update: production · In review",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
       },
       "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+          "releaseName": "0.6.0 (9)",
+          "build": 9
+        },
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
@@ -64,7 +70,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -105,7 +111,7 @@
       "publicBuild": null,
       "updateState": "rejected",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_NOT_APPROVED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Rejected in review · reason available only in Play Console",
       "review": {
         "submissionID": null,
@@ -143,11 +149,11 @@
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "5",
+      "publicBuild": "6",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-29T20:29:01Z",
-      "detail": "Production published · build 5 · pending/current update: alpha · Draft",
+      "updatedAt": "2026-10-30T00:12:04Z",
+      "detail": "Production published · build 6 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -163,8 +169,8 @@
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "WärmeTakt 1.1.0 – Messvergleiche prüfen",
-          "build": 5
+          "releaseName": "1.2.0 (6)",
+          "build": 6
         },
         {
           "track": "internal",
@@ -193,7 +199,7 @@
       "publicBuild": "11",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -234,7 +240,7 @@
       "publicBuild": "8",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -272,18 +278,18 @@
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "7",
-      "updateState": "review",
-      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "updatedAt": "2026-10-29T20:29:01Z",
-      "detail": "Production published · build 7 · pending/current update: production · In review",
+      "publicBuild": "8",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-10-30T00:12:04Z",
+      "detail": "production · Published",
       "review": {
         "submissionID": null,
         "submissionState": null,
         "itemStates": [],
         "submittedAt": null,
         "track": "production",
-        "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
         "reason": null,
         "reasonAvailability": "consoleOnly",
         "consoleURL": "https://play.google.com/console"
@@ -291,15 +297,9 @@
       "tracks": [
         {
           "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_IN_REVIEW",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "1.3.0 – Lokales Gerätenotizbuch",
           "build": 8
-        },
-        {
-          "track": "production",
-          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "1.2.0 – Gerätebuch & Serviceverlauf",
-          "build": 7
         },
         {
           "track": "internal",
@@ -322,7 +322,7 @@
       "publicBuild": "11",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -363,7 +363,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -404,7 +404,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -451,7 +451,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -492,7 +492,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -533,7 +533,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -574,7 +574,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -615,7 +615,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -656,7 +656,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -694,11 +694,11 @@
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "6",
+      "publicBuild": "7",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-10-29T20:29:01Z",
-      "detail": "Production published · build 6 · pending/current update: alpha · Draft",
+      "updatedAt": "2026-10-30T00:12:04Z",
+      "detail": "Production published · build 7 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
         "submissionState": null,
@@ -714,8 +714,8 @@
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "6 (1.1.0)",
-          "build": 6
+          "releaseName": "1.2.0 – Kaufkarten und Nutzungsverlauf",
+          "build": 7
         },
         {
           "track": "internal",
@@ -736,15 +736,15 @@
       "appName": "Schon erledigt?",
       "externalID": "com.kamilunavo.schonerledigt",
       "bundleOrPackageID": "com.kamilunavo.schonerledigt",
-      "version": "1.1.0 (6)",
-      "build": "6",
+      "version": "1.2.0 (7)",
+      "build": "7",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
       "state": "live",
       "publiclyAvailable": true,
-      "publicBuild": "6",
+      "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -761,8 +761,8 @@
         {
           "track": "production",
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
-          "releaseName": "1.1.0 (6)",
-          "build": 6
+          "releaseName": "1.2.0 (7)",
+          "build": 7
         },
         {
           "track": "internal",
@@ -785,7 +785,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -826,7 +826,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -867,7 +867,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-10-29T20:29:01Z",
+      "updatedAt": "2026-10-30T00:12:04Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
