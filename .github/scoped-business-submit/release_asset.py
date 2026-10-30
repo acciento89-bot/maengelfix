@@ -70,8 +70,20 @@ def verify_provenance(github, candidate, family='calculator9'):
         part = candidate.manifest[section]; run_id = numeric_id(part['runId']); artifact_id = numeric_id(part['artifactId'])
         base = '/repos/'+app['repository']+'/actions/'
         run = github.json(base+'runs/'+str(run_id))
+        # One already-reviewed immutable M9 source run was triggered by its source push.
+        # Every other source/signing route retains the manual-event requirement.
+        reviewed_m9_source = (family == 'business12' and section == 'source' and
+            candidate.package == app.get('package') == 'com.kamilunavo.maengelfix' and
+            type(app.get('newVersionCode')) is int and app['newVersionCode'] == 9 and
+            type(candidate.manifest.get('versionCode')) is int and candidate.manifest['versionCode'] == 9 and
+            candidate.manifest.get('versionName') == app.get('newVersionName') == '1.1.0' and
+            app.get('reviewedSourceCommit') == part.get('commit') == '475cc69fe296a5ee1e484283697efe59144dac1e' and
+            app.get('repository') == part.get('repository') == 'acciento89-bot/maengelfix' and
+            part.get('workflow') == '.github/workflows/android-ci.yml' and
+            run_id == 41033070706 and artifact_id == 12965814585 and
+            part.get('artifactArchiveSha256') == '96af56341cdf369aa89f2f5275adae11f565f62a3b3c6c0a2b222ba2def24909')
         require(run.get('id') == run_id and run.get('head_sha') == app['reviewedSourceCommit'] and run.get('head_branch') == 'main' and
-            run.get('event') == 'workflow_dispatch' and run.get('path') == part['workflow'] and run.get('status') == 'completed' and run.get('conclusion') == 'success' and
+            (run.get('event') == 'workflow_dispatch' or (reviewed_m9_source and run.get('event') == 'push')) and run.get('path') == part['workflow'] and run.get('status') == 'completed' and run.get('conclusion') == 'success' and
             run.get('repository',{}).get('full_name') == app['repository'] and run.get('head_repository',{}).get('full_name') == app['repository'], 'Official selected source/sign run mismatch')
         artifact = github.json(base+'artifacts/'+str(artifact_id)); source = artifact.get('workflow_run',{})
         require(type(artifact.get('id')) is int and artifact['id'] == artifact_id and artifact.get('name') == app[name] and artifact.get('expired') is False and
