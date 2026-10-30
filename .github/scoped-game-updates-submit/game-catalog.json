@@ -409,14 +409,73 @@
       ],
       "uiLanguagePolicy": "actual_per_frame_review",
       "fullSignedPayloadSha256": "1c0740afc5fb12f4e01c432109533ea9b07ed0df4bc34feea1fa804f3c874e46",
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
-      "releaseNotes": {},
-      "rootReviewSha256": null,
-      "rightsEvidenceSha256": null,
-      "frameLanguageRequirements": null,
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "7bbeeaae50c1de2e1c23cfdf8275f49799941b93597a99bee5a17882675951fe",
+      "releaseNotes": {
+        "de-DE": "Neues Tourenbuch mit einzelnen Sprungzeiten, Fehlern und abgeschlossenen Routen. Gespeicherte L\u00e4ufe erneut ansehen und die optionale Tempohilfe einschalten. \u00dcberarbeitete Himmelskarte, gut lesbare Schrift und deutsche sowie englische Ansichten. Fortschritt und Einstellungen bleiben nach einem Neustart erhalten.",
+        "en-US": "New climb journal with individual jump splits, falls and completed routes. Revisit saved climbs and enable the optional pace guide. Refreshed sky map, readable typography, and German and English views. Progress and settings remain saved after restarting."
+      },
+      "rootReviewSha256": "e7d8708be1187177ee1795a3f566a6e86d1901999f2a2d53ace700377764633e",
+      "rightsEvidenceSha256": "3d2c6f285b19c8fd55ebd385354af7d020d18b6ed5789acb5e76c002508148b8",
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "languageLimitation": "",
+            "mixedUi": false,
+            "screenScope": "other"
+          }
+        ]
+      },
       "optionalOriginalIcon": null,
-      "readiness": "pending_final_native_screens_locales_rights_root_review",
+      "readiness": "root_reviewed_candidate_inputs",
       "allowedGeneratedBaselineExtras": {
         "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
         "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"

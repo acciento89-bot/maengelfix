@@ -18,7 +18,7 @@ class GamePolicyTests(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(candidate.CandidateError):p.assert_identity(bad)
         with self.assertRaises(candidate.CandidateError):p.scope('all-games')
         self.assertEqual(set(p.scope('calculator9')),set(candidate.EXPECTED))
-    def test_actual_rune6_idle6_nine8_perfect15_ready_rising_remains_pending(self):
+    def test_all_five_actual_games_ready_with_exact_root_review_pins(self):
         p=self.policy();raw=(HERE/'game-catalog.json').read_bytes();cat=p.load_catalog(HERE/'game-catalog.json',candidate.digest(raw));self.assertEqual(len(cat),5)
         for app in cat.values():
             if app['package']=='com.kamilunavo.runenpfad':
@@ -42,8 +42,14 @@ class GamePolicyTests(unittest.TestCase):
                 with self.assertRaises(candidate.CandidateError):p.require_ready(pending)
             else:
                 self.assertEqual(app['package'],'com.kamilunavo.risingsteps')
-                self.assertEqual(app['newVersionCode'],app['previousMaxCode']+1)
-                with self.assertRaises(candidate.CandidateError):p.require_ready(app)
+                self.assertEqual((app['previousMaxCode'],app['newVersionCode'],app['newVersionName']),(8,9,'1.2.0'))
+                self.assertEqual(app['reviewedSourceCommit'],'8245a0d495163e647f0f97dba330906034847f76')
+                self.assertEqual(app['rootReviewSha256'],'e7d8708be1187177ee1795a3f566a6e86d1901999f2a2d53ace700377764633e')
+                self.assertEqual(app['rightsEvidenceSha256'],'3d2c6f285b19c8fd55ebd385354af7d020d18b6ed5789acb5e76c002508148b8')
+                self.assertEqual(p.require_ready(app),('de-DE','en-US'))
+                self.assertFalse(p.allows_reserved_game_step(app,8,'game5'))
+                pending=copy.deepcopy(app);pending['rootReviewSha256']=None
+                with self.assertRaises(candidate.CandidateError):p.require_ready(pending)
     def test_catalog_shape_duplicate_scope_or_boolean_version_rejected(self):
         p=self.policy();original=json.loads((HERE/'game-catalog.json').read_text())
         for mode in ['schema','duplicate','omitted','topology','binary','extra']:

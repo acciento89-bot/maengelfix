@@ -195,8 +195,15 @@ class ReservedGameVersionTests(unittest.TestCase):
                     game_policy.require_ready(pending)
             else:
                 self.assertEqual(row['package'], 'com.kamilunavo.risingsteps')
+                self.assertEqual((row['previousMaxCode'], row['newVersionCode']), (8, 9))
+                self.assertEqual(row['reviewedSourceCommit'], '8245a0d495163e647f0f97dba330906034847f76')
+                self.assertEqual(row['rootReviewSha256'], 'e7d8708be1187177ee1795a3f566a6e86d1901999f2a2d53ace700377764633e')
+                self.assertEqual(row['rightsEvidenceSha256'], '3d2c6f285b19c8fd55ebd385354af7d020d18b6ed5789acb5e76c002508148b8')
+                game_policy.require_ready(row)
+                self.assertFalse(game_policy.allows_reserved_game_step(row, 8, 'game5'))
+                pending = copy.deepcopy(row); pending['rootReviewSha256'] = None
                 with self.assertRaises(candidate.CandidateError):
-                    game_policy.require_ready(row)
+                    game_policy.require_ready(pending)
 
     def test_fresh_production_maximum_or_production_status_changes_still_stop(self):
         for slot in SLOTS:
