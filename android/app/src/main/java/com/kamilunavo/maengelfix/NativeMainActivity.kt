@@ -396,7 +396,7 @@ private fun injectGooglePlayBillingGuard(view: WebView?) {
                 .workspaceShell{display:block!important;min-height:100dvh!important}
                 .workspaceSidebar{position:sticky!important;top:0!important;z-index:60!important;width:100%!important;max-width:none!important;height:auto!important;min-height:0!important;padding:8px 10px!important;overflow:visible!important}
                 .workspaceSidebar .sidebarBrand,.workspaceSidebar .sidebarLabel,.workspaceSidebar .sidebarBottom{display:none!important}
-                .workspaceSidebar nav{display:flex!important;gap:6px!important;overflow-x:auto!important;padding:0!important;scrollbar-width:none!important}
+                .workspaceSidebar nav{width:100%!important;display:flex!important;gap:6px!important;overflow-x:auto!important;padding:0!important;scrollbar-width:none!important}
                 .workspaceSidebar nav::-webkit-scrollbar{display:none!important}
                 .workspaceSidebar nav button{flex:0 0 auto!important;width:auto!important;min-width:max-content!important;min-height:44px!important;padding:9px 13px!important;border-radius:12px!important;white-space:nowrap!important}
                 .workspaceSidebar nav button>span{display:none!important}

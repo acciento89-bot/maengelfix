@@ -77,7 +77,7 @@ jobs:
           grep -Fq 'class MainActivity : ComponentActivity()' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           # Retain the complete workspace from the actual published 1.0.2 client.
           # The unreleased native preview omitted paid tools; billing repair must not remove them.
-          printf '%s  %s\n' 411b6754f35f51aec3e27d66d2376e6cba544ec318fb9ef4e68c38a20ce01203 android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt | sha256sum --check --strict
+          printf '%s  %s\n' 51ff64f6d56c6ee3578895ae16f2bff6b1e6987be8dc6a93a1397c4d8117a698 android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt | sha256sum --check --strict
           grep -Fq 'injectGooglePlayBillingGuard' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'uri.path == "/api/billing/checkout"' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
           grep -Fq 'uri.scheme == "maengelfix" && uri.host == "play-billing"' android/app/src/main/java/com/kamilunavo/maengelfix/NativeMainActivity.kt
