@@ -1,127 +1,19 @@
 {
-  "app": "IdleHandwerker",
-  "repository": "acciento89-bot/appideenchatgpt",
-  "sourceAuthorityActualCloudHead": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-  "runId": 40912897838,
-  "runUrl": "https://github.com/acciento89-bot/appideenchatgpt/actions/runs/40912897838",
-  "workflowPath": ".github/workflows/idle-handwerker-android.yml",
-  "event": "workflow_dispatch",
-  "attempt": 1,
-  "status": "ACTUAL_SOURCE_SIGN_ARCHIVES_CERT_ALL_MODULES_FONT_NOTICES_ELF_PASS_DEVICE_QA_PENDING",
-  "unsignedArtifactId": 12915017180,
-  "unsignedArchiveSha256": "b3071080fc13fc1d75aa36f30c8c9d39551648ac0b4a8f565a43eb141be9cf0f",
-  "unsignedAabSha256": "188dc5bdf9bb281e9010d87519f29689d3f153a59fa4f4bc14b376545bade999",
-  "signedArtifactId": 12914972403,
-  "signedArchiveSha256": "5b096eb1d5bc6e2a2cabca3a486f0f217a14a5bd2da57f9047821c7c4d38a790",
-  "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/IdleHandwerker/ArtifactVerification/signed-files/idle-handwerker.aab",
-  "signedAabSha256": "4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6",
+  "sourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
   "package": "de.kamilunavo.idlehandwerker",
+  "versionCode": 6,
   "versionName": "1.5.0",
-  "versionCode": 5,
-  "acceptedUploadCertificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6",
-  "sourceProvenanceExact": true,
-  "allModuleFilesUnchanged": 1082,
-  "installTimeAssetFilesRetained": 445,
-  "actualInstallTimeAndFusing": true,
-  "rawOriginalNotices": [
-    {
-      "entry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
-      "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d",
-      "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/OFL.txt",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/assets/fonts/LICENSE.txt",
-      "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df",
-      "committedSource": "apps/005-idle-handwerker/assets/fonts/LICENSE.txt",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
-      "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93",
-      "committedSource": "apps/005-idle-handwerker/assets/fonts/DejaVu-2.37-LICENSE.txt",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-      "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d",
-      "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
-      "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
-      "committedSource": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/LICENSE.txt",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
-      "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad",
-      "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/PROVENANCE.json",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
-      "sha256": "ad872490dbbc6bb3ded65b25d3ed2a587dd7e0b40c2f83d18181dc439e4fd76b",
-      "committedSource": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/PROVENANCE.json",
-      "byteExactOriginalNotice": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
-      "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
-      "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
-      "byteExactOriginalNotice": true
-    }
-  ],
-  "originalFonts": [
-    {
-      "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
-      "convertedResourceSha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
-      "originalTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
-      "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Bold.ttf",
-      "originalBytes": 224432,
-      "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/IdleHandwerker-AAB-Mitr-Bold.ttf.fontdata",
-      "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true
-    },
-    {
-      "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
-      "convertedResourceSha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
-      "originalTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
-      "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Regular.ttf",
-      "originalBytes": 222416,
-      "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/IdleHandwerker-AAB-Mitr-Regular.ttf.fontdata",
-      "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true
-    }
-  ],
-  "native64BitElf": [
-    {
-      "entry": "base/lib/arm64-v8a/libc++_shared.so",
-      "sha256": "c4c2fe5cbcb1fba0003a31fc7ab29a9bb12df6cc187ec45a806462540e83d93b",
-      "allPtLoadAlignments": [
-        16384,
-        16384,
-        16384
-      ],
-      "pass16K": true,
-      "machine": "AArch64",
-      "e_machine": 183
-    },
-    {
-      "entry": "base/lib/arm64-v8a/libgodot_android.so",
-      "sha256": "91e166de14c14270dfd0f83b868b671a433967438b035791f570137675151cae",
-      "allPtLoadAlignments": [
-        16384,
-        16384,
-        16384
-      ],
-      "pass16K": true,
-      "machine": "AArch64",
-      "e_machine": 183
-    }
-  ],
-  "cleanupStepSucceeded": true,
-  "screenshotsDisabledAndSkipped": true,
-  "noLocalProductionKeyAccess": true,
-  "noPlayAppleDeviceOrLocalCompilerAction": true,
-  "finishedUTC": "2026-10-29T16:41:58.881345+00:00"
+  "runId": 40985059477,
+  "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/signed-files/idle-handwerker.aab",
+  "signedAabSha256": "61121a79b18fcf728c7d125a95283c8d4f0535b34ddd9fc2c209ac08a3d9e016",
+  "signedAabBytes": 39504055,
+  "unsignedAabSha256": "b0ef862d4f9699a534896c9b0b49ecb72b89fd196f712cd4e4408229d682d9ef",
+  "sourceArtifactId": 12947210291,
+  "signedArtifactId": 12947060827,
+  "allNonSignatureModulePayloadsUnchanged": true,
+  "payloadEntryCount": 1094,
+  "allPayloadCoveredByOneJarSignature": true,
+  "originalSourceTransferContextMatches": true,
+  "guardSha256": "d6b87b6da8683f0b62fb36bf96bdb6c08f0c9c1ef67ae01818c3d4614b01e983",
+  "noSigningKeysAccessed": true
 }

@@ -716,13 +716,13 @@
       "package": "de.kamilunavo.idlehandwerker",
       "previousProductionCode": 4,
       "previousMaxCode": 4,
-      "newVersionCode": 5,
+      "newVersionCode": 6,
       "newVersionName": "1.5.0",
-      "reviewedSourceCommit": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-      "signedAabSha256": "4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6",
-      "signedAabBytes": 39477800,
-      "testedDerivedApkSha256": "2db158c55f1d84484dac2969190735d1af0ef1116baa1d8e1860b0cec34ac3eb",
-      "testedDerivedApkBytes": 89806848,
+      "reviewedSourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
+      "signedAabSha256": "61121a79b18fcf728c7d125a95283c8d4f0535b34ddd9fc2c209ac08a3d9e016",
+      "signedAabBytes": 39504055,
+      "testedDerivedApkSha256": "6feec11ed7d6e441a56cfdfceef15c999b974ba77f764325d4fb2fb533d816a0",
+      "testedDerivedApkBytes": 89824288,
       "certificate": {
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
@@ -732,35 +732,35 @@
       "sourceTopology": {
         "kind": "godot_integrated_main_same_run_source_sign_all_install_time_modules",
         "repository": "acciento89-bot/appideenchatgpt",
-        "sourceCommit": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-        "installTimeAssetFiles": 445,
-        "allModulePayloadEntries": 1082,
+        "sourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
+        "installTimeAssetFiles": 457,
+        "allModulePayloadEntries": 1094,
         "cloudReads": [
           {
             "kind": "run",
             "repository": "acciento89-bot/appideenchatgpt",
-            "id": 40912897838,
+            "id": 40985059477,
             "workflow": ".github/workflows/idle-handwerker-android.yml",
-            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
+            "head": "b984e914e18c0d007066c13c571d1c157eafb26a",
             "attempt": 1
           },
           {
             "kind": "artifact",
             "repository": "acciento89-bot/appideenchatgpt",
-            "id": 12915017180,
+            "id": 12947210291,
             "name": "idle-handwerker-unsigned-aab",
-            "runId": 40912897838,
-            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-            "archiveSha256": "b3071080fc13fc1d75aa36f30c8c9d39551648ac0b4a8f565a43eb141be9cf0f"
+            "runId": 40985059477,
+            "head": "b984e914e18c0d007066c13c571d1c157eafb26a",
+            "archiveSha256": "31e3f9b5c6a907c62f0b2722c1a0db2f2ba747527b6622049884e4deaf5d16a8"
           },
           {
             "kind": "artifact",
             "repository": "acciento89-bot/appideenchatgpt",
-            "id": 12914972403,
+            "id": 12947060827,
             "name": "idle-handwerker-central-signed-aab",
-            "runId": 40912897838,
-            "head": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-            "archiveSha256": "5b096eb1d5bc6e2a2cabca3a486f0f217a14a5bd2da57f9047821c7c4d38a790"
+            "runId": 40985059477,
+            "head": "b984e914e18c0d007066c13c571d1c157eafb26a",
+            "archiveSha256": "760f7c2c31eacb30b55b8a1e5f959443c2d25372f10dd0a878c6ba75d1c097dd"
           }
         ]
       },
@@ -774,43 +774,43 @@
         {
           "role": "qa-derivation",
           "path": "source-evidence/IdleHandwerker/qa-derivation.json",
-          "sha256": "4bbb5f88f28411e2284af15d9ef27621bac338eeb436f0675d141cdb1777701a",
-          "bytes": 14729
+          "sha256": "b4603c679e96c1d02c47b97c184a91a0787cc3710c82095bd1f8106115423bd7",
+          "bytes": 7192
         },
         {
           "role": "source-sign-closure",
           "path": "source-evidence/IdleHandwerker/source-sign-closure.json",
-          "sha256": "15c6a0c1e882476c0cc77808267e42ceba351b729cadd60592861d54c31ec891",
-          "bytes": 30397
+          "sha256": "82795049fecf5821d5ac8a7fce727bf79e50c3fbb5539164b0d3df180ccf72e0",
+          "bytes": 5855
         },
         {
           "role": "actual-source-sign-verification",
           "path": "source-evidence/IdleHandwerker/actual-source-sign-verification.json",
-          "sha256": "83841224ed3c9ca95596a1cc8515dd80cbb75a6f29346ec2ca07ba5f8980de32",
-          "bytes": 6344
+          "sha256": "ee645c128da786093a1c529f4d4864ddcf4e2282e9452a844d2e7f600c7d081c",
+          "bytes": 936
         },
         {
           "role": "actual-source-sign-run",
           "path": "source-evidence/IdleHandwerker/actual-source-sign-run.json",
-          "sha256": "c7f5f523e1648eb73c61fcbeae6fcd8a42f040fc6a9c92e1a349373b51f0f49b",
-          "bytes": 390
+          "sha256": "b40b2b9043f757385812102b34254b29fb617c58990a256522e85172ed7a9c4d",
+          "bytes": 14592
         },
         {
           "role": "unsigned-source-official-artifact",
           "path": "source-evidence/IdleHandwerker/unsigned-source-official-artifact.json",
-          "sha256": "73b888f4bacb7cec183edd931ea0ed3453be814d3a4e22ab4c42b67566a9d990",
+          "sha256": "726d2227706116667d4d0660055b67f0c84973efeb40f47b572e77a2bb3cad8e",
           "bytes": 801
         },
         {
           "role": "signed-official-artifact",
           "path": "source-evidence/IdleHandwerker/signed-official-artifact.json",
-          "sha256": "9b9b4e671e100f9b4df64342d5a6314eff104bed1983cc262377140ceca86378",
+          "sha256": "195cad17ae4272602c339aea278f7eba5e78bd278e523b3fe85674fa866838e1",
           "bytes": 807
         },
         {
           "role": "signed-provenance",
           "path": "source-evidence/IdleHandwerker/signed-provenance.json",
-          "sha256": "53e1f12fbac16828b5f51b89affd9ea9ca15600f2ce3f48aa63dfc702d5ceac7",
+          "sha256": "600cc4c1bf6de3a943d70df216dff12ae6e84ccdcb35432a2ec1eb2d8a9eb5fd",
           "bytes": 2139
         },
         {
@@ -822,8 +822,8 @@
         {
           "role": "all-module-aab-apk-pair",
           "path": "source-evidence/IdleHandwerker/all-module-aab-apk-pair.json",
-          "sha256": "84991ad9d5a2c20f831bbf6d9b48dcd62663df642fb58f3b7f390aabd3445d29",
-          "bytes": 131433
+          "sha256": "117b7aededa6a0ff6060f7ced3a91594f2bbb19cd97cef005484a9db198d86a1",
+          "bytes": 133936
         },
         {
           "role": "prior-engine-original-font-inspection",
@@ -902,6 +902,42 @@
           "path": "source-evidence/IdleHandwerker/original-notice-7.txt",
           "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
           "bytes": 1066
+        },
+        {
+          "role": "original-notice-8",
+          "path": "source-evidence/IdleHandwerker/original-notice-8.json",
+          "sha256": "e40e003956950f05f1884b8ea432342f914fd79de1f2c05f5bc2a252c5924ead",
+          "bytes": 1557
+        },
+        {
+          "role": "current-resource-byte-proof",
+          "path": "source-evidence/IdleHandwerker/current-resource-byte-proof.json",
+          "sha256": "4f328d5ea9578b6173036f47437789cac27bacfc291733c8718cdfcbad3163b8",
+          "bytes": 2362
+        },
+        {
+          "role": "current-inclusive-endpoint-proof",
+          "path": "source-evidence/IdleHandwerker/current-inclusive-endpoint-proof.json",
+          "sha256": "a274e4361c1a3fd9adb31d67173725bdf00e9ca928b751a95bfa27182de3c3a8",
+          "bytes": 1402
+        },
+        {
+          "role": "current-controller-source",
+          "path": "source-evidence/IdleHandwerker/current-controller-source.gd",
+          "sha256": "bf0d295b88bc5a68ccbfeb5b4f8a55348646d42014411f9a64dbabb1df8a4777",
+          "bytes": 4338
+        },
+        {
+          "role": "current-sfx-source",
+          "path": "source-evidence/IdleHandwerker/current-sfx-source.gd",
+          "sha256": "8a8eeffc3bbd2ec041d33d7bdea981db44478e84724a3b1c1dfc1fff4c86395d",
+          "bytes": 1906
+        },
+        {
+          "role": "current-assets-proof",
+          "path": "source-evidence/IdleHandwerker/current-assets-proof.json",
+          "sha256": "f9b0c559b788d6ef21765c73cde8e84b3fdc5e1680dfed263e7b3df92a7cb378",
+          "bytes": 8810
         }
       ],
       "requiredBundleAssets": [
@@ -914,28 +950,24 @@
           "sha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c"
         },
         {
-          "entry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
-          "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d"
+          "entry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
+          "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
         },
         {
           "entry": "assetPackInstallTime/assets/assets/fonts/LICENSE.txt",
           "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df"
         },
         {
-          "entry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
-          "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93"
+          "entry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
+          "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d"
         },
         {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-          "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d"
+          "entry": "assetPackInstallTime/assets/docs/workshop-music/audio-source-provenance.json",
+          "sha256": "e40e003956950f05f1884b8ea432342f914fd79de1f2c05f5bc2a252c5924ead"
         },
         {
           "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
           "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675"
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
-          "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad"
         },
         {
           "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
@@ -944,6 +976,38 @@
         {
           "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
           "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
+          "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
+          "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/embedded_font.gd.remap",
+          "sha256": "798c6792cf16225be32ce72fe8a1f04cc8d5719fdcd8c83d105ab968ba1a4726"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/embedded_font.gdc",
+          "sha256": "aeca40920a002c295ef38262cf01eaf23982975bcc93eedd2f6bf81e84448eb8"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/main.gd.remap",
+          "sha256": "49fa76d6d4c786bc0ffa6e2674ce7fadcd33649ece61eadbd4c2784a6d2e75c9"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/main.gdc",
+          "sha256": "ed97c72fc599bb9514b372e9f13a4c8632720be062a0b5104071b6e61f5158df"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/workshop_music.gd.remap",
+          "sha256": "6d79cc2b4d87985b22647965f73fd0c3d2c998169b5efc04f850ee3e0af04b0a"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/scripts/workshop_music.gdc",
+          "sha256": "d502b7c05514089cae8dce33c843c77e3e4f2b9c798bb1256a394a93f4472278"
         }
       ],
       "fontProofs": [
@@ -969,11 +1033,14 @@
         }
       ],
       "uiLanguagePolicy": "german_only",
-      "fullSignedPayloadSha256": "7e100268849d112363a6c325cbabdcb002b2e61206f27ce7e509a9e265900a27",
+      "fullSignedPayloadSha256": "a9b68188b3211c1aeb266e1f779081f253cdab2dcdda732ae7a1560d9a4ee7e3",
       "allowedGeneratedBaselineExtras": {
-        "assets/dexopt/baseline.prof": "a4952eaab81f4a81c16278573d86ffab34674b2bd6b39a5db0cd4e719f43e766",
+        "assets/dexopt/baseline.prof": "dbbc01a3553277354b004819b0d807333f125d0ff388c39a7a3809c506b21d0a",
         "assets/dexopt/baseline.profm": "044943789d947c8ad0c8682a515effa44ca6c7556b970bca226ec7bb1b3ccdd0"
-      }
+      },
+      "reservedUnusedVersionCodes": [
+        5
+      ]
     }
   ]
 }

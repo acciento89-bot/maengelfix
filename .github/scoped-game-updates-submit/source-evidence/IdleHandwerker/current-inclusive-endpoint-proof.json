@@ -1,0 +1,47 @@
+{
+  "status": "PASS",
+  "sourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
+  "sourceRunId": 40985059477,
+  "currentWholeControllerSha256": "bf0d295b88bc5a68ccbfeb5b4f8a55348646d42014411f9a64dbabb1df8a4777",
+  "originalCreationWholeControllerSha256": "ddddef46862c02c347f50e07b942256d9606afaefb6476096b0e6d6c6d102e17",
+  "sourceLine": 73,
+  "actualCompiledEndpointTokens": [
+    [
+      "IDENTIFIER",
+      "_cached_loop"
+    ],
+    [
+      "PERIOD",
+      "PERIOD"
+    ],
+    [
+      "IDENTIFIER",
+      "loop_end"
+    ],
+    [
+      "EQUAL",
+      "EQUAL"
+    ],
+    [
+      "IDENTIFIER",
+      "FRAME_COUNT"
+    ],
+    [
+      "MINUS",
+      "MINUS"
+    ],
+    [
+      "LITERAL",
+      1
+    ]
+  ],
+  "actualCurrentCompiledResourceSha256": "d502b7c05514089cae8dce33c843c77e3e4f2b9c798bb1256a394a93f4472278",
+  "oldCompiledEndpointRejected": true,
+  "allOtherControllerTokensIncludingGeneratorAndLifecycleExactlySameAfterTwoTokenRemoval": true,
+  "tokenizerVersion": 101,
+  "earlierActualSameB984HeadlessPcmSha256": "2fe7843c0dd6e8ea7ecf37759ca55f9a5a01a37016064044932404f57aeb9263",
+  "earlierPcmProofPath": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRecoveryPreparation/source-test-handoff.json",
+  "newRuntimePcmGeneratedFromExportedCandidate": false,
+  "noPackagedPcmClaim": true,
+  "noEngineCompilerDeviceExecution": true
+}

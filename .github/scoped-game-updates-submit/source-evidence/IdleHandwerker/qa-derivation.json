@@ -1,271 +1,132 @@
 {
-  "completedUTC": "2026-10-29T16:49:59.240168+00:00",
-  "products": [
+  "schema": 1,
+  "status": "DERIVED_AND_STATICALLY_VERIFIED_NOT_NATIVE_ACCEPTANCE",
+  "package": "de.kamilunavo.idlehandwerker",
+  "versionName": "1.5.0",
+  "versionCode": 6,
+  "sourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
+  "sourceRunId": 40985059477,
+  "signedAab": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/signed-files/idle-handwerker.aab",
+    "sha256": "61121a79b18fcf728c7d125a95283c8d4f0535b34ddd9fc2c209ac08a3d9e016",
+    "bytes": 39504055
+  },
+  "apks": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/NativeQA-Code6-V2/IdleHandwerker-1.5.0-code6-ExactSignedAAB-QA.apks",
+    "sha256": "2e6fd301091441fa97fcbed93a73c1ead85aea9385131ebbfb64cc73347edf0b"
+  },
+  "qaApk": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/NativeQA-Code6-V2/IdleHandwerker-1.5.0-code6-ExactSignedAAB-QA.apk",
+    "sha256": "6feec11ed7d6e441a56cfdfceef15c999b974ba77f764325d4fb2fb533d816a0"
+  },
+  "unmodifiedUniversalEntry": true,
+  "qaCertificateSha256": "784b2c73ae7b8fec6acd2fed01393f85a8e2bb256cca6ac52b9b85297236e80c",
+  "sameHistoricalQaSigner": true,
+  "actualInstalledSignerChecked": false,
+  "nonDebuggable": true,
+  "extractNativeLibs": false,
+  "nativeLibraries": [
     {
-      "app": "NineNine",
-      "sourceActualCloudHead": "d2790fd808d1f218e6bdf72e2ef8102916826893",
-      "sourceRunId": 40912634003,
-      "package": "de.kamilunavo.ninenine",
-      "versionName": "1.2.0",
-      "versionCode": 7,
-      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/NineNine/ArtifactVerification/signed-files/99-9-v7-central.aab",
-      "signedAabSha256": "e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274",
-      "apks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/NineNine/NativeQA/NineNine-e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274-ExactSignedAAB-QA.apks",
-      "apksSha256": "a932a6436b257bfa4ef2c58bcfd028cfb3c73b67166ff01cf4e3647cb5f99fff",
-      "qaApk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/NineNine/NativeQA/NineNine-1.2.0-code7-ExactSignedAAB-QA.apk",
-      "qaApkSha256": "58e300ce25d3db8c92883e539b225ed3652049a77903598d7028cc8914c59d46",
-      "apkIsUnmodifiedActualUniversalEntry": true,
-      "existingQaPublicCertificateSha256": "b8c1515b04f8ce75f45e20394981e0ccdcbd2ba80bb4e95895ac512a595025cf",
-      "samePriorQaSignerNoResetNeeded": true,
-      "normalReleaseNonDebuggable": true,
-      "actualApkExtractNativeLibs": false,
-      "nativeLibraries": [
-        {
-          "entry": "lib/arm64-v8a/libc++_shared.so",
-          "machine": "AArch64",
-          "allLoadAlignments": [
-            16384,
-            16384,
-            16384
-          ],
-          "elf16KPass": true,
-          "compression": 0,
-          "dataOffset": 16138240,
-          "offsetModulo16K": 0,
-          "storageRule": "STORED_16K_ALIGNED"
-        },
-        {
-          "entry": "lib/arm64-v8a/libgodot_android.so",
-          "machine": "AArch64",
-          "allLoadAlignments": [
-            16384,
-            16384,
-            16384
-          ],
-          "elf16KPass": true,
-          "compression": 0,
-          "dataOffset": 17514496,
-          "offsetModulo16K": 0,
-          "storageRule": "STORED_16K_ALIGNED"
-        }
+      "entry": "lib/arm64-v8a/libc++_shared.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
       ],
-      "zipalignCheckPass": true,
-      "allMappedDexJniBaseAndInstallTimeAssets": 426,
-      "installTimeAssetFilesAllMatched": 421,
-      "moduleTargetCollisions": false,
-      "fullOriginalNotices": [
-        {
-          "entry": "assetPackInstallTime/assets/assets/fonts/hammersmithone/OFL.txt",
-          "sha256": "b43e2530c7af69fe1800f180d210b6d2745915ed4e0e404495038c861bb6dbf7",
-          "committedSource": "assets/fonts/hammersmithone/OFL.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/assets/fonts/hammersmithone/OFL.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/addons/admob/LICENSE",
-          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
-          "committedSource": "addons/admob/LICENSE",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/addons/admob/LICENSE",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/LICENSE.txt",
-          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
-          "committedSource": "licenses/godot-iap-3.0.2/LICENSE.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-iap-3.0.2/LICENSE.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/PROVENANCE.json",
-          "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87",
-          "committedSource": "licenses/godot-iap-3.0.2/PROVENANCE.json",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-iap-3.0.2/PROVENANCE.json",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        }
-      ],
-      "fullOriginalFontProof": [
-        {
-          "entry": "assetPackInstallTime/assets/.godot/imported/HammersmithOne-Regular.ttf-7cbe4bb881d29db288f35406ea4f8474.fontdata",
-          "convertedResourceSha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
-          "originalTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
-          "committedSource": "assets/fonts/hammersmithone/HammersmithOne-Regular.ttf",
-          "originalBytes": 102884,
-          "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/NineNine-AAB-HammersmithOne-Regular.ttf.fontdata",
-          "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true,
-          "actualApkEntry": "assets/.godot/imported/HammersmithOne-Regular.ttf-7cbe4bb881d29db288f35406ea4f8474.fontdata",
-          "actualApkConvertedBytesMatchEngineProvenFullOriginalFont": true
-        }
-      ],
-      "actualGameDataEntries": {
-        "assets/project.binary": "33f00adf5777aae686bb9a892dcd1494335e797f74d12da473a2a5dca7bacd23"
-      },
-      "compiledGdcRuntimeAssetsMatched": 157,
-      "pckFileCount": 0,
-      "allLooseGodotAssetsAlsoByteExact": true,
-      "originalSourceAndSignArchivesUnchanged": true,
-      "oldQaApkPreserved": true,
-      "nativeDeviceQa": "PENDING root-owned sole-device actual normal UI/profile checks",
-      "noFakeQaHooksSourceChangesOrEngineDeviceStoreJobs": true,
-      "finishedUTC": "2026-10-29T16:49:52.372652+00:00"
+      "elf16KPass": true,
+      "dataOffset": 16269312,
+      "compression": 0,
+      "storageRule": "STORED_16K_ALIGNED"
     },
     {
-      "app": "IdleHandwerker",
-      "sourceActualCloudHead": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c",
-      "sourceRunId": 40912897838,
-      "package": "de.kamilunavo.idlehandwerker",
-      "versionName": "1.5.0",
-      "versionCode": 5,
-      "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/IdleHandwerker/ArtifactVerification/signed-files/idle-handwerker.aab",
-      "signedAabSha256": "4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6",
-      "apks": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/IdleHandwerker/NativeQA/IdleHandwerker-4ae2245d47add1c8961cad836607710f4a0409c669d7b013c480abfe3e5c18a6-ExactSignedAAB-QA.apks",
-      "apksSha256": "013d4fca118dc46fd06060ab7623f314e8ef3aeeb48a45227d7e38a80b8f4e60",
-      "qaApk": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/GodotAndroidSigning-20261029/IdleHandwerker/NativeQA/IdleHandwerker-1.5.0-code5-ExactSignedAAB-QA.apk",
-      "qaApkSha256": "2db158c55f1d84484dac2969190735d1af0ef1116baa1d8e1860b0cec34ac3eb",
-      "apkIsUnmodifiedActualUniversalEntry": true,
-      "existingQaPublicCertificateSha256": "784b2c73ae7b8fec6acd2fed01393f85a8e2bb256cca6ac52b9b85297236e80c",
-      "samePriorQaSignerNoResetNeeded": true,
-      "normalReleaseNonDebuggable": true,
-      "actualApkExtractNativeLibs": false,
-      "nativeLibraries": [
-        {
-          "entry": "lib/arm64-v8a/libc++_shared.so",
-          "machine": "AArch64",
-          "allLoadAlignments": [
-            16384,
-            16384,
-            16384
-          ],
-          "elf16KPass": true,
-          "compression": 0,
-          "dataOffset": 16252928,
-          "offsetModulo16K": 0,
-          "storageRule": "STORED_16K_ALIGNED"
-        },
-        {
-          "entry": "lib/arm64-v8a/libgodot_android.so",
-          "machine": "AArch64",
-          "allLoadAlignments": [
-            16384,
-            16384,
-            16384
-          ],
-          "elf16KPass": true,
-          "compression": 0,
-          "dataOffset": 17629184,
-          "offsetModulo16K": 0,
-          "storageRule": "STORED_16K_ALIGNED"
-        }
+      "entry": "lib/arm64-v8a/libgodot_android.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
       ],
-      "zipalignCheckPass": true,
-      "allMappedDexJniBaseAndInstallTimeAssets": 450,
-      "installTimeAssetFilesAllMatched": 445,
-      "moduleTargetCollisions": false,
-      "fullOriginalNotices": [
-        {
-          "entry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
-          "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d",
-          "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/OFL.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/assets/fonts/mitr/OFL.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/assets/fonts/LICENSE.txt",
-          "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df",
-          "committedSource": "apps/005-idle-handwerker/assets/fonts/LICENSE.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/assets/fonts/LICENSE.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
-          "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93",
-          "committedSource": "apps/005-idle-handwerker/assets/fonts/DejaVu-2.37-LICENSE.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-          "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d",
-          "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
-          "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
-          "committedSource": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/LICENSE.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
-          "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad",
-          "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/PROVENANCE.json",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
-          "sha256": "ad872490dbbc6bb3ded65b25d3ed2a587dd7e0b40c2f83d18181dc439e4fd76b",
-          "committedSource": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/PROVENANCE.json",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
-          "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
-          "committedSource": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
-          "byteExactOriginalNotice": true,
-          "actualApkEntry": "assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
-          "actualApkFullOriginalNoticeBytesMatchSignedAab": true
-        }
-      ],
-      "fullOriginalFontProof": [
-        {
-          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
-          "convertedResourceSha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
-          "originalTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
-          "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Bold.ttf",
-          "originalBytes": 224432,
-          "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/IdleHandwerker-AAB-Mitr-Bold.ttf.fontdata",
-          "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true,
-          "actualApkEntry": "assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
-          "actualApkConvertedBytesMatchEngineProvenFullOriginalFont": true
-        },
-        {
-          "entry": "assetPackInstallTime/assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
-          "convertedResourceSha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
-          "originalTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
-          "committedSource": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Regular.ttf",
-          "originalBytes": 222416,
-          "priorActualEngineInspection": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/Godot/FinalStagePrep-20261029/FinalFontInspection/IdleHandwerker-AAB-Mitr-Regular.ttf.fontdata",
-          "fullOriginalFontDataProofInheritedByByteExactResourceEquality": true,
-          "actualApkEntry": "assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
-          "actualApkConvertedBytesMatchEngineProvenFullOriginalFont": true
-        }
-      ],
-      "actualGameDataEntries": {
-        "assets/project.binary": "ec636f984450b639801cc8347020e0d8335bb0332bebb3c5559ef5a8753feed4"
-      },
-      "compiledGdcRuntimeAssetsMatched": 160,
-      "pckFileCount": 0,
-      "allLooseGodotAssetsAlsoByteExact": true,
-      "originalSourceAndSignArchivesUnchanged": true,
-      "oldQaApkPreserved": true,
-      "nativeDeviceQa": "PENDING root-owned sole-device actual normal UI/profile checks",
-      "noFakeQaHooksSourceChangesOrEngineDeviceStoreJobs": true,
-      "finishedUTC": "2026-10-29T16:49:59.200976+00:00"
+      "elf16KPass": true,
+      "dataOffset": 17645568,
+      "compression": 0,
+      "storageRule": "STORED_16K_ALIGNED"
     }
   ],
-  "deviceAcceptancePending": true
+  "fullBaseAndInstallTimePair": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/NativeQA-Code6-V2/all-base-and-install-time-pair.json",
+    "sha256": "117b7aededa6a0ff6060f7ced3a91594f2bbb19cd97cef005484a9db198d86a1"
+  },
+  "currentAssetProofInherited": {
+    "verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/verification.json",
+      "sha256": "82795049fecf5821d5ac8a7fce727bf79e50c3fbb5539164b0d3df180ccf72e0",
+      "bytes": 5855
+    },
+    "actual-current-assets-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/actual-current-assets-verification.json",
+      "sha256": "f9b0c559b788d6ef21765c73cde8e84b3fdc5e1680dfed263e7b3df92a7cb378",
+      "bytes": 8810
+    },
+    "actual-current-resource-byte-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/actual-current-resource-byte-verification.json",
+      "sha256": "4f328d5ea9578b6173036f47437789cac27bacfc291733c8718cdfcbad3163b8",
+      "bytes": 2362
+    },
+    "source-sign-payload-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/source-sign-payload-verification.json",
+      "sha256": "ee645c128da786093a1c529f4d4864ddcf4e2282e9452a844d2e7f600c7d081c",
+      "bytes": 936
+    },
+    "actual-public-java-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/actual-public-java-verification.json",
+      "sha256": "08a6d1bb943a59c3c615eab7aaacf9d984d63b622416ce44249d54d82aa0b20a",
+      "bytes": 1273
+    },
+    "actual-inclusive-endpoint-token-proof.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/Collected/actual-inclusive-endpoint-token-proof.json",
+      "sha256": "a274e4361c1a3fd9adb31d67173725bdf00e9ca928b751a95bfa27182de3c3a8",
+      "bytes": 1402
+    },
+    "root-source-build-approval.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/root-source-build-approval.json",
+      "sha256": "203973383e8762ace168b6c4973451ff95bf747fcd2a753ba2543d2a8bbe886a",
+      "bytes": 1362
+    },
+    "b984-source-headless-proof.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRecoveryPreparation/source-test-handoff.json",
+      "sha256": "b8fb2ed673b78b9f6459d1a7b7fd3c4e16573360303e5614e935e02d764fa3ab",
+      "bytes": 11370
+    },
+    "historical-v2-closure.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleWorkshopMusicRootBuild-20261030/PackagingPreparation-V2/preparation-closure.json",
+      "sha256": "e1ce5da49a7db4e6ea05959f5ff9b4b279ce8ac9a2c43a7eef2f7ebc8e74953a",
+      "bytes": 7674
+    },
+    "historical-v2-authority.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleWorkshopMusicRootBuild-20261030/PackagingPreparation-V2/authority.json",
+      "sha256": "ccf5a8ce49a56d34c304e37b41b44f811f33992c150cce7bee05c38187fa1dd8",
+      "bytes": 10866
+    },
+    "historical-v2-runtime.py": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleWorkshopMusicRootBuild-20261030/PackagingPreparation-V2/prepare_exact_qa.py",
+      "sha256": "ce475ef9ddc4eb6bf5d99d70a2d2149931ad91e1c680f005a3d9f6fafdca1f78",
+      "bytes": 26168
+    },
+    "historical-crashed-3b5-derived-binding.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleWorkshopMusicRootBuild-20261030/NativeQA-Code6-V2/derived-binding.json",
+      "sha256": "f084a37b3f374cf137eac6b70a164cc37d52011e45045ead3f55736abd6653b3",
+      "bytes": 4840
+    },
+    "python-producer-contract.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/IdleNativeAudioLoopRootBuild-20261030/PackagingPreparation-V2/python-producer-contract.json",
+      "sha256": "8e18ae0c435e4d314a3c47c87273faa10cada9c87601f867e88e83cbc5a41719",
+      "bytes": 620
+    }
+  },
+  "audioRepresentation": "runtime-generated workshop music; exact current compiled GDSC/remap/provenance bytes; no packaged WAV, actual PCM or playback claim",
+  "rootExecutionApprovalSha256": "e45e8fdeee556a8120606942b3e38e34964eb564d0ca9574dd86cbc41d808972",
+  "nativeQa": "PENDING_ROOT",
+  "rootDistributionApproval": null,
+  "noDeviceStoreSourceBuildOrNewKey": true,
+  "passwordTransport": "file:",
+  "temporaryPasswordFilesRemoved": true
 }

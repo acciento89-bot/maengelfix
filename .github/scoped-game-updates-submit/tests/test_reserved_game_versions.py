@@ -175,6 +175,10 @@ class ReservedGameVersionTests(unittest.TestCase):
                 self.assertEqual(row['reviewedSourceCommit'], 'd84b3e2e00514a38fc21a5da31950d2ddceebfd3')
                 self.assertEqual(row['rootReviewSha256'], '5ee7e6a6572620ce1e7dc39c2c54a3a483d1575aa58f7391b76fb108aa1b99f8')
                 game_policy.require_ready(row)
+            elif row['package'] == 'de.kamilunavo.idlehandwerker':
+                self.assertEqual(row['reviewedSourceCommit'], 'b984e914e18c0d007066c13c571d1c157eafb26a')
+                self.assertEqual(row['rootReviewSha256'], 'b13c64ca74acdd85e6501cc6926edb1fd47577a5a4e8df81dfb13dfb8bb7d0d9')
+                game_policy.require_ready(row)
             else:
                 with self.assertRaises(candidate.CandidateError):
                     game_policy.require_ready(row)

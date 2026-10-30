@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from candidate import EXPECTED,require,digest,strict_json,is_digest,safe_name,listing_locales
 ROOT=Path(__file__).resolve().parent
-REGISTRY_SHA='09476536e8ed5af36e95b989722a52cf79b7a1ef47f07636d96164357e1b7392'
+REGISTRY_SHA='676ba178ae2736cd97ff10a87874701f57643699c143f2b18ada75369f9ba5d7'
 PROVIDER_SHA='5b671173dcc7dfadd82fdd2f857176da57b7a418cabfbb1dd75de43b5a3286a5'
 READY_FIELDS={'listingLocales','localeSnapshotSha256','releaseNotes','rootReviewSha256','rightsEvidenceSha256','frameLanguageRequirements','optionalOriginalIcon','readiness'}
 _RESERVED_GAME_STEPS=frozenset({

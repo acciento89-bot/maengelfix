@@ -1,0 +1,213 @@
+{
+  "status": "PASS",
+  "sourceCommit": "b984e914e18c0d007066c13c571d1c157eafb26a",
+  "noticesAndProvenance": [
+    {
+      "source": "apps/005-idle-handwerker/assets/fonts/mitr/OFL.txt",
+      "aabEntry": "assetPackInstallTime/assets/assets/fonts/mitr/OFL.txt",
+      "bytes": 4382,
+      "sha256": "427ae4ac208b3cb1930bc2398141bed5880f0c057af4d2fc91b2f7ba8dcffb7d",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/assets/fonts/LICENSE.txt",
+      "aabEntry": "assetPackInstallTime/assets/assets/fonts/LICENSE.txt",
+      "bytes": 2367,
+      "sha256": "57c2e31ce08a8136215b2c8c927d6cff062c91a2f08560f0ac0bcb9dda3e15df",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/assets/fonts/DejaVu-2.37-LICENSE.txt",
+      "aabEntry": "assetPackInstallTime/assets/assets/fonts/DejaVu-2.37-LICENSE.txt",
+      "bytes": 8816,
+      "sha256": "7a083b136e64d064794c3419751e5c7dd10d2f64c108fe5ba161eae5e5958a93",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
+      "aabEntry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/UPSTREAM-README.md",
+      "bytes": 5104,
+      "sha256": "e5e4b82badb8bf3d3d7ae8f283edafbec42476e4d7b6b35500be326a5a07f87d",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
+      "aabEntry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/CURRENT-UPSTREAM-MIT-LICENSE.txt",
+      "bytes": 1066,
+      "sha256": "243adbe048bbec60be2faf9ae1e62c5221327d20ffbc13b1c80e82fa98127af1",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/licenses/godot-iap-1.2.9/PROVENANCE.json",
+      "aabEntry": "assetPackInstallTime/assets/licenses/godot-iap-1.2.9/PROVENANCE.json",
+      "bytes": 2716,
+      "sha256": "bbad636156e378e9a651ccb5232217661d40ffd748cb57c4307bf3fdeea1a8ad",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/LICENSE.txt",
+      "aabEntry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/LICENSE.txt",
+      "bytes": 1078,
+      "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/licenses/godot-admob-v5.0.0/PROVENANCE.json",
+      "aabEntry": "assetPackInstallTime/assets/licenses/godot-admob-v5.0.0/PROVENANCE.json",
+      "bytes": 677,
+      "sha256": "ad872490dbbc6bb3ded65b25d3ed2a587dd7e0b40c2f83d18181dc439e4fd76b",
+      "exactCurrentSource": true
+    },
+    {
+      "source": "apps/005-idle-handwerker/docs/workshop-music/audio-source-provenance.json",
+      "aabEntry": "assetPackInstallTime/assets/docs/workshop-music/audio-source-provenance.json",
+      "bytes": 1557,
+      "sha256": "e40e003956950f05f1884b8ea432342f914fd79de1f2c05f5bc2a252c5924ead",
+      "exactCurrentSource": true
+    }
+  ],
+  "fonts": [
+    {
+      "label": "Mitr-Regular",
+      "source": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Regular.ttf",
+      "sourceTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+      "sourceTtfBytes": 222416,
+      "aabEntry": "assetPackInstallTime/assets/.godot/imported/Mitr-Regular.ttf-8f4e7f2784d0f5b888692d1cd9146672.fontdata",
+      "resourceSha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
+      "resourceBytes": 115627
+    },
+    {
+      "label": "Mitr-Bold",
+      "source": "apps/005-idle-handwerker/assets/fonts/mitr/Mitr-Bold.ttf",
+      "sourceTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+      "sourceTtfBytes": 224432,
+      "aabEntry": "assetPackInstallTime/assets/.godot/imported/Mitr-Bold.ttf-fb65022bb9d1ede764fd49528fae3e3e.fontdata",
+      "resourceSha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
+      "resourceBytes": 112980
+    }
+  ],
+  "embeddedFallback": {
+    "source": "apps/005-idle-handwerker/scripts/embedded_font.gd",
+    "sourceBase64Bytes": 159132,
+    "originalTtfBytes": 119348,
+    "originalTtfSha256": "89c8c5f948577f9c618015bb643fd74ce62f2395906e146637d5eba7fd758f87",
+    "packageClaim": "Compiled constant presence checked separately; no raw fallback TTF AAB path invented"
+  },
+  "musicExport": {
+    "composition": "Werkstatt-Walzer",
+    "runtimeSource": "scripts/workshop_music.gd",
+    "sourceSha256": "bf0d295b88bc5a68ccbfeb5b4f8a55348646d42014411f9a64dbabb1df8a4777",
+    "originalCreationSourceSha256": "ddddef46862c02c347f50e07b942256d9606afaefb6476096b0e6d6c6d102e17",
+    "originalCreationRecordPreserved": true,
+    "sourceProvenancePackagedExact": true,
+    "actualRemappedCompiledScripts": [
+      {
+        "source": "apps/005-idle-handwerker/scripts/workshop_music.gd",
+        "sourceSha256": "bf0d295b88bc5a68ccbfeb5b4f8a55348646d42014411f9a64dbabb1df8a4777",
+        "remapEntry": "assetPackInstallTime/assets/scripts/workshop_music.gd.remap",
+        "remapTarget": "scripts/workshop_music.gdc",
+        "compiledAabEntry": "assetPackInstallTime/assets/scripts/workshop_music.gdc",
+        "compiledSha256": "d502b7c05514089cae8dce33c843c77e3e4f2b9c798bb1256a394a93f4472278",
+        "compiledBytes": 3907,
+        "tokenizerVersion": 101,
+        "compiledSourceByteEqualityClaimed": false
+      },
+      {
+        "source": "apps/005-idle-handwerker/scripts/main.gd",
+        "sourceSha256": "5aea1133518c5183b6acc3943ce9c3b79e9819362faf1e91ec74c343024fe3ec",
+        "remapEntry": "assetPackInstallTime/assets/scripts/main.gd.remap",
+        "remapTarget": "scripts/main.gdc",
+        "compiledAabEntry": "assetPackInstallTime/assets/scripts/main.gdc",
+        "compiledSha256": "ed97c72fc599bb9514b372e9f13a4c8632720be062a0b5104071b6e61f5158df",
+        "compiledBytes": 52513,
+        "tokenizerVersion": 101,
+        "compiledSourceByteEqualityClaimed": false
+      },
+      {
+        "source": "apps/005-idle-handwerker/scripts/embedded_font.gd",
+        "sourceSha256": "9408b78184df653d553a47cb10227f5a68addf3b3d1e09ddee953156fc1ff872",
+        "remapEntry": "assetPackInstallTime/assets/scripts/embedded_font.gd.remap",
+        "remapTarget": "scripts/embedded_font.gdc",
+        "compiledAabEntry": "assetPackInstallTime/assets/scripts/embedded_font.gdc",
+        "compiledSha256": "aeca40920a002c295ef38262cf01eaf23982975bcc93eedd2f6bf81e84448eb8",
+        "compiledBytes": 86756,
+        "tokenizerVersion": 101,
+        "compiledSourceByteEqualityClaimed": false
+      }
+    ],
+    "runtimeGenerated": true,
+    "expectedDurationSecondsFromSource": 20,
+    "packagedWavOrPcmClaimed": false,
+    "actualNativePcmGenerationOrPlaybackClaimed": false,
+    "sourceOwnMusicPreloadAndInstantiationVerified": true,
+    "compiledSourceProofBoundary": "Exact source/run/full-payload attestation plus actual remap and compiled resource presence. GDC is not treated as a waveform or native playback proof."
+  },
+  "nativeLibraries": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "sha256": "c4c2fe5cbcb1fba0003a31fc7ab29a9bb12df6cc187ec45a806462540e83d93b",
+      "bytes": 1374336,
+      "loadSegments": [
+        {
+          "offset": 0,
+          "virtualAddress": 0,
+          "alignment": 16384,
+          "fileBytes": 1329912,
+          "congruent16K": true
+        },
+        {
+          "offset": 1329912,
+          "virtualAddress": 1346296,
+          "alignment": 16384,
+          "fileBytes": 41104,
+          "congruent16K": true
+        },
+        {
+          "offset": 1371016,
+          "virtualAddress": 1403784,
+          "alignment": 16384,
+          "fileBytes": 568,
+          "congruent16K": true
+        }
+      ],
+      "elf16KCompatible": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgodot_android.so",
+      "sha256": "91e166de14c14270dfd0f83b868b671a433967438b035791f570137675151cae",
+      "bytes": 71110440,
+      "loadSegments": [
+        {
+          "offset": 0,
+          "virtualAddress": 0,
+          "alignment": 16384,
+          "fileBytes": 69544976,
+          "congruent16K": true
+        },
+        {
+          "offset": 69544976,
+          "virtualAddress": 69561360,
+          "alignment": 16384,
+          "fileBytes": 1518336,
+          "congruent16K": true
+        },
+        {
+          "offset": 71063312,
+          "virtualAddress": 71096080,
+          "alignment": 16384,
+          "fileBytes": 44688,
+          "congruent16K": true
+        }
+      ],
+      "elf16KCompatible": true
+    }
+  ],
+  "installTimeManifestValidation": "PASS",
+  "assetPackEntryCount": 457,
+  "allAabModules": [
+    "BundleConfig.pb",
+    "assetPackInstallTime",
+    "base"
+  ],
+  "noEngineDeviceCompilerKey": true
+}

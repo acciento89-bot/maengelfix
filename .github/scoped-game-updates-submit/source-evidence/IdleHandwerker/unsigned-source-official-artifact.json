@@ -1,20 +1,20 @@
 {
-  "id": 12915017180,
-  "node_id": "MDg6QXJ0aWZhY3QxMjkxNTAxNzE4MA==",
+  "id": 12947210291,
+  "node_id": "MDg6QXJ0aWZhY3QxMjk0NzIxMDI5MQ==",
   "name": "idle-handwerker-unsigned-aab",
-  "size_in_bytes": 38974929,
-  "url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12915017180",
-  "archive_download_url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12915017180/zip",
+  "size_in_bytes": 38998328,
+  "url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12947210291",
+  "archive_download_url": "https://api.github.com/repos/acciento89-bot/appideenchatgpt/actions/artifacts/12947210291/zip",
   "expired": false,
-  "digest": "sha256:b3071080fc13fc1d75aa36f30c8c9d39551648ac0b4a8f565a43eb141be9cf0f",
-  "created_at": "2026-10-29T16:37:56Z",
-  "updated_at": "2026-10-29T16:37:56Z",
-  "expires_at": "2026-11-28T16:37:51Z",
+  "digest": "sha256:31e3f9b5c6a907c62f0b2722c1a0db2f2ba747527b6622049884e4deaf5d16a8",
+  "created_at": "2026-10-30T01:22:27Z",
+  "updated_at": "2026-10-30T01:22:27Z",
+  "expires_at": "2026-11-29T01:22:25Z",
   "workflow_run": {
-    "id": 40912897838,
+    "id": 40985059477,
     "repository_id": 1338759340,
     "head_repository_id": 1338759340,
     "head_branch": "main",
-    "head_sha": "2e03e4feabd14fa436d651dbd56f3c0f0e6ef97c"
+    "head_sha": "b984e914e18c0d007066c13c571d1c157eafb26a"
   }
 }

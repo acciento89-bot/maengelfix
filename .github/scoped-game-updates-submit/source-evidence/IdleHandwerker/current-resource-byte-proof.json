@@ -1,0 +1,61 @@
+{
+  "status": "PASS",
+  "decoder": "existing Node v26.8.1 standard-library zstdDecompressSync",
+  "fonts": [
+    {
+      "label": "Mitr-Regular",
+      "sourceTtfSha256": "3763923ca8d860f9c06f483f663cd3d8d94e9ed8c2f35a7ce35bb6b13e1219fd",
+      "sourceTtfBytes": 222416,
+      "resourceSha256": "3fcee0a9359bbef6e741c677e1cb82ee07f17cc6596b5fc73e43ab652a42384c",
+      "decodedResourceBytes": 223740,
+      "completeOriginalTtfOffset": 1075,
+      "completeOriginalBytesFound": true
+    },
+    {
+      "label": "Mitr-Bold",
+      "sourceTtfSha256": "92349c05cd6a35549d0fb3e9b0d7d73059717e212cbda182ee28e5917150bc34",
+      "sourceTtfBytes": 224432,
+      "resourceSha256": "0c75c279fb382f1a74109cc110d65d15e6d1b8a468c62d659015ef3fe788580c",
+      "decodedResourceBytes": 225777,
+      "completeOriginalTtfOffset": 1075,
+      "completeOriginalBytesFound": true
+    }
+  ],
+  "compiledScripts": [
+    {
+      "label": "main",
+      "compiledSha256": "ed97c72fc599bb9514b372e9f13a4c8632720be062a0b5104071b6e61f5158df",
+      "tokenBufferBytes": 196164,
+      "tokenBufferSha256": "0bbfed984606b392b3c1ffec88ef7f2ee699d25ade7918d5c02d42c6c4cc4cbe",
+      "boundedZstdGdscDecoded": true,
+      "noExecution": true
+    },
+    {
+      "label": "workshop_music",
+      "compiledSha256": "d502b7c05514089cae8dce33c843c77e3e4f2b9c798bb1256a394a93f4472278",
+      "tokenBufferBytes": 13504,
+      "tokenBufferSha256": "b1fe48f0258e416e4fafbde1c4c5caa89fa03ac8f91aa601205d2c4e462eef08",
+      "boundedZstdGdscDecoded": true,
+      "noExecution": true
+    },
+    {
+      "label": "embedded_font",
+      "compiledSha256": "aeca40920a002c295ef38262cf01eaf23982975bcc93eedd2f6bf81e84448eb8",
+      "tokenBufferBytes": 159300,
+      "tokenBufferSha256": "96e5a2a714206c2255bb361c58ed7b33fc105ab3d42d4a38af15c9328c30de9e",
+      "boundedZstdGdscDecoded": true,
+      "noExecution": true
+    }
+  ],
+  "embeddedFallback": {
+    "completeSourceBase64FoundInCurrentCompiledResource": true,
+    "offset": 96,
+    "sourceBase64Bytes": 159132,
+    "sourceOriginalTtfSha256": "89c8c5f948577f9c618015bb643fd74ce62f2395906e146637d5eba7fd758f87",
+    "rawTtfAabPathClaimed": false
+  },
+  "limitations": [
+    "GDSC buffers demonstrate resource inclusion, not runtime playback or exact source text equality.",
+    "Runtime-generated music has no packaged WAV or precomputed PCM claim."
+  ]
+}
