@@ -174,14 +174,73 @@
       ],
       "uiLanguagePolicy": "actual_per_frame_review",
       "fullSignedPayloadSha256": "5982b46719225fa0f40c3355edc6b9fd7d325b4666c637bd7f47e46e47b34e2b",
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
-      "releaseNotes": {},
-      "rootReviewSha256": null,
-      "rightsEvidenceSha256": null,
-      "frameLanguageRequirements": null,
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "7bbeeaae50c1de2e1c23cfdf8275f49799941b93597a99bee5a17882675951fe",
+      "releaseNotes": {
+        "de-DE": "Neue Stadtansichten, Chakra-Petch-Schrift und eigens komponierte Hintergrundmusik. Baupr\u00fcfungen bieten eigene Stapelziele, drei Versuche und gespeicherten Fortschritt.",
+        "en-US": "New city views, Chakra Petch typography and an original background score. Building trials offer distinct stacking goals, three attempts and saved progress."
+      },
+      "rootReviewSha256": "d124dd053e6de869d593376f718024f98cb088f334e71fb4afdaf750d8b4f041",
+      "rightsEvidenceSha256": "a3e18d72c9da57363afe48716dacefb09818afcc7976a6a3be1bd35c1709844a",
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "Branded title PERFECT DROP and familiar game terms retained.",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "Branded title PERFECT DROP and familiar game terms retained.",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "Branded title PERFECT DROP and familiar game terms retained.",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": "Branded title PERFECT DROP and familiar game terms retained.",
+            "screenScope": "other"
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "",
+            "screenScope": "other"
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "",
+            "screenScope": "other"
+          }
+        ]
+      },
       "optionalOriginalIcon": null,
-      "readiness": "pending_final_native_screens_locales_rights_root_review",
+      "readiness": "root_reviewed_candidate_inputs",
       "allowedGeneratedBaselineExtras": {
         "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
         "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"

@@ -185,7 +185,16 @@ class ReservedGameVersionTests(unittest.TestCase):
                 self.assertEqual(row['reviewedSourceCommit'], '67d236b7d35b70b59693a730164a0d8426409ee5')
                 self.assertEqual(row['rootReviewSha256'], 'b31e9637d88b739fe4197c97862a80168ea8cdf2b01722d4bfbd6ba8f5a5ccb8')
                 game_policy.require_ready(row)
+            elif row['package'] == 'com.kamilunavo.perfectdrop':
+                self.assertEqual(row['reviewedSourceCommit'], '499018036a5b12375fa7fbfcec9556ed177fd435')
+                self.assertEqual(row['rootReviewSha256'], 'd124dd053e6de869d593376f718024f98cb088f334e71fb4afdaf750d8b4f041')
+                game_policy.require_ready(row)
+                self.assertFalse(game_policy.allows_reserved_game_step(row, row['previousMaxCode'], 'game5'))
+                pending = copy.deepcopy(row); pending['rootReviewSha256'] = None
+                with self.assertRaises(candidate.CandidateError):
+                    game_policy.require_ready(pending)
             else:
+                self.assertEqual(row['package'], 'com.kamilunavo.risingsteps')
                 with self.assertRaises(candidate.CandidateError):
                     game_policy.require_ready(row)
 

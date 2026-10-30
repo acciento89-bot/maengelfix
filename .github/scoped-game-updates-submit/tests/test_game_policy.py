@@ -18,7 +18,7 @@ class GamePolicyTests(unittest.TestCase):
             with self.subTest(key=key),self.assertRaises(candidate.CandidateError):p.assert_identity(bad)
         with self.assertRaises(candidate.CandidateError):p.scope('all-games')
         self.assertEqual(set(p.scope('calculator9')),set(candidate.EXPECTED))
-    def test_actual_rune6_idle6_nine8_inputs_ready_other_two_remain_pending(self):
+    def test_actual_rune6_idle6_nine8_perfect15_ready_rising_remains_pending(self):
         p=self.policy();raw=(HERE/'game-catalog.json').read_bytes();cat=p.load_catalog(HERE/'game-catalog.json',candidate.digest(raw));self.assertEqual(len(cat),5)
         for app in cat.values():
             if app['package']=='com.kamilunavo.runenpfad':
@@ -33,7 +33,15 @@ class GamePolicyTests(unittest.TestCase):
                 self.assertEqual((app['previousProductionCode'],app['previousMaxCode'],app['newVersionCode'],app['reservedUnusedVersionCodes']),(6,6,8,[7]))
                 self.assertEqual(app['rootReviewSha256'],'b31e9637d88b739fe4197c97862a80168ea8cdf2b01722d4bfbd6ba8f5a5ccb8');self.assertEqual(app['rightsEvidenceSha256'],'0abb358af9e03432e28d6cc8e475ac6caf33e08d232ec27a55e8857ddabc1153')
                 self.assertEqual(p.require_ready(app),('de-DE','en-US'));self.assertTrue(p.allows_reserved_game_step(app,6,'game5'))
+            elif app['package']=='com.kamilunavo.perfectdrop':
+                self.assertEqual(app['newVersionCode'],app['previousMaxCode']+1)
+                self.assertEqual(app['reviewedSourceCommit'],'499018036a5b12375fa7fbfcec9556ed177fd435')
+                self.assertEqual(app['rootReviewSha256'],'d124dd053e6de869d593376f718024f98cb088f334e71fb4afdaf750d8b4f041');self.assertEqual(app['rightsEvidenceSha256'],'a3e18d72c9da57363afe48716dacefb09818afcc7976a6a3be1bd35c1709844a')
+                self.assertEqual(p.require_ready(app),('de-DE','en-US'))
+                pending=copy.deepcopy(app);pending['rootReviewSha256']=None
+                with self.assertRaises(candidate.CandidateError):p.require_ready(pending)
             else:
+                self.assertEqual(app['package'],'com.kamilunavo.risingsteps')
                 self.assertEqual(app['newVersionCode'],app['previousMaxCode']+1)
                 with self.assertRaises(candidate.CandidateError):p.require_ready(app)
     def test_catalog_shape_duplicate_scope_or_boolean_version_rejected(self):
