@@ -242,17 +242,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "Only the new local notebook UI is English; unchanged base app remains German. Manually entered fictional German sample question/note remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "Only the new local notebook UI is English; unchanged base app remains German. Manually entered fictional German sample question/note remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "Only the new local notebook UI is English; unchanged base app remains German. Manually entered fictional German sample question/note remains verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "Only the new local notebook UI is English; unchanged base app remains German. Manually entered fictional German sample question/note remains verbatim."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "e95744759190c59a974428252a3db177f6968e6688917ac5b5e265f103afb4b0",
       "newVersionCode": 6,
       "newVersionName": "1.2.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.zweicheck",
       "previousMaxCode": 5,
       "previousProductionCode": 5,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Lokales Prüfnotizbuch mit eigenen Fragen, Quellen und Entscheidungsverlauf. Geänderte Fragen übernehmen keine frühere Entscheidung automatisch. Nobile-Typografie; Notizen werden nicht als Nachricht gesendet.",
+        "en-US": "Local notebook with personal questions, sources and decision history. Question changes never inherit a prior decision. Only the new notebook is available in English; the existing base app remains German. Entered notes keep their original language."
+      },
       "repository": "acciento89-bot/zweicheck",
       "requiredBundleAssets": [
         {
@@ -295,8 +346,8 @@
       "reviewedGitTree": "ecb5eb7a05ffc1312a4cea7e54e73e6d2845a1fd",
       "reviewedProductDigest": "577cade7c243d906103eecec26e1697596a18bdd11ab58f7420bca8ec9ffa195",
       "reviewedSourceCommit": "81797ecc9fd618d0f5d879ddc18c692289e00953",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "e94025b012a3ebdf55da8afedbf3eceb241b5af590aab275d6512ad3e96ea283",
+      "rootReviewSha256": "cdf42da295fd529c0ace1102adec9d75d72975676548971767b3379228bacd07",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-notebook-sign.yml",
       "signWorkflowSha256": "4607d7673ffa09c3cef1cf527caf2c6ea90aa82602525c829d26893d470e3fa6",
