@@ -159,22 +159,27 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "observedCommit": "39c9b25bcb7fccb64ffb200b558674615c5a657e",
+      "observedCommit": "475cc69fe296a5ee1e484283697efe59144dac1e",
       "package": "com.kamilunavo.maengelfix",
-      "pending": [],
+      "pending": [
+        "ROOT_CURRENT_SOURCE_PIN_INTEGRATION_REVIEW_PENDING"
+      ],
       "pinEvidence": {
-        "productContentEqualsReviewedBaseline": true,
-        "rootFreeze": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessMainIntegration-20261029/root-android-only-freeze-heads.json",
-        "rootLocalHeadMatches": true,
-        "sourceSignWorkflowsByteUnchanged": true
+        "rootProductDigestProof": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/BusinessCandidatePreparation/Maengelfix/RootProductDigest-475cc69-20261030/root-current-product-digest.json",
+        "rootProductDigestProofSha256": "b2aba1e0b30420cb43dbaacc484732efd84bb1280e4b45c7f068bfee5c67cc4e",
+        "priorRegistryDigestReproduced": true,
+        "actualSource475WorkflowAndNativeHashPreviouslyVerified": true,
+        "signWorkflowByteUnchanged": true,
+        "sourceWorkflowChangedFrom39c9ToExact475NativePin": true,
+        "rootSourcePinIntegrationReviewPending": true
       },
       "previousProviderMax": 8,
       "productDigestPolicy": "git ls-tree -r -z; exclude .github/ and docs/ only; preserve every remaining record/mode/blob/path/order",
       "repository": "acciento89-bot/maengelfix",
-      "reviewedCommit": "39c9b25bcb7fccb64ffb200b558674615c5a657e",
-      "reviewedGitTree": "e8e7fbe6e93553f52dc48703e3ff02533168ede6",
-      "reviewedProductCommit": "99668481f464d2dd9bfca6c6206fb7c91fc9a938",
-      "reviewedProductDigest": "8091fe15353bc6e8d30bf457667fa8d1619784c14aa9378912b13dad277a6e6d",
+      "reviewedCommit": "475cc69fe296a5ee1e484283697efe59144dac1e",
+      "reviewedGitTree": "44c61c96a6d53642fc7bd3eaa08cc2e4e08c0f7e",
+      "reviewedProductCommit": "475cc69fe296a5ee1e484283697efe59144dac1e",
+      "reviewedProductDigest": "0e59c06d0b132369c9ec4a19df9c04657914434c884d171cbab7ffc436cfa622",
       "root": "/Volumes/SSK SSD/Kamilunavo/Projects/Maengelfix-PortfolioUpdate-20261021",
       "route": "central_kms",
       "stages": {
@@ -194,7 +199,7 @@
           "artifactName": "MaengelFix-1.1.0-9-unsigned-release-aab",
           "inputs": {},
           "workflow": ".github/workflows/android-ci.yml",
-          "workflowSha256": "61de7c97a07d882840a4fe4a6b4403785c6eff9440398e107eeffb9860520fa2"
+          "workflowSha256": "512596c56c8f909c01d92e4855354bd86482b62cef1e96c0290b08b4456049a5"
         }
       },
       "versionCode": 9,

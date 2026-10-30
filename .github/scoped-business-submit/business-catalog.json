@@ -364,17 +364,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "mixed-de-en",
+            "mixedUi": true,
+            "languageLimitation": "Local inspection outbox feature supports English; the navigation shell and entered German example names, notes and category data remain German."
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "mixedUi": true,
+            "languageLimitation": "Local inspection outbox feature supports English; the navigation shell and entered German example names, notes and category data remain German."
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "mixedUi": true,
+            "languageLimitation": "Local inspection outbox feature supports English; the navigation shell and entered German example names, notes and category data remain German."
+          },
+          {
+            "inAppLanguage": "mixed-de-en",
+            "mixedUi": true,
+            "languageLimitation": "Local inspection outbox feature supports English; the navigation shell and entered German example names, notes and category data remain German."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "e95744759190c59a974428252a3db177f6968e6688917ac5b5e265f103afb4b0",
       "newVersionCode": 9,
       "newVersionName": "1.1.0",
       "optionalOriginalIcon": null,
       "package": "com.kamilunavo.maengelfix",
       "previousMaxCode": 8,
       "previousProductionCode": 8,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Räume, Feststellungen und Fotos im lokalen Protokollausgang erfassen. Fotos direkt über die Android-Dateiauswahl hinzufügen und Vorschauen ansehen. Den lokalen Ausgang nach Bestätigung schreibgeschützt schließen. Deutsch/Englisch im Ausgang; alte Navigation bleibt deutsch. Ein Kaltstart benötigt eine Verbindung.",
+        "en-US": "Capture rooms, findings and photos in the local inspection outbox. Add photos through the Android document picker and view previews. Confirm sealing to make the local outbox read-only. English outbox with German legacy navigation and entered data. A cold start requires a connection."
+      },
       "repository": "acciento89-bot/maengelfix",
       "requiredBundleAssets": [
         {
@@ -414,11 +465,11 @@
           "sha256": "809fa1ed21450f59827d1e9aec720bbc4b687434fa22283c6cb5dd82a47ab9c0"
         }
       ],
-      "reviewedGitTree": "e8e7fbe6e93553f52dc48703e3ff02533168ede6",
-      "reviewedProductDigest": "8091fe15353bc6e8d30bf457667fa8d1619784c14aa9378912b13dad277a6e6d",
-      "reviewedSourceCommit": "39c9b25bcb7fccb64ffb200b558674615c5a657e",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "reviewedGitTree": "44c61c96a6d53642fc7bd3eaa08cc2e4e08c0f7e",
+      "reviewedProductDigest": "0e59c06d0b132369c9ec4a19df9c04657914434c884d171cbab7ffc436cfa622",
+      "reviewedSourceCommit": "475cc69fe296a5ee1e484283697efe59144dac1e",
+      "rightsEvidenceSha256": "8615e957017dbcf9a47a8ed6e4ebfcb01f235116d152f590b252c66180097231",
+      "rootReviewSha256": "6cdd712c899884684f88cf86c4da6b9a543c870b0df2ffccda654c08acddeb52",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-central-signed-bundle.yml",
       "signWorkflowSha256": "4ad8f09ce06e8f890f1169c8706379756933f16d787bd7c52ad8e42ed023ab3e",
@@ -427,7 +478,7 @@
       "sourceAabEntry": "app-release.aab",
       "sourceArtifactName": "MaengelFix-1.1.0-9-unsigned-release-aab",
       "sourceWorkflow": ".github/workflows/android-ci.yml",
-      "sourceWorkflowSha256": "61de7c97a07d882840a4fe4a6b4403785c6eff9440398e107eeffb9860520fa2"
+      "sourceWorkflowSha256": "512596c56c8f909c01d92e4855354bd86482b62cef1e96c0290b08b4456049a5"
     },
     {
       "app": "RapportAI",
@@ -1500,5 +1551,5 @@
   },
   "previousProviderSnapshotSha256": "5b671173dcc7dfadd82fdd2f857176da57b7a418cabfbb1dd75de43b5a3286a5",
   "schema": 1,
-  "sourceManifestSha256": "592858d568456fc1e876050d79b35bd41918d1959464328cc5762a40912986b0"
+  "sourceManifestSha256": "2bf664da1574d2e4291ed274a0e2cb562f7a5cb48c076e33b542f6fe8c4a8908"
 }

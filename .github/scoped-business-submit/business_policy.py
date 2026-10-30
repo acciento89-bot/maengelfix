@@ -1,7 +1,7 @@
 """Closed twelve-app policy. Final evidence never follows from source readiness."""
 from pathlib import Path
 from candidate import EXPECTED, require, digest, strict_json, is_digest, safe_name, listing_locales
-SOURCE_SHA = '592858d568456fc1e876050d79b35bd41918d1959464328cc5762a40912986b0'
+SOURCE_SHA = '2bf664da1574d2e4291ed274a0e2cb562f7a5cb48c076e33b542f6fe8c4a8908'
 PROVIDER_SHA = '5b671173dcc7dfadd82fdd2f857176da57b7a418cabfbb1dd75de43b5a3286a5'
 ROOT=Path(__file__).resolve().parent
 
