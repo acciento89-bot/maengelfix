@@ -1,0 +1,60 @@
+{
+  "status": "PASS",
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "sourceRunId": 40989636663,
+  "sourceAudioServiceSha256": "65d3a1459139f44cbd6866c239117a3d7630eb80286f5fb11fa95037b12f549c",
+  "actualCompiledAudioServiceSha256": "de88167880234e46475739911085dbd307a785f7d1cac1b8e532bb88ec3f0bfd",
+  "sourceLine": 32,
+  "actualCompiledLastValidEndpointTokens": [
+    [
+      "IDENTIFIER",
+      "music_player"
+    ],
+    [
+      "PERIOD",
+      "PERIOD"
+    ],
+    [
+      "IDENTIFIER",
+      "stream"
+    ],
+    [
+      "PERIOD",
+      "PERIOD"
+    ],
+    [
+      "IDENTIFIER",
+      "loop_end"
+    ],
+    [
+      "EQUAL",
+      "EQUAL"
+    ],
+    [
+      "LITERAL",
+      24
+    ],
+    [
+      "STAR",
+      "STAR"
+    ],
+    [
+      "LITERAL",
+      22050
+    ],
+    [
+      "MINUS",
+      "MINUS"
+    ],
+    [
+      "LITERAL",
+      1
+    ]
+  ],
+  "expectedEndIndex": 529199,
+  "allOtherControllerTokensIncludingPreferencesLifecycleAndEffectsEqualAea": true,
+  "oldCompiledEndpointRejected": true,
+  "tokenizerVersion": 101,
+  "noCompilerEngineDeviceExecutionForThisProof": true,
+  "noNativeAcceptanceClaim": true
+}

@@ -1,0 +1,153 @@
+{
+  "status": "PASS",
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "sourceRunId": 40989636663,
+  "currentSourceSha256": "23e6836d25b39e83d7a3ff22ad4829028815c6b2029b2e518764f39f1aed5450",
+  "actualGdcSha256": "3240217b3fc5c4d9722f4ebe225e912cec7e75e51118588d1dbe40c68d6d280c",
+  "tokenBufferSha256": "28627bfafc7b8d938dfb2e5500c8edcb4daa525df20d2e0e68def719138f1959",
+  "tokenizerVersion": 101,
+  "counts": {
+    "identifiers": 111,
+    "constants": 60,
+    "lineEntries": 110,
+    "tokens": 1131
+  },
+  "reviewedSettingsAssignmentsActuallyPresent": {
+    "assignments": [
+      {
+        "sourceLine": 39,
+        "role": "content",
+        "actualTokens": [
+          {
+            "type": "IDENTIFIER",
+            "value": "content",
+            "line": 39
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 39
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "mouse_filter",
+            "line": 39
+          },
+          {
+            "type": "EQUAL",
+            "value": "EQUAL",
+            "line": 39
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "Control",
+            "line": 39
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 39
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "MOUSE_FILTER_PASS",
+            "line": 39
+          }
+        ]
+      },
+      {
+        "sourceLine": 43,
+        "role": "_audio_settings_canvas",
+        "actualTokens": [
+          {
+            "type": "IDENTIFIER",
+            "value": "_audio_settings_canvas",
+            "line": 43
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 43
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "mouse_filter",
+            "line": 43
+          },
+          {
+            "type": "EQUAL",
+            "value": "EQUAL",
+            "line": 43
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "Control",
+            "line": 43
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 43
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "MOUSE_FILTER_PASS",
+            "line": 43
+          }
+        ]
+      },
+      {
+        "sourceLine": 72,
+        "role": "button",
+        "actualTokens": [
+          {
+            "type": "IDENTIFIER",
+            "value": "button",
+            "line": 72
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 72
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "mouse_filter",
+            "line": 72
+          },
+          {
+            "type": "EQUAL",
+            "value": "EQUAL",
+            "line": 72
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "Control",
+            "line": 72
+          },
+          {
+            "type": "PERIOD",
+            "value": "PERIOD",
+            "line": 72
+          },
+          {
+            "type": "IDENTIFIER",
+            "value": "MOUSE_FILTER_PASS",
+            "line": 72
+          }
+        ]
+      }
+    ],
+    "descendantLoopSourceLine": 71,
+    "actualDescendantLiteralArguments": [
+      "*",
+      "Button",
+      true,
+      false
+    ]
+  },
+  "oldC996CompiledResourceRejected": true,
+  "malformedTokenControlsRejected": 3,
+  "scope": "Actual exported token instructions at reviewed current source lines, bound to exact cloud source/run. No full source-text identity or native behavior claim.",
+  "noEngineCompilerExecution": true
+}

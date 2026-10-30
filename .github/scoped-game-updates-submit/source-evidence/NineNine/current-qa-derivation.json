@@ -1,0 +1,157 @@
+{
+  "schema": 1,
+  "status": "DERIVED_AND_STATICALLY_VERIFIED_NOT_NATIVE_ACCEPTANCE",
+  "package": "de.kamilunavo.ninenine",
+  "versionName": "1.2.0",
+  "versionCode": 8,
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "sourceRunId": 40989636663,
+  "signedAab": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/signed-files/99-9-v8-central.aab",
+    "sha256": "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a",
+    "bytes": 39635391
+  },
+  "apks": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/NativeQA-Code8-V2/NineNine-1.2.0-code8-ExactSignedAAB-QA.apks",
+    "sha256": "a8c203a677b36278580610d29274eca92cbc3e8f793652d406891dc84c1e4c84"
+  },
+  "qaApk": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/NativeQA-Code8-V2/NineNine-1.2.0-code8-ExactSignedAAB-QA.apk",
+    "sha256": "984e76eeea07e11ed3073def4f4d1e1559ba701ce6e7413f14f940319c42aae2"
+  },
+  "unmodifiedUniversalEntry": true,
+  "qaCertificateSha256": "b8c1515b04f8ce75f45e20394981e0ccdcbd2ba80bb4e95895ac512a595025cf",
+  "sameHistoricalQaSigner": true,
+  "actualInstalledSignerChecked": false,
+  "nonDebuggable": true,
+  "extractNativeLibs": false,
+  "nativeLibraries": [
+    {
+      "entry": "lib/arm64-v8a/libc++_shared.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true,
+      "dataOffset": 16384000,
+      "compression": 0,
+      "storageRule": "STORED_16K_ALIGNED"
+    },
+    {
+      "entry": "lib/arm64-v8a/libgodot_android.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true,
+      "dataOffset": 17760256,
+      "compression": 0,
+      "storageRule": "STORED_16K_ALIGNED"
+    }
+  ],
+  "fullBaseAndInstallTimePair": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/NativeQA-Code8-V2/all-base-and-install-time-pair.json",
+    "sha256": "ac3531c3d81ca214718668c08cfdee51c43a16b3ab8ce96095fc95c2fb919b9d"
+  },
+  "currentAssetProofInherited": {
+    "verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/verification.json",
+      "sha256": "d7cad02f27904ccf110391d77dbe4e8f09599610115f6e0ee58f53bdd5ce5f0c",
+      "bytes": 6200
+    },
+    "actual-current-assets-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-current-assets-verification.json",
+      "sha256": "9c4bfe958a0ff7f150c49f0b6318dbc017c2b6d405cae5c3b8e6dd01429173e7",
+      "bytes": 8937
+    },
+    "actual-code8-font-full-original-byte-proof.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-code8-font-full-original-byte-proof.json",
+      "sha256": "dd1d0509c6abdac0f625383b8f7bbf6d630aab704ec37c9fb75e6fa7e746ac94",
+      "bytes": 489
+    },
+    "source-sign-payload-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/source-sign-payload-verification.json",
+      "sha256": "4085ce0da1abc0ffb26b1fc996e9cfc96836ad7e680e7368e79ed26f0afe0539",
+      "bytes": 930
+    },
+    "actual-generator-and-negative-controls.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-generator-and-negative-controls.json",
+      "sha256": "19a02c8e228406bcac508128c70841e4bd810fafc6e40d4f154b211bf047dff9",
+      "bytes": 1094
+    },
+    "actual-public-java-verification.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-public-java-verification.json",
+      "sha256": "34df87228b5dc64929cd721ac5bd18618394e8fb4db48644ca208be819930a2c",
+      "bytes": 1267
+    },
+    "actual-current-settings-token-proof.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-current-settings-token-proof.json",
+      "sha256": "3499e755e824750aefc683cbcddf8446b463edfc2eb8c86ada551890a0a27b2b",
+      "bytes": 3760
+    },
+    "actual-current-resource-decoding.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-current-resource-decoding.json",
+      "sha256": "5d90e0fce33016911094b76eb89128308979c9c3ff60f80d8652a0e962bbe459",
+      "bytes": 1996
+    },
+    "actual-current-inclusive-qoa-endpoint-token-proof.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-current-inclusive-qoa-endpoint-token-proof.json",
+      "sha256": "e79bd3b0481928691dcfe4712cdc10a1d79dc08e7452eab636d0ddb606ba9c6c",
+      "bytes": 1140
+    },
+    "actual-new67d-exported-qoa-mixer.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/actual-new67d-exported-qoa-mixer.json",
+      "sha256": "72ddc1409c9bfc3fd793e3ec7911ae4e0d58db1b7ebd358f21dd03fb983acfb0",
+      "bytes": 947
+    },
+    "root-source-build-approval.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/root-source-build-approval.json",
+      "sha256": "7255ae0ca4601e3810a0f0b39ac4356a4dd88b1535cc678f30fbf5c127318226",
+      "bytes": 785
+    },
+    "independent-67d-source-review.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRecoveryIndependentReview-20261030/review.json",
+      "sha256": "31827e07a08888f07bc8109a92f67beba1c00e406ba237ea81d1a6fe829ce4e1",
+      "bytes": 6158
+    },
+    "historical-aea-v2-closure.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineNineSettingsRootBuild-20261030/PackagingPreparation-V2/preparation-closure.json",
+      "sha256": "305348133ad11c91036180766cfadaca9b33c2528e1318b588853b53f525eda0",
+      "bytes": 7442
+    },
+    "historical-aea-v2-authority.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineNineSettingsRootBuild-20261030/PackagingPreparation-V2/authority.json",
+      "sha256": "96e19ce040600c1376cff438c99e6266301c3603c0d747b19333692a42cabe9a",
+      "bytes": 16310
+    },
+    "historical-aea-v2-runtime.py": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineNineSettingsRootBuild-20261030/PackagingPreparation-V2/prepare_exact_qa.py",
+      "sha256": "49a59a4c53ac9238bfaf740b60e262fac34e8f8e857d4129f280ece85057bcc2",
+      "bytes": 25996
+    },
+    "historical-aea-explicit-hold.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineNineSettingsRootBuild-20261030/qa-derivation-held-after-qoa-review.json",
+      "sha256": "03f8298d78dda1b5ac4010043c77594072f53b0e80c98a0e626ea5cf6624b96f",
+      "bytes": 2005
+    },
+    "historical-c996-derived-binding.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineNineAudioRootBuild-20261029/NativeQA-Code8-V2/derived-binding.json",
+      "sha256": "6ed8fabe0f23989640feb68de1f1df1422410ef4862250d5b53f2464853209eb",
+      "bytes": 5073
+    },
+    "python-producer-contract.json": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/PackagingPreparation-V2/python-producer-contract.json",
+      "sha256": "8e18ae0c435e4d314a3c47c87273faa10cada9c87601f867e88e83cbc5a41719",
+      "bytes": 620
+    }
+  },
+  "audioRepresentation": "exact signed-AAB QOA/remap bytes; no raw-WAV/decoded-PCM byte identity claim",
+  "rootExecutionApprovalSha256": "f0a10abc2cfecfccf459df6a37fd50a0c6a78c45860590d3aa4fa566573c8ffc",
+  "nativeQa": "PENDING_ROOT",
+  "rootDistributionApproval": null,
+  "noDeviceStoreSourceBuildOrNewKey": true,
+  "passwordTransport": "file:",
+  "temporaryPasswordFilesRemoved": true
+}

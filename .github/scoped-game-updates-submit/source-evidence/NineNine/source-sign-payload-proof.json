@@ -1,0 +1,19 @@
+{
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "package": "de.kamilunavo.ninenine",
+  "versionCode": 8,
+  "versionName": "1.2.0",
+  "runId": 40989636663,
+  "signedAab": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/signed-files/99-9-v8-central.aab",
+  "signedAabSha256": "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a",
+  "signedAabBytes": 39635391,
+  "unsignedAabSha256": "5a500e2a6bfda0282638cc0ba74747fa81fdad50ae5599069929b2405cbd5a62",
+  "sourceArtifactId": 12948079874,
+  "signedArtifactId": 12948528003,
+  "allNonSignatureModulePayloadsUnchanged": true,
+  "payloadEntryCount": 1068,
+  "allPayloadCoveredByOneJarSignature": true,
+  "originalSourceTransferContextMatches": true,
+  "guardSha256": "d6b87b6da8683f0b62fb36bf96bdb6c08f0c9c1ef67ae01818c3d4614b01e983",
+  "noSigningKeysAccessed": true
+}

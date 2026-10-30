@@ -1,0 +1,88 @@
+{
+  "schema": 1,
+  "authorship": "Original composition and deterministic procedural synthesis written for Kamilunavo on 2026-10-29 by the Codex implementation agent under owner instruction.",
+  "externalAudioInputs": [],
+  "generator": "scripts/generate_original_audio.py",
+  "generatorSha256": "7b2f06609fbf6dfe23b66d0a6776538fd16c3e84fa76fbc75dd65f9f55722d5a",
+  "scoreMidiAtSeconds": [
+    [
+      0.0,
+      57
+    ],
+    [
+      1.75,
+      64
+    ],
+    [
+      3.75,
+      69
+    ],
+    [
+      6.0,
+      53
+    ],
+    [
+      8.25,
+      60
+    ],
+    [
+      10.0,
+      65
+    ],
+    [
+      12.0,
+      55
+    ],
+    [
+      14.5,
+      62
+    ],
+    [
+      16.0,
+      67
+    ],
+    [
+      18.0,
+      52
+    ],
+    [
+      20.25,
+      59
+    ],
+    [
+      21.5,
+      64
+    ]
+  ],
+  "outputs": {
+    "precision-loop.wav": {
+      "sha256": "a1ecf54463e30cbb1568d36023186b615672a0cf9ada822ea8b86bada5053e1f",
+      "frames": 529200,
+      "rate": 22050,
+      "channels": 1,
+      "pcmBits": 16
+    },
+    "ui.wav": {
+      "sha256": "9a8d286e0bc0cb8bc21c7a0326d45328cfbcda2435be1b9b245cf9d6521cfa4e",
+      "frames": 1654,
+      "rate": 22050,
+      "channels": 1,
+      "pcmBits": 16
+    },
+    "hit.wav": {
+      "sha256": "72d385c1afc22ac16d65027a8ea9160010df937e522a4c688f030ca567041d66",
+      "frames": 6174,
+      "rate": 22050,
+      "channels": 1,
+      "pcmBits": 16
+    },
+    "miss.wav": {
+      "sha256": "649dfe34117bf49a24aeb53346d6b8adc93f0298b508044ad4035582d38910e2",
+      "frames": 4851,
+      "rate": 22050,
+      "channels": 1,
+      "pcmBits": 16
+    }
+  },
+  "notice": "assets/audio/NOTICE.txt"
+}

@@ -1,0 +1,138 @@
+{
+  "schema": 1,
+  "status": "EXACT_67D_SOURCE_SIGN_RESOURCE_AND_ACTUAL_HOST_QOA_PASS_NATIVE_PENDING",
+  "generatedAtUtc": "2026-10-30T02:14:06.961791+00:00",
+  "repository": "acciento89-bot/99-9",
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "workflow": ".github/workflows/android-central-bundle.yml",
+  "runId": 40989636663,
+  "event": "workflow_dispatch",
+  "ref": "refs/heads/main",
+  "runAttempt": 1,
+  "runConclusion": "success",
+  "artifactArchives": [
+    {
+      "artifactId": 12948528003,
+      "name": "99-9-v8-central-signed-aab",
+      "originalArchive": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/99-9-v8-central-signed-aab.original.zip",
+      "sha256": "e5711b346251baa70a0849e9958c8ce58dfb02363a6cfb233b5a497f4a7a4f71",
+      "bytes": 39269473,
+      "officialDigestVerified": true
+    },
+    {
+      "artifactId": 12948079874,
+      "name": "central-input-99-9-40989636663",
+      "originalArchive": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/central-input-99-9-40989636663.original.zip",
+      "sha256": "0455ed704fa6d5d00306c4cb798de53316ddc27d989efb7b09ca49fcd10b7bce",
+      "bytes": 39160658,
+      "officialDigestVerified": true
+    }
+  ],
+  "signedAab": {
+    "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/signed-files/99-9-v8-central.aab",
+    "sha256": "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a",
+    "bytes": 39635391,
+    "package": "de.kamilunavo.ninenine",
+    "versionCode": 8,
+    "versionName": "1.2.0",
+    "debuggable": false,
+    "certificateSha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
+  },
+  "checks": {
+    "officialMetadataArchiveDigestsAndExactRunSourceBinding": "PASS",
+    "originalSourceAndSigningReceiptsRetained": true,
+    "unsignedToSignedEntireNonSignaturePayloadEntryCount": 1068,
+    "allModulePayloadUnchanged": true,
+    "allPayloadEntriesCoveredByOneCryptographicallyVerifiedJarSignature": true,
+    "bundletoolValidate": "PASS",
+    "originalPublicCertificate": "PASS",
+    "installTimeAssetPackIdentityAndFusing": "PASS",
+    "installTimeAssetEntryCount": 443,
+    "nativeElf16KCompatibleLibraries": 2,
+    "newAudioResources": 4,
+    "allFourOriginalWavsDeterministicallyRegeneratedExactly": true,
+    "packagedAudioNoticeAndProvenanceExactCurrentSource": true,
+    "packagedFontAndVendorNoticesExactCurrentSource": true,
+    "completeOriginalFontTtfDirectlyFoundInsideCurrentConvertedResource": true,
+    "actualNewSettingsCompiledTokenAssignmentsAndOwnedFalseButtonLoop": true,
+    "currentSourceHeadAndProductTreeUnchanged": true,
+    "actualCurrentInclusiveQoaEndpointGdcAndOtherInstructionsVerified": true,
+    "actualNewSourceAndNewExportedQoaRealMixer13Pass": true
+  },
+  "currentExpectedQaMappingCounts": {
+    "mappedEntries": 448,
+    "installTimeAssets": 443,
+    "nativeLibraries": 2,
+    "dexFiles": 3
+  },
+  "audioPackaging": {
+    "rawWavFilesPresent": false,
+    "actualRepresentation": "Godot AudioStreamWAV .sample with QOA compression + .wav.import remaps",
+    "decodedPcmByteEqualityToOriginalClaimed": false,
+    "minimumDecodedVsOriginalSnrDb": 45.62221183374496,
+    "minimumDecodedVsOriginalCorrelation": 0.9999863646900351,
+    "anyDecodedClipping": false,
+    "playbackOrListeningClaimed": false
+  },
+  "compiledSettingsProof": {
+    "file": "actual-current-settings-token-proof.json",
+    "sha256": "3499e755e824750aefc683cbcddf8446b463edfc2eb8c86ada551890a0a27b2b",
+    "fullSourceTextEqualityClaimed": false
+  },
+  "expectedNewDeadTestResources": [
+    "assetPackInstallTime/assets/tests/qoa_loop_boundary_tests.gdc",
+    "assetPackInstallTime/assets/tests/qoa_loop_boundary_tests.gd.remap"
+  ],
+  "evidenceFiles": [
+    "actual-completed-run.original.json",
+    "actual-jobs.original.json",
+    "actual-download-receipt.json",
+    "source-sign-payload-verification.json",
+    "signed-files/provenance.json",
+    "signed-files/release-evidence.json",
+    "unsigned-source/source.json",
+    "actual-public-java-verification.json",
+    "actual-current-assets-verification.json",
+    "actual-code8-font-full-original-byte-proof.json",
+    "actual-generator-and-negative-controls.json",
+    "actual-current-settings-token-proof.json",
+    "actual-current-inclusive-qoa-endpoint-token-proof.json",
+    "actual-new67d-exported-qoa-mixer.json"
+  ],
+  "warnings": [
+    "Public JAR cryptographic verification and exact pinned upload cert passed; normal self-signed certificate/no public trust-chain/timestamp warnings remain in original log.",
+    "Original WAVs were converted to lossy QOA; correspondence measured, not byte equality claimed.",
+    "New source/GDC last-valid529199 and actual new-resource host mixer13PASS are verified; no device/hearing/native acceptance is claimed."
+  ],
+  "pending": {
+    "qaApkDerivation": true,
+    "apkZipStorageAlignment": true,
+    "actualInstalledApkHash": true,
+    "newSettingsNativeTouchVerification": true,
+    "normalNativeAudioMusicEffectsAndMuteLifecycle": true,
+    "normalNativePracticeCoreAndPersistence": true,
+    "rootReleaseRightsAndCandidateApproval": true
+  },
+  "oldC996Code8NativeQaInherited": false,
+  "rootDistributionApproval": null,
+  "providerMutations": false,
+  "newBuildsOrRepeatDispatch": false,
+  "signingKeysAccessed": false,
+  "devicesGuiOrEngineUsed": true,
+  "compiledInclusiveQoaEndpointProof": {
+    "file": "actual-current-inclusive-qoa-endpoint-token-proof.json",
+    "sha256": "e79bd3b0481928691dcfe4712cdc10a1d79dc08e7452eab636d0ddb606ba9c6c"
+  },
+  "actualCurrentQoaHostMixer": {
+    "proof": "actual-new67d-exported-qoa-mixer.json",
+    "sha256": "72ddc1409c9bfc3fd793e3ec7911ae4e0d58db1b7ebd358f21dd03fb983acfb0",
+    "checks": 13,
+    "failed": 0,
+    "dummyHostOnly": true,
+    "nativeListeningAcceptance": false
+  },
+  "oldAeaNativeQaInherited": false,
+  "deviceOrGuiUsed": false,
+  "expresslyAuthorizedHeadlessMixerEngineOnly": true,
+  "editorImportExportBuildUsed": false
+}

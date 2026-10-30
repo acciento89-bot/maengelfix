@@ -18,11 +18,13 @@ class GameCandidateTests(unittest.TestCase):
             else:f.qa['testedApkSha256']='a'*64
             raw=f.raw()
             with self.subTest(mode=mode),self.assertRaises(candidate.CandidateError):candidate.validate_archive(raw,digest(raw),f.package,f.catalog,FixtureVerifier(),NOW,family='game5')
-    def test_german_only_idle_and_nine_english_only_practice_cannot_be_called_global_english(self):
-        for package,screen in [('de.kamilunavo.idlehandwerker','other'),('de.kamilunavo.ninenine','other')]:
-            a=ready_app(package);a['frameLanguageRequirements']['en-US'][0]={'inAppLanguage':'en','mixedUi':False,'languageLimitation':'Synthetic source-scope check','screenScope':screen}
-            with self.assertRaises(candidate.CandidateError):game_policy.require_ready(a)
-        a=ready_app('de.kamilunavo.ninenine');a['frameLanguageRequirements']['en-US'][0]={'inAppLanguage':'en','mixedUi':False,'languageLimitation':'Only Practice panel is English.','screenScope':'practice'};game_policy.require_ready(a)
+    def test_german_idle_and_current_nine_english_shell_have_honest_distinct_limits(self):
+        a=ready_app('de.kamilunavo.idlehandwerker');a['frameLanguageRequirements']['en-US'][0]={'inAppLanguage':'en','mixedUi':False,'languageLimitation':'Synthetic scope check','screenScope':'other'}
+        with self.assertRaises(candidate.CandidateError):game_policy.require_ready(a)
+        a=ready_app('de.kamilunavo.ninenine');game_policy.require_ready(a)
+        a['frameLanguageRequirements']['de-DE'][0]={'inAppLanguage':'de','mixedUi':False,'languageLimitation':'German Practice fixture.','screenScope':'practice'};game_policy.require_ready(a)
+        a['frameLanguageRequirements']['de-DE'][0]['screenScope']='other'
+        with self.assertRaises(candidate.CandidateError):game_policy.require_ready(a)
     def test_english_listing_with_honest_german_ui_allowed_but_device_only_label_rejected(self):
         a=ready_app('de.kamilunavo.idlehandwerker');game_policy.require_ready(a);entry=copy.deepcopy(a['frameLanguageRequirements']['en-US'][0]);entry['inAppLanguage']='en'
         with self.assertRaises(candidate.CandidateError):game_policy.validate_frame_language(a,'en-US',0,entry)

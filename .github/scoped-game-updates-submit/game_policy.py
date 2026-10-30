@@ -3,7 +3,7 @@ import json
 from pathlib import Path
 from candidate import EXPECTED,require,digest,strict_json,is_digest,safe_name,listing_locales
 ROOT=Path(__file__).resolve().parent
-REGISTRY_SHA='676ba178ae2736cd97ff10a87874701f57643699c143f2b18ada75369f9ba5d7'
+REGISTRY_SHA='72968b085895e97efdfa10c1adee82ebb68f84794be91fb06e4f178bca10c9f5'
 PROVIDER_SHA='5b671173dcc7dfadd82fdd2f857176da57b7a418cabfbb1dd75de43b5a3286a5'
 READY_FIELDS={'listingLocales','localeSnapshotSha256','releaseNotes','rootReviewSha256','rightsEvidenceSha256','frameLanguageRequirements','optionalOriginalIcon','readiness'}
 _RESERVED_GAME_STEPS=frozenset({
@@ -62,6 +62,10 @@ def require_ready(app):
     require(all(isinstance(v,str)and 1<=len(v)<=500 for v in app['releaseNotes'].values()),'Factual fixed release notes required');language_requirements(app);return locales
 
 def language_requirements(app,allow_pending=False):
+    policy=app.get('uiLanguagePolicy')
+    require(type(policy)is str and policy in ('actual_per_frame_review','german_only','english_only_practice','english_shell_bilingual_practice'),'Unknown fixed game UI language policy')
+    if policy=='english_shell_bilingual_practice':
+        require(app.get('package')=='de.kamilunavo.ninenine' and app.get('reviewedSourceCommit')=='67d236b7d35b70b59693a730164a0d8426409ee5' and type(app.get('newVersionCode'))is int and app['newVersionCode']==8,'English-shell/bilingual-Practice policy is only reviewed Nine67d/code8')
     requirements=app.get('frameLanguageRequirements')
     if allow_pending and requirements is None:return None
     locales=listing_locales(app);require(isinstance(requirements,dict)and set(requirements)==set(locales),'Actual per-frame language review pending')
@@ -74,6 +78,7 @@ def language_requirements(app,allow_pending=False):
             require(not(mixed or language!=locale.split('-')[0])or bool(limit.strip()),'Mixed or listing/UI-language difference needs factual limitation')
             require(app['uiLanguagePolicy']!='german_only'or language=='de','Idle actual source is German-only')
             require(app['uiLanguagePolicy']!='english_only_practice'or language=='de'or screen=='practice','Nine English coverage is Practice only, not global English UI')
+            require(policy!='english_shell_bilingual_practice'or screen=='practice'or (language=='en'and mixed is False),'Nine Home/Settings shell is English; DE/EN or bilingual legal text is Practice only')
     return requirements
 
 def validate_frame_language(app,locale,index,entry):

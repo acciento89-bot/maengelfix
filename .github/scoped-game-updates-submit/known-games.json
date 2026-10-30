@@ -518,13 +518,13 @@
       "package": "de.kamilunavo.ninenine",
       "previousProductionCode": 6,
       "previousMaxCode": 6,
-      "newVersionCode": 7,
+      "newVersionCode": 8,
       "newVersionName": "1.2.0",
-      "reviewedSourceCommit": "d2790fd808d1f218e6bdf72e2ef8102916826893",
-      "signedAabSha256": "e0edaa1302b140be3f202ad5e16619242e4be1cdd20a97970b97c9fce0c2c274",
-      "signedAabBytes": 39410888,
-      "testedDerivedApkSha256": "58e300ce25d3db8c92883e539b225ed3652049a77903598d7028cc8914c59d46",
-      "testedDerivedApkBytes": 89753843,
+      "reviewedSourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+      "signedAabSha256": "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a",
+      "signedAabBytes": 39635391,
+      "testedDerivedApkSha256": "984e76eeea07e11ed3073def4f4d1e1559ba701ce6e7413f14f940319c42aae2",
+      "testedDerivedApkBytes": 90001550,
       "certificate": {
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
@@ -534,116 +534,158 @@
       "sourceTopology": {
         "kind": "godot_integrated_main_same_run_source_sign_all_install_time_modules",
         "repository": "acciento89-bot/99-9",
-        "sourceCommit": "d2790fd808d1f218e6bdf72e2ef8102916826893",
-        "installTimeAssetFiles": 421,
-        "allModulePayloadEntries": 1046,
+        "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+        "installTimeAssetFiles": 443,
+        "allModulePayloadEntries": 1068,
         "cloudReads": [
           {
             "kind": "run",
             "repository": "acciento89-bot/99-9",
-            "id": 40912634003,
+            "id": 40989636663,
             "workflow": ".github/workflows/android-central-bundle.yml",
-            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
+            "head": "67d236b7d35b70b59693a730164a0d8426409ee5",
             "attempt": 1
           },
           {
             "kind": "artifact",
             "repository": "acciento89-bot/99-9",
-            "id": 12915161788,
-            "name": "central-input-99-9-40912634003",
-            "runId": 40912634003,
-            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
-            "archiveSha256": "9e1408ec4793c45f56d55f2b997e04edc96af599766465dbc2fc4683e60ccefc"
+            "id": 12948079874,
+            "name": "central-input-99-9-40989636663",
+            "runId": 40989636663,
+            "head": "67d236b7d35b70b59693a730164a0d8426409ee5",
+            "archiveSha256": "0455ed704fa6d5d00306c4cb798de53316ddc27d989efb7b09ca49fcd10b7bce"
           },
           {
             "kind": "artifact",
             "repository": "acciento89-bot/99-9",
-            "id": 12914782483,
-            "name": "99-9-v7-central-signed-aab",
-            "runId": 40912634003,
-            "head": "d2790fd808d1f218e6bdf72e2ef8102916826893",
-            "archiveSha256": "0bec52b71400975af8907a2f4817c6e50f73cfeaa55b6568fdf2af921f20dcd7"
+            "id": 12948528003,
+            "name": "99-9-v8-central-signed-aab",
+            "runId": 40989636663,
+            "head": "67d236b7d35b70b59693a730164a0d8426409ee5",
+            "archiveSha256": "e5711b346251baa70a0849e9958c8ce58dfb02363a6cfb233b5a497f4a7a4f71"
           }
         ]
       },
       "sourceProofs": [
         {
-          "role": "public-upload-certificate",
-          "path": "source-evidence/NineNine/public-upload-certificate.txt",
-          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
-          "bytes": 788
-        },
-        {
-          "role": "qa-derivation",
-          "path": "source-evidence/NineNine/qa-derivation.json",
-          "sha256": "4bbb5f88f28411e2284af15d9ef27621bac338eeb436f0675d141cdb1777701a",
-          "bytes": 14729
-        },
-        {
-          "role": "source-sign-closure",
-          "path": "source-evidence/NineNine/source-sign-closure.json",
-          "sha256": "15c6a0c1e882476c0cc77808267e42ceba351b729cadd60592861d54c31ec891",
-          "bytes": 30397
-        },
-        {
-          "role": "actual-source-sign-verification",
-          "path": "source-evidence/NineNine/actual-source-sign-verification.json",
-          "sha256": "f6c5f574e6f8761a808b2670a6fd5f1d07803f5ed61bb80ec73243cd41d249bf",
-          "bytes": 4195
-        },
-        {
-          "role": "actual-source-sign-run",
-          "path": "source-evidence/NineNine/actual-source-sign-run.json",
-          "sha256": "20577cf6b735c281926f14e8e8e1d7cb34198dcd3f6ce7375d04b1b27b255f82",
-          "bytes": 378
-        },
-        {
-          "role": "unsigned-source-official-artifact",
-          "path": "source-evidence/NineNine/unsigned-source-official-artifact.json",
-          "sha256": "fbd7badc0e3b74004ab5451c375dbe71f4e9e5f912ce50a68ae36a82ec638607",
-          "bytes": 781
-        },
-        {
-          "role": "signed-official-artifact",
-          "path": "source-evidence/NineNine/signed-official-artifact.json",
-          "sha256": "9d301960cec3535e85a93bdb99f5092ced5fc85c3c3ebddda1c3ec2cd7c0cb99",
-          "bytes": 777
-        },
-        {
-          "role": "signed-provenance",
-          "path": "source-evidence/NineNine/signed-provenance.json",
-          "sha256": "83a1a779d51e7b070f49c3e5379cfcc652418ba1827e61fb27cb7ff396908297",
+          "role": "central-signer-provenance",
+          "path": "source-evidence/NineNine/central-signer-provenance.json",
+          "sha256": "f7667d587879c902bdf9079fa75c36e3e636e4fcfc8229dd10a7184bf4877cd3",
           "bytes": 2081
         },
         {
-          "role": "install-time-actual-manifest",
-          "path": "source-evidence/NineNine/install-time-actual-manifest.xml",
-          "sha256": "d401ce5274599a084410aa6d2c64360801141ff7e77dcfd824f5f8f0fbda89bd",
-          "bytes": 551
+          "role": "current-actual-exported-qoa-mixer",
+          "path": "source-evidence/NineNine/current-actual-exported-qoa-mixer.json",
+          "sha256": "72ddc1409c9bfc3fd793e3ec7911ae4e0d58db1b7ebd358f21dd03fb983acfb0",
+          "bytes": 947
         },
         {
-          "role": "all-module-aab-apk-pair",
-          "path": "source-evidence/NineNine/all-module-aab-apk-pair.json",
-          "sha256": "48177588dc5076a849fb6c3319c604dd4b84512c8568b07c61b8c2478d1295cd",
-          "bytes": 124551
+          "role": "current-audio-inclusive-endpoint-proof",
+          "path": "source-evidence/NineNine/current-audio-inclusive-endpoint-proof.json",
+          "sha256": "e79bd3b0481928691dcfe4712cdc10a1d79dc08e7452eab636d0ddb606ba9c6c",
+          "bytes": 1140
         },
         {
-          "role": "prior-engine-original-font-inspection",
-          "path": "source-evidence/NineNine/prior-engine-original-font-inspection.json",
-          "sha256": "bb9c2293b57ca5b1d2857abfaa808193c184f33837a3b46d8de185f53f2d6f5d",
-          "bytes": 1546
+          "role": "current-full-aab-apk-pair",
+          "path": "source-evidence/NineNine/current-full-aab-apk-pair.json",
+          "sha256": "ac3531c3d81ca214718668c08cfdee51c43a16b3ab8ce96095fc95c2fb919b9d",
+          "bytes": 129437
         },
         {
-          "role": "original-font-0",
-          "path": "source-evidence/NineNine/original-font-0.ttf",
-          "sha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
-          "bytes": 102884
+          "role": "current-full-original-font-proof",
+          "path": "source-evidence/NineNine/current-full-original-font-proof.json",
+          "sha256": "dd1d0509c6abdac0f625383b8f7bbf6d630aab704ec37c9fb75e6fa7e746ac94",
+          "bytes": 489
+        },
+        {
+          "role": "current-qa-derivation",
+          "path": "source-evidence/NineNine/current-qa-derivation.json",
+          "sha256": "407bb3258623dd3288a919c361d097dafe2c9d91e35fbd68aa7862958409a44c",
+          "bytes": 8883
+        },
+        {
+          "role": "current-settings-token-proof",
+          "path": "source-evidence/NineNine/current-settings-token-proof.json",
+          "sha256": "3499e755e824750aefc683cbcddf8446b463edfc2eb8c86ada551890a0a27b2b",
+          "bytes": 3760
         },
         {
           "role": "engine-inspected-font-resource-0",
           "path": "source-evidence/NineNine/engine-inspected-font-resource-0.fontdata",
           "sha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
           "bytes": 59028
+        },
+        {
+          "role": "normal-source-context",
+          "path": "source-evidence/NineNine/normal-source-context.json",
+          "sha256": "1f5f6d7898703b06f76b2b9ca1504c94be5762e87ef7ce17d7a976b88526a812",
+          "bytes": 895
+        },
+        {
+          "role": "official-completed-source-sign-run",
+          "path": "source-evidence/NineNine/official-completed-source-sign-run.json",
+          "sha256": "0ee99bacc345b09d1d3066f25388e43b10c7bb9e73b51e2bb142b4f1c5baf94f",
+          "bytes": 13608
+        },
+        {
+          "role": "official-signed-artifact-metadata",
+          "path": "source-evidence/NineNine/official-signed-artifact-metadata.json",
+          "sha256": "f9e9d004f821dc903b64d1e8f6c70f0e33c02716a1e40d7d110bf701bdd374c1",
+          "bytes": 777
+        },
+        {
+          "role": "official-source-artifact-metadata",
+          "path": "source-evidence/NineNine/official-source-artifact-metadata.json",
+          "sha256": "8479696bf8911ca6f8292088f2e18d4d3a11cdcba50fba4c7f14d704de3d5641",
+          "bytes": 781
+        },
+        {
+          "role": "original-audio-generator",
+          "path": "source-evidence/NineNine/original-audio-generator.py",
+          "sha256": "7b2f06609fbf6dfe23b66d0a6776538fd16c3e84fa76fbc75dd65f9f55722d5a",
+          "bytes": 3509
+        },
+        {
+          "role": "original-audio-hit",
+          "path": "source-evidence/NineNine/original-audio-hit.wav",
+          "sha256": "72d385c1afc22ac16d65027a8ea9160010df937e522a4c688f030ca567041d66",
+          "bytes": 12392
+        },
+        {
+          "role": "original-audio-miss",
+          "path": "source-evidence/NineNine/original-audio-miss.wav",
+          "sha256": "649dfe34117bf49a24aeb53346d6b8adc93f0298b508044ad4035582d38910e2",
+          "bytes": 9746
+        },
+        {
+          "role": "original-audio-notice",
+          "path": "source-evidence/NineNine/original-audio-notice.txt",
+          "sha256": "ff30c868ecb7034c0c14d07848235e2ba8627f295588b9f787e53aad65900959",
+          "bytes": 666
+        },
+        {
+          "role": "original-audio-precision-loop",
+          "path": "source-evidence/NineNine/original-audio-precision-loop.wav",
+          "sha256": "a1ecf54463e30cbb1568d36023186b615672a0cf9ada822ea8b86bada5053e1f",
+          "bytes": 1058444
+        },
+        {
+          "role": "original-audio-provenance",
+          "path": "source-evidence/NineNine/original-audio-provenance.json",
+          "sha256": "a22ae125c398a93d3d102e1ce6bd50fa8641ba90be43eddeea1f60b068b3b989",
+          "bytes": 1640
+        },
+        {
+          "role": "original-audio-ui",
+          "path": "source-evidence/NineNine/original-audio-ui.wav",
+          "sha256": "9a8d286e0bc0cb8bc21c7a0326d45328cfbcda2435be1b9b245cf9d6521cfa4e",
+          "bytes": 3352
+        },
+        {
+          "role": "original-font-0",
+          "path": "source-evidence/NineNine/original-font-0.ttf",
+          "sha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+          "bytes": 102884
         },
         {
           "role": "original-notice-0",
@@ -653,7 +695,7 @@
         },
         {
           "role": "original-notice-1",
-          "path": "source-evidence/NineNine/original-notice-1.txt",
+          "path": "source-evidence/NineNine/original-notice-1",
           "sha256": "5eb8fed3c9765be2c902791e19517025cc9e871f171e70f48213ad8999560675",
           "bytes": 1078
         },
@@ -668,6 +710,36 @@
           "path": "source-evidence/NineNine/original-notice-3.json",
           "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87",
           "bytes": 1055
+        },
+        {
+          "role": "prior-engine-original-font-inspection",
+          "path": "source-evidence/NineNine/prior-engine-original-font-inspection.json",
+          "sha256": "bb9c2293b57ca5b1d2857abfaa808193c184f33837a3b46d8de185f53f2d6f5d",
+          "bytes": 1546
+        },
+        {
+          "role": "public-upload-certificate",
+          "path": "source-evidence/NineNine/public-upload-certificate.log",
+          "sha256": "e26a971eff42bb41b6cd32151df75129469eb2ac4b0cf225b902900e0134dc64",
+          "bytes": 788
+        },
+        {
+          "role": "release-evidence",
+          "path": "source-evidence/NineNine/release-evidence.json",
+          "sha256": "56539977540839dce62ab95cc3e943cd284a4dcc23a44c38beb197e6116a702b",
+          "bytes": 215
+        },
+        {
+          "role": "source-sign-payload-proof",
+          "path": "source-evidence/NineNine/source-sign-payload-proof.json",
+          "sha256": "4085ce0da1abc0ffb26b1fc996e9cfc96836ad7e680e7368e79ed26f0afe0539",
+          "bytes": 930
+        },
+        {
+          "role": "source-sign-verification",
+          "path": "source-evidence/NineNine/source-sign-verification.json",
+          "sha256": "d7cad02f27904ccf110391d77dbe4e8f09599610115f6e0ee58f53bdd5ce5f0c",
+          "bytes": 6200
         }
       ],
       "requiredBundleAssets": [
@@ -690,6 +762,34 @@
         {
           "entry": "assetPackInstallTime/assets/licenses/godot-iap-3.0.2/PROVENANCE.json",
           "sha256": "bf8212dae23a62bf0a702e8338a9543a282e41a401d774827202960b5f390d87"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/audio/NOTICE.txt",
+          "sha256": "ff30c868ecb7034c0c14d07848235e2ba8627f295588b9f787e53aad65900959"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/audio/PROVENANCE.json",
+          "sha256": "a22ae125c398a93d3d102e1ce6bd50fa8641ba90be43eddeea1f60b068b3b989"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/precision-loop.wav-534b65b6413d5e8654ecb3a078104415.sample",
+          "sha256": "b4424c66ea1b8978aade130ea3bf47fad6cdb8fb638d927ab0b209b4c2539a9e"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/ui.wav-d54e8bc37b8ccee18240932350cecc18.sample",
+          "sha256": "766308e0779fe0ccca78c77aeec71e1ce8759da3e850109a7df1b326151998f6"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/hit.wav-96dc477cdf4a42f381370dba6e3f75ce.sample",
+          "sha256": "ba6446c7986f98f78c9a86912868036704ac6bca720deb2c62d61ea410e45177"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/.godot/imported/miss.wav-4696074401e3ee5b47b2144bfa6ac22c.sample",
+          "sha256": "0ab0cd6622092a0b51a96b19f6cd5d6d5a92b3432684299ab7daa99583e4aac8"
+        },
+        {
+          "entry": "assetPackInstallTime/assets/assets/icon.svg",
+          "sha256": "b7bbc1bf2242e87abbd559e42637b531e43023434e687184d1d72b8bc1e9f9d8"
         }
       ],
       "fontProofs": [
@@ -704,12 +804,15 @@
           "committedSource": "assets/fonts/hammersmithone/HammersmithOne-Regular.ttf"
         }
       ],
-      "uiLanguagePolicy": "english_only_practice",
-      "fullSignedPayloadSha256": "e84622a870ba5356957002b469d1f0ae4af4ed511f2a2d3cb977761e8d5b3419",
+      "uiLanguagePolicy": "english_shell_bilingual_practice",
+      "fullSignedPayloadSha256": "9723c3e965ebe37e3532e8df597a89ca1ade0f7d69acbca20070b5c085aafe62",
       "allowedGeneratedBaselineExtras": {
-        "assets/dexopt/baseline.prof": "62d76a3c8ec857e8db03ec559da32ef15d6d39eb8a83e90b3f6aaa130a898b5a",
+        "assets/dexopt/baseline.prof": "e855fe4ba080be5fc6a4d7ab904bcbc94f0cad911d8c3c9ca1ea6bdffbb671c8",
         "assets/dexopt/baseline.profm": "4604d949575a456880b96b87251959bd90bd9bf97b558843de27ec89200209c0"
-      }
+      },
+      "reservedUnusedVersionCodes": [
+        7
+      ]
     },
     {
       "app": "IdleHandwerker",

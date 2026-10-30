@@ -1,0 +1,22 @@
+{
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "sourceRunId": 40989636663,
+  "signedAabSha256": "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a",
+  "actualArgv": [
+    "sh",
+    "scripts/run-qoa-loop-tests.sh",
+    "/Volumes/SSK SSD/Kamilunavo/Cache/Godot/4.7.2/Godot.app/Contents/MacOS/Godot",
+    "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/NineQoaLoopBoundaryRootBuild-20261030/Collected/signed-files/99-9-v8-central.aab",
+    "192376a37586e2a062971b9f4e3cb8fe6a2af64453341c57c28e8ebead23004a"
+  ],
+  "actualExit": 0,
+  "logSha256": "d4a2227a4a30de3d3eb49704bb3a14617b6a54435fdeb67114231f1e75eb7edb",
+  "seconds": 2.154222834,
+  "checks": 13,
+  "failed": 0,
+  "actualProductionReadyAndAllFourNewExportedResources": true,
+  "realMixerDummyHostOnly": true,
+  "nativeDeviceOrListeningApproval": false,
+  "sourceTrackedUnchanged": true,
+  "noBuildOrPackaging": true
+}

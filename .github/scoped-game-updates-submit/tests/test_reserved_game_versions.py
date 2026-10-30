@@ -40,7 +40,9 @@ class ReservedGameVersionTests(unittest.TestCase):
         row.update(previousMaxCode=maximum, newVersionCode=target,
                    signedAabSha256=self.calculator.bundle_sha256,
                    signedAabBytes=len(self.calculator.aab),
-                   reviewedSourceCommit='f' * 40)
+                   reviewedSourceCommit='f' * 40,
+                   # Synthetic source f cannot inherit exact67d-only English-shell policy.
+                   uiLanguagePolicy='actual_per_frame_review')
         if reservation is MISSING:
             # Actual Rune6 now has a reservation; a missing-field fixture must
             # remove it rather than accidentally inherit the real approved row.
@@ -178,6 +180,10 @@ class ReservedGameVersionTests(unittest.TestCase):
             elif row['package'] == 'de.kamilunavo.idlehandwerker':
                 self.assertEqual(row['reviewedSourceCommit'], 'b984e914e18c0d007066c13c571d1c157eafb26a')
                 self.assertEqual(row['rootReviewSha256'], 'b13c64ca74acdd85e6501cc6926edb1fd47577a5a4e8df81dfb13dfb8bb7d0d9')
+                game_policy.require_ready(row)
+            elif row['package'] == 'de.kamilunavo.ninenine':
+                self.assertEqual(row['reviewedSourceCommit'], '67d236b7d35b70b59693a730164a0d8426409ee5')
+                self.assertEqual(row['rootReviewSha256'], 'b31e9637d88b739fe4197c97862a80168ea8cdf2b01722d4bfbd6ba8f5a5ccb8')
                 game_policy.require_ready(row)
             else:
                 with self.assertRaises(candidate.CandidateError):

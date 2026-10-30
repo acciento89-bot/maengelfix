@@ -1,0 +1,11 @@
+NineNine — original precision audio, 2026-10-29
+
+The music composition, short UI/hit/miss effects and their synthesis code were
+created for Kamilunavo by the Codex implementation agent under the owner's
+instruction. The WAV files are generated exclusively from mathematical sine
+oscillators and envelopes by scripts/generate_original_audio.py. No samples,
+outside artist recordings, plugin/demo music, downloaded audio or voice inputs
+were used. This is a source-of-authorship statement, not an attribution of a
+third-party licence or a claim that public-domain/CC0 material was used.
+
+See PROVENANCE.json for exact generator/output hashes and the original score.

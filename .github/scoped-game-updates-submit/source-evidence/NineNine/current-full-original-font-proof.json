@@ -1,0 +1,13 @@
+{
+  "status": "PASS",
+  "sourceCommit": "67d236b7d35b70b59693a730164a0d8426409ee5",
+  "sourceRunId": 40989636663,
+  "sourceTtfSha256": "6faf4e9a59a2b25e1016c4e47cf4da4a494d07aee15dc2f708a88caae015ff8a",
+  "sourceTtfBytes": 102884,
+  "resourceSha256": "0689e7c141cdd164c32575fa98168b4835cac42e0280279ef16d87d45f5b73c3",
+  "resourceBytes": 59028,
+  "uncompressedResourceBytes": 104219,
+  "completeOriginalTtfOffset": 1075,
+  "fullOriginalBytesPresent": true,
+  "engineOrDeviceUsed": false
+}

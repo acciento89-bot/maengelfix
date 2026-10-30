@@ -1,0 +1,20 @@
+{
+  "context": {
+    "GITHUB_EVENT_NAME": "workflow_dispatch",
+    "GITHUB_REF": "refs/heads/main",
+    "GITHUB_REPOSITORY": "acciento89-bot/99-9",
+    "GITHUB_REPOSITORY_ID": "1342836201",
+    "GITHUB_RUN_ATTEMPT": "1",
+    "GITHUB_RUN_ID": "40989636663",
+    "GITHUB_SHA": "67d236b7d35b70b59693a730164a0d8426409ee5",
+    "GITHUB_WORKFLOW_REF": "acciento89-bot/99-9/.github/workflows/android-central-bundle.yml@refs/heads/main",
+    "PACKAGE_NAME": "de.kamilunavo.ninenine",
+    "RELEASE_WORKFLOW": ".github/workflows/android-central-bundle.yml",
+    "VERSION_CODE": "8",
+    "VERSION_NAME": "1.2.0"
+  },
+  "fullModulePayloadSha256": "9723c3e965ebe37e3532e8df597a89ca1ade0f7d69acbca20070b5c085aafe62",
+  "rawBuildSha256": "fb61db082783dfe76e973c9af74378ce7454bf14a67e2ec046c7cea67888b388",
+  "schema": 1,
+  "unsignedSha256": "5a500e2a6bfda0282638cc0ba74747fa81fdad50ae5599069929b2405cbd5a62"
+}

@@ -7,7 +7,10 @@ import candidate,game_policy
 
 def ready_app(package='com.kamilunavo.runenpfad'):
     a=copy.deepcopy(game_policy.fixed_apps()[package]);a.update(listingLocales=['de-DE','en-US'],localeSnapshotSha256='a'*64,releaseNotes={'de-DE':'Synthetischer Test','en-US':'Synthetic unit fixture'},rootReviewSha256='b'*64,rightsEvidenceSha256='c'*64,optionalOriginalIcon=None,readiness='root_reviewed_candidate_inputs')
-    a['frameLanguageRequirements']={l:[{'inAppLanguage':'de','mixedUi':False,'languageLimitation':''if l=='de-DE'else'English listing with actual German UI declaration.','screenScope':'other'}for _ in range(4)]for l in a['listingLocales']};return a
+    a['frameLanguageRequirements']={l:[{'inAppLanguage':'de','mixedUi':False,'languageLimitation':''if l=='de-DE'else'English listing with actual German UI declaration.','screenScope':'other'}for _ in range(4)]for l in a['listingLocales']}
+    if a['uiLanguagePolicy']=='english_shell_bilingual_practice':
+        a['frameLanguageRequirements']={l:[{'inAppLanguage':'en','mixedUi':False,'languageLimitation':'Synthetic English shell for German listing.'if l=='de-DE'else'','screenScope':'other'}for _ in range(4)]for l in a['listingLocales']}
+    return a
 
 class GameFixture:
     def __init__(self,testcase):
