@@ -3,9 +3,14 @@ import json
 from pathlib import Path
 from candidate import EXPECTED,require,digest,strict_json,is_digest,safe_name,listing_locales
 ROOT=Path(__file__).resolve().parent
-REGISTRY_SHA='d2daf6e65509e5ed359eb0a8afb46a6bb5d3ec0305c921c30d28f67943f84857'
+REGISTRY_SHA='09476536e8ed5af36e95b989722a52cf79b7a1ef47f07636d96164357e1b7392'
 PROVIDER_SHA='5b671173dcc7dfadd82fdd2f857176da57b7a418cabfbb1dd75de43b5a3286a5'
 READY_FIELDS={'listingLocales','localeSnapshotSha256','releaseNotes','rootReviewSha256','rightsEvidenceSha256','frameLanguageRequirements','optionalOriginalIcon','readiness'}
+_RESERVED_GAME_STEPS=frozenset({
+    ('de.kamilunavo.ninenine',6,8,(7,)),
+    ('de.kamilunavo.idlehandwerker',4,6,(5,)),
+    ('com.kamilunavo.runenpfad',4,6,(5,)),
+})
 
 def canonical(value):return json.dumps(value,sort_keys=True,separators=(',',':'))
 
@@ -24,6 +29,16 @@ def version(package,family='calculator9'):
 def assert_identity(app):
     require(isinstance(app,dict)and app.get('package')in fixed_apps(),'Excluded game identity');expected=fixed_apps()[app['package']]
     require(all(k in app and canonical(app[k])==canonical(v)for k,v in expected.items()),'Unknown binary/source/certificate/topology or fixed game identity mismatch')
+
+def allows_reserved_game_step(app,maximum,family):
+    if family!='game5':return False
+    # Reservations belong to the immutable identity, never candidate readiness
+    # or caller-supplied flags. Current registry rows have no reservation.
+    assert_identity(app);known=fixed_apps()[app['package']]
+    reserved=known.get('reservedUnusedVersionCodes')
+    if not isinstance(reserved,list)or not all(type(code)is int for code in reserved):return False
+    if type(maximum)is not int or type(known['previousMaxCode'])is not int or type(known['newVersionCode'])is not int:return False
+    return (known['package'],maximum,known['newVersionCode'],tuple(reserved))in _RESERVED_GAME_STEPS and maximum==known['previousMaxCode']
 
 def load_catalog(path,expected_sha):
     raw=Path(path).read_bytes();require(is_digest(expected_sha)and digest(raw)==expected_sha,'Game catalog SHA mismatch');d=strict_json(raw)

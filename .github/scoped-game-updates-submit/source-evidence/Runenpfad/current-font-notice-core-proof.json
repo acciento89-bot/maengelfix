@@ -1,0 +1,78 @@
+{
+  "fonts": [
+    {
+      "source": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Bold.ttf",
+      "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+      "sourceSha256": "a4f49c9df1351b6151969737493446fa1add16ed1a22fa8b9a4aecbdffeb1b3b",
+      "sourceBytes": 113916,
+      "freshActualAabMatches": [
+        {
+          "entry": "base/assets/bin/Data/9ac3a0e7132e45c2bfc9744987aa85a7",
+          "entrySha256": "f97edac8a1e9290c7d92a79fec7e30b1d7333187695b2b5a7fb58ca2821bb505"
+        }
+      ]
+    },
+    {
+      "source": "Assets/_Project/Art/Fonts/AveriaSerifLibre-Regular.ttf",
+      "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+      "sourceSha256": "c64545bce66be1d737832337c1188015f9acacc5230ccbeb4ce646a0eaa252da",
+      "sourceBytes": 109948,
+      "freshActualAabMatches": [
+        {
+          "entry": "base/assets/bin/Data/b656968719bb4825ad9e518bd6dd47ec",
+          "entrySha256": "a2978425e21fe95da97879c1470ff0ffc444fc45826c51fad6f69f0dd9e3a549"
+        }
+      ]
+    }
+  ],
+  "notices": [
+    {
+      "source": "Assets/StreamingAssets/AveriaSerifLibre-OFL.txt",
+      "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+      "entry": "base/assets/AveriaSerifLibre-OFL.txt",
+      "sha256": "46239ba6485d28553fd944da4ad32a00d9c403aa1c3e111676b0b96fe458d1d4",
+      "bytes": 4402,
+      "freshActualAabFullOriginalMatch": true
+    },
+    {
+      "source": "Assets/StreamingAssets/Licenses/Fonts/LiberationSans/OFL.txt",
+      "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+      "entry": "base/assets/Licenses/Fonts/LiberationSans/OFL.txt",
+      "sha256": "37f8552e9a874ec10710dc0ede6a9adf168e6609fbd02a507f35629373b85a48",
+      "bytes": 4469,
+      "freshActualAabFullOriginalMatch": true
+    }
+  ],
+  "core": {
+    "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+    "actualRawAabSha256": "014389dfab75f8922b05778e3f7d2a0c1754a94a330d9a6ea857c8084d7427ec",
+    "signedAabSha256": "77a1b1634de36304e36d9c2ce8ebef2c9b244a4d6bb7a87235344822bb80ea75",
+    "sourceBuildProof": {
+      "path": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/RunenpfadRewardRecoveryRootBuild-20261030/actual-build-and-source-readback.json",
+      "sha256": "5b73fdc2eaf9cba86ff6b7b41aeb2e0728512dd4c5b0367d7621c272e553ec09"
+    },
+    "freshSourceCoreHashesMatchBuildSnapshot": {
+      "Assets/_Project/Scripts/Core/Domain.cs": "ea20019a56a69ed0c2a4c6152f5a4945ce7a4455eac97d02912fe28da0885780",
+      "Assets/_Project/Scripts/Core/RunState.cs": "3f6f1364b334e4dff1ac5bbb44b2e31053aca4ef26b0cb272a27f158a59cda5e",
+      "Assets/_Project/Scripts/Platform/RunSave.cs": "11bc50a570633b5f4c1250965ca94b0518ede010135691ccbd1e581813c1fc58",
+      "Assets/_Project/Scripts/Platform/PlayerAccount.cs": "85316132d378779f68ba258a7279ebe2df67cc186319a69cb5b7d0733e3c5f10"
+    },
+    "freshCompiledEntryHashes": {
+      "base/assets/bin/Data/Managed/Metadata/global-metadata.dat": "2edb1eded58973cacb9e2a7c69e4140faedabb1f3d59f9243edb671ce98b42d3",
+      "base/assets/bin/Data/RuntimeInitializeOnLoads.json": "9e1d4d1a633d03f0b0fa63a1e77ef9fa74e7b8c92d5cdd89b8b6cf562dd49cb0",
+      "base/assets/bin/Data/ScriptingAssemblies.json": "f348134142057dbb681416a66e3b4301778e27bb6a989c596ba1b79a08ff0bb8",
+      "base/assets/bin/Data/boot.config": "c4fc781a2c1be2be470f4b03f1383a207e136d10e05cda40998823f7f3a9e226",
+      "base/assets/bin/Data/globalgamemanagers": "4d1b50d54e5298bf8944bae03aa73c2e65c73171793e114d4720e53f9b36a5ed",
+      "base/lib/arm64-v8a/libil2cpp.so": "c7f401054375e13c2f46058379592ab14f57b1f928a9fd97c94f2c89e472abd6"
+    },
+    "currentRecoverySymbolsActuallyPresent": [
+      "TryRecoverUnpreparedReward",
+      "RecoverableRewardContext",
+      "get_IsEmptyPlaceholder"
+    ],
+    "scope": "current-source/build attestation and actual symbol/resource inclusion, not source text equivalence or native behavior"
+  },
+  "fullRawToSignedPayloadEntries": 663,
+  "allCoveredByVerifiedJarManifest": true,
+  "old5VerificationUsedOnlyForPathReference": true
+}

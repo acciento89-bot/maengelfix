@@ -1,0 +1,14 @@
+{
+  "startedUTC": "2026-10-30T00:02:09.918343+00:00",
+  "pid": 86399,
+  "method": "Darwin kqueue EVFILT_PROC NOTE_EXIT|NOTE_EXITSTATUS|NOTE_EXIT_DETAIL; actual SDK event.h266 permits exitstatus when allowed to signal ownedpid; no signal sent",
+  "readsOnlyOwnUnityProcess": true,
+  "finishedUTC": "2026-10-30T00:07:20.205115+00:00",
+  "eventIdent": 86399,
+  "eventFilter": -5,
+  "eventFlags": 32821,
+  "eventFFlags": 2248146944,
+  "rawWaitStatus": 0,
+  "actualExitStatusRequested": true,
+  "exitCode": 0
+}

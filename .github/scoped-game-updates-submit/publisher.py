@@ -6,7 +6,7 @@ import re
 from urllib.error import HTTPError, URLError
 from urllib.request import HTTPRedirectHandler, Request, build_opener
 from candidate import EXPECTED, digest, is_digest, require, strict_json, listing_locales
-from game_policy import scope, version, require_ready
+from game_policy import scope, version, require_ready, allows_reserved_game_step
 
 @dataclass
 class Response:
@@ -177,7 +177,7 @@ def submit_candidate(candidate, transport, checkpoint=None, family='calculator9'
         else:
             if before['maxCode'] >= target: raise UnknownWrite('candidate_or_newer_code_already_exists')
             check(before['productionCode'] == candidate.app['previousProductionCode'] and before['maxCode'] == candidate.app['previousMaxCode'] and
-                target == before['maxCode']+1,'fresh_previous_code_or_max_mismatch')
+                (target == before['maxCode']+1 or allows_reserved_game_step(candidate.app,before['maxCode'],family)),'fresh_previous_code_or_max_mismatch')
             save('before_bundle_upload')
             uploaded = publisher.write('POST',edit,'bundles',media=MediaPayload(candidate.aab,'application/octet-stream'))
             check(isinstance(uploaded,dict) and code(uploaded.get('versionCode')) == target and uploaded.get('sha256') == candidate.bundle_sha256,'uploaded_bundle_identity_mismatch')

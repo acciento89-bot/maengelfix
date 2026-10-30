@@ -1,0 +1,63 @@
+{
+  "signedAabSha256": "77a1b1634de36304e36d9c2ce8ebef2c9b244a4d6bb7a87235344822bb80ea75",
+  "nativeLibraries": [
+    {
+      "entry": "base/lib/arm64-v8a/libc++_shared.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libgame.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libil2cpp.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libmain.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libswappywrapper.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    },
+    {
+      "entry": "base/lib/arm64-v8a/libunity.so",
+      "loadAlignments": [
+        16384,
+        16384,
+        16384,
+        16384
+      ],
+      "elf16KPass": true
+    }
+  ]
+}

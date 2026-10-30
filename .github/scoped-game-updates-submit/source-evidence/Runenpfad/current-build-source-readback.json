@@ -1,0 +1,19 @@
+{
+  "actualExitCode": 0,
+  "buildSucceeded": true,
+  "package": "com.kamilunavo.runenpfad",
+  "versionName": "0.4.0",
+  "versionCode": 6,
+  "outputBytes": 39392646,
+  "aabSha256": "014389dfab75f8922b05778e3f7d2a0c1754a94a330d9a6ea857c8084d7427ec",
+  "proofHashMatches": true,
+  "restoredFlags": {
+    "ProjectSettingsRestored": true,
+    "ProviderIdentityAssetsRestored": true,
+    "IOSVersionRestored": true,
+    "ToolchainRestored": true
+  },
+  "changedTrackedCount": 0,
+  "changedPaths": [],
+  "gitStatus": ""
+}

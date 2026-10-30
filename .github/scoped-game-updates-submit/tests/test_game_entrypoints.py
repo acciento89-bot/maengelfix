@@ -46,7 +46,9 @@ class GameEntrypointTests(unittest.TestCase):
             with self.assertRaises(candidate.CandidateError):g.json(p)
         self.assertEqual(len(opener.calls),count);self.assertTrue(all(r.get_method()=='GET'for r,_ in opener.calls))
     def test_fixed_game_version_production_only_and_safe_commit_behavior_transport(self):
-        self.enabled();raw=(HERE/'game-catalog.json').read_bytes();cat=game_policy.load_catalog(HERE/'game-catalog.json',digest(raw));a=ready_app();cat[a['package']]=a;client=publisher.HttpTransport('unit-only',cat,inspect_only=False,family='game5');opener=Opener();client._opener=opener;base='/androidpublisher/v3/applications/'+a['package']+'/edits/own';track={'track':'production','releases':[{'versionCodes':['5'],'status':'completed','name':'0.4.0 (5)','releaseNotes':[{'language':l,'text':'Unit'}for l in ['de-DE','en-US']]}]};client.request('PUT',base+'/tracks/production',track)
+        self.enabled();raw=(HERE/'game-catalog.json').read_bytes();cat=game_policy.load_catalog(HERE/'game-catalog.json',digest(raw));a=ready_app();cat[a['package']]=a;client=publisher.HttpTransport('unit-only',cat,inspect_only=False,family='game5');opener=Opener();client._opener=opener;base='/androidpublisher/v3/applications/'+a['package']+'/edits/own';track={'track':'production','releases':[{'versionCodes':['6'],'status':'completed','name':'0.4.0 (6)','releaseNotes':[{'language':l,'text':'Unit'}for l in ['de-DE','en-US']]}]};client.request('PUT',base+'/tracks/production',track)
+        old=copy.deepcopy(track);old['releases'][0].update(versionCodes=['5'],name='0.4.0 (5)')
+        with self.assertRaises(Exception):client.request('PUT',base+'/tracks/production',old)
         for method,path,body in [('POST',base+':commit',None),('POST',base+':commit?changesInReviewBehavior=CANCEL_IN_REVIEW_AND_SUBMIT',None),('PUT',base+'/tracks/beta',track),('POST','/androidpublisher/v3/applications/com.kamilunavo.onemorefloor/edits',{})]:
             with self.assertRaises(Exception):client.request(method,path,body)
         self.assertEqual(len(opener.calls),1)

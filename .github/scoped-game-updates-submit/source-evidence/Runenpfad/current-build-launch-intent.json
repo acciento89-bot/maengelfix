@@ -1,0 +1,34 @@
+{
+  "utc": "2026-10-30T00:00:18.546085+00:00",
+  "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+  "argv": [
+    "/Applications/Unity/Hub/Editor/6000.6.4f1/Unity.app/Contents/MacOS/Unity",
+    "-batchmode",
+    "-buildTarget",
+    "Android",
+    "-projectPath",
+    "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/RunenpfadRewardRecoveryPreparation/Source",
+    "-logFile",
+    "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/RunenpfadRewardRecoveryRootBuild-20261030/unity-normal-release-build.log",
+    "-job-worker-count",
+    "1",
+    "-quit",
+    "-executeMethod",
+    "PortfolioVisualIdentityQA.AndroidReleaseBuild.Build",
+    "-buildOutput",
+    "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/RunenpfadRewardRecoveryRootBuild-20261030/Runenpfad-0.4.0-code6-normal.aab"
+  ],
+  "toolchainOverrides": {
+    "JAVA_HOME": "/Applications/Unity/Hub/Editor/6000.6.4f1/PlaybackEngines/AndroidPlayer/OpenJDK",
+    "ANDROID_HOME": "/tmp/PvUnitySDK20261029",
+    "PORTFOLIO_ANDROID_SDK_ROOT": "/tmp/PvUnitySDK20261029",
+    "PORTFOLIO_ANDROID_NDK_ROOT": "/tmp/PvUnityNDK20261029",
+    "PORTFOLIO_ANDROID_JDK_ROOT": "/Applications/Unity/Hub/Editor/6000.6.4f1/PlaybackEngines/AndroidPlayer/OpenJDK",
+    "TMPDIR": "/Volumes/SSK SSD/.utmp/visual-editor",
+    "UPM_CACHE_ROOT": "/Volumes/SSK SSD/Kamilunavo/Caches/UnityUPM",
+    "GRADLE_USER_HOME": "/Volumes/SSK SSD/Kamilunavo/Cache/Gradle",
+    "GRADLE_OPTS": "-Dorg.gradle.workers.max=1 -Dorg.gradle.jvmargs=-Xmx1536m"
+  },
+  "soleLocalCompilerVirtualDevicesOff": true,
+  "noProductionSigningOrProvider": true
+}

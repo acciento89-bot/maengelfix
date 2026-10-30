@@ -1,15 +1,15 @@
 {
-  "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+  "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
   "package": "com.kamilunavo.runenpfad",
   "versionName": "0.4.0",
-  "versionCode": 5,
-  "sourceSHA256": "f9c893a8ce2a0275815d23d0aa47937f74c5125e5ad2a6a4250d8fd20e1c8555",
-  "canonicalUnsignedSHA256": "77177eb011ee41086919824c12782da3c86f77152882564338dcfa47edef5c93",
-  "signedSHA256": "c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6",
+  "versionCode": 6,
+  "sourceSHA256": "014389dfab75f8922b05778e3f7d2a0c1754a94a330d9a6ea857c8084d7427ec",
+  "canonicalUnsignedSHA256": "cead1dce4585370b029c956a2317ac3cd238718fe1e290ecd0de6dee5ab5a288",
+  "signedSHA256": "77a1b1634de36304e36d9c2ce8ebef2c9b244a4d6bb7a87235344822bb80ea75",
   "certificateSHA256": "A76F8F0ED69FDD6BB1181322A07B961A353605E8B9F654A0D4E6BC2F186BEF2B",
   "payloadUnchanged": true,
   "jarSignatureVerified": true,
   "bundletoolSHA256": "378b5434cd1378bef6b2bc527b8c7f0ff2584b273830335bce54d6d0813c8584",
-  "output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/UnityProductionReleaseMetadata-20261029/NativeCandidates/Runenpfad-0.4.0-5-regular-34e8fd445426/Runenpfad-0.4.0-5-upload.aab",
+  "output": "/Volumes/SSK SSD/Kamilunavo/Artifacts/PortfolioVisualIdentity-20261029/StoreReadiness/RunenpfadRewardRecoveryRootBuild-20261030/Runenpfad-0.4.0-code6-upload-signed.aab",
   "providerSubmission": false
 }

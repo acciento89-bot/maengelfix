@@ -344,12 +344,12 @@
       "package": "com.kamilunavo.runenpfad",
       "previousProductionCode": 4,
       "previousMaxCode": 4,
-      "newVersionCode": 5,
+      "newVersionCode": 6,
       "newVersionName": "0.4.0",
-      "reviewedSourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
-      "signedAabSha256": "c897c8b1f7ed285fa8f1a57e4fabad48247a9f41381ec6502482e2814a4b00b6",
-      "signedAabBytes": 39400038,
-      "testedDerivedApkSha256": "9fda19de3127ae6713962abacd5e455e387a37b9e36282644d406561527223f4",
+      "reviewedSourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
+      "signedAabSha256": "77a1b1634de36304e36d9c2ce8ebef2c9b244a4d6bb7a87235344822bb80ea75",
+      "signedAabBytes": 39402965,
+      "testedDerivedApkSha256": "eab816a2b832d68f4ab2b6b47825bd8a3b5894f9a89d44a4d702bd30fd7827cb",
       "testedDerivedApkBytes": 39724125,
       "certificate": {
         "sha1": "FC5649A9EAFCF01BB24433F18485E1DF60E28EF6",
@@ -360,45 +360,87 @@
       "sourceTopology": {
         "kind": "local_guarded_unity_vault_signing",
         "githubOrigin": null,
-        "sourceCommit": "34e8fd445426fd3c319bd8a3c25f6b3fdfd9ac29",
+        "sourceCommit": "d84b3e2e00514a38fc21a5da31950d2ddceebfd3",
         "cloudReads": []
       },
       "sourceProofs": [
         {
           "role": "public-upload-certificate",
-          "path": "source-evidence/Runenpfad/public-upload-certificate.txt",
+          "path": "source-evidence/Runenpfad/public-upload-certificate.log",
           "sha256": "4d54e761164c69e20e57cb9e05d061c68042bb85d2facb5e00020995d1a8273e",
           "bytes": 793
         },
         {
           "role": "qa-derivation",
           "path": "source-evidence/Runenpfad/qa-derivation.json",
-          "sha256": "8030f618a17c83572d214af6d6badab9aafcf8d04579e43bd83f56afc514fb2c",
-          "bytes": 26583
+          "sha256": "5254da7a151f774646ba9b7718b2702070599b022b448b27159f0f92d9f0aa5e",
+          "bytes": 8215
         },
         {
           "role": "source-sign-closure",
           "path": "source-evidence/Runenpfad/source-sign-closure.json",
-          "sha256": "8fa01e9bd6e3336cecdf8c05f5579f93d738bfbb211e7e6381c7d8883bca4ac5",
-          "bytes": 37380
+          "sha256": "6c2a20347c1e544050d3056e526d10d8881d8ec5f34732fe66d45d7e04ac7262",
+          "bytes": 11733
         },
         {
           "role": "guarded-local-export",
           "path": "source-evidence/Runenpfad/guarded-local-export.json",
-          "sha256": "ab7da4eb245e6c505e2d0200082e1e48304a2679e90eba8086c142fb85072a3b",
-          "bytes": 5170
+          "sha256": "a9d3b5c4c8cd7e7484b8bc22e472bd0d0793dae8ebb4cdb6eff5fb0a79583afb",
+          "bytes": 587
         },
         {
           "role": "local-vault-signing",
           "path": "source-evidence/Runenpfad/local-vault-signing.json",
-          "sha256": "bdb7f305218ff6cd0bcecac74a4cd0a65de2f252b096cb271d713339a3b831c8",
-          "bytes": 919
+          "sha256": "af3c997a7678d20933c94031ebb401691f40eb7b40d27f7b1ebcd176df6b3dbe",
+          "bytes": 876
         },
         {
           "role": "aab-apk-payload-pair",
           "path": "source-evidence/Runenpfad/aab-apk-payload-pair.json",
-          "sha256": "c3db49d58f29115f941d82ff95fa55d064e6f4aa01db8fb043d4ef299b946879",
-          "bytes": 19637
+          "sha256": "c632acc9a51c3c357e85c5d69869def94af4c33c41fa83308fc1276738a734e5",
+          "bytes": 36135
+        },
+        {
+          "role": "current-build-launch-intent",
+          "path": "source-evidence/Runenpfad/current-build-launch-intent.json",
+          "sha256": "6ac8c274af1823d4b2f5b7a17d950fae340a3d976baede10a60bc64708ee29cc",
+          "bytes": 1685
+        },
+        {
+          "role": "current-build-source-readback",
+          "path": "source-evidence/Runenpfad/current-build-source-readback.json",
+          "sha256": "5b73fdc2eaf9cba86ff6b7b41aeb2e0728512dd4c5b0367d7621c272e553ec09",
+          "bytes": 514
+        },
+        {
+          "role": "current-tracked-source-snapshot",
+          "path": "source-evidence/Runenpfad/current-tracked-source-snapshot.json",
+          "sha256": "50dcf9fbcf786ade91794e2a8e3f8f4055ac3c1bd9e8d57dd39f49774758cd74",
+          "bytes": 507738
+        },
+        {
+          "role": "current-integration",
+          "path": "source-evidence/Runenpfad/current-integration.json",
+          "sha256": "3fd1d138a526e93de7265c20ae5381d45da9415c10370e81f7d8fbcf76d957df",
+          "bytes": 249
+        },
+        {
+          "role": "current-actual-editor-exit",
+          "path": "source-evidence/Runenpfad/current-actual-editor-exit.json",
+          "sha256": "3639c34bbf3e0499e21fa268aceb0a273be0bd03f2479921d8c552de01a8863f",
+          "bytes": 505
+        },
+        {
+          "role": "current-font-notice-core-proof",
+          "path": "source-evidence/Runenpfad/current-font-notice-core-proof.json",
+          "sha256": "ad87fa1fbcac61e0d06752a2b4ea09f9e7ed04188cd752bbe442a64914690662",
+          "bytes": 4055
+        },
+        {
+          "role": "current-native-elf-proof",
+          "path": "source-evidence/Runenpfad/current-native-elf-proof.json",
+          "sha256": "c6ec4ce27fc4d601307d8e2985649082495d380a9d6202880c368fb75c9be254",
+          "bytes": 1187
         },
         {
           "role": "original-font-0",
@@ -462,11 +504,14 @@
         }
       ],
       "uiLanguagePolicy": "actual_per_frame_review",
-      "fullSignedPayloadSha256": "1f4daa0ab736bd401970907da074179ee2b378cd05553261e865ab8652b58d9a",
+      "fullSignedPayloadSha256": "40b0ef7567d5661641ee0393f1b7af21b136e5de5ab68278628aea9619e6795c",
       "allowedGeneratedBaselineExtras": {
         "assets/dexopt/baseline.prof": "9d7befd32a0c52ea9dced15dd96f769d5ccb210d568048dae9fdb339bedd5009",
         "assets/dexopt/baseline.profm": "78ebe4a4f9d54c94c9f9335482aebe6da7b910083b241614504aadd0c4067bfa"
-      }
+      },
+      "reservedUnusedVersionCodes": [
+        5
+      ]
     },
     {
       "app": "NineNine",
