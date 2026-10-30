@@ -6,17 +6,68 @@
         "sha1": "BCF2337D41E617C03BCAE698C09D1523654BD790",
         "sha256": "7985BD6B33711BACA7E6BA722C2B3870EBBC802F7DB4A7BC1206BDAE51C4D5D6"
       },
-      "frameLanguageRequirements": null,
-      "listingLocales": null,
-      "localeSnapshotSha256": null,
+      "frameLanguageRequirements": {
+        "de-DE": [
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          },
+          {
+            "inAppLanguage": "de",
+            "mixedUi": false,
+            "languageLimitation": ""
+          }
+        ],
+        "en-US": [
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German demo object and draft text remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German demo object and draft text remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German demo object and draft text remain verbatim."
+          },
+          {
+            "inAppLanguage": "en",
+            "mixedUi": false,
+            "languageLimitation": "English UI; own manually entered fictional German demo object and draft text remain verbatim."
+          }
+        ]
+      },
+      "listingLocales": [
+        "de-DE",
+        "en-US"
+      ],
+      "localeSnapshotSha256": "1c82b930634eb0a0c312964234b7e47a23793d809787713b4c461f7a0810bd45",
       "newVersionCode": 12,
       "newVersionName": "1.2.0",
       "optionalOriginalIcon": null,
       "package": "de.kamilunavo.navopass",
       "previousMaxCode": 11,
       "previousProductionCode": 11,
-      "readiness": "pending_final_native_screens_locales_asset_rights_root_review",
-      "releaseNotes": {},
+      "readiness": "root_reviewed_candidate_inputs",
+      "releaseNotes": {
+        "de-DE": "Überarbeiteter Servicepass mit Metrophobic-Typografie, lokal gespeicherten Wartungsnotizen und ausdrücklich privater Veröffentlichung.",
+        "en-US": "Updated service-pass layout with Metrophobic typography, saved local service notes and explicit private publishing. Your entered sample names and notes keep their original language."
+      },
       "repository": "acciento89-bot/navopass",
       "requiredBundleAssets": [
         {
@@ -55,8 +106,8 @@
       "reviewedGitTree": "5065a0f565106cc178b184dd849ad4283694ed71",
       "reviewedProductDigest": "f70648e583455868b5cf48007bcde64045fe920a464c5dba4d36fb7e7b203e4d",
       "reviewedSourceCommit": "2f3011b7e183d9f2bfc146096a949f5297718fa5",
-      "rightsEvidenceSha256": null,
-      "rootReviewSha256": null,
+      "rightsEvidenceSha256": "6d93f7f785e6072da559260c140a1d08312e53ea7669d5628208a0f82fa0696b",
+      "rootReviewSha256": "ff675e2d33851b6d3b6fa7734c1998068c3de43a374668584ada908826949983",
       "route": "central_kms",
       "signWorkflow": ".github/workflows/android-central-bundle.yml",
       "signWorkflowSha256": "1bc75532b7423c0094d54230649cd4ec851d93adb7193ff55e464b23ac0c8d21",
