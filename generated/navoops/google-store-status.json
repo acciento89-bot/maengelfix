@@ -1,12 +1,12 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-11-06T20:59:33Z",
+  "generatedAt": "2026-11-07T01:05:08Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
   "summary": {
-    "readableApps": 19,
-    "publiclyAvailable": 17,
+    "readableApps": 21,
+    "publiclyAvailable": 20,
     "pendingReviewWithoutPublicProduction": 1
   },
   "apps": [
@@ -23,7 +23,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -64,7 +64,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -105,7 +105,7 @@
       "publicBuild": null,
       "updateState": "review",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_IN_REVIEW",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · In review",
       "review": {
         "submissionID": null,
@@ -146,7 +146,7 @@
       "publicBuild": "6",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "Production published · build 6 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -193,7 +193,7 @@
       "publicBuild": "12",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -234,7 +234,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -275,7 +275,7 @@
       "publicBuild": "8",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -316,7 +316,7 @@
       "publicBuild": "12",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -357,7 +357,7 @@
       "publicBuild": "8",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -398,7 +398,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -445,7 +445,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -486,7 +486,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -527,7 +527,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -568,7 +568,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -609,7 +609,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -650,7 +650,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -691,7 +691,7 @@
       "publicBuild": "7",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "Production published · build 7 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -727,27 +727,9 @@
     },
     {
       "provider": "google",
-      "appName": "HydroCalc",
-      "externalID": "de.kamilunavo.hydrocalc",
-      "bundleOrPackageID": "de.kamilunavo.hydrocalc",
-      "version": null,
-      "build": null,
-      "rawState": "none",
-      "state": "development",
-      "publiclyAvailable": false,
-      "publicBuild": null,
-      "updateState": "development",
-      "updateRawState": "none",
-      "updatedAt": "2026-11-06T20:59:33Z",
-      "detail": "No active release found on configured Google Play tracks.",
-      "review": null,
-      "tracks": []
-    },
-    {
-      "provider": "google",
-      "appName": "MAGCalc",
-      "externalID": "de.kamilunavo.magcalc",
-      "bundleOrPackageID": "de.kamilunavo.magcalc",
+      "appName": "Schon erledigt?",
+      "externalID": "com.kamilunavo.schonerledigt",
+      "bundleOrPackageID": "com.kamilunavo.schonerledigt",
       "version": "1.2.0 (7)",
       "build": "7",
       "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
@@ -756,7 +738,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-06T20:59:33Z",
+      "updatedAt": "2026-11-07T01:05:08Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -775,6 +757,135 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "1.2.0 (7)",
           "build": 7
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.1)",
+          "build": 5
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "BrennerCalc",
+      "externalID": "de.kamilunavo.brennercalc",
+      "bundleOrPackageID": "de.kamilunavo.brennercalc",
+      "version": "1.2.0 (7)",
+      "build": "7",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "7",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-11-07T01:05:08Z",
+      "detail": "production · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "1.2.0 (7)",
+          "build": 7
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.2)",
+          "build": 4
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "HydroCalc",
+      "externalID": "de.kamilunavo.hydrocalc",
+      "bundleOrPackageID": "de.kamilunavo.hydrocalc",
+      "version": "1.2.0 (6)",
+      "build": "6",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "6",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-11-07T01:05:08Z",
+      "detail": "production · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "1.2.0 (6)",
+          "build": 6
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
+        }
+      ]
+    },
+    {
+      "provider": "google",
+      "appName": "MAGCalc",
+      "externalID": "de.kamilunavo.magcalc",
+      "bundleOrPackageID": "de.kamilunavo.magcalc",
+      "version": "1.2.0 (7)",
+      "build": "7",
+      "rawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "state": "live",
+      "publiclyAvailable": true,
+      "publicBuild": "7",
+      "updateState": "live",
+      "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
+      "updatedAt": "2026-11-07T01:05:08Z",
+      "detail": "production · Published",
+      "review": {
+        "submissionID": null,
+        "submissionState": null,
+        "itemStates": [],
+        "submittedAt": null,
+        "track": "production",
+        "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+        "reason": null,
+        "reasonAvailability": "consoleOnly",
+        "consoleURL": "https://play.google.com/console"
+      },
+      "tracks": [
+        {
+          "track": "production",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "1.2.0 (7)",
+          "build": 7
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "3 (1.0.2)",
+          "build": 3
         }
       ]
     }
