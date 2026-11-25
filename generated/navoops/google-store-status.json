@@ -1,6 +1,6 @@
 {
   "schemaVersion": 3,
-  "generatedAt": "2026-11-25T03:37:35Z",
+  "generatedAt": "2026-11-25T04:36:17Z",
   "sourceRepository": "acciento89-bot/maengelfix",
   "appleAvailable": false,
   "googleAvailable": true,
@@ -23,7 +23,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -42,6 +42,12 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "0.6.0 (9)",
           "build": 9
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "6 (0.3.2)",
+          "build": 6
         }
       ]
     },
@@ -58,7 +64,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -99,7 +105,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -140,7 +146,7 @@
       "publicBuild": "6",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "Production published · build 6 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -159,6 +165,12 @@
           "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
           "releaseName": "1.2.0 (6)",
           "build": 6
+        },
+        {
+          "track": "internal",
+          "lifecycleState": "RELEASE_LIFECYCLE_STATE_PUBLISHED",
+          "releaseName": "4 (1.0.2)",
+          "build": 4
         },
         {
           "track": "alpha",
@@ -181,7 +193,7 @@
       "publicBuild": "12",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -222,7 +234,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -263,7 +275,7 @@
       "publicBuild": "8",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -304,7 +316,7 @@
       "publicBuild": "12",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -345,7 +357,7 @@
       "publicBuild": "8",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -386,7 +398,7 @@
       "publicBuild": "9",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -433,7 +445,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -474,7 +486,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -515,7 +527,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -556,7 +568,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -597,7 +609,7 @@
       "publicBuild": "5",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -638,7 +650,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -679,7 +691,7 @@
       "publicBuild": "7",
       "updateState": "development",
       "updateRawState": "alpha:RELEASE_LIFECYCLE_STATE_DRAFT",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "Production published · build 7 · pending/current update: alpha · Draft",
       "review": {
         "submissionID": null,
@@ -726,7 +738,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -767,7 +779,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -808,7 +820,7 @@
       "publicBuild": "6",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
@@ -849,7 +861,7 @@
       "publicBuild": "7",
       "updateState": "live",
       "updateRawState": "production:RELEASE_LIFECYCLE_STATE_PUBLISHED",
-      "updatedAt": "2026-11-25T03:37:35Z",
+      "updatedAt": "2026-11-25T04:36:17Z",
       "detail": "production · Published",
       "review": {
         "submissionID": null,
